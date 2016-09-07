@@ -1,4 +1,30 @@
 package com.juniperphoton.myersplash.model;
 
-public class UnsplashImage extends UnsplashImageBase {
+public class UnsplashImage {
+    private String id;
+    private String created_at;
+    private String color;
+    private int likes;
+    private UnsplashUser user;
+    private ImageUrl urls;
+
+    public UnsplashImage() {
+
+    }
+
+    public String getRegularUrl(){
+        return urls.regular;
+    }
+
+    public class ImageUrl {
+        private String raw;
+        private String full;
+        private String regular;
+        private String small;
+        private String thumb;
+
+        public ImageUrl() {
+
+        }
+    }
 }

@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_margin="12sp"
+            android:layout_margin="20sp"
             android:text="MyerSplash"
             android:textColor="@android:color/white"
             android:textSize="20sp" />

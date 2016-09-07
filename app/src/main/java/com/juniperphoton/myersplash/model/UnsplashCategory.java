@@ -1,5 +1,7 @@
 package com.juniperphoton.myersplash.model;
 
+import com.juniperphoton.myersplash.cloudservice.CloudService;
+
 public class UnsplashCategory {
     private int id;
     private String title;
@@ -20,6 +22,12 @@ public class UnsplashCategory {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getUrl() {
+        if (id <= 0) {
+            return CloudService.baseUrl;
+        } else return links.self + "/";
     }
 
     public class links {

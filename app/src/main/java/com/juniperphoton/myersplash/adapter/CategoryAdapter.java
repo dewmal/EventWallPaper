@@ -16,8 +16,6 @@ import com.juniperphoton.myersplash.callback.INavigationDrawerCallback;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.view.RectView;
 
-import java.security.PrivilegedAction;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryListViewHolder> {
@@ -28,6 +26,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     private RectView mLastSelectedRV = null;
     private RelativeLayout mLastSelectedRL = null;
     private INavigationDrawerCallback mCallback = null;
+
 
     public CategoryAdapter(List<UnsplashCategory> data, Context context) {
         mData = data;
@@ -46,30 +45,45 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
     @Override
     public void onBindViewHolder(final CategoryListViewHolder holder, int position) {
-        final UnsplashCategory category = mData.get(holder.getAdapterPosition());
+
+        final int index = holder.getAdapterPosition();
+        final UnsplashCategory category = mData.get(index);
         holder.TitleTextView.setText(category.getTitle());
         holder.ItemRoot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int index = holder.getAdapterPosition();
-                if (index == mSelectedIndex) return;
+                if (index == mSelectedIndex) {
+                    return;
+                }
                 mSelectedIndex = index;
-                holder.LeftRect.setVisibility(View.VISIBLE);
-                holder.ItemRoot.setBackground(new ColorDrawable(ContextCompat.getColor(mContext, R.color.SelectedBackgroundColor)));
-
-                if (mLastSelectedRV != null) {
-                    mLastSelectedRV.setVisibility(View.INVISIBLE);
-                }
-                if (mLastSelectedRL != null) {
-                    mLastSelectedRL.setBackground(new ColorDrawable(Color.TRANSPARENT));
-                }
-                mLastSelectedRV = holder.LeftRect;
-                mLastSelectedRL = holder.ItemRoot;
-                if (mCallback != null) {
-                    mCallback.selectItem(category);
-                }
+                selectItem(holder, category);
             }
         });
+        if (index == mSelectedIndex) {
+            selectItem(holder, category);
+        }
+    }
+
+    private void selectItem(CategoryListViewHolder holder, UnsplashCategory category) {
+        holder.LeftRect.setVisibility(View.VISIBLE);
+        holder.ItemRoot.setBackground(new ColorDrawable(ContextCompat.getColor(mContext, R.color.SelectedBackgroundColor)));
+
+        if (mLastSelectedRV != null) {
+            mLastSelectedRV.setVisibility(View.INVISIBLE);
+        }
+        if (mLastSelectedRL != null) {
+            mLastSelectedRL.setBackground(new ColorDrawable(Color.TRANSPARENT));
+        }
+        mLastSelectedRV = holder.LeftRect;
+        mLastSelectedRL = holder.ItemRoot;
+        if (mCallback != null) {
+            mCallback.onSelectItem(category);
+        }
+    }
+
+    public void select(int i) {
+        mSelectedIndex = i;
+        notifyDataSetChanged();
     }
 
     @Override
