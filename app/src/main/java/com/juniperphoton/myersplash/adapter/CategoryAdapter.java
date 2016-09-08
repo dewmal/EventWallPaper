@@ -4,11 +4,11 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
@@ -24,7 +24,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     private Context mContext;
     private int mSelectedIndex = -1;
     private RectView mLastSelectedRV = null;
-    private RelativeLayout mLastSelectedRL = null;
+    private CardView mLastSelectedCV = null;
     private INavigationDrawerCallback mCallback = null;
 
 
@@ -71,11 +71,11 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         if (mLastSelectedRV != null) {
             mLastSelectedRV.setVisibility(View.INVISIBLE);
         }
-        if (mLastSelectedRL != null) {
-            mLastSelectedRL.setBackground(new ColorDrawable(Color.TRANSPARENT));
+        if (mLastSelectedCV != null) {
+            mLastSelectedCV.setBackground(new ColorDrawable(Color.TRANSPARENT));
         }
         mLastSelectedRV = holder.LeftRect;
-        mLastSelectedRL = holder.ItemRoot;
+        mLastSelectedCV = holder.ItemRoot;
         if (mCallback != null) {
             mCallback.onSelectItem(category);
         }
@@ -93,13 +93,13 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
     public class CategoryListViewHolder extends RecyclerView.ViewHolder {
         public TextView TitleTextView;
-        public RelativeLayout ItemRoot;
+        public CardView ItemRoot;
         public RectView LeftRect;
 
         public CategoryListViewHolder(View itemView) {
             super(itemView);
             TitleTextView = (TextView) itemView.findViewById(R.id.row_category);
-            ItemRoot = (RelativeLayout) itemView.findViewById(R.id.row_category_rl);
+            ItemRoot = (CardView) itemView.findViewById(R.id.row_category_cv);
             LeftRect = (RectView) itemView.findViewById(R.id.row_cateogory_rv);
         }
     }

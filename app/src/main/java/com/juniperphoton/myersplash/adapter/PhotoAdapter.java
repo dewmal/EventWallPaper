@@ -54,9 +54,14 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             String regularUrl = image.getRegularUrl();
             if (holder.SimpleDraweeView != null) {
                 holder.SimpleDraweeView.setImageURI(regularUrl);
+                holder.SimpleDraweeView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
             }
         }
-
     }
 
     @Override

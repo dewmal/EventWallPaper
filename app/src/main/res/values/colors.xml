@@ -5,4 +5,5 @@
     <color name="colorAccent">#4e1d1d1d</color>
     <color name="MyerSplashThemeColor">#00bebe</color>
     <color name="SelectedBackgroundColor">#34ffffff</color>
+    <color name="DrawerColor">#1d1d1d</color>
 </resources>

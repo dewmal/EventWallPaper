@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 
 import com.juniperphoton.myersplash.R;
@@ -69,10 +70,12 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         super.onCreate(savedInstanceState);
 
         StatusBarCompat.setUpActivity(this);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
         setContentView(R.layout.activity_main);
 
         setSupportActionBar(mToolbar);
+
 
         ButterKnife.bind(this);
 
@@ -123,6 +126,13 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 mContentRecyclerView.smoothScrollToPosition(0);
             }
         });
+
+        mSearchFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
         getCategories();
     }
 
@@ -147,8 +157,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 UnsplashCategory featureCategory = new UnsplashCategory();
                 featureCategory.setId(-2);
                 featureCategory.setTitle(Constant.FEATURE_S);
-                unsplashCategories.add(0, featureCategory);
                 unsplashCategories.add(0, newCategory);
+                unsplashCategories.add(0, featureCategory);
                 CategoryAdapter adapter = new CategoryAdapter(unsplashCategories, MainActivity.this);
                 adapter.setCallback(MainActivity.this);
                 adapter.select(1);
