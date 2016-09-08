@@ -1,6 +1,7 @@
 package com.juniperphoton.myersplash.activity;
 
 import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -33,6 +34,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import moe.feng.material.statusbar.StatusBarCompat;
 import rx.Subscriber;
 
@@ -75,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         setContentView(R.layout.activity_main);
 
         setSupportActionBar(mToolbar);
-
 
         ButterKnife.bind(this);
 
@@ -134,6 +135,17 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             }
         });
         getCategories();
+    }
+
+    @OnClick(R.id.drawer_settings_ll)
+    void onClickSettings() {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.drawer_about_ll)
+    void onClickAbout() {
+
     }
 
     //进行网络请求

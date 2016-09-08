@@ -1,6 +1,9 @@
 package com.juniperphoton.myersplash.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -52,6 +55,10 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             final int index = holder.getAdapterPosition();
             UnsplashImage image = mData.get(index);
             String regularUrl = image.getRegularUrl();
+            int backColor = index % 2 == 0 ?
+                    ContextCompat.getColor(mContext, R.color.BackColor1) : ContextCompat.getColor(mContext, R.color.BackColor2);
+
+            holder.RootCardView.setBackground(new ColorDrawable(backColor));
             if (holder.SimpleDraweeView != null) {
                 holder.SimpleDraweeView.setImageURI(regularUrl);
                 holder.SimpleDraweeView.setOnClickListener(new View.OnClickListener() {
@@ -146,10 +153,12 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         public static final int TYPE_FOOTER_VIEW = 100002;
 
         public SimpleDraweeView SimpleDraweeView;
+        public CardView RootCardView;
 
         public PhotoViewHolder(View itemView) {
             super(itemView);
             SimpleDraweeView = (SimpleDraweeView) itemView.findViewById(R.id.row_photo_iv);
+            RootCardView = (CardView) itemView.findViewById(R.id.row_photo_cv);
         }
     }
 }

@@ -54,7 +54,7 @@
             card_view:cardElevation="0dp">
 
             <RelativeLayout
-                android:id="@+id/fragment_drawer_settings_ll"
+                android:id="@+id/drawer_settings_ll"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="?android:attr/selectableItemBackground"
@@ -97,7 +97,7 @@
             card_view:cardElevation="0dp">
 
             <RelativeLayout
-                android:id="@+id/fragment_drawer_about_ll"
+                android:id="@+id/drawer_about_ll"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="?android:attr/selectableItemBackground"
