@@ -3,6 +3,7 @@ package com.juniperphoton.myersplash.activity;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
@@ -45,6 +46,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
+
+    @Bind(R.id.toolbar_layout)
+    AppBarLayout mAppBarLayout;
 
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
@@ -102,25 +106,25 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         mDrawerRecyclerview.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         mContentRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-//        mContentRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//
-//            }
-//
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                super.onScrolled(recyclerView, dx, dy);
-//                if (dy > 20) {
-//                    ToggleSearchBtnAnimation(false);
-//                    ToggleToolbarAnimation(false);
-//                } else if (dy < -20) {
-//                    ToggleSearchBtnAnimation(true);
-//                    ToggleToolbarAnimation(true);
-//                }
-//            }
-//        });
+        mContentRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy > 20) {
+                    mSearchFAB.hide();
+                    ToggleToolbarAnimation(false);
+                } else if (dy < -20) {
+                    mSearchFAB.show();
+                    ToggleToolbarAnimation(true);
+                }
+            }
+        });
         mToolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -134,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
             }
         });
+        mRefreshLayout.setRefreshing(true);
         getCategories();
     }
 
@@ -141,11 +146,14 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     void onClickSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
     @OnClick(R.id.drawer_about_ll)
     void onClickAbout() {
-
+        Intent intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
     //进行网络请求
@@ -227,37 +235,19 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         }, mUrl, mCurrentPage);
     }
 
-    private void ToggleSearchBtnAnimation(boolean show) {
-        ValueAnimator valueAnimator = new ValueAnimator();
-        valueAnimator.setDuration(300);
-        valueAnimator.setInterpolator(new DecelerateInterpolator(1.5f));
-        if (show) {
-            valueAnimator.setIntValues(100, 0);
-        } else {
-            valueAnimator.setIntValues(0, 100);
-        }
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                mSearchFAB.scrollTo(0, (int) animation.getAnimatedValue());
-            }
-        });
-        valueAnimator.start();
-    }
-
     private void ToggleToolbarAnimation(boolean show) {
         ValueAnimator valueAnimator = new ValueAnimator();
         valueAnimator.setDuration(300);
         valueAnimator.setInterpolator(new DecelerateInterpolator(1.5f));
         if (show) {
-            valueAnimator.setIntValues(-100, 0);
+            valueAnimator.setIntValues(200, 0);
         } else {
-            valueAnimator.setIntValues(0, -100);
+            valueAnimator.setIntValues(0, 200);
         }
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                mToolbar.scrollTo(0, (int) animation.getAnimatedValue());
+                //mAppBarLayout.scrollTo(0, (int) animation.getAnimatedValue());
             }
         });
         valueAnimator.start();

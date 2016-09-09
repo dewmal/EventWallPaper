@@ -37,6 +37,7 @@
 
             <android.support.design.widget.AppBarLayout
                 android:layout_width="match_parent"
+                android:id="@+id/toolbar_layout"
                 android:layout_height="wrap_content"
                 app:layout_scrollFlags="scroll|snap|enterAlways"
                 android:theme="@style/AppTheme.AppBarOverlay">

@@ -5,8 +5,7 @@
     <color name="colorAccent">#4e1d1d1d</color>
     <color name="MyerSplashThemeColor">#00bebe</color>
     <color name="SelectedBackgroundColor">#34ffffff</color>
-    <color name="DrawerColor">#1d1d1d</color>
     <color name="BackColor1">#FF2E2E2E</color>
     <color name="BackColor2">#FF383838</color>
-
+    <color name="MyerSplashDark">#1d1d1d</color>
 </resources>
