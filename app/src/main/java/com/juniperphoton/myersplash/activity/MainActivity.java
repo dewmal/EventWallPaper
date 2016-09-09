@@ -113,13 +113,15 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             }
         });
 
-        mDrawerRecyclerview.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        mContentRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        mDrawerRecyclerview.setLayoutManager(new LinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL, false));
+        mContentRecyclerView.setLayoutManager(new LinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL, false));
+
         mContentRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-
             }
 
             @Override
@@ -150,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.content_activity_search_fab)
     void onClickFAB() {
-
+        ToastService.sendShortToast("Still working on this.");
     }
 
     @SuppressWarnings("UnusedDeclaration")
