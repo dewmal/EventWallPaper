@@ -31,7 +31,7 @@ public class AboutActivity extends AppCompatActivity {
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.setType("message/rfc822");
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"dengweichao@hotmail.com"}); // recipients
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "MyerList Android feedback");
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "MyerSplash for Android feedback");
         emailIntent.putExtra(Intent.EXTRA_TEXT, "");
         startActivity(Intent.createChooser(emailIntent, "Choose app to send an email"));
     }

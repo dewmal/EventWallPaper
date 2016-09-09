@@ -12,8 +12,16 @@ public class UnsplashImage {
 
     }
 
-    public String getRegularUrl(){
+    public String getListUrl() {
         return urls.regular;
+    }
+
+    public String getDownloadUrl() {
+        return urls.full + "/";
+    }
+
+    public String getFileNameForDownload() {
+        return user.getName() + "-" + created_at + ".jpg";
     }
 
     public class ImageUrl {

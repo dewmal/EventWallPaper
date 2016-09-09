@@ -1,24 +1,36 @@
 package com.juniperphoton.myersplash.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.callback.OnLoadMoreListener;
-import com.juniperphoton.myersplash.model.UnsplashCategory;
+import com.juniperphoton.myersplash.cloudservice.CloudService;
 import com.juniperphoton.myersplash.model.UnsplashImage;
+import com.juniperphoton.myersplash.service.BackgrdDownloadService;
+import com.juniperphoton.myersplash.utils.DownloadUtils;
+import com.juniperphoton.myersplash.utils.ToastService;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.ResponseBody;
+import rx.Subscriber;
 
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder> {
@@ -49,17 +61,30 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         return null;
     }
 
+    @SuppressWarnings("ResourceAsColor")
     @Override
     public void onBindViewHolder(PhotoViewHolder holder, int position) {
         if (holder.getItemViewType() == PhotoAdapter.PhotoViewHolder.TYPE_COMMON_VIEW) {
             final int index = holder.getAdapterPosition();
-            UnsplashImage image = mData.get(index);
-            String regularUrl = image.getRegularUrl();
-            int backColor = index % 2 == 0 ?
-                    ContextCompat.getColor(mContext, R.color.BackColor1) : ContextCompat.getColor(mContext, R.color.BackColor2);
+            final UnsplashImage image = mData.get(index);
+            String regularUrl = image.getListUrl();
 
-            holder.RootCardView.setBackground(new ColorDrawable(backColor));
+            int backColor = index % 2 == 0 ?
+                    ContextCompat.getColor(mContext, R.color.BackColor1) :
+                    ContextCompat.getColor(mContext, R.color.BackColor2);
+
             if (holder.SimpleDraweeView != null) {
+                holder.RootCardView.setBackground(new ColorDrawable(backColor));
+                holder.DownloadBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(mContext, BackgrdDownloadService.class);
+                        intent.putExtra("name", image.getFileNameForDownload());
+                        intent.putExtra("url", image.getDownloadUrl());
+                        mContext.startService(intent);
+                        ToastService.sendShortToast("Downloading...");
+                    }
+                });
                 holder.SimpleDraweeView.setImageURI(regularUrl);
                 holder.SimpleDraweeView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -70,6 +95,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             }
         }
     }
+
 
     @Override
     public int getItemCount() {
@@ -154,11 +180,13 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
         public SimpleDraweeView SimpleDraweeView;
         public CardView RootCardView;
+        public RelativeLayout DownloadBtn;
 
         public PhotoViewHolder(View itemView) {
             super(itemView);
             SimpleDraweeView = (SimpleDraweeView) itemView.findViewById(R.id.row_photo_iv);
             RootCardView = (CardView) itemView.findViewById(R.id.row_photo_cv);
+            DownloadBtn = (RelativeLayout) itemView.findViewById(R.id.row_photo_download_rl);
         }
     }
 }

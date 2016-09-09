@@ -8,4 +8,8 @@ public class UnsplashUser {
     public UnsplashUser(){
 
     }
+
+    public String getName(){
+        return name;
+    }
 }
