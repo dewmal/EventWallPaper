@@ -7,7 +7,7 @@ import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
-public class RequestUtils {
+public class RequestUtil {
     public static void check(Activity context) {
         // Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(context,

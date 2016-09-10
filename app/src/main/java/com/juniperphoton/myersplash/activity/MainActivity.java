@@ -2,7 +2,10 @@ package com.juniperphoton.myersplash.activity;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.graphics.RectF;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -15,22 +18,27 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
+import android.view.animation.TranslateAnimation;
+import android.widget.RelativeLayout;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.gson.reflect.TypeToken;
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.adapter.CategoryAdapter;
 import com.juniperphoton.myersplash.adapter.PhotoAdapter;
 import com.juniperphoton.myersplash.callback.INavigationDrawerCallback;
+import com.juniperphoton.myersplash.callback.OnClickPhotoCallback;
 import com.juniperphoton.myersplash.callback.OnLoadMoreListener;
 import com.juniperphoton.myersplash.cloudservice.CloudService;
-import com.juniperphoton.myersplash.common.Constant;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
-import com.juniperphoton.myersplash.model.UnsplashImageFeatured;
-import com.juniperphoton.myersplash.utils.RequestUtils;
+import com.juniperphoton.myersplash.utils.RequestUtil;
 import com.juniperphoton.myersplash.utils.SerializerUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
 
@@ -43,7 +51,7 @@ import butterknife.OnClick;
 import moe.feng.material.statusbar.StatusBarCompat;
 import rx.Subscriber;
 
-public class MainActivity extends AppCompatActivity implements INavigationDrawerCallback, OnLoadMoreListener {
+public class MainActivity extends AppCompatActivity implements INavigationDrawerCallback, OnLoadMoreListener, OnClickPhotoCallback {
 
     private static final String TAG = MainActivity.class.getName();
 
@@ -72,6 +80,15 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     @Bind(R.id.content_activity_search_fab)
     FloatingActionButton mSearchFAB;
+
+    @Bind(R.id.detail_mask_rl)
+    RelativeLayout mMaskRL;
+
+    @Bind(R.id.detail_root_rl)
+    RelativeLayout mDetailRootRL;
+
+    @Bind(R.id.detail_hero_dv)
+    SimpleDraweeView mHeroDV;
 
     private PhotoAdapter mAdapter;
 
@@ -129,15 +146,29 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 super.onScrolled(recyclerView, dx, dy);
                 if (dy > 20) {
                     mSearchFAB.hide();
-                    ToggleToolbarAnimation(false);
+                    toggleToolbarAnimation(false);
                 } else if (dy < -20) {
                     mSearchFAB.show();
-                    ToggleToolbarAnimation(true);
+                    toggleToolbarAnimation(true);
                 }
             }
         });
 
-        RequestUtils.check(this);
+        mDetailRootRL.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+            }
+        });
+
+        mDetailRootRL.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.this.toggleMaskAnimation(false);
+            }
+        });
+
+        RequestUtil.check(this);
         mRefreshLayout.setRefreshing(true);
         restorePhotoList();
         getCategories();
@@ -218,12 +249,14 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private void setCachedImageList(List<UnsplashImage> unsplashImages) {
         PhotoAdapter adapter = new PhotoAdapter(unsplashImages, MainActivity.this);
         adapter.setOnLoadMoreListener(MainActivity.this);
+        adapter.setOnClickItemListener(MainActivity.this);
         mContentRecyclerView.setAdapter(adapter);
     }
 
     private void setImageList(List<UnsplashImage> unsplashImages) {
         mAdapter = new PhotoAdapter(unsplashImages, MainActivity.this);
         mAdapter.setOnLoadMoreListener(MainActivity.this);
+        mAdapter.setOnClickItemListener(MainActivity.this);
         mContentRecyclerView.setAdapter(mAdapter);
     }
 
@@ -257,17 +290,17 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     @Override
     public void onBackPressed() {
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        try {
-            if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-                mDrawerLayout.closeDrawer(GravityCompat.START);
-            } else {
-                super.onBackPressed();
-            }
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+        if (mDetailRootRL.getVisibility() == View.VISIBLE) {
+            toggleMaskAnimation(false);
+            return;
+        }
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
     }
+
 
     @Override
     public void onSelectItem(UnsplashCategory category) {
@@ -317,7 +350,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         }
     }
 
-    private void ToggleToolbarAnimation(boolean show) {
+    private void toggleToolbarAnimation(boolean show) {
         ValueAnimator valueAnimator = new ValueAnimator();
         valueAnimator.setDuration(300);
         valueAnimator.setInterpolator(new DecelerateInterpolator(1.5f));
@@ -333,12 +366,81 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             }
         });
         valueAnimator.start();
-
     }
 
     @Override
     public void OnLoadMore() {
         ++mCurrentPage;
         loadPhotoList();
+    }
+
+    @Override
+    public void clickPhotoItem(final RectF rectF, final UnsplashImage unsplashImage) {
+        mHeroDV.setImageURI(unsplashImage.getListUrl());
+        mDetailRootRL.setVisibility(View.VISIBLE);
+        toggleMaskAnimation(true);
+
+        ViewTreeObserver viewTreeObserver = mHeroDV.getViewTreeObserver();
+        if (viewTreeObserver.isAlive()) {
+            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    mHeroDV.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                    int[] position = new int[2];
+                    mHeroDV.getLocationOnScreen(position);
+
+                    float targetY = rectF.top;
+                    //mHeroDV.scrollTo(0, 0);
+                    //mHeroDV.scrollBy(0, position[1] - (int) targetY);
+                    MainActivity.this.toggleHeroViewAnimation((int) targetY);
+                }
+            });
+        }
+    }
+
+    private void toggleHeroViewAnimation(int startY) {
+        TranslateAnimation animation = new TranslateAnimation(0, 0, 200, 0);
+        animation.setDuration(300);
+        animation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        animation.setFillAfter(true);
+        mHeroDV.startAnimation(animation);
+    }
+
+    private void toggleMaskAnimation(final boolean show) {
+        ValueAnimator animator = new ValueAnimator();
+        if (show) {
+            animator.setFloatValues(0, 0.7f);
+            mMaskRL.setAlpha(0f);
+        } else {
+            animator.setFloatValues(0.7f, 0);
+            mMaskRL.setAlpha(0.7f);
+        }
+        animator.setDuration(300);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mMaskRL.setAlpha((float) animation.getAnimatedValue());
+                if ((float) animation.getAnimatedValue() == 0f && !show) {
+                    mDetailRootRL.setVisibility(View.GONE);
+                }
+            }
+        });
+        animator.start();
     }
 }

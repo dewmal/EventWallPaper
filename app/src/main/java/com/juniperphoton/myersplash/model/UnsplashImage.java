@@ -1,6 +1,12 @@
 package com.juniperphoton.myersplash.model;
 
-public class UnsplashImage {
+import android.graphics.Color;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import java.io.Serializable;
+
+public class UnsplashImage implements Serializable {
     private String id;
     private String created_at;
     private String color;
@@ -24,7 +30,15 @@ public class UnsplashImage {
         return user.getName() + "-" + created_at + ".jpg";
     }
 
-    public class ImageUrl {
+    public int getThemeColor(){
+        return Color.parseColor(color);
+    }
+
+    public String getUserName(){
+        return user.getName();
+    }
+
+    public class ImageUrl implements Serializable {
         private String raw;
         private String full;
         private String regular;

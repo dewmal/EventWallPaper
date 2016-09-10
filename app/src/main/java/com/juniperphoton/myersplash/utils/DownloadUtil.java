@@ -15,8 +15,8 @@ import java.io.OutputStream;
 
 import okhttp3.ResponseBody;
 
-public class DownloadUtils {
-    private static String TAG = "DownloadUtils";
+public class DownloadUtil {
+    private static String TAG = "DownloadUtil";
 
     public static boolean writeResponseBodyToDisk(ResponseBody body, String expectedName) {
         try {
