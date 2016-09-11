@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/detail_root_rl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
-    android:orientation="vertical"
-    android:visibility="gone">
+    android:visibility="visible">
 
     <RelativeLayout
         android:id="@+id/detail_mask_rl"
@@ -14,9 +14,82 @@
         android:alpha="0"
         android:background="@android:color/black" />
 
-    <com.facebook.drawee.view.SimpleDraweeView
-        android:id="@+id/detail_hero_dv"
+    <RelativeLayout
+        android:id="@+id/detail_img_rl"
         android:layout_width="match_parent"
-        android:layout_height="270dp"
-        android:layout_centerInParent="true" />
+        android:layout_height="@dimen/img_detail_height"
+        android:layout_centerInParent="true"
+        android:clickable="true">
+
+        <RelativeLayout
+            android:id="@+id/detail_backgrd_rl"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/img_detail_info_height"
+            android:layout_alignParentBottom="true"
+            android:background="@android:color/white"
+            android:clickable="true">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/detail_photoby_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="photo by"
+                    android:textColor="@android:color/black"
+                    android:textSize="12dp" />
+
+                <TextView
+                    android:id="@+id/detail_name_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Juniper Photon"
+                    android:textColor="@android:color/black"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/detail_hero_dv"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/img_height"
+            android:clickable="true" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/detail_share_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="@dimen/share_btn_margin_bottom"
+            android:layout_marginRight="@dimen/share_btn_margin_right"
+            android:clickable="true"
+            android:src="@drawable/ic_share_white_24dp"
+            app:backgroundTint="@color/MyerSplashLikedHeartColor"
+            app:fabSize="mini" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/detail_download_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="@dimen/download_btn_margin_bottom"
+            android:layout_marginRight="@dimen/download_btn_margin_right"
+            android:clickable="true"
+            android:src="@drawable/ic_file_download_white_24dp"
+            app:backgroundTint="@color/MyerSplashThemeColor" />
+
+
+    </RelativeLayout>
+
+
 </RelativeLayout>

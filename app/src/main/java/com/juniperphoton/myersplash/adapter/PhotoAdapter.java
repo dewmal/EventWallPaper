@@ -3,7 +3,10 @@ package com.juniperphoton.myersplash.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.RectF;
+import android.graphics.drawable.Animatable;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
@@ -12,9 +15,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.RelativeLayout;
 
+import com.facebook.common.logging.FLog;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.drawee.controller.ControllerListener;
+import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.image.ImageInfo;
+import com.facebook.imagepipeline.image.QualityInfo;
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.activity.DetailActivity;
 import com.juniperphoton.myersplash.callback.OnClickPhotoCallback;
@@ -71,26 +82,15 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
             if (holder.SimpleDraweeView != null) {
                 holder.RootCardView.setBackground(new ColorDrawable(backColor));
-//                holder.DownloadBtn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        Intent intent = new Intent(mContext, BackgrdDownloadService.class);
-//                        intent.putExtra("name", image.getFileNameForDownload());
-//                        intent.putExtra("url", image.getDownloadUrl());
-//                        mContext.startService(intent);
-//                        ToastService.sendShortToast("Downloading...");
-//                    }
-//                });
                 holder.SimpleDraweeView.setImageURI(regularUrl);
                 holder.SimpleDraweeView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         int[] location = new int[2];
                         holder.SimpleDraweeView.getLocationOnScreen(location);
-
                         mOnClickPhotoCallback.clickPhotoItem(new RectF(
-                                        location[0], location[1],
-                                        holder.SimpleDraweeView.getWidth(), holder.SimpleDraweeView.getHeight()), image);
+                                location[0], location[1],
+                                holder.SimpleDraweeView.getWidth(), holder.SimpleDraweeView.getHeight()), image, holder.SimpleDraweeView);
                     }
                 });
             }

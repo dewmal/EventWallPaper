@@ -75,6 +75,7 @@
                 android:src="@drawable/ic_search_white_24dp"
                 app:backgroundTint="@color/MyerSplashThemeColor" />
 
+
         </android.support.design.widget.CoordinatorLayout>
 
         <include
