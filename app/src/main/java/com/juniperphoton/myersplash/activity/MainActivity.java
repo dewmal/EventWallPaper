@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,12 +27,12 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.facebook.binaryresource.BinaryResource;
 import com.facebook.binaryresource.FileBinaryResource;
 import com.facebook.cache.common.CacheKey;
-import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.cache.DefaultCacheKeyFactory;
 import com.facebook.imagepipeline.core.ImagePipelineFactory;
@@ -42,6 +43,7 @@ import com.juniperphoton.myersplash.adapter.CategoryAdapter;
 import com.juniperphoton.myersplash.adapter.PhotoAdapter;
 import com.juniperphoton.myersplash.callback.INavigationDrawerCallback;
 import com.juniperphoton.myersplash.callback.OnClickPhotoCallback;
+import com.juniperphoton.myersplash.callback.OnClickQuickDownloadCallback;
 import com.juniperphoton.myersplash.callback.OnLoadMoreListener;
 import com.juniperphoton.myersplash.cloudservice.CloudService;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
@@ -63,9 +65,11 @@ import butterknife.OnClick;
 import moe.feng.material.statusbar.StatusBarCompat;
 import rx.Subscriber;
 
-public class MainActivity extends AppCompatActivity implements INavigationDrawerCallback, OnLoadMoreListener, OnClickPhotoCallback {
+public class MainActivity extends AppCompatActivity implements INavigationDrawerCallback, OnLoadMoreListener, OnClickPhotoCallback, OnClickQuickDownloadCallback {
 
     private static final String TAG = MainActivity.class.getName();
+
+    private static final String SHARE_TEXT = "Share %s's amazing photo from MyerSplash app. %s";
 
     @Bind(R.id.activity_drawer_rv)
     RecyclerView mDrawerRecyclerView;
@@ -93,11 +97,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @Bind(R.id.content_activity_search_fab)
     FloatingActionButton mSearchFAB;
 
-    @Bind(R.id.detail_mask_rl)
-    RelativeLayout mMaskRL;
-
-    @Bind(R.id.detail_root_rl)
-    RelativeLayout mDetailRootRL;
+    @Bind(R.id.detail_root_sv)
+    ScrollView mDetailRootScrollView;
 
     @Bind(R.id.detail_hero_dv)
     SimpleDraweeView mHeroDV;
@@ -139,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         StatusBarCompat.setUpActivity(this);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
         setContentView(R.layout.activity_main);
 
@@ -182,22 +184,67 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
+    @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.detail_download_fab)
+    void onClickDownload() {
+        if (mClickedImage == null) {
+            return;
+        }
+        Intent intent = new Intent(MainActivity.this, BackgrdDownloadService.class);
+        intent.putExtra("name", mClickedImage.getFileNameForDownload());
+        intent.putExtra("url", mClickedImage.getDownloadUrl());
+        startService(intent);
+        ToastService.sendShortToast("Downloading...");
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.detail_share_fab)
+    void onClickShare() {
+        CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(
+                ImageRequest.fromUri(Uri.parse(mClickedImage.getListUrl())), null);
+
+        File localFile = null;
+        if (cacheKey != null) {
+            if (ImagePipelineFactory.getInstance().getMainFileCache().hasKey(cacheKey)) {
+                BinaryResource resource = ImagePipelineFactory.getInstance().getMainFileCache().getResource(cacheKey);
+                localFile = ((FileBinaryResource) resource).getFile();
+            }
+        }
+
+        if (localFile != null) {
+            if (localFile.exists()) {
+
+            }
+        }
+
+        String shareText = String.format(SHARE_TEXT, mClickedImage.getUserName(), mClickedImage.getDownloadUrl());
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("image/jpg");
+        Uri uri = Uri.fromFile(localFile);
+        intent.putExtra(Intent.EXTRA_STREAM, uri);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Share");
+        intent.putExtra(Intent.EXTRA_TEXT, shareText);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(Intent.createChooser(intent, "Share"));
+    }
+
     private void initDetailViews() {
-        mMaskRL.setOnTouchListener(new View.OnTouchListener() {
+        mDetailRootScrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return false;
             }
         });
 
-        mMaskRL.setOnClickListener(new View.OnClickListener() {
+        mDetailRootScrollView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MainActivity.this.hideDetailPanel();
             }
         });
 
-        mDetailRootRL.setVisibility(View.INVISIBLE);
+        mDetailRootScrollView.setVisibility(View.INVISIBLE);
 
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(mDetailInfoRootLayout.getLayoutParams());
         params.setMargins(0, 0, 0,
@@ -218,39 +265,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         paramsSFAB.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         paramsSFAB.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
         mShareFAB.setLayoutParams(paramsSFAB);
-
-        mDownloadFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mClickedImage == null) {
-                    return;
-                }
-                Intent intent = new Intent(MainActivity.this, BackgrdDownloadService.class);
-                intent.putExtra("name", mClickedImage.getFileNameForDownload());
-                intent.putExtra("url", mClickedImage.getDownloadUrl());
-                startService(intent);
-                ToastService.sendShortToast("Downloading...");
-            }
-        });
-
-        mShareFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ImageRequest imageRequest= ImageRequest.fromUri(mClickedImage.getListUrl());
-                CacheKey cacheKey= DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(imageRequest,null);
-                BinaryResource resource = ImagePipelineFactory.getInstance().getMainFileCache().getResource(cacheKey);
-                File file=((FileBinaryResource)resource).getFile();
-
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("image/jpg");
-                Uri uri = Uri.fromFile(file);
-                intent.putExtra(Intent.EXTRA_STREAM, uri);
-                intent.putExtra(Intent.EXTRA_SUBJECT, "Share");
-                intent.putExtra(Intent.EXTRA_TEXT, "Body");
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(Intent.createChooser(intent, "Share"));
-            }
-        });
     }
 
     private void initMainViews() {
@@ -344,16 +358,20 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     private void setCachedImageList(List<UnsplashImage> unsplashImages) {
         PhotoAdapter adapter = new PhotoAdapter(unsplashImages, MainActivity.this);
-        adapter.setOnLoadMoreListener(MainActivity.this);
-        adapter.setOnClickItemListener(MainActivity.this);
+        setupCallback(adapter);
         mContentRecyclerView.setAdapter(adapter);
     }
 
     private void setImageList(List<UnsplashImage> unsplashImages) {
         mAdapter = new PhotoAdapter(unsplashImages, MainActivity.this);
-        mAdapter.setOnLoadMoreListener(MainActivity.this);
-        mAdapter.setOnClickItemListener(MainActivity.this);
+        setupCallback(mAdapter);
         mContentRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void setupCallback(PhotoAdapter adapter) {
+        adapter.setOnLoadMoreListener(MainActivity.this);
+        adapter.setOnClickItemListener(MainActivity.this);
+        adapter.setOnClickDownloadCallback(MainActivity.this);
     }
 
     private boolean restoreCategoryList() {
@@ -386,7 +404,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     @Override
     public void onBackPressed() {
-        if (mDetailRootRL.getVisibility() == View.VISIBLE) {
+        if (mDetailRootScrollView.getVisibility() == View.VISIBLE) {
             hideDetailPanel();
             return;
         }
@@ -496,7 +514,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         }
 
         mHeroDV.setImageURI(unsplashImage.getListUrl());
-        mDetailRootRL.setVisibility(View.VISIBLE);
+        mDetailRootScrollView.setVisibility(View.VISIBLE);
         toggleMaskAnimation(true);
 
         int[] heroImgePosition = new int[2];
@@ -517,6 +535,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         toggleHeroViewAnimation(itemY, targetPositonY, true);
         toggleDownloadBtnAnimation(true);
         toggleShareBtnAnimation(true);
+        mSearchFAB.hide();
     }
 
     private void toggleHeroViewAnimation(int startY, int endY, final boolean show) {
@@ -668,24 +687,46 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     private void toggleMaskAnimation(final boolean show) {
 
-        ValueAnimator animator = new ValueAnimator();
-        if (show) {
-            animator.setFloatValues(0, 0.85f);
-            mMaskRL.setAlpha(0f);
-        } else {
-            animator.setFloatValues(0.85f, 0);
-            mMaskRL.setAlpha(0.85f);
-        }
+        ValueAnimator animator = ValueAnimator.ofArgb(show ? Color.TRANSPARENT : ContextCompat.getColor(this, R.color.MaskColor),
+                show ? ContextCompat.getColor(this, R.color.MaskColor) : Color.TRANSPARENT);
         animator.setDuration(300);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                mMaskRL.setAlpha((float) animation.getAnimatedValue());
-                if ((float) animation.getAnimatedValue() == 0f && !show) {
-                    mDetailRootRL.setVisibility(View.INVISIBLE);
+                mDetailRootScrollView.setBackground(new ColorDrawable((int) animation.getAnimatedValue()));
+
+            }
+        });
+        animator.addListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (!show) {
+                    mDetailRootScrollView.setVisibility(View.INVISIBLE);
+                    mSearchFAB.show();
                 }
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+
             }
         });
         animator.start();
+    }
+
+    @Override
+    public void onClickQuickDownload(UnsplashImage image) {
+        mClickedImage = image;
+        onClickDownload();
     }
 }

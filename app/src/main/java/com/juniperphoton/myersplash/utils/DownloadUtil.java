@@ -67,7 +67,6 @@ public class DownloadUtil {
                 }
                 new SingleMediaScanner(App.getInstance(), fileToSave);
                 NotificationUitl.sent("MyerSplash", "Saved:D");
-
             }
         } catch (IOException e) {
             return false;

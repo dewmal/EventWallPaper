@@ -32,23 +32,25 @@
                 android:clickable="true"
                 fresco:backgroundTint="@color/colorPrimaryDark" />
 
-            <!--<RelativeLayout-->
-            <!--android:id="@+id/row_photo_download_rl"-->
-            <!--android:layout_width="50dp"-->
-            <!--android:layout_height="50dp"-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_margin="10dp"-->
-            <!--android:background="?android:attr/selectableItemBackground"-->
-            <!--android:clickable="true">-->
+            <RelativeLayout
+                android:id="@+id/row_photo_download_rl"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_margin="10dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:visibility="gone">
 
-            <!--<ImageView-->
-            <!--android:layout_width="30dp"-->
-            <!--android:layout_height="30dp"-->
-            <!--android:layout_centerInParent="true"-->
-            <!--android:scaleType="fitXY"-->
-            <!--android:src="@drawable/ic_file_download_white_24dp" />-->
-            <!--</RelativeLayout>-->
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_centerInParent="true"
+                    android:contentDescription="@string/ImageDescDefault"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_file_download_white_24dp" />
+            </RelativeLayout>
 
         </RelativeLayout>
 
