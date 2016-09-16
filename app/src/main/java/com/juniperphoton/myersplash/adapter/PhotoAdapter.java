@@ -19,6 +19,9 @@ import android.view.ViewParent;
 import android.widget.RelativeLayout;
 
 import com.facebook.common.logging.FLog;
+import com.facebook.datasource.BaseDataSubscriber;
+import com.facebook.datasource.DataSource;
+import com.facebook.datasource.DataSubscriber;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.controller.BaseControllerListener;
 import com.facebook.drawee.controller.ControllerListener;
@@ -78,7 +81,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         if (holder.getItemViewType() == PhotoAdapter.PhotoViewHolder.TYPE_COMMON_VIEW) {
             final int index = holder.getAdapterPosition();
             final UnsplashImage image = mData.get(index);
-            String regularUrl = image.getListUrl();
+            final String regularUrl = image.getListUrl();
 
             int backColor = index % 2 == 0 ?
                     ContextCompat.getColor(mContext, R.color.BackColor1) :
@@ -95,12 +98,14 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                 holder.SimpleDraweeView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        int[] location = new int[2];
-                        holder.SimpleDraweeView.getLocationOnScreen(location);
-                        if (mOnClickPhotoCallback != null) {
-                            mOnClickPhotoCallback.clickPhotoItem(new RectF(
-                                    location[0], location[1],
-                                    holder.SimpleDraweeView.getWidth(), holder.SimpleDraweeView.getHeight()), image, holder.SimpleDraweeView);
+                        if(Fresco.getImagePipeline().isInBitmapMemoryCache(Uri.parse(regularUrl))){
+                            int[] location = new int[2];
+                            holder.SimpleDraweeView.getLocationOnScreen(location);
+                            if (mOnClickPhotoCallback != null) {
+                                mOnClickPhotoCallback.clickPhotoItem(new RectF(
+                                        location[0], location[1],
+                                        holder.SimpleDraweeView.getWidth(), holder.SimpleDraweeView.getHeight()), image, holder.SimpleDraweeView);
+                            }
                         }
                     }
                 });

@@ -23,4 +23,6 @@
     <string name="LoadingLarge">Large</string>
     <string name="LoadingSmall">Small</string>
     <string name="LoadingThumbnail">Thumbnail</string>
+
+    <string name="authorities">com.juniperphoton.myersplash.fileProvider</string>
 </resources>

@@ -8,10 +8,13 @@ import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -50,6 +53,7 @@ import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.service.BackgrdDownloadService;
 import com.juniperphoton.myersplash.utils.ColorUtil;
+import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.RequestUtil;
 import com.juniperphoton.myersplash.utils.SerializerUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
@@ -58,6 +62,7 @@ import com.orhanobut.logger.Logger;
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Scanner;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -68,6 +73,7 @@ import rx.Subscriber;
 public class MainActivity extends AppCompatActivity implements INavigationDrawerCallback, OnLoadMoreListener, OnClickPhotoCallback, OnClickQuickDownloadCallback {
 
     private static final String TAG = MainActivity.class.getName();
+    private static final int RESULT_CODE = 10000;
 
     private static final String SHARE_TEXT = "Share %s's amazing photo from MyerSplash app. %s";
 
@@ -121,6 +127,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @Bind(R.id.detail_share_fab)
     FloatingActionButton mShareFAB;
 
+    private File mCopyFileForSharing;
+
     private int mHeroStartY = 0;
     private int mHeroEndY = 0;
 
@@ -153,6 +161,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         restorePhotoList();
         getCategories();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -199,40 +212,62 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.detail_root_sv)
+    void onClickMaskSV() {
+        hideDetailPanel();
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.detail_share_fab)
     void onClickShare() {
+        CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(
+                ImageRequest.fromUri(Uri.parse(mClickedImage.getListUrl())), null);
 
-        ToastService.sendShortToast("Still working on this.");
+        File localFile = null;
 
-        return;
+        if (cacheKey != null) {
+            if (ImagePipelineFactory.getInstance().getMainFileCache().hasKey(cacheKey)) {
+                BinaryResource resource = ImagePipelineFactory.getInstance().getMainFileCache().getResource(cacheKey);
+                localFile = ((FileBinaryResource) resource).getFile();
+            }
+        }
 
-//        CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(
-//                ImageRequest.fromUri(Uri.parse(mClickedImage.getListUrl())), null);
-//
-//        File localFile = null;
-//        if (cacheKey != null) {
-//            if (ImagePipelineFactory.getInstance().getMainFileCache().hasKey(cacheKey)) {
-//                BinaryResource resource = ImagePipelineFactory.getInstance().getMainFileCache().getResource(cacheKey);
-//                localFile = ((FileBinaryResource) resource).getFile();
-//            }
-//        }
-//
-//        if (localFile != null) {
-//            if (localFile.exists()) {
-//
-//            }
-//        }
-//
-//        String shareText = String.format(SHARE_TEXT, mClickedImage.getUserName(), mClickedImage.getDownloadUrl());
-//
-//        Intent intent = new Intent(Intent.ACTION_SEND);
-//        intent.setType("image/jpg");
-//        Uri uri = Uri.fromFile(localFile);
-//        intent.putExtra(Intent.EXTRA_STREAM, uri);
-//        intent.putExtra(Intent.EXTRA_SUBJECT, "Share");
-//        intent.putExtra(Intent.EXTRA_TEXT, shareText);
-//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        startActivity(Intent.createChooser(intent, "Share"));
+        boolean copied = false;
+        if (localFile != null && localFile.exists()) {
+            mCopyFileForSharing = new File(DownloadUtil.getGalleryPath(), "Share-" + localFile.getName().replace("cnt", "cnt"));
+            copied = DownloadUtil.copyFile(localFile, mCopyFileForSharing);
+        }
+
+        if (mCopyFileForSharing == null || !mCopyFileForSharing.exists() || !copied) {
+            ToastService.sendShortToast("Something went wrong :-(");
+            return;
+        }
+
+        String shareText = String.format(SHARE_TEXT, mClickedImage.getUserName(), mClickedImage.getDownloadUrl());
+
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intent.setAction(Intent.ACTION_SEND);
+        intent.setType("image/jpg");
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(mCopyFileForSharing));
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Share");
+        intent.putExtra(Intent.EXTRA_TEXT, shareText);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivityForResult(Intent.createChooser(intent, "Share"), RESULT_CODE, null);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //TODO: Should has a better way to do this.
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (mCopyFileForSharing != null && mCopyFileForSharing.exists()) {
+                    boolean ok = mCopyFileForSharing.delete();
+                }
+            }
+        }, 5000);
     }
 
     private void initDetailViews() {
@@ -692,7 +727,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     private void toggleMaskAnimation(final boolean show) {
-
         ValueAnimator animator = ValueAnimator.ofArgb(show ? Color.TRANSPARENT : ContextCompat.getColor(this, R.color.MaskColor),
                 show ? ContextCompat.getColor(this, R.color.MaskColor) : Color.TRANSPARENT);
         animator.setDuration(300);
@@ -700,7 +734,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 mDetailRootScrollView.setBackground(new ColorDrawable((int) animation.getAnimatedValue()));
-
             }
         });
         animator.addListener(new Animator.AnimatorListener() {
