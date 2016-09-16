@@ -12,6 +12,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipelineFactory;
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.common.Constant;
 import com.juniperphoton.myersplash.utils.LocalSettingHelper;
@@ -38,6 +39,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Bind(R.id.loading_quality_tv)
     TextView mLoadingTV;
+
+    @Bind(R.id.activity_settings_cacheSize_tv)
+    TextView mCacheTV;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -76,6 +80,7 @@ public class SettingsActivity extends AppCompatActivity {
     public void clearUp() {
         Fresco.getImagePipeline().clearCaches();
         ToastService.sendShortToast("All clear :D");
+        mCacheTV.setText("0 MB");
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -114,5 +119,12 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 });
         builder.show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mCacheTV.setText(String.valueOf(ImagePipelineFactory.getInstance().getMainFileCache().getSize() / 1024 / 1024) + " MB");
     }
 }

@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         boolean copied = false;
         if (localFile != null && localFile.exists()) {
-            mCopyFileForSharing = new File(DownloadUtil.getGalleryPath(), "Share-" + localFile.getName().replace("cnt", "cnt"));
+            mCopyFileForSharing = new File(DownloadUtil.getGalleryPath(), "Share-" + localFile.getName());
             copied = DownloadUtil.copyFile(localFile, mCopyFileForSharing);
         }
 
