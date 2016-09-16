@@ -151,7 +151,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         initMainViews();
         initDetailViews();
 
-        RequestUtil.check(this);
         restorePhotoList();
         getCategories();
     }
@@ -187,6 +186,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.detail_download_fab)
     void onClickDownload() {
+        RequestUtil.check(this);
+
         if (mClickedImage == null) {
             return;
         }
@@ -200,33 +201,38 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.detail_share_fab)
     void onClickShare() {
-        CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(
-                ImageRequest.fromUri(Uri.parse(mClickedImage.getListUrl())), null);
 
-        File localFile = null;
-        if (cacheKey != null) {
-            if (ImagePipelineFactory.getInstance().getMainFileCache().hasKey(cacheKey)) {
-                BinaryResource resource = ImagePipelineFactory.getInstance().getMainFileCache().getResource(cacheKey);
-                localFile = ((FileBinaryResource) resource).getFile();
-            }
-        }
+        ToastService.sendShortToast("Still working on this.");
 
-        if (localFile != null) {
-            if (localFile.exists()) {
+        return;
 
-            }
-        }
-
-        String shareText = String.format(SHARE_TEXT, mClickedImage.getUserName(), mClickedImage.getDownloadUrl());
-
-        Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.setType("image/jpg");
-        Uri uri = Uri.fromFile(localFile);
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Share");
-        intent.putExtra(Intent.EXTRA_TEXT, shareText);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(Intent.createChooser(intent, "Share"));
+//        CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(
+//                ImageRequest.fromUri(Uri.parse(mClickedImage.getListUrl())), null);
+//
+//        File localFile = null;
+//        if (cacheKey != null) {
+//            if (ImagePipelineFactory.getInstance().getMainFileCache().hasKey(cacheKey)) {
+//                BinaryResource resource = ImagePipelineFactory.getInstance().getMainFileCache().getResource(cacheKey);
+//                localFile = ((FileBinaryResource) resource).getFile();
+//            }
+//        }
+//
+//        if (localFile != null) {
+//            if (localFile.exists()) {
+//
+//            }
+//        }
+//
+//        String shareText = String.format(SHARE_TEXT, mClickedImage.getUserName(), mClickedImage.getDownloadUrl());
+//
+//        Intent intent = new Intent(Intent.ACTION_SEND);
+//        intent.setType("image/jpg");
+//        Uri uri = Uri.fromFile(localFile);
+//        intent.putExtra(Intent.EXTRA_STREAM, uri);
+//        intent.putExtra(Intent.EXTRA_SUBJECT, "Share");
+//        intent.putExtra(Intent.EXTRA_TEXT, shareText);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startActivity(Intent.createChooser(intent, "Share"));
     }
 
     private void initDetailViews() {
