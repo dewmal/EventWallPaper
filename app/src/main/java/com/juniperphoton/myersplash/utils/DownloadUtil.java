@@ -15,8 +15,8 @@ import java.io.OutputStream;
 
 import okhttp3.ResponseBody;
 
-public class DownloadUtils {
-    private static String TAG = "DownloadUtils";
+public class DownloadUtil {
+    private static String TAG = "DownloadUtil";
 
     public static boolean writeResponseBodyToDisk(ResponseBody body, String expectedName) {
         try {
@@ -67,7 +67,6 @@ public class DownloadUtils {
                 }
                 new SingleMediaScanner(App.getInstance(), fileToSave);
                 NotificationUitl.sent("MyerSplash", "Saved:D");
-
             }
         } catch (IOException e) {
             return false;

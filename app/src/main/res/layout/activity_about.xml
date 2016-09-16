@@ -14,24 +14,10 @@
         android:layout_width="match_parent"
         android:layout_height="24sp"
         android:layout_alignParentTop="true"
-        android:alpha="0"
+        android:alpha="0.3"
         android:elevation="0dp"
         android:scaleType="fitXY"
         android:src="@drawable/black_mask" />
-
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:title="SETTINGS" />
-
-    </android.support.design.widget.AppBarLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -1,6 +1,8 @@
 package com.juniperphoton.myersplash.model;
 
-public class UnsplashUser {
+import java.io.Serializable;
+
+public class UnsplashUser implements Serializable {
     private String id;
     private String username;
     private String name;

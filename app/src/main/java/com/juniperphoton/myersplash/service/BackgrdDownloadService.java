@@ -3,12 +3,10 @@ package com.juniperphoton.myersplash.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.juniperphoton.myersplash.cloudservice.CloudService;
-import com.juniperphoton.myersplash.common.Constant;
-import com.juniperphoton.myersplash.utils.DownloadUtils;
+import com.juniperphoton.myersplash.utils.DownloadUtil;
 
 import okhttp3.ResponseBody;
 import rx.Subscriber;
@@ -53,7 +51,7 @@ public class BackgrdDownloadService extends IntentService {
 
                     @Override
                     public void onNext(ResponseBody responseBody) {
-                        DownloadUtils.writeResponseBodyToDisk(responseBody, fileName);
+                        DownloadUtil.writeResponseBodyToDisk(responseBody, fileName);
                     }
                 }, url);
                 return null;

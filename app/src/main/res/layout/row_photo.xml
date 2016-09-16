@@ -20,7 +20,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="270dp"
+            android:layout_height="@dimen/img_height"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true">
 
@@ -28,8 +28,8 @@
                 android:id="@+id/row_photo_iv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:clickable="true"
                 android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
                 fresco:backgroundTint="@color/colorPrimaryDark" />
 
             <RelativeLayout
@@ -37,15 +37,17 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:layout_margin="10dp"
                 android:background="?android:attr/selectableItemBackground"
-                android:clickable="true">
+                android:clickable="true"
+                android:visibility="gone">
 
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_centerInParent="true"
+                    android:contentDescription="@string/ImageDescDefault"
                     android:scaleType="fitXY"
                     android:src="@drawable/ic_file_download_white_24dp" />
             </RelativeLayout>

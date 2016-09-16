@@ -16,5 +16,4 @@ public interface PhotoService {
     Observable<List<UnsplashImage>> getPhotos(@Url String url, @Query("page") int page, @Query("per_page") int per_page, @Query("client_id") String id);
     @GET
     Observable<List<UnsplashImageFeatured>> getFeaturedPhotos(@Url String url, @Query("page") int page, @Query("per_page") int per_page, @Query("client_id") String id);
-
 }

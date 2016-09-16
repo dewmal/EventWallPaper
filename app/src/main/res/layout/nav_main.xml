@@ -39,8 +39,6 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="50dp"
         android:background="@android:color/transparent"
-        android:columnCount="2"
-        android:rowCount="1"
         android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
         <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"

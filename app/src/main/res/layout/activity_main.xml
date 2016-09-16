@@ -55,14 +55,13 @@
                 android:id="@+id/content_activity_srl"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                android:clickable="true">
+                android:clickable="true"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/content_activity_rv"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                     />
+                    android:layout_height="match_parent" />
             </android.support.v4.widget.SwipeRefreshLayout>
 
             <android.support.design.widget.FloatingActionButton
@@ -76,6 +75,7 @@
                 android:src="@drawable/ic_search_white_24dp"
                 app:backgroundTint="@color/MyerSplashThemeColor" />
 
+
         </android.support.design.widget.CoordinatorLayout>
 
         <include
@@ -88,5 +88,10 @@
             android:fitsSystemWindows="true" />
 
     </android.support.v4.widget.DrawerLayout>
+
+    <include
+        layout="@layout/detail_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </RelativeLayout>
