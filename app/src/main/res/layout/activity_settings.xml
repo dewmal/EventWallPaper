@@ -177,10 +177,11 @@
                 app:cardCornerRadius="0dp"
                 app:cardElevation="0dp">
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="60dp"
+                    android:layout_height="70dp"
                     android:background="?android:attr/selectableItemBackground"
+                    android:orientation="vertical"
                     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
                     <TextView
@@ -194,7 +195,21 @@
                         android:textColor="@android:color/white"
                         android:textSize="17sp"
                         android:textStyle="normal" />
-                </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/activity_settings_cacheSize_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginBottom="@dimen/settings_margin_up_and_down"
+                        android:layout_marginStart="@dimen/settings_margin_left"
+                        android:layout_marginTop="@dimen/settings_margin_up_and_down"
+                        android:alpha="0.5"
+                        android:text="0 MB"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:textStyle="normal" />
+                </LinearLayout>
 
             </android.support.v7.widget.CardView>
 
