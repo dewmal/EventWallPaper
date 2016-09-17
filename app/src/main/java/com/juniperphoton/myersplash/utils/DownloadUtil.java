@@ -1,11 +1,14 @@
 package com.juniperphoton.myersplash.utils;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
 import com.juniperphoton.myersplash.base.App;
+import com.juniperphoton.myersplash.service.BackgrdDownloadService;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -147,5 +150,14 @@ public class DownloadUtil {
         }
 
         return true;
+    }
+
+    public static void startDownloadService(Activity context, String fileName, String url) {
+        RequestUtil.check(context);
+
+        Intent intent = new Intent(context, BackgrdDownloadService.class);
+        intent.putExtra("name", fileName);
+        intent.putExtra("url", url);
+        context.startService(intent);
     }
 }

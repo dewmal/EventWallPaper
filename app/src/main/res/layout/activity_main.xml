@@ -89,8 +89,8 @@
 
     </android.support.v4.widget.DrawerLayout>
 
-    <include
-        layout="@layout/detail_content"
+    <com.juniperphoton.myersplash.view.DetailView
+        android:id="@+id/activity_main_detail_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
