@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.cloudservice.CloudService;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
+import com.juniperphoton.myersplash.utils.NotificationUtil;
 
 import okhttp3.ResponseBody;
 import rx.Subscriber;
@@ -31,10 +33,11 @@ public class BackgrdDownloadService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         String url = intent.getStringExtra("url");
         String fileName = intent.getStringExtra("name");
-        donwloadImage(url, fileName);
+        downloadImage(url, fileName);
+        NotificationUtil.sendNotification("MyerSplash", "Downloading...", false);
     }
 
-    protected void donwloadImage(final String url, final String fileName) {
+    protected void downloadImage(final String url, final String fileName) {
         new AsyncTask<Void, Long, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {

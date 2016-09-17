@@ -10,7 +10,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:clickable="true">
 
         <RelativeLayout
@@ -67,9 +67,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:layout_marginBottom="@dimen/share_btn_margin_bottom"
-                android:layout_marginRight="@dimen/share_btn_margin_right"
+                android:layout_marginEnd="@dimen/share_btn_margin_right"
                 android:clickable="true"
                 android:src="@drawable/ic_share_white_24dp"
                 app:backgroundTint="@color/MyerSplashLikedHeartColor"
@@ -80,9 +80,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:layout_marginBottom="@dimen/download_btn_margin_bottom"
-                android:layout_marginRight="@dimen/download_btn_margin_right"
+                android:layout_marginEnd="@dimen/download_btn_margin_right"
                 android:clickable="true"
                 android:src="@drawable/ic_file_download_white_24dp"
                 app:backgroundTint="@color/MyerSplashThemeColor" />
