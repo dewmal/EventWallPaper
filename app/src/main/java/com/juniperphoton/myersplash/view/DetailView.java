@@ -211,7 +211,6 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
             }
         });
         valueAnimator.addListener(new Animator.AnimatorListener() {
-
             @Override
             public void onAnimationStart(Animator animation) {
 
@@ -422,7 +421,6 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         mClickedView = itemView;
         mClickedView.setVisibility(View.INVISIBLE);
 
-
         mDetailInfoRootLayout.setBackground(new ColorDrawable(unsplashImage.getThemeColor()));
         mNameTextView.setText(unsplashImage.getUserName());
 
@@ -437,7 +435,6 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
 
         mHeroDV.setImageURI(unsplashImage.getListUrl());
         mDetailRootScrollView.setVisibility(View.VISIBLE);
-        toggleMaskAnimation(true);
 
         int[] heroImgePosition = new int[2];
         mDetailImgRL.getLocationOnScreen(heroImgePosition);
@@ -451,6 +448,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
 
         int targetPositonY = getTargetY();
 
+        toggleMaskAnimation(true);
         toggleHeroViewAnimation(itemY, targetPositonY, true);
         toggleDownloadBtnAnimation(true);
         toggleShareBtnAnimation(true);
