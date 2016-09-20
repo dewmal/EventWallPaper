@@ -98,7 +98,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                 holder.SimpleDraweeView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(Fresco.getImagePipeline().isInBitmapMemoryCache(Uri.parse(regularUrl))){
+                        if (Fresco.getImagePipeline().isInBitmapMemoryCache(Uri.parse(regularUrl))) {
                             int[] location = new int[2];
                             holder.SimpleDraweeView.getLocationOnScreen(location);
                             if (mOnClickPhotoCallback != null) {
@@ -193,6 +193,13 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
     public void setOnClickDownloadCallback(OnClickQuickDownloadCallback callback) {
         mOnClickDownloadCallback = callback;
+    }
+
+    public UnsplashImage getFirstImage() {
+        if (mData != null & mData.size() > 0) {
+            return mData.get(0);
+        }
+        return null;
     }
 
     private void scrollLoadMore() {

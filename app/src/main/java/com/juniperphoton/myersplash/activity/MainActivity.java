@@ -1,6 +1,7 @@
 package com.juniperphoton.myersplash.activity;
 
 import android.animation.ValueAnimator;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.RectF;
@@ -10,6 +11,7 @@ import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,8 +19,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
@@ -100,10 +104,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
-
-        ButterKnife.bind(this);
 
         initMainViews();
 
@@ -145,6 +148,16 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         startActivity(intent);
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
+
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.search_menu, menu);
+//        // Retrieve the SearchView and plug it into SearchManager
+//        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+//        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+//        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+//        return super.onCreateOptionsMenu(menu);
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -248,6 +261,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     private void setImageList(List<UnsplashImage> unsplashImages) {
+        if (mAdapter != null && mAdapter.getFirstImage() != null) {
+            if (mAdapter.getFirstImage().getId().equals(unsplashImages.get(0).getId())) {
+                return;
+            }
+        }
         mAdapter = new PhotoAdapter(unsplashImages, MainActivity.this);
         setupCallback(mAdapter);
         mContentRecyclerView.setAdapter(mAdapter);
