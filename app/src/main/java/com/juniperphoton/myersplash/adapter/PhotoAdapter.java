@@ -86,11 +86,19 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             int backColor = index % 2 == 0 ?
                     ContextCompat.getColor(mContext, R.color.BackColor1) :
                     ContextCompat.getColor(mContext, R.color.BackColor2);
+
             if (LocalSettingHelper.getBoolean(mContext, Constant.QUICK_DOWNLOAD_CONFIG_NAME, false)) {
                 holder.DownloadRL.setVisibility(View.VISIBLE);
-                if (mOnClickDownloadCallback != null) {
-                    mOnClickDownloadCallback.onClickQuickDownload(image);
-                }
+                holder.DownloadRL.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (mOnClickDownloadCallback != null) {
+                            mOnClickDownloadCallback.onClickQuickDownload(image);
+                        }
+                    }
+                });
+            } else {
+                holder.DownloadRL.setVisibility(View.GONE);
             }
             if (holder.SimpleDraweeView != null) {
                 holder.RootCardView.setBackground(new ColorDrawable(backColor));

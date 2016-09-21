@@ -35,12 +35,16 @@ import com.juniperphoton.myersplash.adapter.PhotoAdapter;
 import com.juniperphoton.myersplash.callback.DetailViewNavigationCallback;
 import com.juniperphoton.myersplash.callback.INavigationDrawerCallback;
 import com.juniperphoton.myersplash.callback.OnClickQuickDownloadCallback;
+import com.juniperphoton.myersplash.callback.OnClickSearchCallback;
 import com.juniperphoton.myersplash.callback.OnLoadMoreListener;
 import com.juniperphoton.myersplash.cloudservice.CloudService;
+import com.juniperphoton.myersplash.cloudservice.Urls;
+import com.juniperphoton.myersplash.common.Constant;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.utils.ColorUtil;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
+import com.juniperphoton.myersplash.utils.LocalSettingHelper;
 import com.juniperphoton.myersplash.utils.SerializerUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
 import com.juniperphoton.myersplash.view.DetailView;
@@ -55,9 +59,11 @@ import moe.feng.material.statusbar.StatusBarCompat;
 import rx.Subscriber;
 
 public class MainActivity extends AppCompatActivity implements INavigationDrawerCallback,
-        OnLoadMoreListener, OnClickQuickDownloadCallback, DetailViewNavigationCallback {
+        OnLoadMoreListener, OnClickQuickDownloadCallback, DetailViewNavigationCallback, OnClickSearchCallback {
 
     private static final String TAG = MainActivity.class.getName();
+
+    private static final int SEARCH_ID = -10000;
 
     @Bind(R.id.activity_drawer_rv)
     RecyclerView mDrawerRecyclerView;
@@ -88,11 +94,14 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @Bind(R.id.activity_main_detail_view)
     DetailView mDetailView;
 
+    @Bind(R.id.activity_main_search_view)
+    com.juniperphoton.myersplash.view.SearchView mSearchView;
+
     private PhotoAdapter mAdapter;
 
     private int mCurrentPage = 1;
     private int mSelectedCategoryID = 0;
-
+    private String mQuery;
     private String mUrl = CloudService.baseUrl;
 
     @Override
@@ -111,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         initMainViews();
 
         mDetailView.setNavigationCallback(this);
+        mSearchView.setSearchCallback(this);
 
         restorePhotoList();
         getCategories();
@@ -119,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @Override
     protected void onResume() {
         super.onResume();
+        mContentRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -130,7 +141,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.content_activity_search_fab)
     void onClickFAB() {
-        ToastService.sendShortToast("Still working on this.");
+        mSearchFAB.hide();
+        mSearchView.toggleAnimation(true);
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -148,16 +160,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         startActivity(intent);
         mDrawerLayout.closeDrawer(GravityCompat.START);
     }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.search_menu, menu);
-//        // Retrieve the SearchView and plug it into SearchManager
-//        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-//        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
-//        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-//        return super.onCreateOptionsMenu(menu);
-//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -307,6 +309,10 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     @Override
     public void onBackPressed() {
+        if (mSearchView.getShown()) {
+            mSearchView.toggleAnimation(false);
+            return;
+        }
         if (mDetailView.tryHide()) {
             return;
         }
@@ -345,21 +351,23 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             }
 
             @Override
-            public void onNext(List<UnsplashImage> unsplashImages) {
+            public void onNext(List<UnsplashImage> images) {
                 if (mCurrentPage == 1 || mAdapter == null) {
-                    setImageList(unsplashImages);
+                    setImageList(images);
                     if (mSelectedCategoryID == UnsplashCategory.NEW_CATEGORY_ID) {
-                        SerializerUtil.serializeToFile(MainActivity.this, unsplashImages,
+                        SerializerUtil.serializeToFile(MainActivity.this, images,
                                 SerializerUtil.IMAGE_LIST_FILE_NAME);
                     }
                 } else {
-                    mAdapter.setLoadMoreData(unsplashImages);
+                    mAdapter.setLoadMoreData(images);
                 }
             }
         };
 
         if (mSelectedCategoryID == UnsplashCategory.FEATURED_CATEGORY_ID) {
             CloudService.getInstance().getFeaturedPhotos(subscriber, mUrl, mCurrentPage);
+        } else if (mSelectedCategoryID == SEARCH_ID) {
+            CloudService.getInstance().searchPhotos(subscriber, mUrl, mCurrentPage, mQuery);
         } else {
             CloudService.getInstance().getPhotos(subscriber, mUrl, mCurrentPage);
         }
@@ -413,5 +421,19 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @Override
     public void onHidden() {
         mSearchFAB.show();
+    }
+
+    @Override
+    public void onClickSearch(String keyword) {
+        mCurrentPage = 1;
+        mAdapter = null;
+        mSelectedCategoryID = SEARCH_ID;
+        mUrl = Urls.SEARCH_URL;
+        mQuery = keyword;
+        mRefreshLayout.setRefreshing(true);
+        mToolbar.setTitle(keyword.toUpperCase());
+        ((CategoryAdapter) mDrawerRecyclerView.getAdapter()).select(-1);
+        mSearchFAB.show();
+        loadPhotoList();
     }
 }

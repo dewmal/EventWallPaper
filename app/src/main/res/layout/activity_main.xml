@@ -9,9 +9,10 @@
     <ImageView
         android:id="@+id/activity_main_mask"
         android:layout_width="match_parent"
-        android:layout_height="24sp"
+        android:layout_height="@dimen/status_bar_height"
         android:layout_alignParentTop="true"
         android:alpha="0.3"
+        android:contentDescription="@string/ImageDescDefault"
         android:elevation="4dp"
         android:scaleType="fitXY"
         android:src="@drawable/black_mask" />
@@ -32,7 +33,7 @@
             android:id="@+id/activity_main_cl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/status_bar_height"
             android:fitsSystemWindows="false">
 
             <android.support.design.widget.AppBarLayout
@@ -70,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|bottom"
                 android:layout_marginBottom="60dp"
-                android:layout_marginRight="24dp"
+                android:layout_marginEnd="24dp"
                 android:background="@drawable/ripple_effect"
                 android:src="@drawable/ic_search_white_24dp"
                 app:backgroundTint="@color/MyerSplashThemeColor" />
@@ -93,5 +94,10 @@
         android:id="@+id/activity_main_detail_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <com.juniperphoton.myersplash.view.SearchView
+        android:id="@+id/activity_main_search_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
 </RelativeLayout>
