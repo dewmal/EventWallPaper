@@ -1,5 +1,6 @@
 package com.juniperphoton.myersplash.cloudservice;
 
+import com.juniperphoton.myersplash.model.SearchResult;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.model.UnsplashImageFeatured;
@@ -45,6 +46,7 @@ public class CloudService {
                 .build();
 
         categoryService = retrofit.create(CategoryService.class);
+        photoService = retrofit.create(PhotoService.class);
     }
 
     private static class SingletonHolder {
@@ -64,17 +66,11 @@ public class CloudService {
     }
 
     public void getPhotos(Subscriber<List<UnsplashImage>> subscriber, String url, int page) {
-
-        photoService = retrofit.create(PhotoService.class);
-
         Observable<List<UnsplashImage>> observable = photoService.getPhotos(url, page, 10, AppKey);
         subsribe(observable, subscriber);
     }
 
     public void getFeaturedPhotos(Subscriber<List<UnsplashImage>> subscriber, String url, int page) {
-
-        photoService = retrofit.create(PhotoService.class);
-
         Observable<List<UnsplashImageFeatured>> observableF = photoService.getFeaturedPhotos(url, page, 10, AppKey);
         Observable<List<UnsplashImage>> observable = observableF.map(new Func1<List<UnsplashImageFeatured>, List<UnsplashImage>>() {
             @Override
@@ -84,6 +80,17 @@ public class CloudService {
                     contentImages.add(img.getImage());
                 }
                 return contentImages;
+            }
+        });
+        subsribe(observable, subscriber);
+    }
+
+    public void searchPhotos(Subscriber<List<UnsplashImage>> subscriber, String url, int page, String query) {
+        Observable<SearchResult> observableF = photoService.searchPhotosByQuery(url, page, 10, query, AppKey);
+        Observable<List<UnsplashImage>> observable = observableF.map(new Func1<SearchResult, List<UnsplashImage>>() {
+            @Override
+            public List<UnsplashImage> call(SearchResult searchResults) {
+                return searchResults.getList();
             }
         });
         subsribe(observable, subscriber);
@@ -110,4 +117,5 @@ public class CloudService {
                 .observeOn(Schedulers.io())
                 .subscribe(subscriber);
     }
+
 }

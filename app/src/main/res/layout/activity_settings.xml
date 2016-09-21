@@ -47,17 +47,19 @@
             android:background="@color/MyerSplashDark"
             android:orientation="vertical">
 
-            <Switch
+            <android.support.v7.widget.SwitchCompat
                 android:id="@+id/detail_switch_quick_download"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:checked="false"
+                android:buttonTint="@color/MyerSplashThemeColor"
+                android:checked="true"
+                android:foregroundTint="@color/MyerSplashThemeColor"
                 android:paddingLeft="@dimen/settings_margin_left"
                 android:text="@string/QuickDownload"
                 android:textColor="@android:color/white"
                 android:textSize="17sp"
-                android:thumbTint="@color/MyerSplashThemeColor"
-                android:trackTint="@color/MyerSplashThemeDarkColor" />
+                android:theme="@style/AppTheme2"
+                android:thumbTint="@color/MyerSplashThemeColor" />
 
             <ImageView
                 android:layout_width="match_parent"

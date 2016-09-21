@@ -5,10 +5,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -32,7 +32,7 @@ public class SettingsActivity extends AppCompatActivity {
     private String[] loadingStrings;
 
     @Bind(R.id.detail_switch_quick_download)
-    Switch mQuickDownloadSwitch;
+    SwitchCompat mQuickDownloadSwitch;
 
     @Bind(R.id.saving_quality_tv)
     TextView mSavingQualityTV;

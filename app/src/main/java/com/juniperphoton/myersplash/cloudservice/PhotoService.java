@@ -1,5 +1,6 @@
 package com.juniperphoton.myersplash.cloudservice;
 
+import com.juniperphoton.myersplash.model.SearchResult;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.model.UnsplashImageFeatured;
@@ -14,6 +15,10 @@ import rx.Observable;
 public interface PhotoService {
     @GET
     Observable<List<UnsplashImage>> getPhotos(@Url String url, @Query("page") int page, @Query("per_page") int per_page, @Query("client_id") String id);
+
     @GET
     Observable<List<UnsplashImageFeatured>> getFeaturedPhotos(@Url String url, @Query("page") int page, @Query("per_page") int per_page, @Query("client_id") String id);
+
+    @GET
+    Observable<SearchResult> searchPhotosByQuery(@Url String url, @Query("page") int page, @Query("per_page") int per_page, @Query("query") String query, @Query("client_id") String id);
 }

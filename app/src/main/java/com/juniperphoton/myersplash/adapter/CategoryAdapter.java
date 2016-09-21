@@ -45,7 +45,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
 
     @Override
     public void onBindViewHolder(final CategoryListViewHolder holder, int position) {
-
         final int index = holder.getAdapterPosition();
         final UnsplashCategory category = mData.get(index);
         holder.TitleTextView.setText(category.getTitle());
