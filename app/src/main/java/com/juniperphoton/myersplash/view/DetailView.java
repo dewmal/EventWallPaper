@@ -401,7 +401,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
                     boolean ok = mCopyFileForSharing.delete();
                 }
             }
-        }, 5000);
+        }, 15000);
     }
 
     public boolean tryHide() {
