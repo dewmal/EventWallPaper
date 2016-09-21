@@ -33,4 +33,6 @@
     <string name="myer">Myer</string>
     <string name="splash">Splash</string>
     <string name="for_windows_amp_android"><![CDATA[for Windows & Android]]></string>
+    <string name="search">SEARCH</string>
+    <string name="search_in_english">Search in English.</string>
 </resources>
