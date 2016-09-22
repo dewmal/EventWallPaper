@@ -129,7 +129,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @Override
     protected void onResume() {
         super.onResume();
-        mContentRecyclerView.getAdapter().notifyDataSetChanged();
+        if(mContentRecyclerView != null && mContentRecyclerView.getAdapter() != null){
+            mContentRecyclerView.getAdapter().notifyDataSetChanged();
+        }
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -308,22 +310,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     @Override
-    public void onBackPressed() {
-        if (mSearchView.getShown()) {
-            mSearchView.toggleAnimation(false);
-            return;
-        }
-        if (mDetailView.tryHide()) {
-            return;
-        }
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
     public void onSelectItem(UnsplashCategory category) {
         mSelectedCategoryID = category.getId();
         mToolbar.setTitle(category.getTitle().toUpperCase());
@@ -435,5 +421,23 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         ((CategoryAdapter) mDrawerRecyclerView.getAdapter()).select(-1);
         mSearchFAB.show();
         loadPhotoList();
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if (mSearchView.getShown()) {
+            mSearchView.toggleAnimation(false);
+            mSearchFAB.show();
+            return;
+        }
+        if (mDetailView.tryHide()) {
+            return;
+        }
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 }
