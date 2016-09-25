@@ -1,6 +1,8 @@
 package com.juniperphoton.myersplash.utils;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
@@ -161,15 +163,42 @@ public class DownloadUtil {
         return true;
     }
 
-    public static void startDownloadService(Activity context, String fileName, String url) {
+    public static void startDownloadService(final Activity context, final String fileName, final String url) {
         RequestUtil.check(context);
 
-        String fixedUrl = fixUri(url);
+        if (!NetworkUtil.usingWifi(context)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("ATTETION");
+            builder.setMessage("You are not using WiFi network. Continue to download?");
+            builder.setPositiveButton("DOWNLOAD", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String fixedUrl = fixUri(url);
 
-        Intent intent = new Intent(context, BackgroundDownloadService.class);
-        intent.putExtra("NAME", fileName);
-        intent.putExtra("URI", fixedUrl);
-        context.startService(intent);
+                    Intent intent = new Intent(context, BackgroundDownloadService.class);
+                    intent.putExtra("NAME", fileName);
+                    intent.putExtra("URI", fixedUrl);
+                    context.startService(intent);
+                    ToastService.sendShortToast("Downloading...");
+                }
+            });
+            builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.create().show();
+        } else {
+            String fixedUrl = fixUri(url);
+
+            Intent intent = new Intent(context, BackgroundDownloadService.class);
+            intent.putExtra("NAME", fileName);
+            intent.putExtra("URI", fixedUrl);
+            context.startService(intent);
+            ToastService.sendShortToast("Downloading...");
+        }
+
     }
 
     private static String fixUri(String url) {

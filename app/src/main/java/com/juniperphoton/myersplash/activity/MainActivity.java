@@ -386,7 +386,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @Override
     public void onClickQuickDownload(UnsplashImage image) {
         DownloadUtil.startDownloadService(this, image.getFileNameForDownload(), image.getDownloadUrl());
-        ToastService.sendShortToast("Downloading...");
     }
 
     @Override

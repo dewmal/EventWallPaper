@@ -104,8 +104,6 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         }
         DownloadUtil.startDownloadService((Activity) mContext, mClickedImage.getFileNameForDownload(),
                 mClickedImage.getDownloadUrl());
-
-        ToastService.sendShortToast("Downloading...");
     }
 
     @SuppressWarnings("UnusedDeclaration")
