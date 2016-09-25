@@ -7,7 +7,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.juniperphoton.myersplash.base.App;
-import com.juniperphoton.myersplash.service.BackgrdDownloadService;
+import com.juniperphoton.myersplash.service.BackgroundDownloadService;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,7 +22,7 @@ import okhttp3.ResponseBody;
 public class DownloadUtil {
     private static String TAG = "DownloadUtil";
 
-    public static boolean writeResponseBodyToDisk(ResponseBody body, String expectedName, String url) {
+    public static File writeResponseBodyToDisk(ResponseBody body, String expectedName, String url) {
         try {
             File folder = new File(getGalleryPath());
             if (!folder.exists()) {
@@ -66,9 +66,11 @@ public class DownloadUtil {
 
                 outputStream.flush();
 
-                return true;
+                NotificationUtil.showCompleteNotification(Uri.parse(url), Uri.fromFile(fileToSave));
+
+                return fileToSave;
             } catch (Exception e) {
-                return false;
+                return null;
             } finally {
                 if (inputStream != null) {
                     inputStream.close();
@@ -80,7 +82,7 @@ public class DownloadUtil {
                 new SingleMediaScanner(App.getInstance(), fileToSave);
             }
         } catch (IOException e) {
-            return false;
+            return null;
         }
     }
 
@@ -164,7 +166,7 @@ public class DownloadUtil {
 
         String fixedUrl = fixUri(url);
 
-        Intent intent = new Intent(context, BackgrdDownloadService.class);
+        Intent intent = new Intent(context, BackgroundDownloadService.class);
         intent.putExtra("name", fileName);
         intent.putExtra("url", fixedUrl);
         context.startService(intent);

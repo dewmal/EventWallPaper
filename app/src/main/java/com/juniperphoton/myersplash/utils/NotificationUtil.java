@@ -1,6 +1,5 @@
 package com.juniperphoton.myersplash.utils;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -9,15 +8,12 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.SparseArray;
-import android.widget.RemoteViews;
 
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.activity.MainActivity;
 import com.juniperphoton.myersplash.base.App;
+import com.juniperphoton.myersplash.service.BackgroundDownloadService;
 
-import java.security.spec.DSAPrivateKeySpec;
 import java.util.HashMap;
-import java.util.Hashtable;
 
 public class NotificationUtil {
 
@@ -42,9 +38,7 @@ public class NotificationUtil {
     }
 
     private static NotificationManager getNotificationManager() {
-        NotificationManager notificationManager =
-                (NotificationManager) App.getInstance().getSystemService(Context.NOTIFICATION_SERVICE);
-        return notificationManager;
+        return (NotificationManager) App.getInstance().getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     public static void cancelNotification(Uri downloadUri) {
@@ -58,23 +52,22 @@ public class NotificationUtil {
         int nId = findNIdByUri(downloadUri);
         if (nId != -1) {
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(App.getInstance())
-                    .setContentTitle("Error")
-                    .setContentText("Download error.")
+                    .setContentTitle("Download error.")
+                    .setContentText("Tap to retry.")
                     .setSmallIcon(R.drawable.ic_cancel_white_36dp);
             getNotificationManager().notify(nId, mBuilder.build());
         }
     }
 
-    public static void showCompleteNotification(Uri downloadUri) {
+    public static void showCompleteNotification(Uri downloadUri, Uri fileUri) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(App.getInstance())
                 .setContentTitle("MyerSplash")
                 .setContentText("Saved :D")
-                .setSmallIcon(R.drawable.download_small_icon)
-                .setAutoCancel(true);
+                .setSmallIcon(R.drawable.small_icon);
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.addCategory(Intent.CATEGORY_DEFAULT);
-        intent.setDataAndType(downloadUri, "image/*");
+        intent.setDataAndType(fileUri, "image/*");
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(App.getInstance());

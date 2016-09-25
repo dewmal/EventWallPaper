@@ -36,7 +36,7 @@
             android:theme="@style/AppTheme" />
 
         <service
-            android:name=".service.BackgrdDownloadService"
+            android:name=".service.BackgroundDownloadService"
             android:exported="false" />
 
         <provider

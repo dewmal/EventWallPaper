@@ -3,28 +3,28 @@ package com.juniperphoton.myersplash.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.util.Log;
 
-import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.cloudservice.CloudService;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.NotificationUtil;
 import com.orhanobut.logger.Logger;
 
+import java.io.File;
+
 import okhttp3.ResponseBody;
 import rx.Subscriber;
 
 @SuppressWarnings("UnusedDeclaration")
-public class BackgrdDownloadService extends IntentService {
-    private static String TAG = BackgrdDownloadService.class.getName();
+public class BackgroundDownloadService extends IntentService {
+    private static String TAG = BackgroundDownloadService.class.getName();
 
-    public BackgrdDownloadService(String name) {
+    public BackgroundDownloadService(String name) {
         super(name);
     }
 
-    public BackgrdDownloadService() {
-        super("BackgrdDownloadService");
+    public BackgroundDownloadService() {
+        super("BackgroundDownloadService");
     }
 
     @Override
@@ -40,7 +40,6 @@ public class BackgrdDownloadService extends IntentService {
             @Override
             public void onCompleted() {
                 Logger.d(TAG, "Completed");
-                NotificationUtil.showCompleteNotification(Uri.parse(url));
             }
 
             @Override
@@ -53,8 +52,7 @@ public class BackgrdDownloadService extends IntentService {
             @Override
             public void onNext(ResponseBody responseBody) {
                 Log.d(TAG, "file download onNext,size" + responseBody.contentLength());
-
-                boolean ok = DownloadUtil.writeResponseBodyToDisk(responseBody, fileName, url);
+                File file = DownloadUtil.writeResponseBodyToDisk(responseBody, fileName, url);
             }
         }, url);
     }
