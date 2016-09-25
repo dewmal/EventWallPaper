@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.SparseArray;
 import android.widget.RemoteViews;
 
 import com.juniperphoton.myersplash.R;
@@ -23,7 +24,7 @@ public class NotificationUtil {
     private static int mLastId = 0;
     private static int NOT_ALLOCATED_ID = -10000;
     private static HashMap<Uri, Integer> uriHashMap = new HashMap<>();
-    private static HashMap<Integer, NotificationCompat.Builder> integerBuilderHashMap = new HashMap<>();
+    private static SparseArray<NotificationCompat.Builder> integerBuilderHashMap = new SparseArray<>();
 
     private static int findNIdByUri(Uri downloadUri) {
         int nId = NOT_ALLOCATED_ID;
@@ -34,7 +35,7 @@ public class NotificationUtil {
     }
 
     private static NotificationCompat.Builder findBuilderById(int id) {
-        if (integerBuilderHashMap.containsKey(id)) {
+        if (integerBuilderHashMap.get(id) != null) {
             return integerBuilderHashMap.get(id);
         }
         return null;
