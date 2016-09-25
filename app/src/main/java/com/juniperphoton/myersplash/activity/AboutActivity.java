@@ -1,13 +1,20 @@
 package com.juniperphoton.myersplash.activity;
 
+import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 import com.juniperphoton.myersplash.R;
 
@@ -20,6 +27,9 @@ public class AboutActivity extends AppCompatActivity {
 
     private final String SHARE_SUBJECT = "MyerSplash for Android %s feedback";
 
+    @Bind(R.id.activity_about_banner_iv)
+    ImageView mBannerIV;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +40,21 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about);
 
         ButterKnife.bind(this);
+
+        initView();
+    }
+
+    private void initView() {
+        mBannerIV.setVisibility(View.VISIBLE);
+        mBannerIV.setAlpha(0f);
+
+        new Handler().postAtTime(new Runnable() {
+            @Override
+            public void run() {
+                mBannerIV.setImageResource(R.drawable.banner);
+                toggleAnimation();
+            }
+        }, 5000);
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -49,5 +74,18 @@ public class AboutActivity extends AppCompatActivity {
         Uri uri = Uri.parse("market://details?id=" + getPackageName());
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
+    }
+
+    public void toggleAnimation() {
+        ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+        animator.setDuration(500);
+        animator.setStartDelay(2000);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mBannerIV.setAlpha((float) animation.getAnimatedValue());
+            }
+        });
+        animator.start();
     }
 }

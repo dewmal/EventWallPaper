@@ -103,7 +103,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             if (holder.SimpleDraweeView != null) {
                 holder.RootCardView.setBackground(new ColorDrawable(backColor));
                 holder.SimpleDraweeView.setImageURI(regularUrl);
-                holder.SimpleDraweeView.setOnClickListener(new View.OnClickListener() {
+                holder.RippleMaskRL.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (Fresco.getImagePipeline().isInBitmapMemoryCache(Uri.parse(regularUrl))) {
@@ -221,12 +221,14 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         public SimpleDraweeView SimpleDraweeView;
         public CardView RootCardView;
         public RelativeLayout DownloadRL;
+        public RelativeLayout RippleMaskRL;
 
         public PhotoViewHolder(View itemView) {
             super(itemView);
             SimpleDraweeView = (SimpleDraweeView) itemView.findViewById(R.id.row_photo_iv);
             RootCardView = (CardView) itemView.findViewById(R.id.row_photo_cv);
             DownloadRL = (RelativeLayout) itemView.findViewById(R.id.row_photo_download_rl);
+            RippleMaskRL = (RelativeLayout) itemView.findViewById(R.id.row_photo_ripple_mask_rl);
         }
     }
 }

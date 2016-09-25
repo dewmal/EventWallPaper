@@ -16,11 +16,6 @@ import rx.Subscriber;
 public class BackgrdDownloadService extends IntentService {
     private static String TAG = BackgrdDownloadService.class.getName();
 
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     * @param name Used to name the worker thread, important only for debugging.
-     */
     public BackgrdDownloadService(String name) {
         super(name);
     }

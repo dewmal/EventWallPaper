@@ -23,7 +23,7 @@ public class NotificationUtil {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(App.getInstance())
                 .setContentTitle(title)
                 .setContentText(content)
-                .setOngoing(!completed);
+                .setAutoCancel(true);
         if (completed) {
             mBuilder.setSmallIcon(R.drawable.small_icon);
         } else {
