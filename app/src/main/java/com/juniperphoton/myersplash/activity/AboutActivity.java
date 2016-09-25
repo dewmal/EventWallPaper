@@ -54,7 +54,7 @@ public class AboutActivity extends AppCompatActivity {
                 mBannerIV.setImageResource(R.drawable.banner);
                 toggleAnimation();
             }
-        }, 5000);
+        }, 1000);
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -79,7 +79,6 @@ public class AboutActivity extends AppCompatActivity {
     public void toggleAnimation() {
         ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
         animator.setDuration(500);
-        animator.setStartDelay(2000);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {

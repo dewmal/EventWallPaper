@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     void onClickSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
-        mDrawerLayout.closeDrawer(GravityCompat.START);
+        //mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     void onClickAbout() {
         Intent intent = new Intent(this, AboutActivity.class);
         startActivity(intent);
-        mDrawerLayout.closeDrawer(GravityCompat.START);
+        //mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
     @Override
