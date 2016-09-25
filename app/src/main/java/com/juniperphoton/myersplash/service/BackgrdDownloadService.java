@@ -32,38 +32,30 @@ public class BackgrdDownloadService extends IntentService {
         String url = intent.getStringExtra("url");
         String fileName = intent.getStringExtra("name");
         downloadImage(url, fileName);
-        NotificationUtil.sendNotification("MyerSplash", "Downloading...", false, Uri.parse(url));
+        NotificationUtil.showProgressNotification("MyerSplash", "Downloading...", 0, Uri.parse(url));
     }
 
     protected void downloadImage(final String url, final String fileName) {
-        new AsyncTask<Void, Long, Void>() {
+        CloudService.getInstance().downloadPhoto(new Subscriber<ResponseBody>() {
             @Override
-            protected Void doInBackground(Void... voids) {
-                CloudService.getInstance().downloadPhoto(new Subscriber<ResponseBody>() {
-                    @Override
-                    public void onCompleted() {
-                        Logger.d(TAG, "Completed");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        NotificationUtil.showErrorNotification(Uri.parse(url));
-                        Logger.d(TAG, "Error");
-                        Log.d(TAG, "onError," + e.getMessage() + "," + url);
-                    }
-
-                    @Override
-                    public void onNext(ResponseBody responseBody) {
-                        Log.d(TAG, "file download onNext,size" + responseBody.contentLength());
-
-                        boolean ok = DownloadUtil.writeResponseBodyToDisk(responseBody, fileName);
-                        if (ok) {
-                            NotificationUtil.sendNotification("MyerSplash", "Saved :D", true, Uri.parse(url));
-                        }
-                    }
-                }, url);
-                return null;
+            public void onCompleted() {
+                Logger.d(TAG, "Completed");
+                NotificationUtil.showCompleteNotification(Uri.parse(url));
             }
-        }.execute();
+
+            @Override
+            public void onError(Throwable e) {
+                NotificationUtil.showErrorNotification(Uri.parse(url));
+                Logger.d(TAG, "Error");
+                Log.d(TAG, "onError," + e.getMessage() + "," + url);
+            }
+
+            @Override
+            public void onNext(ResponseBody responseBody) {
+                Log.d(TAG, "file download onNext,size" + responseBody.contentLength());
+
+                boolean ok = DownloadUtil.writeResponseBodyToDisk(responseBody, fileName, url);
+            }
+        }, url);
     }
 }

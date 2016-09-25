@@ -32,6 +32,7 @@ public class CloudService {
     private Retrofit retrofit;
     private CategoryService categoryService;
     private PhotoService photoService;
+    private DownloadService downloadService;
     private OkHttpClient.Builder builder;
 
     private CloudService() {
@@ -47,6 +48,7 @@ public class CloudService {
 
         categoryService = retrofit.create(CategoryService.class);
         photoService = retrofit.create(PhotoService.class);
+        downloadService = retrofit.create(DownloadService.class);
     }
 
     private static class SingletonHolder {
@@ -104,13 +106,6 @@ public class CloudService {
     }
 
     public void downloadPhoto(Subscriber<ResponseBody> subscriber, String url) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .client(builder.build())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .baseUrl(baseUrl)
-                .build();
-
-        DownloadService downloadService = retrofit.create(DownloadService.class);
         Observable<ResponseBody> observable = downloadService.downloadFileWithDynamicUrlSync(url);
         observable.subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())

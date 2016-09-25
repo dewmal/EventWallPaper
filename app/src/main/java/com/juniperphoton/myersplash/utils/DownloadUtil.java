@@ -22,7 +22,7 @@ import okhttp3.ResponseBody;
 public class DownloadUtil {
     private static String TAG = "DownloadUtil";
 
-    public static boolean writeResponseBodyToDisk(ResponseBody body, String expectedName) {
+    public static boolean writeResponseBodyToDisk(ResponseBody body, String expectedName, String url) {
         try {
             File folder = new File(getGalleryPath());
             if (!folder.exists()) {
@@ -33,32 +33,33 @@ public class DownloadUtil {
             InputStream inputStream = null;
             OutputStream outputStream = null;
 
-
             try {
                 long startTime = new Date().getTime();
 
                 inputStream = body.byteStream();
                 outputStream = new FileOutputStream(fileToSave);
-                outputStream.write(body.bytes());
-//                byte[] fileReader = new byte[4096];
-//
-//                long fileSize = body.contentLength();
-//                long fileSizeDownloaded = 0;
-//
-//
-//                while (true) {
-//                    int read = inputStream.read(fileReader);
-//
-//                    if (read == -1) {
-//                        break;
-//                    }
-//
-//                    outputStream.write(fileReader, 0, read);
-//
-//                    fileSizeDownloaded += read;
-//
-//                    Log.d(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
-//                }
+
+                byte[] fileReader = new byte[4096];
+
+                long fileSize = body.contentLength();
+                long fileSizeDownloaded = 0;
+
+                while (true) {
+                    int read = inputStream.read(fileReader);
+
+                    if (read == -1) {
+                        break;
+                    }
+
+                    outputStream.write(fileReader, 0, read);
+
+                    fileSizeDownloaded += read;
+
+                    double progress = fileSizeDownloaded / (double) fileSize;
+                    NotificationUtil.showProgressNotification("MyerSplash", "Downloading...", (int) (progress * 100), Uri.parse(url));
+
+                    Log.d(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
+                }
                 long endTime = new Date().getTime();
 
                 Log.d(TAG, "time spend=" + String.valueOf(endTime - startTime));
