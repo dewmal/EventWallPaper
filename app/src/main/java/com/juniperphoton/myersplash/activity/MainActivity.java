@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @Override
     protected void onResume() {
         super.onResume();
-        if(mContentRecyclerView != null && mContentRecyclerView.getAdapter() != null){
+        if (mContentRecyclerView != null && mContentRecyclerView.getAdapter() != null) {
             mContentRecyclerView.getAdapter().notifyDataSetChanged();
         }
     }

@@ -197,7 +197,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
             mHeroEndY = endY;
         }
 
-        Logger.d("start:" + startY + ",end:" + endY);
+        //Logger.d("start:" + startY + ",end:" + endY);
 
         ValueAnimator valueAnimator = new ValueAnimator();
         valueAnimator.setIntValues(startY, endY);

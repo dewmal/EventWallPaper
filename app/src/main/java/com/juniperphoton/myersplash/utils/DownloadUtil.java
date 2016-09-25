@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 
 import okhttp3.ResponseBody;
 
@@ -32,28 +33,35 @@ public class DownloadUtil {
             InputStream inputStream = null;
             OutputStream outputStream = null;
 
-            try {
-                byte[] fileReader = new byte[4096];
 
-                long fileSize = body.contentLength();
-                long fileSizeDownloaded = 0;
+            try {
+                long startTime = new Date().getTime();
 
                 inputStream = body.byteStream();
                 outputStream = new FileOutputStream(fileToSave);
+                outputStream.write(body.bytes());
+//                byte[] fileReader = new byte[4096];
+//
+//                long fileSize = body.contentLength();
+//                long fileSizeDownloaded = 0;
+//
+//
+//                while (true) {
+//                    int read = inputStream.read(fileReader);
+//
+//                    if (read == -1) {
+//                        break;
+//                    }
+//
+//                    outputStream.write(fileReader, 0, read);
+//
+//                    fileSizeDownloaded += read;
+//
+//                    Log.d(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
+//                }
+                long endTime = new Date().getTime();
 
-                while (true) {
-                    int read = inputStream.read(fileReader);
-
-                    if (read == -1) {
-                        break;
-                    }
-
-                    outputStream.write(fileReader, 0, read);
-
-                    fileSizeDownloaded += read;
-
-                    Log.d(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
-                }
+                Log.d(TAG, "time spend=" + String.valueOf(endTime - startTime));
 
                 outputStream.flush();
 
@@ -69,7 +77,6 @@ public class DownloadUtil {
                     outputStream.close();
                 }
                 new SingleMediaScanner(App.getInstance(), fileToSave);
-                NotificationUtil.sendNotification("MyerSplash", "Saved :D", true, Uri.fromFile(fileToSave));
             }
         } catch (IOException e) {
             return false;
@@ -154,9 +161,19 @@ public class DownloadUtil {
     public static void startDownloadService(Activity context, String fileName, String url) {
         RequestUtil.check(context);
 
+        String fixedUrl = fixUri(url);
+
         Intent intent = new Intent(context, BackgrdDownloadService.class);
         intent.putExtra("name", fileName);
-        intent.putExtra("url", url);
+        intent.putExtra("url", fixedUrl);
         context.startService(intent);
+    }
+
+    private static String fixUri(String url) {
+        String outputUrl = url;
+        if (outputUrl.endsWith("/")) {
+            outputUrl = outputUrl.substring(0, outputUrl.length() - 1);
+        }
+        return outputUrl;
     }
 }

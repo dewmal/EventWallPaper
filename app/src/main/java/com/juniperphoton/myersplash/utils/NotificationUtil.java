@@ -14,15 +14,51 @@ import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.activity.MainActivity;
 import com.juniperphoton.myersplash.base.App;
 
+import java.util.HashMap;
+import java.util.Hashtable;
+
 public class NotificationUtil {
-    public static void sendNotification(String title, String content, boolean completed) {
-        NotificationUtil.sendNotification(title, content, completed, null);
+
+    private static int mLastId = 0;
+    private static HashMap<Uri, Integer> uriHashMap = new HashMap<>();
+
+    private static int findNIdByUri(Uri downloadUri) {
+        int nId = -1;
+        if (uriHashMap.containsKey(downloadUri)) {
+            nId = uriHashMap.get(downloadUri);
+        }
+        return nId;
     }
 
-    public static void sendNotification(String title, String content, boolean completed, Uri fileUri) {
+    public static void cancelNotification(Uri downloadUri) {
+        NotificationManager notificationManager =
+                (NotificationManager) App.getInstance().getSystemService(Context.NOTIFICATION_SERVICE);
+        int nId = findNIdByUri(downloadUri);
+        if (nId != -1) {
+
+            notificationManager.cancel(nId);
+        }
+    }
+
+    public static void showErrorNotification(Uri downloadUri) {
+        NotificationManager notificationManager =
+                (NotificationManager) App.getInstance().getSystemService(Context.NOTIFICATION_SERVICE);
+        int nId = findNIdByUri(downloadUri);
+        if (nId != -1) {
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(App.getInstance())
+                    .setContentTitle("Error")
+                    .setContentText("Download error.")
+                    .setSmallIcon(R.drawable.ic_cancel_white_36dp);
+
+            notificationManager.notify(nId, mBuilder.build());
+        }
+    }
+
+    public static void sendNotification(String title, String content, boolean completed, Uri downloadUri) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(App.getInstance())
                 .setContentTitle(title)
                 .setContentText(content)
+                .setTicker(content)
                 .setAutoCancel(true);
         if (completed) {
             mBuilder.setSmallIcon(R.drawable.small_icon);
@@ -34,7 +70,7 @@ public class NotificationUtil {
         if (completed) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.addCategory(Intent.CATEGORY_DEFAULT);
-            intent.setDataAndType(fileUri, "image/*");
+            intent.setDataAndType(downloadUri, "image/*");
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(App.getInstance());
@@ -48,6 +84,13 @@ public class NotificationUtil {
         NotificationManager notificationManager =
                 (NotificationManager) App.getInstance().getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0, mBuilder.build());
+        int nId = -1;
+        nId = findNIdByUri(downloadUri);
+        if (nId == -1) {
+            uriHashMap.put(downloadUri, mLastId);
+            nId = mLastId;
+            mLastId++;
+        }
+        notificationManager.notify(nId, mBuilder.build());
     }
 }
