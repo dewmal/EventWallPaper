@@ -29,30 +29,45 @@ public class BackgroundDownloadService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        String url = intent.getStringExtra("url");
-        String fileName = intent.getStringExtra("name");
+        String url = intent.getStringExtra("URI");
+        String fileName = intent.getStringExtra("NAME");
+        int nId = intent.getIntExtra("NID", -1);
+        if (nId != -1) {
+            if (nId != NotificationUtil.NOT_ALLOCATED_ID) {
+                NotificationUtil.cancelNotificationById(nId);
+            }
+        }
+
         downloadImage(url, fileName);
         NotificationUtil.showProgressNotification("MyerSplash", "Downloading...", 0, Uri.parse(url));
     }
 
     protected void downloadImage(final String url, final String fileName) {
         CloudService.getInstance().downloadPhoto(new Subscriber<ResponseBody>() {
+            boolean completed = false;
+
             @Override
             public void onCompleted() {
+                if (!completed) {
+                    NotificationUtil.showErrorNotification(Uri.parse(url), fileName, url);
+                }
                 Logger.d(TAG, "Completed");
             }
 
             @Override
             public void onError(Throwable e) {
-                NotificationUtil.showErrorNotification(Uri.parse(url));
+                NotificationUtil.showErrorNotification(Uri.parse(url), fileName, url);
                 Logger.d(TAG, "Error");
                 Log.d(TAG, "onError," + e.getMessage() + "," + url);
             }
 
             @Override
             public void onNext(ResponseBody responseBody) {
-                Log.d(TAG, "file download onNext,size" + responseBody.contentLength());
+                Logger.d(TAG, "file download onNext,size" + responseBody.contentLength());
                 File file = DownloadUtil.writeResponseBodyToDisk(responseBody, fileName, url);
+                if (file != null) {
+                    completed = true;
+                }
             }
         }, url);
     }

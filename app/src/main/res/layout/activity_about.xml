@@ -19,16 +19,6 @@
         android:scaleType="fitXY"
         android:src="@drawable/black_mask" />
 
-    <ImageView
-        android:id="@+id/activity_about_banner_iv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:alpha="1"
-        android:contentDescription="@string/ImageDescDefault"
-        android:scaleType="matrix"
-        android:visibility="gone" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

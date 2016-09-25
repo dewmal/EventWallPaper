@@ -81,7 +81,7 @@ public class DownloadUtil {
                 }
                 new SingleMediaScanner(App.getInstance(), fileToSave);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -167,8 +167,8 @@ public class DownloadUtil {
         String fixedUrl = fixUri(url);
 
         Intent intent = new Intent(context, BackgroundDownloadService.class);
-        intent.putExtra("name", fileName);
-        intent.putExtra("url", fixedUrl);
+        intent.putExtra("NAME", fileName);
+        intent.putExtra("URI", fixedUrl);
         context.startService(intent);
     }
 

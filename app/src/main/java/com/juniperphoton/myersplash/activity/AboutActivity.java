@@ -27,9 +27,6 @@ public class AboutActivity extends AppCompatActivity {
 
     private final String SHARE_SUBJECT = "MyerSplash for Android %s feedback";
 
-    @Bind(R.id.activity_about_banner_iv)
-    ImageView mBannerIV;
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,21 +37,6 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about);
 
         ButterKnife.bind(this);
-
-        initView();
-    }
-
-    private void initView() {
-        mBannerIV.setVisibility(View.VISIBLE);
-        mBannerIV.setAlpha(0f);
-
-        new Handler().postAtTime(new Runnable() {
-            @Override
-            public void run() {
-                mBannerIV.setImageResource(R.drawable.banner);
-                toggleAnimation();
-            }
-        }, 1000);
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -74,17 +56,5 @@ public class AboutActivity extends AppCompatActivity {
         Uri uri = Uri.parse("market://details?id=" + getPackageName());
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
-    }
-
-    public void toggleAnimation() {
-        ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
-        animator.setDuration(500);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                mBannerIV.setAlpha((float) animation.getAnimatedValue());
-            }
-        });
-        animator.start();
     }
 }

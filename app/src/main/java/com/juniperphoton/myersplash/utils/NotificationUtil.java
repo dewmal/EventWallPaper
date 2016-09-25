@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.SparseArray;
@@ -18,7 +19,7 @@ import java.util.HashMap;
 public class NotificationUtil {
 
     private static int mLastId = 0;
-    private static int NOT_ALLOCATED_ID = -10000;
+    public static int NOT_ALLOCATED_ID = -10000;
     private static HashMap<Uri, Integer> uriHashMap = new HashMap<>();
     private static SparseArray<NotificationCompat.Builder> integerBuilderHashMap = new SparseArray<>();
 
@@ -48,15 +49,36 @@ public class NotificationUtil {
         }
     }
 
-    public static void showErrorNotification(Uri downloadUri) {
-        int nId = findNIdByUri(downloadUri);
-        if (nId != -1) {
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(App.getInstance())
-                    .setContentTitle("Download error.")
-                    .setContentText("Tap to retry.")
-                    .setSmallIcon(R.drawable.ic_cancel_white_36dp);
-            getNotificationManager().notify(nId, mBuilder.build());
+    public static void cancelNotificationById(int nId) {
+        if (nId != NOT_ALLOCATED_ID) {
+            getNotificationManager().cancel(nId);
         }
+    }
+
+    public static void showErrorNotification(Uri downloadUri, String fileName, String url) {
+        int nId;
+        nId = findNIdByUri(downloadUri);
+        if (nId == NOT_ALLOCATED_ID) {
+            uriHashMap.put(downloadUri, mLastId);
+            nId = mLastId;
+            mLastId++;
+        }
+
+        Intent intent = new Intent(App.getInstance(), BackgroundDownloadService.class);
+        intent.putExtra("NAME", fileName);
+        intent.putExtra("URI", url);
+        intent.putExtra("NID", nId);
+
+        PendingIntent resultPendingIntent = PendingIntent.getService(App.getInstance(), 0, intent, 0);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(App.getInstance())
+                .setContentTitle("Download error.")
+                .setContentText("Please check your network and retry.")
+                .setSmallIcon(R.drawable.ic_cancel_white_36dp);
+
+        builder.addAction(R.drawable.ic_replay_white_48dp, "Retry", resultPendingIntent);
+
+        getNotificationManager().notify(nId, builder.build());
     }
 
     public static void showCompleteNotification(Uri downloadUri, Uri fileUri) {
