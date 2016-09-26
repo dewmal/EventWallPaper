@@ -34,6 +34,7 @@
         android:scrollbars="vertical" />
 
     <LinearLayout
+        android:id="@+id/activity_drawer_bottom_ll"
         android:layout_width="match_parent"
         android:layout_height="50sp"
         android:layout_alignParentBottom="true"

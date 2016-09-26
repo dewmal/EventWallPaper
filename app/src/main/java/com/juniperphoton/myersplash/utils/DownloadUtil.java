@@ -170,12 +170,12 @@ public class DownloadUtil {
     }
 
     public static void checkAndDownload(final Activity context, final String fileName, final String url) {
-        RequestUtil.checkAndRequest(context);
-        if(!RequestUtil.check(context)){
+        if (!RequestUtil.check(context)) {
+            ToastService.sendShortToast("No permission to write file into external storage.");
             return;
         }
         if (!NetworkUtil.usingWifi(context)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.MyAlertDialogStyle);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.ThemeAlertDialogStyle);
             builder.setTitle("ATTENTION");
             builder.setMessage("You are not using WiFi network. Continue to download?");
             builder.setPositiveButton("DOWNLOAD", new DialogInterface.OnClickListener() {
@@ -204,7 +204,7 @@ public class DownloadUtil {
         intent.putExtra("NAME", fileName);
         intent.putExtra("URI", fixedUrl);
         context.startService(intent);
-        ToastService.sendShortToast("Downloading...");
+        ToastService.sendShortToast("Downloading in background.");
     }
 
     private static String fixUri(String url) {

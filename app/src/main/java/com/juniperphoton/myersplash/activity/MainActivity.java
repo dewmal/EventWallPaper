@@ -3,6 +3,7 @@ package com.juniperphoton.myersplash.activity;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -15,9 +16,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.google.gson.reflect.TypeToken;
 import com.juniperphoton.myersplash.R;
@@ -32,7 +36,10 @@ import com.juniperphoton.myersplash.cloudservice.CloudService;
 import com.juniperphoton.myersplash.cloudservice.Urls;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
+import com.juniperphoton.myersplash.utils.DeviceUtil;
+import com.juniperphoton.myersplash.utils.DisplayUtil;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
+import com.juniperphoton.myersplash.utils.RequestUtil;
 import com.juniperphoton.myersplash.utils.SerializerUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
 import com.juniperphoton.myersplash.view.DetailView;
@@ -45,6 +52,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import moe.feng.material.statusbar.StatusBarCompat;
 import rx.Subscriber;
+
+import static com.juniperphoton.myersplash.utils.DisplayUtil.getDimenInPixel;
 
 public class MainActivity extends AppCompatActivity implements INavigationDrawerCallback,
         OnLoadMoreListener, OnClickQuickDownloadCallback, DetailViewNavigationCallback, OnClickSearchCallback {
@@ -85,6 +94,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @Bind(R.id.activity_main_search_view)
     com.juniperphoton.myersplash.view.SearchView mSearchView;
 
+    @Bind(R.id.activity_drawer_bottom_ll)
+    LinearLayout mDrawerBottomLL;
+
     private PhotoAdapter mAdapter;
 
     private int mCurrentPage = 1;
@@ -112,6 +124,13 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         restorePhotoList();
         getCategories();
+
+        RequestUtil.checkAndRequest(this);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -201,6 +220,20 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 }
             }
         });
+
+        if (DeviceUtil.checkDeviceHasNavigationBar(this)) {
+            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mSearchFAB.getLayoutParams();
+            params.setMargins(0, 0, getDimenInPixel(24, this), getDimenInPixel(24, this));
+            mSearchFAB.setLayoutParams(params);
+
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mDrawerBottomLL.getLayoutParams();
+            layoutParams.setMargins(0, 0, 0, 0);
+            mDrawerBottomLL.setLayoutParams(layoutParams);
+
+            RelativeLayout.LayoutParams layoutParamsRV = (RelativeLayout.LayoutParams) mDrawerRecyclerView.getLayoutParams();
+            layoutParamsRV.setMargins(0, getDimenInPixel(200, this), 0, getDimenInPixel(0, this));
+            mDrawerRecyclerView.setLayoutParams(layoutParamsRV);
+        }
     }
 
     private void getCategories() {
