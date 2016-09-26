@@ -47,8 +47,8 @@ public class BackgroundDownloadService extends IntentService {
             File outputFile = null;
 
             @Override
-            public void onCompleted() {
-                if (outputFile == null) {
+            public void onCompleted() {                if (outputFile == null) {
+
                     NotificationUtil.showErrorNotification(Uri.parse(url), fileName, url);
                 } else {
                     NotificationUtil.showCompleteNotification(Uri.parse(url), Uri.fromFile(outputFile));

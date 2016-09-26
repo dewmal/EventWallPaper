@@ -8,7 +8,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
 public class RequestUtil {
-    public static void check(Activity context) {
+
+    public static boolean check(Activity context) {
+        return ContextCompat.checkSelfPermission(context,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public static void checkAndRequest(Activity context) {
         // Here, thisActivity is the current activity
         if (ContextCompat.checkSelfPermission(context,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -29,7 +36,6 @@ public class RequestUtil {
                 ActivityCompat.requestPermissions(context,
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         0);
-
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
                 // result of the request.

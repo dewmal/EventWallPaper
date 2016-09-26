@@ -24,7 +24,7 @@ import okhttp3.ResponseBody;
 public class DownloadUtil {
     private static String TAG = "DownloadUtil";
 
-    public static File writeResponseBodyToDisk(ResponseBody body, String expectedName, String url) {
+    public static File writeResponseBodyToDisk(ResponseBody body, String expectedName, final String url) {
         try {
             File folder = new File(getGalleryPath());
             if (!folder.exists()) {
@@ -46,6 +46,8 @@ public class DownloadUtil {
                 long fileSize = body.contentLength();
                 long fileSizeDownloaded = 0;
 
+                int progressToReport = 0;
+
                 while (true) {
                     int read = inputStream.read(fileReader);
 
@@ -57,10 +59,12 @@ public class DownloadUtil {
 
                     fileSizeDownloaded += read;
 
-                    double progress = fileSizeDownloaded / (double) fileSize;
-                    NotificationUtil.showProgressNotification("MyerSplash", "Downloading...", (int) (progress * 100), Uri.parse(url));
-
-                    Log.d(TAG, "file download: " + fileSizeDownloaded + " of " + fileSize);
+                    int progress = (int) (fileSizeDownloaded / (double) fileSize * 100);
+                    if (progress - progressToReport >= 5) {
+                        progressToReport = progress;
+                        NotificationUtil.showProgressNotification("MyerSplash", "Downloading...", progressToReport, Uri.parse(url));
+                    }
+                    Log.d(TAG, "progress: " + progress + ",last:" + progressToReport);
                 }
                 long endTime = new Date().getTime();
 
@@ -72,6 +76,7 @@ public class DownloadUtil {
 
                 return fileToSave;
             } catch (Exception e) {
+                e.printStackTrace();
                 return null;
             } finally {
                 if (inputStream != null) {
@@ -84,6 +89,7 @@ public class DownloadUtil {
                 new SingleMediaScanner(App.getInstance(), fileToSave);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -164,8 +170,10 @@ public class DownloadUtil {
     }
 
     public static void checkAndDownload(final Activity context, final String fileName, final String url) {
-        RequestUtil.check(context);
-
+        RequestUtil.checkAndRequest(context);
+        if(!RequestUtil.check(context)){
+            return;
+        }
         if (!NetworkUtil.usingWifi(context)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.MyAlertDialogStyle);
             builder.setTitle("ATTENTION");
