@@ -44,12 +44,14 @@ public class BackgroundDownloadService extends IntentService {
 
     protected void downloadImage(final String url, final String fileName) {
         CloudService.getInstance().downloadPhoto(new Subscriber<ResponseBody>() {
-            boolean completed = false;
+            File outputFile = null;
 
             @Override
             public void onCompleted() {
-                if (!completed) {
+                if (outputFile == null) {
                     NotificationUtil.showErrorNotification(Uri.parse(url), fileName, url);
+                } else {
+                    NotificationUtil.showCompleteNotification(Uri.parse(url), Uri.fromFile(outputFile));
                 }
                 Logger.d(TAG, "Completed");
             }
@@ -63,11 +65,8 @@ public class BackgroundDownloadService extends IntentService {
 
             @Override
             public void onNext(ResponseBody responseBody) {
-                Logger.d(TAG, "file download onNext,size" + responseBody.contentLength());
-                File file = DownloadUtil.writeResponseBodyToDisk(responseBody, fileName, url);
-                if (file != null) {
-                    completed = true;
-                }
+                Logger.d(TAG, "outputFile download onNext,size" + responseBody.contentLength());
+                this.outputFile = DownloadUtil.writeResponseBodyToDisk(responseBody, fileName, url);
             }
         }, url);
     }
