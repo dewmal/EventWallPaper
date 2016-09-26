@@ -1,20 +1,20 @@
 package com.juniperphoton.myersplash.utils;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
+import android.support.v7.app.AlertDialog;
 
+import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.service.BackgroundDownloadService;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
@@ -163,23 +163,18 @@ public class DownloadUtil {
         return true;
     }
 
-    public static void startDownloadService(final Activity context, final String fileName, final String url) {
+    public static void checkAndDownload(final Activity context, final String fileName, final String url) {
         RequestUtil.check(context);
 
         if (!NetworkUtil.usingWifi(context)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle("ATTETION");
+            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.MyAlertDialogStyle);
+            builder.setTitle("ATTENTION");
             builder.setMessage("You are not using WiFi network. Continue to download?");
             builder.setPositiveButton("DOWNLOAD", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    String fixedUrl = fixUri(url);
-
-                    Intent intent = new Intent(context, BackgroundDownloadService.class);
-                    intent.putExtra("NAME", fileName);
-                    intent.putExtra("URI", fixedUrl);
-                    context.startService(intent);
-                    ToastService.sendShortToast("Downloading...");
+                    dialog.dismiss();
+                    startDownloadService(context, fileName, url);
                 }
             });
             builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -190,15 +185,18 @@ public class DownloadUtil {
             });
             builder.create().show();
         } else {
-            String fixedUrl = fixUri(url);
-
-            Intent intent = new Intent(context, BackgroundDownloadService.class);
-            intent.putExtra("NAME", fileName);
-            intent.putExtra("URI", fixedUrl);
-            context.startService(intent);
-            ToastService.sendShortToast("Downloading...");
+            startDownloadService(context, fileName, url);
         }
+    }
 
+    private static void startDownloadService(final Activity context, final String fileName, final String url) {
+        String fixedUrl = fixUri(url);
+
+        Intent intent = new Intent(context, BackgroundDownloadService.class);
+        intent.putExtra("NAME", fileName);
+        intent.putExtra("URI", fixedUrl);
+        context.startService(intent);
+        ToastService.sendShortToast("Downloading...");
     }
 
     private static String fixUri(String url) {

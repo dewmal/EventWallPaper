@@ -1,17 +1,11 @@
 package com.juniperphoton.myersplash.activity;
 
 import android.animation.ValueAnimator;
-import android.app.SearchManager;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.RectF;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,14 +13,11 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.RelativeLayout;
 
 import com.google.gson.reflect.TypeToken;
 import com.juniperphoton.myersplash.R;
@@ -39,12 +30,9 @@ import com.juniperphoton.myersplash.callback.OnClickSearchCallback;
 import com.juniperphoton.myersplash.callback.OnLoadMoreListener;
 import com.juniperphoton.myersplash.cloudservice.CloudService;
 import com.juniperphoton.myersplash.cloudservice.Urls;
-import com.juniperphoton.myersplash.common.Constant;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
-import com.juniperphoton.myersplash.utils.ColorUtil;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
-import com.juniperphoton.myersplash.utils.LocalSettingHelper;
 import com.juniperphoton.myersplash.utils.SerializerUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
 import com.juniperphoton.myersplash.view.DetailView;
@@ -385,7 +373,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     @Override
     public void onClickQuickDownload(UnsplashImage image) {
-        DownloadUtil.startDownloadService(this, image.getFileNameForDownload(), image.getDownloadUrl());
+        DownloadUtil.checkAndDownload(this, image.getFileNameForDownload(), image.getDownloadUrl());
     }
 
     @Override

@@ -36,7 +36,6 @@ import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.utils.ColorUtil;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
-import com.orhanobut.logger.Logger;
 
 import java.io.File;
 
@@ -102,7 +101,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         if (mClickedImage == null) {
             return;
         }
-        DownloadUtil.startDownloadService((Activity) mContext, mClickedImage.getFileNameForDownload(),
+        DownloadUtil.checkAndDownload((Activity) mContext, mClickedImage.getFileNameForDownload(),
                 mClickedImage.getDownloadUrl());
     }
 
