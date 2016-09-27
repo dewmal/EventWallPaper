@@ -119,13 +119,15 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         initMainViews();
 
-        mDetailView.setNavigationCallback(this);
-        mSearchView.setSearchCallback(this);
-
         restorePhotoList();
         getCategories();
 
         RequestUtil.checkAndRequest(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -167,7 +169,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     void onClickAbout() {
         Intent intent = new Intent(this, AboutActivity.class);
         startActivity(intent);
-        //mDrawerLayout.closeDrawer(GravityCompat.START);
     }
 
     @Override
@@ -220,6 +221,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 }
             }
         });
+
+        mDetailView.setNavigationCallback(this);
+        mSearchView.setSearchCallback(this);
 
         if (DeviceUtil.checkDeviceHasNavigationBar(this)) {
             CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mSearchFAB.getLayoutParams();
