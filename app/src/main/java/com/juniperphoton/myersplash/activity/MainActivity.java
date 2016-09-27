@@ -495,7 +495,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @Override
     public void onBackPressed() {
         if (mSearchView.getShown()) {
-            mSearchView.toggleAnimation(false);
+            mSearchView.hide();
             mSearchFAB.show();
             return;
         }

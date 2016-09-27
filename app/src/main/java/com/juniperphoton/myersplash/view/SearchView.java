@@ -83,7 +83,6 @@ public class SearchView extends FrameLayout {
     }
 
     public void toggleAnimation(final boolean show) {
-
         mShown = show;
         this.setVisibility(VISIBLE);
 
@@ -152,6 +151,13 @@ public class SearchView extends FrameLayout {
         return DisplayUtil.getDimenInPixel(180, mContext);
     }
 
+    public void hide(){
+        InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
+        toggleAnimation(false);
+        mEditText.setText("");
+    }
+
     @OnClick(R.id.detail_search_btn_rl)
     void onClickSearch() {
         if (mEditText.getText().toString().equals("")) {
@@ -159,12 +165,8 @@ public class SearchView extends FrameLayout {
             return;
         }
         if (mSearchCallback != null) {
-            InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
-
             mSearchCallback.onClickSearch(mEditText.getText().toString());
-            toggleAnimation(false);
-            mEditText.setText("");
+            hide();
         }
     }
 }
