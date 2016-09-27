@@ -38,4 +38,5 @@
     <string name="no_item">NO ITEMS</string>
     <string name="search_by_other_keywords">SEARCH BY OTHER KEYWORDS</string>
     <string name="return_to_content">RETURN TO %s</string>
+    <string name="set_as_wallpaper">SET AS WALLPAPER</string>
 </resources>

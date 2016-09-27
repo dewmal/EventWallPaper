@@ -3,4 +3,7 @@
     <files-path
         name="sharedImages"
         path="" />
+    <external-path
+        name="downloaded"
+        path="" />
 </Paths>

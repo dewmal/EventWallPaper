@@ -2,18 +2,20 @@ package com.juniperphoton.myersplash.utils;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.FileProvider;
 import android.util.SparseArray;
 
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.service.BackgroundDownloadService;
 
+import java.io.File;
 import java.util.HashMap;
 
 public class NotificationUtil {
@@ -83,14 +85,13 @@ public class NotificationUtil {
 
     public static void showCompleteNotification(Uri downloadUri, Uri fileUri) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(App.getInstance())
-                .setContentTitle("MyerSplash")
-                .setContentText("Saved :D")
+                .setContentTitle("Saved :D")
+                .setContentText("Tap to crop and set as wallpaper.")
                 .setSmallIcon(R.drawable.small_icon);
 
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.addCategory(Intent.CATEGORY_DEFAULT);
-        intent.setDataAndType(fileUri, "image/*");
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        File file = new File(fileUri.getPath());
+        Uri uri = FileProvider.getUriForFile(App.getInstance(), App.getInstance().getString(R.string.authorities), file);
+        Intent intent = WallpaperManager.getInstance(App.getInstance()).getCropAndSetWallpaperIntent(uri);
 
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(App.getInstance());
         stackBuilder.addNextIntent(intent);

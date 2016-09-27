@@ -64,6 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:fontFamily="sans-serif-light"
             android:alpha="0.3"
             android:text="@string/for_windows_amp_android"
             android:textColor="@android:color/white"
