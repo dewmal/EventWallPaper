@@ -85,6 +85,14 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         notifyDataSetChanged();
     }
 
+    public int getSelectedIndex() {
+        return mSelectedIndex;
+    }
+
+    public UnsplashCategory getCategoryByIndex(int index) {
+        return mData.get(index);
+    }
+
     @Override
     public int getItemCount() {
         return mData == null ? 0 : mData.size();

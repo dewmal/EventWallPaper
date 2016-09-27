@@ -65,6 +65,10 @@
                     android:layout_height="match_parent" />
             </android.support.v4.widget.SwipeRefreshLayout>
 
+            <include
+                android:id="@+id/no_item_layout"
+                layout="@layout/detail_no_item" />
+
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/content_activity_search_fab"
                 android:layout_width="wrap_content"
@@ -98,6 +102,6 @@
     <com.juniperphoton.myersplash.view.SearchView
         android:id="@+id/activity_main_search_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

@@ -35,4 +35,7 @@
     <string name="for_windows_amp_android"><![CDATA[for Windows & Android]]></string>
     <string name="search">SEARCH</string>
     <string name="search_in_english">Search in English.</string>
+    <string name="no_item">NO ITEMS</string>
+    <string name="search_by_other_keywords">SEARCH BY OTHER KEYWORDS</string>
+    <string name="return_to_content">RETURN TO %s</string>
 </resources>

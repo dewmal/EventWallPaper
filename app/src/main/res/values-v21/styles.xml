@@ -12,6 +12,7 @@
         <item name="colorPrimaryDark">#c2000000</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:actionBarStyle">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
     </style>
     <style name="AppTheme" parent="AppBaseTheme">
         <item name="android:navigationBarColor">@android:color/transparent</item>

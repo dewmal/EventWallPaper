@@ -55,9 +55,16 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
     private RecyclerView mRecyclerView;
 
+    private boolean showFooter = true;
+
     public PhotoAdapter(List<UnsplashImage> data, Context context) {
         mData = data;
         mContext = context;
+        if (data.size() == 0) {
+            showFooter = false;
+        } else {
+            showFooter = true;
+        }
     }
 
     @Override
@@ -65,11 +72,11 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         switch (viewType) {
             case PhotoViewHolder.TYPE_COMMON_VIEW: {
                 View view = LayoutInflater.from(mContext).inflate(R.layout.row_photo, parent, false);
-                return new PhotoViewHolder(view);
+                return new PhotoViewHolder(view, viewType, showFooter);
             }
             case PhotoViewHolder.TYPE_FOOTER_VIEW: {
                 View view = LayoutInflater.from(mContext).inflate(R.layout.row_footer, parent, false);
-                return new PhotoViewHolder(view);
+                return new PhotoViewHolder(view, viewType, showFooter);
             }
         }
         return null;
@@ -223,12 +230,21 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         public RelativeLayout DownloadRL;
         public RelativeLayout RippleMaskRL;
 
-        public PhotoViewHolder(View itemView) {
+        public RelativeLayout FooterRL;
+
+        public PhotoViewHolder(View itemView, int type, boolean showFooter) {
             super(itemView);
-            SimpleDraweeView = (SimpleDraweeView) itemView.findViewById(R.id.row_photo_iv);
-            RootCardView = (CardView) itemView.findViewById(R.id.row_photo_cv);
-            DownloadRL = (RelativeLayout) itemView.findViewById(R.id.row_photo_download_rl);
-            RippleMaskRL = (RelativeLayout) itemView.findViewById(R.id.row_photo_ripple_mask_rl);
+            if (type == TYPE_COMMON_VIEW) {
+                SimpleDraweeView = (SimpleDraweeView) itemView.findViewById(R.id.row_photo_iv);
+                RootCardView = (CardView) itemView.findViewById(R.id.row_photo_cv);
+                DownloadRL = (RelativeLayout) itemView.findViewById(R.id.row_photo_download_rl);
+                RippleMaskRL = (RelativeLayout) itemView.findViewById(R.id.row_photo_ripple_mask_rl);
+            } else {
+                FooterRL = (RelativeLayout) itemView.findViewById(R.id.row_footer_rl);
+                if (!showFooter) {
+                    FooterRL.setVisibility(View.INVISIBLE);
+                }
+            }
         }
     }
 }

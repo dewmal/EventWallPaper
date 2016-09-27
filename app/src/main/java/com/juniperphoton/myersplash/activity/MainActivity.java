@@ -22,6 +22,7 @@ import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
 import com.juniperphoton.myersplash.R;
@@ -97,6 +98,14 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @Bind(R.id.activity_drawer_bottom_ll)
     LinearLayout mDrawerBottomLL;
 
+    @Bind(R.id.no_item_layout)
+    LinearLayout mNoItemLayout;
+
+    @Bind(R.id.no_item_back_tv)
+    TextView mGoBackLastCategoryTV;
+
+    private int mLastCategory = -1;
+
     private PhotoAdapter mAdapter;
 
     private int mCurrentPage = 1;
@@ -170,6 +179,16 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         Intent intent = new Intent(this, AboutActivity.class);
         startActivity(intent);
     }
+
+    @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.no_item_back_rl)
+    void onClickReturn() {
+        CategoryAdapter adapter = getCategoryAdapter();
+        if (mLastCategory != -1 && adapter != null) {
+            adapter.select(mLastCategory);
+        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -363,6 +382,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
             @Override
             public void onNext(List<UnsplashImage> images) {
+                if (images.size() == 0) {
+                    updateNoItemVisibility(true);
+                } else {
+                    updateNoItemVisibility(false);
+                }
                 if (mCurrentPage == 1 || mAdapter == null) {
                     setImageList(images);
                     if (mSelectedCategoryID == UnsplashCategory.NEW_CATEGORY_ID) {
@@ -400,6 +424,18 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             }
         });
         valueAnimator.start();
+    }
+
+    public void updateNoItemVisibility(boolean show) {
+        if (show) {
+            mNoItemLayout.setVisibility(View.VISIBLE);
+        } else {
+            mNoItemLayout.setVisibility(View.GONE);
+        }
+    }
+
+    public CategoryAdapter getCategoryAdapter() {
+        return ((CategoryAdapter) mDrawerRecyclerView.getAdapter());
     }
 
     @Override
@@ -442,7 +478,15 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mQuery = keyword;
         mRefreshLayout.setRefreshing(true);
         mToolbar.setTitle(keyword.toUpperCase());
-        ((CategoryAdapter) mDrawerRecyclerView.getAdapter()).select(-1);
+
+        CategoryAdapter adapter = getCategoryAdapter();
+        if (adapter != null) {
+            mLastCategory = adapter.getSelectedIndex();
+            mGoBackLastCategoryTV.setText(String.format(getString(R.string.return_to_content),
+                    adapter.getCategoryByIndex(mLastCategory).getTitle().toUpperCase()));
+            adapter.select(-1);
+        }
+
         mSearchFAB.show();
         loadPhotoList();
     }
