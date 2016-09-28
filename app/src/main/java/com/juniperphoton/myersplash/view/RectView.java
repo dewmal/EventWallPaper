@@ -1,6 +1,5 @@
 package com.juniperphoton.myersplash.view;
 
-import android.app.Application;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;

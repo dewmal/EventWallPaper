@@ -1,36 +1,21 @@
 package com.juniperphoton.myersplash.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.RectF;
-import android.graphics.drawable.Animatable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.RelativeLayout;
 
-import com.facebook.common.logging.FLog;
-import com.facebook.datasource.BaseDataSubscriber;
-import com.facebook.datasource.DataSource;
-import com.facebook.datasource.DataSubscriber;
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.controller.BaseControllerListener;
-import com.facebook.drawee.controller.ControllerListener;
-import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.image.ImageInfo;
-import com.facebook.imagepipeline.image.QualityInfo;
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.activity.DetailActivity;
 import com.juniperphoton.myersplash.callback.OnClickPhotoCallback;
 import com.juniperphoton.myersplash.callback.OnClickQuickDownloadCallback;
 import com.juniperphoton.myersplash.callback.OnLoadMoreListener;
@@ -50,21 +35,14 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     private OnClickPhotoCallback mOnClickPhotoCallback;
     private OnClickQuickDownloadCallback mOnClickDownloadCallback;
 
-    private boolean mOpenLoadMore = true;//是否开启加载更多
     private boolean isAutoLoadMore = true;//是否自动加载，当数据不满一屏幕会自动加载
-
-    private RecyclerView mRecyclerView;
 
     private boolean showFooter = true;
 
     public PhotoAdapter(List<UnsplashImage> data, Context context) {
         mData = data;
         mContext = context;
-        if (data.size() == 0) {
-            showFooter = false;
-        } else {
-            showFooter = true;
-        }
+        showFooter = data.size() != 0;
     }
 
     @Override
@@ -148,12 +126,11 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         final RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-        mRecyclerView = recyclerView;
         startLoadMore(recyclerView, layoutManager);
     }
 
     private void startLoadMore(RecyclerView recyclerView, final RecyclerView.LayoutManager layoutManager) {
-        if (!mOpenLoadMore || mOnLoadMoreListener == null) {
+        if (mOnLoadMoreListener == null) {
             return;
         }
 
@@ -183,12 +160,19 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     /**
      * 刷新加载更多的数据
      *
-     * @param datas
+     * @param moreData 照片列表
      */
-    public void setLoadMoreData(List<UnsplashImage> datas) {
+    public void setLoadMoreData(List<UnsplashImage> moreData) {
         int size = mData.size();
-        mData.addAll(datas);
+        mData.addAll(moreData);
         notifyItemInserted(size);
+        if (moreData.size() > 0) {
+            isAutoLoadMore = true;
+            showFooter = true;
+        } else {
+            isAutoLoadMore = false;
+            showFooter = false;
+        }
     }
 
     private int findLastVisibleItemPosition(RecyclerView.LayoutManager layoutManager) {
@@ -211,7 +195,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     }
 
     public UnsplashImage getFirstImage() {
-        if (mData != null & mData.size() > 0) {
+        if (mData != null && mData.size() > 0) {
             return mData.get(0);
         }
         return null;
@@ -221,18 +205,18 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         mOnLoadMoreListener.OnLoadMore();
     }
 
-    public class PhotoViewHolder extends RecyclerView.ViewHolder {
-        public static final int TYPE_COMMON_VIEW = 100001;
-        public static final int TYPE_FOOTER_VIEW = 100002;
+    class PhotoViewHolder extends RecyclerView.ViewHolder {
+        static final int TYPE_COMMON_VIEW = 100001;
+        static final int TYPE_FOOTER_VIEW = 100002;
 
-        public SimpleDraweeView SimpleDraweeView;
-        public CardView RootCardView;
-        public RelativeLayout DownloadRL;
-        public RelativeLayout RippleMaskRL;
+        SimpleDraweeView SimpleDraweeView;
+        CardView RootCardView;
+        RelativeLayout DownloadRL;
+        RelativeLayout RippleMaskRL;
 
-        public RelativeLayout FooterRL;
+        RelativeLayout FooterRL;
 
-        public PhotoViewHolder(View itemView, int type, boolean showFooter) {
+        PhotoViewHolder(View itemView, int type, boolean showFooter) {
             super(itemView);
             if (type == TYPE_COMMON_VIEW) {
                 SimpleDraweeView = (SimpleDraweeView) itemView.findViewById(R.id.row_photo_iv);

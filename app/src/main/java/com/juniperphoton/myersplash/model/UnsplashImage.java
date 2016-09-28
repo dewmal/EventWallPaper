@@ -1,8 +1,6 @@
 package com.juniperphoton.myersplash.model;
 
 import android.graphics.Color;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.common.Constant;

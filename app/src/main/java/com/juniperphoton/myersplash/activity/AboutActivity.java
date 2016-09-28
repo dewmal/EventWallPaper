@@ -1,31 +1,20 @@
 package com.juniperphoton.myersplash.activity;
 
-import android.animation.ValueAnimator;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ImageView;
 
 import com.juniperphoton.myersplash.R;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import moe.feng.material.statusbar.StatusBarCompat;
 
 public class AboutActivity extends AppCompatActivity {
-
-    private final String SHARE_SUBJECT = "MyerSplash for Android %s feedback";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,6 +34,8 @@ public class AboutActivity extends AppCompatActivity {
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.setType("message/rfc822");
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"dengweichao@hotmail.com"}); // recipients
+
+        String SHARE_SUBJECT = "MyerSplash for Android %s feedback";
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, String.format(SHARE_SUBJECT, getResources().getString(R.string.Version)));
         emailIntent.putExtra(Intent.EXTRA_TEXT, "");
         startActivity(emailIntent);

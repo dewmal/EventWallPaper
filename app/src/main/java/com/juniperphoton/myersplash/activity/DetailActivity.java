@@ -3,10 +3,8 @@ package com.juniperphoton.myersplash.activity;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.annotation.BinderThread;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -39,15 +37,18 @@ public class DetailActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         UnsplashImage image = (UnsplashImage) getIntent().getExtras().getSerializable("IMAGE");
-        mHeroImageView.setImageURI(image.getListUrl());
+        if (image != null) {
+            mHeroImageView.setImageURI(image.getListUrl());
 
-        mDetailRootRelativeLayout.setBackground(new ColorDrawable(image.getThemeColor()));
-        mNameTextView.setText(image.getUserName());
+            mDetailRootRelativeLayout.setBackground(new ColorDrawable(image.getThemeColor()));
+            mNameTextView.setText(image.getUserName());
 
-        int backColor = image.getThemeColor();
-        if (!ColorUtil.isColorLight(backColor)) {
-            mNameTextView.setTextColor(Color.WHITE);
-            mPhotoByTextView.setTextColor(Color.WHITE);
+            int backColor = image.getThemeColor();
+            if (!ColorUtil.isColorLight(backColor)) {
+                mNameTextView.setTextColor(Color.WHITE);
+                mPhotoByTextView.setTextColor(Color.WHITE);
+            }
         }
+
     }
 }

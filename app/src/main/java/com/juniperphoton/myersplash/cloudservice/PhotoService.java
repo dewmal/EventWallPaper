@@ -1,7 +1,6 @@
 package com.juniperphoton.myersplash.cloudservice;
 
 import com.juniperphoton.myersplash.model.SearchResult;
-import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.model.UnsplashImageFeatured;
 

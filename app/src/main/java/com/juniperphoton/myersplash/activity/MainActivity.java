@@ -7,16 +7,15 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
@@ -38,7 +37,6 @@ import com.juniperphoton.myersplash.cloudservice.Urls;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.utils.DeviceUtil;
-import com.juniperphoton.myersplash.utils.DisplayUtil;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.RequestUtil;
 import com.juniperphoton.myersplash.utils.SerializerUtil;
@@ -382,7 +380,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
             @Override
             public void onNext(List<UnsplashImage> images) {
-                if (images.size() == 0) {
+                if (images.size() == 0 && getPhotoAdapter().getItemCount() == 0) {
                     updateNoItemVisibility(true);
                 } else {
                     updateNoItemVisibility(false);
@@ -438,6 +436,10 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         return ((CategoryAdapter) mDrawerRecyclerView.getAdapter());
     }
 
+    public PhotoAdapter getPhotoAdapter() {
+        return ((PhotoAdapter) mContentRecyclerView.getAdapter());
+    }
+
     @Override
     public void OnLoadMore() {
         ++mCurrentPage;
@@ -480,7 +482,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mToolbar.setTitle(keyword.toUpperCase());
 
         CategoryAdapter adapter = getCategoryAdapter();
-        if (adapter != null) {
+        if (adapter != null && mLastCategory != -1) {
             mLastCategory = adapter.getSelectedIndex();
             mGoBackLastCategoryTV.setText(String.format(getString(R.string.return_to_content),
                     adapter.getCategoryByIndex(mLastCategory).getTitle().toUpperCase()));

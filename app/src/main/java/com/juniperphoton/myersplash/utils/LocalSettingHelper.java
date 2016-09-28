@@ -2,7 +2,6 @@ package com.juniperphoton.myersplash.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.hardware.camera2.params.Face;
 
 public class LocalSettingHelper {
     private static final String CONFIG_NAME = "config";
