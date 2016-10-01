@@ -1,4 +1,4 @@
-package com.juniperphoton.myersplash.view;
+package com.juniperphoton.myersplash.widget;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;

@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.callback.INavigationDrawerCallback;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
-import com.juniperphoton.myersplash.view.RectView;
+import com.juniperphoton.myersplash.widget.RectView;
 
 import java.util.List;
 

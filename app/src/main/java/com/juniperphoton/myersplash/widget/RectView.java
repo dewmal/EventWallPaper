@@ -1,4 +1,4 @@
-package com.juniperphoton.myersplash.view;
+package com.juniperphoton.myersplash.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;

@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground">
 
-        <com.juniperphoton.myersplash.view.RectView
+        <com.juniperphoton.myersplash.widget.RectView
             android:id="@+id/row_cateogory_rv"
             android:layout_width="8dp"
             android:layout_height="match_parent"

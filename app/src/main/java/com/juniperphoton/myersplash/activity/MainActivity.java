@@ -41,7 +41,7 @@ import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.RequestUtil;
 import com.juniperphoton.myersplash.utils.SerializerUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
-import com.juniperphoton.myersplash.view.DetailView;
+import com.juniperphoton.myersplash.widget.DetailView;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     DetailView mDetailView;
 
     @Bind(R.id.activity_main_search_view)
-    com.juniperphoton.myersplash.view.SearchView mSearchView;
+    com.juniperphoton.myersplash.widget.SearchView mSearchView;
 
     @Bind(R.id.activity_drawer_bottom_ll)
     LinearLayout mDrawerBottomLL;
