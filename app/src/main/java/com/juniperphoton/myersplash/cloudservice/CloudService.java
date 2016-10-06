@@ -16,6 +16,7 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
@@ -69,7 +70,7 @@ public class CloudService {
 
     public void getPhotos(Subscriber<List<UnsplashImage>> subscriber, String url, int page) {
         Observable<List<UnsplashImage>> observable = photoService.getPhotos(url, page, 10, AppKey);
-        subsribe(observable, subscriber);
+        subscribe(observable, subscriber);
     }
 
     public void getFeaturedPhotos(Subscriber<List<UnsplashImage>> subscriber, String url, int page) {
@@ -84,7 +85,7 @@ public class CloudService {
                 return contentImages;
             }
         });
-        subsribe(observable, subscriber);
+        subscribe(observable, subscriber);
     }
 
     public void searchPhotos(Subscriber<List<UnsplashImage>> subscriber, String url, int page, String query) {
@@ -95,19 +96,19 @@ public class CloudService {
                 return searchResults.getList();
             }
         });
-        subsribe(observable, subscriber);
+        subscribe(observable, subscriber);
     }
 
-    private void subsribe(Observable<List<UnsplashImage>> observable, Subscriber<List<UnsplashImage>> subscriber) {
+    private void subscribe(Observable<List<UnsplashImage>> observable, Subscriber<List<UnsplashImage>> subscriber) {
         observable.subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
     }
 
-    public void downloadPhoto(Subscriber<ResponseBody> subscriber, String url) {
+    public Subscription downloadPhoto(Subscriber<ResponseBody> subscriber, String url) {
         Observable<ResponseBody> observable = downloadService.downloadFileWithDynamicUrlSync(url);
-        observable.subscribeOn(Schedulers.io())
+        return observable.subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(subscriber);

@@ -18,6 +18,13 @@ import com.juniperphoton.myersplash.service.BackgroundDownloadService;
 import java.io.File;
 import java.util.HashMap;
 
+import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
+import static com.juniperphoton.myersplash.service.BackgroundDownloadService.CANCELED_KEY;
+import static com.juniperphoton.myersplash.service.BackgroundDownloadService.CANCEL_NID_KEY;
+import static com.juniperphoton.myersplash.service.BackgroundDownloadService.FILE_PATH_KEY;
+import static com.juniperphoton.myersplash.service.BackgroundDownloadService.NAME_KEY;
+import static com.juniperphoton.myersplash.service.BackgroundDownloadService.URI_KEY;
+
 public class NotificationUtil {
 
     private static int mLastId = 0;
@@ -67,9 +74,9 @@ public class NotificationUtil {
         }
 
         Intent intent = new Intent(App.getInstance(), BackgroundDownloadService.class);
-        intent.putExtra("NAME", fileName);
-        intent.putExtra("URI", url);
-        intent.putExtra("NID", nId);
+        intent.putExtra(NAME_KEY, fileName);
+        intent.putExtra(URI_KEY, url);
+        intent.putExtra(CANCEL_NID_KEY, nId);
 
         PendingIntent resultPendingIntent = PendingIntent.getService(App.getInstance(), 0, intent, 0);
 
@@ -78,13 +85,16 @@ public class NotificationUtil {
                 .setContentText("Please checkAndRequest your network and retry.")
                 .setSmallIcon(R.drawable.ic_cancel_white_36dp);
 
-        builder.addAction(R.drawable.ic_replay_white_48dp, "Retry", resultPendingIntent);
+        builder.addAction(R.drawable.ic_replay_white_48dp, "RETRY", resultPendingIntent);
 
         getNotificationManager().notify(nId, builder.build());
     }
 
     public static void showCompleteNotification(Uri downloadUri, Uri fileUri) {
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(App.getInstance())
+        int nId;
+        nId = findNIdByUri(downloadUri);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(App.getInstance())
                 .setContentTitle("Saved :D")
                 .setContentText("Tap to crop and set as wallpaper.")
                 .setSmallIcon(R.drawable.small_icon);
@@ -97,17 +107,15 @@ public class NotificationUtil {
         stackBuilder.addNextIntent(intent);
 
         PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        mBuilder.setContentIntent(resultPendingIntent);
+                stackBuilder.getPendingIntent(0, FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(resultPendingIntent);
 
-        int nId;
-        nId = findNIdByUri(downloadUri);
         if (nId != NOT_ALLOCATED_ID) {
-            getNotificationManager().notify(nId, mBuilder.build());
+            getNotificationManager().notify(nId, builder.build());
         }
     }
 
-    public static void showProgressNotification(String title, String content, int progress, Uri downloadUri) {
+    public static void showProgressNotification(String title, String content, int progress, String filePath, Uri downloadUri) {
         int nId;
         nId = findNIdByUri(downloadUri);
         if (nId == NOT_ALLOCATED_ID) {
@@ -126,6 +134,19 @@ public class NotificationUtil {
         } else {
             builder.setProgress(100, progress, false);
         }
+
+//        if (builder.mActions.size() == 0) {
+//            Intent cancelIntent = new Intent(App.getInstance(), BackgroundDownloadService.class);
+//            cancelIntent.putExtra(URI_KEY, downloadUri.toString());
+//            cancelIntent.putExtra(CANCEL_NID_KEY, nId);
+//            cancelIntent.putExtra(CANCELED_KEY, true);
+//            cancelIntent.putExtra(FILE_PATH_KEY, filePath);
+//
+//            PendingIntent resultPendingIntent = PendingIntent.getService(App.getInstance(), 0,
+//                    cancelIntent, FLAG_UPDATE_CURRENT);
+//
+//            builder.addAction(R.drawable.ic_replay_white_48dp, "CANCEL", resultPendingIntent);
+//        }
         getNotificationManager().notify(nId, builder.build());
     }
 }

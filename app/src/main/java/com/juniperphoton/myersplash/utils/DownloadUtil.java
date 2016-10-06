@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.util.Date;
 
 import okhttp3.ResponseBody;
@@ -24,13 +25,9 @@ import okhttp3.ResponseBody;
 public class DownloadUtil {
     private static String TAG = "DownloadUtil";
 
-    public static File writeResponseBodyToDisk(ResponseBody body, String expectedName, final String url) {
+    public static File writeResponseBodyToDisk(ResponseBody body, String fileUri, final String url) {
         try {
-            File folder = new File(getGalleryPath());
-            if (!folder.exists()) {
-                folder.mkdirs();
-            }
-            File fileToSave = new File(folder + File.separator + expectedName);
+            File fileToSave = new File(fileUri);
 
             InputStream inputStream = null;
             OutputStream outputStream = null;
@@ -62,9 +59,10 @@ public class DownloadUtil {
                     int progress = (int) (fileSizeDownloaded / (double) fileSize * 100);
                     if (progress - progressToReport >= 5) {
                         progressToReport = progress;
-                        NotificationUtil.showProgressNotification("MyerSplash", "Downloading...", progressToReport, Uri.parse(url));
+                        NotificationUtil.showProgressNotification("MyerSplash", "Downloading...",
+                                progressToReport, fileUri, Uri.parse(url));
                     }
-                    Log.d(TAG, "progress: " + progress + ",last:" + progressToReport);
+                    //Log.d(TAG, "progress: " + progress + ",last:" + progressToReport);
                 }
                 long endTime = new Date().getTime();
 
@@ -72,7 +70,7 @@ public class DownloadUtil {
 
                 outputStream.flush();
 
-                NotificationUtil.showCompleteNotification(Uri.parse(url), Uri.fromFile(fileToSave));
+                //NotificationUtil.showCompleteNotification(Uri.parse(url), Uri.fromFile(fileToSave));
 
                 return fileToSave;
             } catch (Exception e) {
@@ -92,6 +90,15 @@ public class DownloadUtil {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static File getFileToSave(String expectedName) {
+        File folder = new File(getGalleryPath());
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+        File fileToSave = new File(folder + File.separator + expectedName);
+        return fileToSave;
     }
 
     /**

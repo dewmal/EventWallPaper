@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     private PhotoAdapter mAdapter;
 
-    private int mCurrentPage = 1;
+    private int mCurrentRequestPage = 1;
     private int mSelectedCategoryID = 0;
     private String mQuery;
     private String mUrl = CloudService.baseUrl;
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mCurrentPage = 1;
+                mCurrentRequestPage = 1;
                 loadPhotoList();
             }
         });
@@ -356,7 +356,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mSelectedCategoryID = category.getId();
         mToolbar.setTitle(category.getTitle().toUpperCase());
         mDrawerLayout.closeDrawer(GravityCompat.START);
-        mCurrentPage = 1;
+        mCurrentRequestPage = 1;
         mUrl = category.getUrl();
         mRefreshLayout.setRefreshing(true);
         loadPhotoList();
@@ -367,7 +367,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             @Override
             public void onCompleted() {
                 mRefreshLayout.setRefreshing(false);
-                if (mCurrentPage == 1) {
+                if (mCurrentRequestPage == 1) {
                     ToastService.sendShortToast("Loaded :D");
                 }
             }
@@ -380,12 +380,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
             @Override
             public void onNext(List<UnsplashImage> images) {
-                if (images.size() == 0 && getPhotoAdapter().getItemCount() == 0) {
-                    updateNoItemVisibility(true);
-                } else {
-                    updateNoItemVisibility(false);
-                }
-                if (mCurrentPage == 1 || mAdapter == null) {
+                if (mCurrentRequestPage == 1 || mAdapter == null) {
                     setImageList(images);
                     if (mSelectedCategoryID == UnsplashCategory.NEW_CATEGORY_ID) {
                         SerializerUtil.serializeToFile(MainActivity.this, images,
@@ -394,15 +389,23 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 } else {
                     mAdapter.setLoadMoreData(images);
                 }
+                PhotoAdapter photoAdapter = getPhotoAdapter();
+                if (photoAdapter == null) {
+                    updateNoItemVisibility(true);
+                } else if (images.size() == 0 && photoAdapter.getItemCount() == 0) {
+                    updateNoItemVisibility(true);
+                } else {
+                    updateNoItemVisibility(false);
+                }
             }
         };
 
         if (mSelectedCategoryID == UnsplashCategory.FEATURED_CATEGORY_ID) {
-            CloudService.getInstance().getFeaturedPhotos(subscriber, mUrl, mCurrentPage);
+            CloudService.getInstance().getFeaturedPhotos(subscriber, mUrl, mCurrentRequestPage);
         } else if (mSelectedCategoryID == SEARCH_ID) {
-            CloudService.getInstance().searchPhotos(subscriber, mUrl, mCurrentPage, mQuery);
+            CloudService.getInstance().searchPhotos(subscriber, mUrl, mCurrentRequestPage, mQuery);
         } else {
-            CloudService.getInstance().getPhotos(subscriber, mUrl, mCurrentPage);
+            CloudService.getInstance().getPhotos(subscriber, mUrl, mCurrentRequestPage);
         }
     }
 
@@ -442,7 +445,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     @Override
     public void OnLoadMore() {
-        ++mCurrentPage;
+        ++mCurrentRequestPage;
         loadPhotoList();
     }
 
@@ -473,20 +476,23 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     @Override
     public void onClickSearch(String keyword) {
-        mCurrentPage = 1;
+        mCurrentRequestPage = 1;
         mAdapter = null;
         mSelectedCategoryID = SEARCH_ID;
         mUrl = Urls.SEARCH_URL;
         mQuery = keyword;
         mRefreshLayout.setRefreshing(true);
         mToolbar.setTitle(keyword.toUpperCase());
+        mContentRecyclerView.setAdapter(null);
 
         CategoryAdapter adapter = getCategoryAdapter();
-        if (adapter != null && mLastCategory != -1) {
+        if (adapter != null) {
             mLastCategory = adapter.getSelectedIndex();
-            mGoBackLastCategoryTV.setText(String.format(getString(R.string.return_to_content),
-                    adapter.getCategoryByIndex(mLastCategory).getTitle().toUpperCase()));
-            adapter.select(-1);
+            if (mLastCategory != -1) {
+                mGoBackLastCategoryTV.setText(String.format(getString(R.string.return_to_content),
+                        adapter.getCategoryByIndex(mLastCategory).getTitle().toUpperCase()));
+                adapter.select(-1);
+            }
         }
 
         mSearchFAB.show();

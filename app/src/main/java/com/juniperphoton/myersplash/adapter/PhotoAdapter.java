@@ -25,8 +25,11 @@ import com.juniperphoton.myersplash.utils.LocalSettingHelper;
 
 import java.util.List;
 
-
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder> {
+
+    private final int FOOTER_FLAG_NOT_SHOW = 0;
+    private final int FOOTER_FLAG_SHOW = 1;
+    private final int FOOTER_FLAG_SHOW_END = 1 << 1 | FOOTER_FLAG_SHOW;
 
     private List<UnsplashImage> mData;
 
@@ -36,13 +39,21 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     private OnClickQuickDownloadCallback mOnClickDownloadCallback;
 
     private boolean isAutoLoadMore = true;//是否自动加载，当数据不满一屏幕会自动加载
-
-    private boolean showFooter = true;
+    private int footerFlag = FOOTER_FLAG_SHOW;
 
     public PhotoAdapter(List<UnsplashImage> data, Context context) {
         mData = data;
         mContext = context;
-        showFooter = data.size() != 0;
+        if (data.size() >= 10) {
+            isAutoLoadMore = true;
+            footerFlag = FOOTER_FLAG_SHOW;
+        } else if (data.size() > 0) {
+            isAutoLoadMore = false;
+            footerFlag = FOOTER_FLAG_SHOW_END;
+        } else {
+            isAutoLoadMore = false;
+            footerFlag = FOOTER_FLAG_NOT_SHOW;
+        }
     }
 
     @Override
@@ -50,11 +61,16 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         switch (viewType) {
             case PhotoViewHolder.TYPE_COMMON_VIEW: {
                 View view = LayoutInflater.from(mContext).inflate(R.layout.row_photo, parent, false);
-                return new PhotoViewHolder(view, viewType, showFooter);
+                return new PhotoViewHolder(view, viewType, footerFlag);
             }
             case PhotoViewHolder.TYPE_FOOTER_VIEW: {
-                View view = LayoutInflater.from(mContext).inflate(R.layout.row_footer, parent, false);
-                return new PhotoViewHolder(view, viewType, showFooter);
+                View view;
+                if (footerFlag == FOOTER_FLAG_SHOW_END) {
+                    view = LayoutInflater.from(mContext).inflate(R.layout.row_footer_end, parent, false);
+                } else {
+                    view = LayoutInflater.from(mContext).inflate(R.layout.row_footer, parent, false);
+                }
+                return new PhotoViewHolder(view, viewType, footerFlag);
             }
         }
         return null;
@@ -108,7 +124,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
     @Override
     public int getItemCount() {
-        return mData == null ? 0 : mData.size() + 1;
+        if (mData == null) return 0;
+        int size = footerFlag != FOOTER_FLAG_NOT_SHOW ? mData.size() + 1 : mData.size();
+        return size;
     }
 
     @Override
@@ -119,7 +137,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     }
 
     private boolean isFooterView(int position) {
-        return position >= getItemCount() - 1;
+        return footerFlag != FOOTER_FLAG_NOT_SHOW && position >= getItemCount() - 1;
     }
 
     @Override
@@ -160,18 +178,23 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     /**
      * 刷新加载更多的数据
      *
-     * @param moreData 照片列表
+     * @param data 照片列表
      */
-    public void setLoadMoreData(List<UnsplashImage> moreData) {
+    public void setLoadMoreData(List<UnsplashImage> data) {
         int size = mData.size();
-        mData.addAll(moreData);
-        notifyItemInserted(size);
-        if (moreData.size() > 0) {
+        mData.addAll(data);
+        if (data.size() >= 10) {
             isAutoLoadMore = true;
-            showFooter = true;
+            footerFlag |= FOOTER_FLAG_SHOW;
+            notifyItemInserted(size);
+        } else if (data.size() > 0) {
+            isAutoLoadMore = false;
+            footerFlag |= FOOTER_FLAG_SHOW;
+            footerFlag |= FOOTER_FLAG_SHOW_END;
+            notifyItemInserted(size);
         } else {
             isAutoLoadMore = false;
-            showFooter = false;
+            footerFlag = FOOTER_FLAG_NOT_SHOW;
         }
     }
 
@@ -206,8 +229,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     }
 
     class PhotoViewHolder extends RecyclerView.ViewHolder {
-        static final int TYPE_COMMON_VIEW = 100001;
-        static final int TYPE_FOOTER_VIEW = 100002;
+        static final int TYPE_COMMON_VIEW = 100000;
+        static final int TYPE_FOOTER_VIEW = 100001;
 
         SimpleDraweeView SimpleDraweeView;
         CardView RootCardView;
@@ -216,7 +239,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
         RelativeLayout FooterRL;
 
-        PhotoViewHolder(View itemView, int type, boolean showFooter) {
+        PhotoViewHolder(View itemView, int type, int footerFlag) {
             super(itemView);
             if (type == TYPE_COMMON_VIEW) {
                 SimpleDraweeView = (SimpleDraweeView) itemView.findViewById(R.id.row_photo_iv);
@@ -225,7 +248,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                 RippleMaskRL = (RelativeLayout) itemView.findViewById(R.id.row_photo_ripple_mask_rl);
             } else {
                 FooterRL = (RelativeLayout) itemView.findViewById(R.id.row_footer_rl);
-                if (!showFooter) {
+                if (footerFlag == FOOTER_FLAG_NOT_SHOW) {
                     FooterRL.setVisibility(View.INVISIBLE);
                 }
             }

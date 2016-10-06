@@ -19,15 +19,6 @@
         android:scaleType="fitXY"
         android:src="@drawable/black_mask" />
 
-    <ImageView
-        android:id="@+id/activity_about_backgrd_iv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:contentDescription="@string/ImageDescDefault"
-        android:scaleType="fitXY"
-        />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

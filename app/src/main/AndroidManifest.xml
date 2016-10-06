@@ -40,6 +40,8 @@
             android:name=".service.BackgroundDownloadService"
             android:exported="false" />
 
+        <receiver android:name=".BroadcastReceiver.DownloadCancelReceiver" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="@string/authorities"
