@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mDetailView.setNavigationCallback(this);
         mSearchView.setSearchCallback(this);
 
-        if (DeviceUtil.checkDeviceHasNavigationBar(this)) {
+        if (!DeviceUtil.hasNavigationBar(this)) {
             CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mSearchFAB.getLayoutParams();
             params.setMargins(0, 0, getDimenInPixel(24, this), getDimenInPixel(24, this));
             mSearchFAB.setLayoutParams(params);
