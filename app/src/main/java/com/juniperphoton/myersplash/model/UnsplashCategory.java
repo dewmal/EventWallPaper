@@ -5,8 +5,10 @@ import com.juniperphoton.myersplash.cloudservice.CloudService;
 public class UnsplashCategory {
     public final static int FEATURED_CATEGORY_ID = 10000;
     public final static int NEW_CATEGORY_ID = 10001;
+    public final static int RANDOM_CATEOGORY_ID = 10002;
     public final static String FEATURE_S = "Featured";
     public final static String NEW_S = "New";
+    public final static String RANDOM_S = "Random";
 
     private int id;
     private String title;
@@ -29,7 +31,7 @@ public class UnsplashCategory {
         return title;
     }
 
-    public int getId(){
+    public int getId() {
         return id;
     }
 

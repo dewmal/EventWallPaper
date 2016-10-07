@@ -20,4 +20,7 @@ public interface PhotoService {
 
     @GET
     Observable<SearchResult> searchPhotosByQuery(@Url String url, @Query("page") int page, @Query("per_page") int per_page, @Query("query") String query, @Query("client_id") String id);
+
+    @GET
+    Observable<List<UnsplashImage>> getRandomPhotos(@Url String url, @Query("count") int count, @Query("client_id") String id);
 }

@@ -73,6 +73,11 @@ public class CloudService {
         subscribe(observable, subscriber);
     }
 
+    public void getRandomPhotos(Subscriber<List<UnsplashImage>> subscriber, String url) {
+        Observable<List<UnsplashImage>> observable = photoService.getRandomPhotos(url, 10, AppKey);
+        subscribe(observable, subscriber);
+    }
+
     public void getFeaturedPhotos(Subscriber<List<UnsplashImage>> subscriber, String url, int page) {
         Observable<List<UnsplashImageFeatured>> observableF = photoService.getFeaturedPhotos(url, page, 10, AppKey);
         Observable<List<UnsplashImage>> observable = observableF.map(new Func1<List<UnsplashImageFeatured>, List<UnsplashImage>>() {

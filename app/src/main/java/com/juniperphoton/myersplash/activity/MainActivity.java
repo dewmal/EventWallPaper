@@ -258,9 +258,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     private void getCategories() {
-        if (restoreCategoryList()) {
-            return;
-        }
+        restoreCategoryList();
         CloudService.getInstance().getCategories(new Subscriber<List<UnsplashCategory>>() {
             @Override
             public void onCompleted() {
@@ -282,8 +280,13 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 newCategory.setId(UnsplashCategory.NEW_CATEGORY_ID);
                 newCategory.setTitle(UnsplashCategory.NEW_S);
 
-                unsplashCategories.add(0, newCategory);
+                UnsplashCategory randomCategory = new UnsplashCategory();
+                randomCategory.setId(UnsplashCategory.RANDOM_CATEOGORY_ID);
+                randomCategory.setTitle(UnsplashCategory.RANDOM_S);
+
                 unsplashCategories.add(0, featureCategory);
+                unsplashCategories.add(0, newCategory);
+                unsplashCategories.add(0, randomCategory);
 
                 SerializerUtil.serializeToFile(MainActivity.this, unsplashCategories,
                         SerializerUtil.CATEGORY_LIST_FILE_NAME);
@@ -354,6 +357,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @Override
     public void onSelectItem(UnsplashCategory category) {
         mSelectedCategoryID = category.getId();
+        if (category.getTitle() == null) return;
+
         mToolbar.setTitle(category.getTitle().toUpperCase());
         mDrawerLayout.closeDrawer(GravityCompat.START);
         mCurrentRequestPage = 1;
@@ -404,6 +409,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             CloudService.getInstance().getFeaturedPhotos(subscriber, mUrl, mCurrentRequestPage);
         } else if (mSelectedCategoryID == SEARCH_ID) {
             CloudService.getInstance().searchPhotos(subscriber, mUrl, mCurrentRequestPage, mQuery);
+        } else if (mSelectedCategoryID == UnsplashCategory.RANDOM_CATEOGORY_ID) {
+            CloudService.getInstance().getRandomPhotos(subscriber, Urls.RANDOM_PHOTS_URL);
         } else {
             CloudService.getInstance().getPhotos(subscriber, mUrl, mCurrentRequestPage);
         }
