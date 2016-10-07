@@ -35,16 +35,23 @@ public class UnsplashCategory {
         return id;
     }
 
-    public String getUrl() {
+    public String getRequestUrl() {
         if (id == NEW_CATEGORY_ID) {
-            return CloudService.photoUrl;
+            return CloudService.PHOTO_URL;
         } else if (id == FEATURED_CATEGORY_ID) {
-            return CloudService.featuredPhotosUrl;
+            return CloudService.FEATURED_PHOTO_URL;
+        } else if (id == RANDOM_CATEOGORY_ID) {
+            return CloudService.RANDOM_PHOTOS_URL;
         } else return links.photos;
+    }
+
+    public String getWebsiteUrl() {
+        return links.html;
     }
 
     public class links {
         private String self;
         private String photos;
+        private String html;
     }
 }

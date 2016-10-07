@@ -24,9 +24,11 @@ import rx.schedulers.Schedulers;
 public class CloudService {
     private static String AppKey = "403d9934ce4bb8dbef44765692144e8c6fac6d2698950cb40b07397d6c6635fe";
 
-    public static String baseUrl = "https://api.unsplash.com/";
-    public static String photoUrl = "https://api.unsplash.com/photos?";
-    public static String featuredPhotosUrl = "https://api.unsplash.com/collections/featured?";
+    public static String BASE_URL = "https://api.unsplash.com/";
+    public static String PHOTO_URL = "https://api.unsplash.com/photos?";
+    public static String FEATURED_PHOTO_URL = "https://api.unsplash.com/collections/featured?";
+    public static String RANDOM_PHOTOS_URL = "https://api.unsplash.com/photos/random?";
+    public static String SEARCH_URL = "https://api.unsplash.com/search/photos?";
 
     private static final int DEFAULT_TIMEOUT = 10;
 
@@ -44,7 +46,7 @@ public class CloudService {
                 .client(builder.build())
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .baseUrl(baseUrl)
+                .baseUrl(BASE_URL)
                 .build();
 
         categoryService = retrofit.create(CategoryService.class);

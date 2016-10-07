@@ -33,16 +33,17 @@ import com.juniperphoton.myersplash.callback.OnClickQuickDownloadCallback;
 import com.juniperphoton.myersplash.callback.OnClickSearchCallback;
 import com.juniperphoton.myersplash.callback.OnLoadMoreListener;
 import com.juniperphoton.myersplash.cloudservice.CloudService;
-import com.juniperphoton.myersplash.cloudservice.Urls;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.utils.DeviceUtil;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
+import com.juniperphoton.myersplash.utils.LocalSettingHelper;
 import com.juniperphoton.myersplash.utils.RequestUtil;
 import com.juniperphoton.myersplash.utils.SerializerUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
 import com.juniperphoton.myersplash.widget.DetailView;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.List;
 
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private static final String TAG = MainActivity.class.getName();
 
     private static final int SEARCH_ID = -10000;
+    private static final String CHECK_ONE_POINT_ONE_VERSION = "CHECK_ONE_POINT_ONE_VERSION";
 
     @Bind(R.id.activity_drawer_rv)
     RecyclerView mDrawerRecyclerView;
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private int mCurrentRequestPage = 1;
     private int mSelectedCategoryID = 0;
     private String mQuery;
-    private String mUrl = CloudService.baseUrl;
+    private String mUrl = CloudService.BASE_URL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +127,14 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         setSupportActionBar(mToolbar);
 
         initMainViews();
+
+        if (!LocalSettingHelper.checkKey(this, CHECK_ONE_POINT_ONE_VERSION)) {
+            File file = this.getFileStreamPath(SerializerUtil.CATEGORY_LIST_FILE_NAME);
+            if (file != null) {
+                file.delete();
+            }
+            LocalSettingHelper.putBoolean(this, CHECK_ONE_POINT_ONE_VERSION, true);
+        }
 
         restorePhotoList();
         getCategories();
@@ -258,7 +268,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     private void getCategories() {
-        restoreCategoryList();
+        List<UnsplashCategory> categories = restoreCategoryList();
+        if (categories != null && categories.size() > 0) {
+            configCategoryList(categories);
+            setCategoryList(categories);
+        }
         CloudService.getInstance().getCategories(new Subscriber<List<UnsplashCategory>>() {
             @Override
             public void onCompleted() {
@@ -272,28 +286,31 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
             @Override
             public void onNext(List<UnsplashCategory> unsplashCategories) {
-                UnsplashCategory featureCategory = new UnsplashCategory();
-                featureCategory.setId(UnsplashCategory.FEATURED_CATEGORY_ID);
-                featureCategory.setTitle(UnsplashCategory.FEATURE_S);
-
-                UnsplashCategory newCategory = new UnsplashCategory();
-                newCategory.setId(UnsplashCategory.NEW_CATEGORY_ID);
-                newCategory.setTitle(UnsplashCategory.NEW_S);
-
-                UnsplashCategory randomCategory = new UnsplashCategory();
-                randomCategory.setId(UnsplashCategory.RANDOM_CATEOGORY_ID);
-                randomCategory.setTitle(UnsplashCategory.RANDOM_S);
-
-                unsplashCategories.add(0, featureCategory);
-                unsplashCategories.add(0, newCategory);
-                unsplashCategories.add(0, randomCategory);
-
                 SerializerUtil.serializeToFile(MainActivity.this, unsplashCategories,
                         SerializerUtil.CATEGORY_LIST_FILE_NAME);
 
+                configCategoryList(unsplashCategories);
                 setCategoryList(unsplashCategories);
             }
         });
+    }
+
+    private void configCategoryList(List<UnsplashCategory> unsplashCategories) {
+        UnsplashCategory featureCategory = new UnsplashCategory();
+        featureCategory.setId(UnsplashCategory.FEATURED_CATEGORY_ID);
+        featureCategory.setTitle(UnsplashCategory.FEATURE_S);
+
+        UnsplashCategory newCategory = new UnsplashCategory();
+        newCategory.setId(UnsplashCategory.NEW_CATEGORY_ID);
+        newCategory.setTitle(UnsplashCategory.NEW_S);
+
+        UnsplashCategory randomCategory = new UnsplashCategory();
+        randomCategory.setId(UnsplashCategory.RANDOM_CATEOGORY_ID);
+        randomCategory.setTitle(UnsplashCategory.RANDOM_S);
+
+        unsplashCategories.add(0, featureCategory);
+        unsplashCategories.add(0, newCategory);
+        unsplashCategories.add(0, randomCategory);
     }
 
     private void setCategoryList(List<UnsplashCategory> unsplashCategories) {
@@ -326,24 +343,19 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         adapter.setOnClickDownloadCallback(this);
     }
 
-    private boolean restoreCategoryList() {
+    private List<UnsplashCategory> restoreCategoryList() {
         Type type = new TypeToken<List<UnsplashCategory>>() {
         }.getType();
-        List<UnsplashCategory> unsplashCategories = SerializerUtil.deSerializeFromFile(type, this, SerializerUtil.CATEGORY_LIST_FILE_NAME);
-        if (unsplashCategories != null) {
-            if (unsplashCategories.size() > 0) {
-                Log.d(TAG, "Cached category list");
-                setCategoryList(unsplashCategories);
-                return true;
-            }
-        }
-        return false;
+        return SerializerUtil.deSerializeFromFile(type, this,
+                SerializerUtil.CATEGORY_LIST_FILE_NAME);
     }
 
     private boolean restorePhotoList() {
         Type type = new TypeToken<List<UnsplashImage>>() {
         }.getType();
-        List<UnsplashImage> unsplashCategories = SerializerUtil.deSerializeFromFile(type, this, SerializerUtil.IMAGE_LIST_FILE_NAME);
+        List<UnsplashImage> unsplashCategories = SerializerUtil.deSerializeFromFile(type, this,
+                SerializerUtil.IMAGE_LIST_FILE_NAME);
+
         if (unsplashCategories != null) {
             if (unsplashCategories.size() > 0) {
                 Log.d(TAG, "Cached category list");
@@ -362,7 +374,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mToolbar.setTitle(category.getTitle().toUpperCase());
         mDrawerLayout.closeDrawer(GravityCompat.START);
         mCurrentRequestPage = 1;
-        mUrl = category.getUrl();
+        mUrl = category.getRequestUrl();
         mRefreshLayout.setRefreshing(true);
         loadPhotoList();
     }
@@ -410,7 +422,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         } else if (mSelectedCategoryID == SEARCH_ID) {
             CloudService.getInstance().searchPhotos(subscriber, mUrl, mCurrentRequestPage, mQuery);
         } else if (mSelectedCategoryID == UnsplashCategory.RANDOM_CATEOGORY_ID) {
-            CloudService.getInstance().getRandomPhotos(subscriber, Urls.RANDOM_PHOTS_URL);
+            CloudService.getInstance().getRandomPhotos(subscriber, CloudService.RANDOM_PHOTOS_URL);
         } else {
             CloudService.getInstance().getPhotos(subscriber, mUrl, mCurrentRequestPage);
         }
@@ -486,7 +498,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         mCurrentRequestPage = 1;
         mAdapter = null;
         mSelectedCategoryID = SEARCH_ID;
-        mUrl = Urls.SEARCH_URL;
+        mUrl = CloudService.SEARCH_URL;
         mQuery = keyword;
         mRefreshLayout.setRefreshing(true);
         mToolbar.setTitle(keyword.toUpperCase());
