@@ -11,9 +11,12 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/navi_top_banner_height"
         android:layout_gravity="top"
-
-        android:background="@drawable/drawer_backgrd">
-
+        >
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/drawer_backgrd"
+            android:scaleType="centerCrop" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,7 +31,7 @@
         android:id="@+id/activity_drawer_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="100sp"
+        android:layout_marginBottom="120sp"
         android:layout_marginTop="@dimen/navi_top_banner_height"
         android:background="@android:color/transparent"
         android:clickable="true"
