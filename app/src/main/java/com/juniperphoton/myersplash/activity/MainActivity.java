@@ -262,7 +262,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             mDrawerBottomLL.setLayoutParams(layoutParams);
 
             RelativeLayout.LayoutParams layoutParamsRV = (RelativeLayout.LayoutParams) mDrawerRecyclerView.getLayoutParams();
-            layoutParamsRV.setMargins(0, getDimenInPixel(200, this), 0, getDimenInPixel(0, this));
+            layoutParamsRV.setMargins(0, getResources().getDimensionPixelSize(R.dimen.navi_top_banner_height), 0, getDimenInPixel(50, this));
             mDrawerRecyclerView.setLayoutParams(layoutParamsRV);
         }
     }

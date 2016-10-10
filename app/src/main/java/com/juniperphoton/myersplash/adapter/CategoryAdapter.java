@@ -90,7 +90,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     }
 
     public UnsplashCategory getCategoryByIndex(int index) {
-        if (index > 0 && index < mData.size()) {
+        if (index >= 0 && index < mData.size()) {
             return mData.get(index);
         }
         return null;
