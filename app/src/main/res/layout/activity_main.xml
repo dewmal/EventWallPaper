@@ -6,17 +6,6 @@
     android:layout_height="match_parent"
     tools:context="activity.MainActivity">
 
-    <ImageView
-        android:id="@+id/activity_main_mask"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/status_bar_height"
-        android:layout_alignParentTop="true"
-        android:alpha="0.3"
-        android:contentDescription="@string/ImageDescDefault"
-        android:elevation="4dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/black_mask" />
-
     <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -33,21 +22,33 @@
             android:id="@+id/activity_main_cl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/status_bar_height"
+            android:layout_marginTop="0dp"
             android:fitsSystemWindows="false">
+
+            <ImageView
+                android:id="@+id/activity_main_mask"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/status_bar_height"
+                android:layout_alignParentTop="true"
+                android:alpha="0.3"
+                android:contentDescription="@string/ImageDescDefault"
+                android:elevation="4dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/black_mask" />
 
             <android.support.design.widget.AppBarLayout
                 android:id="@+id/toolbar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:theme="@style/AppTheme.AppBarOverlay"
-                app:layout_scrollFlags="scroll|enterAlways">
+                android:theme="@style/AppTheme.AppBarOverlay">
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:background="?attr/colorPrimary"
+                    android:layout_marginTop="@dimen/status_bar_height"
+                    app:layout_scrollFlags="scroll|enterAlways"
                     app:popupTheme="@style/AppTheme.PopupOverlay" />
 
             </android.support.design.widget.AppBarLayout>
