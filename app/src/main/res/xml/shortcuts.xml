@@ -1,0 +1,12 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:icon="@drawable/ic_search_white_18dp"
+        android:shortcutId="search"
+        android:shortcutLongLabel="@string/search"
+        android:shortcutShortLabel="@string/search">
+        <intent
+            android:action="android.shortcut.conversation"
+            android:targetClass="com.juniperphoton.myersplash.activity.MainActivity"
+            android:targetPackage="com.juniperphoton.myersplash" />
+    </shortcut>
+</shortcuts>

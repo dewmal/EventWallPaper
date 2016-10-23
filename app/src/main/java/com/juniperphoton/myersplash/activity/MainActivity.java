@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private int mSelectedCategoryID = 0;
     private String mQuery;
     private String mUrl = CloudService.BASE_URL;
+    private boolean mPendingRandom = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +128,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         setSupportActionBar(mToolbar);
 
         initMainViews();
+        handleShortcutsAction();
 
         if (!LocalSettingHelper.checkKey(this, CHECK_ONE_POINT_ONE_VERSION)) {
             File file = this.getFileStreamPath(SerializerUtil.CATEGORY_LIST_FILE_NAME);
@@ -168,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.content_activity_search_fab)
-    void onClickFAB() {
+    void onClickSearchFAB() {
         mSearchFAB.hide();
         mSearchView.toggleAnimation(true);
     }
@@ -267,11 +269,28 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         }
     }
 
+    private void handleShortcutsAction() {
+        String action = getIntent().getAction();
+
+        switch (action) {
+            case "action.search": {
+                onClickSearchFAB();
+            }
+            break;
+
+            case "action.random": {
+                mPendingRandom = true;
+            }
+            break;
+        }
+    }
+
     private void getCategories() {
         List<UnsplashCategory> categories = restoreCategoryList();
         if (categories != null && categories.size() > 0) {
             configCategoryList(categories);
             setCategoryList(categories);
+            return;
         }
         CloudService.getInstance().getCategories(new Subscriber<List<UnsplashCategory>>() {
             @Override
@@ -316,7 +335,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private void setCategoryList(List<UnsplashCategory> unsplashCategories) {
         CategoryAdapter adapter = new CategoryAdapter(unsplashCategories, MainActivity.this);
         adapter.setCallback(MainActivity.this);
-        adapter.select(1);
+        adapter.select(mPendingRandom ? 0 : 1);
+        mPendingRandom = false;
         mDrawerRecyclerView.setAdapter(adapter);
     }
 
