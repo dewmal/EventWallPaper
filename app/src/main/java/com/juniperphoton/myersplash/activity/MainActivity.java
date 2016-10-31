@@ -33,6 +33,7 @@ import com.juniperphoton.myersplash.callback.OnClickQuickDownloadCallback;
 import com.juniperphoton.myersplash.callback.OnClickSearchCallback;
 import com.juniperphoton.myersplash.callback.OnLoadMoreListener;
 import com.juniperphoton.myersplash.cloudservice.CloudService;
+import com.juniperphoton.myersplash.common.RandomIntentStatus;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.utils.DeviceUtil;
@@ -112,7 +113,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private int mSelectedCategoryID = 0;
     private String mQuery;
     private String mUrl = CloudService.BASE_URL;
-    private boolean mPendingRandom = false;
+    private RandomIntentStatus mRandomIntentStatus = RandomIntentStatus.NotReceived;
+    private boolean mHandledSearch = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -274,12 +276,17 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         switch (action) {
             case "action.search": {
-                onClickSearchFAB();
+                if (!mHandledSearch) {
+                    mHandledSearch = true;
+                    onClickSearchFAB();
+                }
             }
             break;
 
             case "action.random": {
-                mPendingRandom = true;
+                if (mRandomIntentStatus == RandomIntentStatus.NotReceived) {
+                    mRandomIntentStatus = RandomIntentStatus.Pending;
+                }
             }
             break;
         }
@@ -335,8 +342,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private void setCategoryList(List<UnsplashCategory> unsplashCategories) {
         CategoryAdapter adapter = new CategoryAdapter(unsplashCategories, MainActivity.this);
         adapter.setCallback(MainActivity.this);
-        adapter.select(mPendingRandom ? 0 : 1);
-        mPendingRandom = false;
+        adapter.select(mRandomIntentStatus == RandomIntentStatus.Pending ? 0 : 1);
+        mRandomIntentStatus = RandomIntentStatus.Handled;
         mDrawerRecyclerView.setAdapter(adapter);
     }
 

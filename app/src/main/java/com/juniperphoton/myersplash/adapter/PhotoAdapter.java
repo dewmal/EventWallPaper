@@ -1,16 +1,19 @@
 package com.juniperphoton.myersplash.adapter;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.RelativeLayout;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -41,9 +44,13 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     private boolean isAutoLoadMore = true;//是否自动加载，当数据不满一屏幕会自动加载
     private int footerFlag = FOOTER_FLAG_SHOW;
 
+    private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
+
     public PhotoAdapter(List<UnsplashImage> data, Context context) {
         mData = data;
         mContext = context;
+        lastPosition = -1;
         if (data.size() >= 10) {
             isAutoLoadMore = true;
             footerFlag = FOOTER_FLAG_SHOW;
@@ -119,7 +126,53 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                     }
                 });
             }
+            animateContainer(holder.RootCardView, position);
         }
+    }
+
+    private int lastPosition = -1;
+
+    private void animateContainer(final View container, int position) {
+        int lastItemIndex = findLastVisibleItemPosition(mLayoutManager);
+        if (position >= getMaxPhotoCountOnScreen() || position <= lastPosition
+                || (lastItemIndex >= getMaxPhotoCountOnScreen())) {
+            return;
+        }
+
+        lastPosition = position;
+
+        container.setAlpha(0f);
+        container.setTranslationX(300);
+
+        ValueAnimator animator = ValueAnimator.ofFloat(0.0f, 1.0f);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                container.setAlpha((float) valueAnimator.getAnimatedValue());
+            }
+        });
+        animator.setStartDelay(200 * position + 200);
+        animator.setDuration(800);
+        animator.start();
+
+        ValueAnimator animator2 = ValueAnimator.ofInt(300, 0);
+        animator2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                container.setTranslationX((int) valueAnimator.getAnimatedValue());
+            }
+        });
+        animator2.setInterpolator(new DecelerateInterpolator());
+        animator2.setStartDelay(200 * position + 200);
+        animator2.setDuration(800);
+        animator2.start();
+    }
+
+    private int getMaxPhotoCountOnScreen() {
+        int height = mRecyclerView.getHeight();
+        int imgHeight = mRecyclerView.getResources().getDimensionPixelSize(R.dimen.img_height);
+        int max = (int) Math.ceil((double) height / (double) imgHeight);
+        return max;
     }
 
     @Override
@@ -143,8 +196,10 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
-        final RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-        startLoadMore(recyclerView, layoutManager);
+        mRecyclerView = recyclerView;
+        lastPosition = -1;
+        mLayoutManager = recyclerView.getLayoutManager();
+        startLoadMore(recyclerView, mLayoutManager);
     }
 
     private void startLoadMore(RecyclerView recyclerView, final RecyclerView.LayoutManager layoutManager) {
@@ -238,6 +293,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         RelativeLayout RippleMaskRL;
 
         RelativeLayout FooterRL;
+        RelativeLayout containerRL;
 
         PhotoViewHolder(View itemView, int type, int footerFlag) {
             super(itemView);
