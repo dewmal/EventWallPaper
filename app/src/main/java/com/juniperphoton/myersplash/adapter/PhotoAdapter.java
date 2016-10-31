@@ -141,6 +141,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
         lastPosition = position;
 
+        int delay = 300 * (position + 1);
+        int duration = 800;
+
         container.setAlpha(0f);
         container.setTranslationX(300);
 
@@ -151,8 +154,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                 container.setAlpha((float) valueAnimator.getAnimatedValue());
             }
         });
-        animator.setStartDelay(200 * position + 200);
-        animator.setDuration(800);
+        animator.setStartDelay(delay);
+        animator.setDuration(duration);
         animator.start();
 
         ValueAnimator animator2 = ValueAnimator.ofInt(300, 0);
@@ -163,8 +166,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             }
         });
         animator2.setInterpolator(new DecelerateInterpolator());
-        animator2.setStartDelay(200 * position + 200);
-        animator2.setDuration(800);
+        animator2.setStartDelay(delay);
+        animator2.setDuration(duration);
         animator2.start();
     }
 

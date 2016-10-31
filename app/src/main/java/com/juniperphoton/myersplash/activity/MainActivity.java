@@ -348,9 +348,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     private void setCachedImageList(List<UnsplashImage> unsplashImages) {
-        PhotoAdapter adapter = new PhotoAdapter(unsplashImages, MainActivity.this);
-        setupCallback(adapter);
-        mContentRecyclerView.setAdapter(adapter);
+        mAdapter = new PhotoAdapter(unsplashImages, MainActivity.this);
+        setupCallback(mAdapter);
+        mContentRecyclerView.setAdapter(mAdapter);
     }
 
     private void setImageList(List<UnsplashImage> unsplashImages) {
