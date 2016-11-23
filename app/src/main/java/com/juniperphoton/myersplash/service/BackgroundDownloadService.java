@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.juniperphoton.myersplash.cloudservice.CloudService;
+import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.NotificationUtil;
 import com.orhanobut.logger.Logger;

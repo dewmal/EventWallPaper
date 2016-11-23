@@ -105,6 +105,9 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @Bind(R.id.no_item_back_tv)
     TextView mGoBackLastCategoryTV;
 
+    @Bind(R.id.nav_naviToDownload_rl)
+    RelativeLayout mNativateToDownloadsRL;
+
     private int mLastCategory = -1;
 
     private PhotoAdapter mAdapter;
@@ -201,6 +204,12 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         }
     }
 
+    @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.nav_naviToDownload_rl)
+    void onClickNaviToDownloads() {
+        Intent intent = new Intent(this, ManageDownloadActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -497,7 +506,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     @Override
     public void onClickQuickDownload(UnsplashImage image) {
-        DownloadUtil.checkAndDownload(this, image.getFileNameForDownload(), image.getDownloadUrl());
+        DownloadUtil.checkAndDownload(this, image);
     }
 
     @Override

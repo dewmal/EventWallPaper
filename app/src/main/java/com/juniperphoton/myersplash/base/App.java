@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 
+import io.realm.Realm;
+
 public class App extends Application {
     private static App instance;
 
@@ -19,5 +21,6 @@ public class App extends Application {
         super.onCreate();
         instance = this;
         Fresco.initialize(this);
+        Realm.init(this);
     }
 }
