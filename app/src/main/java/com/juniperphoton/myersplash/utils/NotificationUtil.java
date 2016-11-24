@@ -83,7 +83,7 @@ public class NotificationUtil {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(App.getInstance())
                 .setContentTitle("Download error.")
                 .setContentText("Please checkAndRequest your network and retry.")
-                .setSmallIcon(R.drawable.ic_cancel_white_36dp);
+                .setSmallIcon(R.drawable.vector_ic_clear);
 
         builder.addAction(R.drawable.ic_replay_white_48dp, "RETRY", resultPendingIntent);
 
@@ -129,7 +129,7 @@ public class NotificationUtil {
             builder = new NotificationCompat.Builder(App.getInstance())
                     .setContentTitle(title)
                     .setContentText(content)
-                    .setSmallIcon(R.drawable.download_small_icon);
+                    .setSmallIcon(R.drawable.vector_ic_file_download);
             integerBuilderHashMap.put(nId, builder);
         } else {
             builder.setProgress(100, progress, false);

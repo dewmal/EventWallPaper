@@ -54,7 +54,7 @@
                     <ImageView
                         android:layout_width="25sp"
                         android:layout_height="25sp"
-                        android:src="@drawable/ic_settings_white_24dp" />
+                        android:src="@drawable/vector_ic_settings" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -97,7 +97,7 @@
                         android:layout_width="25sp"
                         android:layout_height="25sp"
                         android:layout_gravity="center_vertical"
-                        android:src="@drawable/like" />
+                        android:src="@drawable/vector_ic_emoticon" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -128,15 +128,6 @@
             android:scaleType="centerCrop"
             android:src="@drawable/drawer_backgrd" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_margin="20sp"
-            android:text="MyerSplash"
-            android:textColor="@android:color/white"
-            android:textSize="20sp" />
-
         <RelativeLayout
             android:id="@+id/nav_naviToDownload_rl"
             android:layout_width="50dp"
@@ -154,8 +145,22 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:src="@drawable/ic_file_download_white_24dp" />
+                android:src="@drawable/vector_ic_file_download" />
         </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MyerSplash"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:layout_marginLeft="20sp"
+            android:layout_marginRight="20sp"
+            android:layout_marginTop="10dp"
+            android:layout_alignTop="@+id/nav_naviToDownload_rl"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="20dp"
+            android:id="@+id/textView2" />
 
     </RelativeLayout>
 

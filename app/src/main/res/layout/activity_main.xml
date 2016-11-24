@@ -78,7 +78,7 @@
                 android:layout_marginBottom="60dp"
                 android:layout_marginEnd="24dp"
                 android:background="@drawable/ripple_effect"
-                android:src="@drawable/ic_search_white_24dp"
+                android:src="@drawable/vector_ic_search"
                 app:backgroundTint="@color/MyerSplashThemeColor" />
 
 
