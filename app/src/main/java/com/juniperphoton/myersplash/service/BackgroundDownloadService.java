@@ -6,14 +6,19 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.juniperphoton.myersplash.cloudservice.CloudService;
+import com.juniperphoton.myersplash.event.DownloadCompletedEvent;
 import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.NotificationUtil;
+import com.juniperphoton.myersplash.utils.ToastService;
 import com.orhanobut.logger.Logger;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.HashMap;
 
+import io.realm.Realm;
 import okhttp3.ResponseBody;
 import rx.Subscriber;
 import rx.Subscription;
@@ -52,6 +57,8 @@ public class BackgroundDownloadService extends IntentService {
             Subscriber subscriber = subscriptionMap.get(url);
             if (subscriber != null) {
                 subscriber.unsubscribe();
+                NotificationUtil.cancelNotification(Uri.parse(url));
+                ToastService.sendShortToast("Download has been cancelled");
             }
         } else {
             String filePath = downloadImage(url, fileName);
@@ -68,7 +75,17 @@ public class BackgroundDownloadService extends IntentService {
             public void onCompleted() {
                 if (outputFile == null) {
                     NotificationUtil.showErrorNotification(Uri.parse(url), fileName, url);
+                    Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            DownloadItem downloadItem = realm.where(DownloadItem.class).equalTo("mDownloadUrl", url).findFirst();
+                            if (downloadItem != null) {
+                                downloadItem.setStatus(DownloadItem.DownloadStatus.Failed);
+                            }
+                        }
+                    });
                 } else {
+                    EventBus.getDefault().post(new DownloadCompletedEvent(Uri.fromFile(outputFile)));
                     NotificationUtil.showCompleteNotification(Uri.parse(url), Uri.fromFile(outputFile));
                 }
                 Logger.d(TAG, "Completed");
@@ -77,7 +94,15 @@ public class BackgroundDownloadService extends IntentService {
             @Override
             public void onError(Throwable e) {
                 NotificationUtil.showErrorNotification(Uri.parse(url), fileName, url);
-                Log.d(TAG, "onError," + e.getMessage() + "," + url);
+                Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        DownloadItem downloadItem = realm.where(DownloadItem.class).equalTo("mDownloadUrl", url).findFirst();
+                        if (downloadItem != null) {
+                            downloadItem.setStatus(DownloadItem.DownloadStatus.Failed);
+                        }
+                    }
+                });
             }
 
             @Override

@@ -7,12 +7,13 @@
     <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
 
     <string name="action_settings">Settings</string>
-    <string name="Version">Version 1.2.2</string>
+    <string name="Version">Version 1.3.0</string>
     <string name="CreditStr">Photos are from Unsplash, a website providing free (do whatever you want) high-resolution photos.</string>
     <string name="SavingQuality">Image quality for downloading</string>
     <string name="LoadingQuality">Loading quality in List</string>
     <string name="CleanupCache">Clean up cache</string>
-    <string name="QuickDownload">Show download button in list.</string>
+    <string name="QuickDownload">Show download button in list</string>
+    <string name="QuickDownloadTitle">Quick download</string>
 
     <string name="ImageDescDefault">Desc</string>
 
@@ -25,14 +26,14 @@
     <string name="LoadingThumbnail">Thumbnail</string>
 
     <string name="authorities">com.juniperphoton.myersplash.fileProvider</string>
-    <string name="feedback_str">I HAVE AN IDEA</string>
+    <string name="feedback_str">I have an idea</string>
     <string name="credit">CREDIT</string>
     <string name="feedback">FEEDBACK</string>
-    <string name="give_me_a_rate">GIVE ME A RATE</string>
+    <string name="give_me_a_rate">Give me a rate</string>
     <string name="like_this_app">LIKE THIS APP</string>
     <string name="myer">Myer</string>
     <string name="splash">Splash</string>
-    <string name="for_windows_amp_android"><![CDATA[for Windows 10 & Android]]></string>
+    <string name="for_windows_amp_android"><![CDATA[for Windows 10 & Android & iOS later]]></string>
     <string name="search">SEARCH</string>
     <string name="searchLowercase">Search</string>
     <string name="random">Random</string>
@@ -45,5 +46,8 @@
     <string name="end">END</string>
     <string name="search_action">android.myersplash.action.search</string>
     <string name="random_action">android.myersplash.action.search</string>
+    <string name="buy_me_a_drink">Treat me a drink</string>
+    <string name="downloads">DOWNLOADS</string>eat
+    <string name="no_downloads">NO DOWNLOADS</string>
 
 </resources>

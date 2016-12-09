@@ -19,9 +19,7 @@ import java.io.File;
 import java.util.HashMap;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
-import static com.juniperphoton.myersplash.service.BackgroundDownloadService.CANCELED_KEY;
 import static com.juniperphoton.myersplash.service.BackgroundDownloadService.CANCEL_NID_KEY;
-import static com.juniperphoton.myersplash.service.BackgroundDownloadService.FILE_PATH_KEY;
 import static com.juniperphoton.myersplash.service.BackgroundDownloadService.NAME_KEY;
 import static com.juniperphoton.myersplash.service.BackgroundDownloadService.URI_KEY;
 

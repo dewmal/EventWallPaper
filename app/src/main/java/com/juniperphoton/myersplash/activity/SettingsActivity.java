@@ -5,9 +5,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SwitchCompat;
+import android.support.v7.widget.AppCompatCheckBox;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -20,6 +23,7 @@ import com.juniperphoton.myersplash.utils.ToastService;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.realm.Realm;
 import moe.feng.material.statusbar.StatusBarCompat;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -31,7 +35,7 @@ public class SettingsActivity extends AppCompatActivity {
     private String[] loadingStrings;
 
     @Bind(R.id.detail_switch_quick_download)
-    SwitchCompat mQuickDownloadSwitch;
+    AppCompatCheckBox mQuickDownloadCheckBox;
 
     @Bind(R.id.saving_quality_tv)
     TextView mSavingQualityTV;
@@ -41,6 +45,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Bind(R.id.activity_settings_cacheSize_tv)
     TextView mCacheTV;
+
+    @Bind(R.id.quick_download_layout)
+    ViewGroup mQuickDownloadLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,8 +60,8 @@ public class SettingsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         boolean quickDownload = LocalSettingHelper.getBoolean(this, Constant.QUICK_DOWNLOAD_CONFIG_NAME, false);
-        mQuickDownloadSwitch.setChecked(quickDownload);
-        mQuickDownloadSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mQuickDownloadCheckBox.setChecked(quickDownload);
+        mQuickDownloadCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 LocalSettingHelper.putBoolean(SettingsActivity.this, Constant.QUICK_DOWNLOAD_CONFIG_NAME, isChecked);
@@ -75,15 +82,27 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    @OnClick(R.id.settings_cleanup_cv)
+    @OnClick(R.id.quick_download_layout)
+    public void toggleQuickDownload(){
+        mQuickDownloadCheckBox.setChecked(!mQuickDownloadCheckBox.isChecked());
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.clear_cache_layout)
     public void clearUp() {
         Fresco.getImagePipeline().clearCaches();
         ToastService.sendShortToast("All clear :D");
         mCacheTV.setText("0 MB");
+        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.deleteAll();
+            }
+        });
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    @OnClick(R.id.settings_saving_quality_cv)
+    @OnClick(R.id.saving_quality_layout)
     void setSavingQuality() {
         final int choice = LocalSettingHelper.getInt(this, Constant.SAVING_QUALITY_CONFIG_NAME, 1);
 
@@ -102,7 +121,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    @OnClick(R.id.settings_loading_quality_cv)
+    @OnClick(R.id.loading_quality_layout)
     void setLoadingQuality() {
         final int choice = LocalSettingHelper.getInt(this, Constant.LOADING_QUALITY_CONFIG_NAME, 0);
 

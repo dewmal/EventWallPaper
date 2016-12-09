@@ -1,24 +1,36 @@
 package com.juniperphoton.myersplash.adapter;
 
 import android.content.Context;
-import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.juniperphoton.myersplash.R;
+import com.juniperphoton.myersplash.base.App;
+import com.juniperphoton.myersplash.callback.DownloadItemsChangedCallback;
 import com.juniperphoton.myersplash.model.DownloadItem;
+import com.juniperphoton.myersplash.service.BackgroundDownloadService;
+import com.juniperphoton.myersplash.widget.DownloadCompleteView;
+import com.juniperphoton.myersplash.widget.DownloadRetryView;
+import com.juniperphoton.myersplash.widget.DownloadingView;
+import com.juniperphoton.myersplash.widget.RippleToggleView;
 
 import java.util.ArrayList;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import io.realm.Realm;
 
 public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdapter.DownloadItemViewHolder> {
 
     private Context mContext;
     private ArrayList<DownloadItem> mData;
+
+    private DownloadItemsChangedCallback mCallback;
 
     public DownloadsListAdapter(ArrayList<DownloadItem> data, Context context) {
         mData = data;
@@ -28,14 +40,64 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
     @Override
     public DownloadItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.row_downloaditem, parent, false);
+        int width = mContext.getResources().getDisplayMetrics().widthPixels;
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        params.height = (int) (width / 1.7d);
+        view.setLayoutParams(params);
         return new DownloadItemViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(DownloadItemViewHolder holder, int position) {
-        DownloadItem item = mData.get(holder.getAdapterPosition());
-        holder.setUrl(item.getThumbUrl());
-        holder.setColor(item.getColor());
+    public void onBindViewHolder(final DownloadItemViewHolder holder, int position) {
+        final DownloadItem item = mData.get(holder.getAdapterPosition());
+        holder.DraweeView.setImageURI(item.getThumbUrl());
+        holder.ProgressStrTV.setText(item.getProgressStr());
+
+        holder.DownloadRetryView.setThemeBackColor(item.getColor());
+        holder.DownloadCompleteView.setThemeBackColor(item.getColor());
+
+        holder.DownloadingView.setProgress(item.getProgress());
+        holder.DownloadingView.setThemeBackColor(item.getColor());
+        holder.DownloadingView.setClickCancelListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeItem(item);
+                notifyItemRemoved(holder.getAdapterPosition());
+
+                Intent intent = new Intent(App.getInstance(), BackgroundDownloadService.class);
+                intent.putExtra(BackgroundDownloadService.CANCELED_KEY, true);
+                intent.putExtra(BackgroundDownloadService.URI_KEY, item.getDownloadUrl());
+                mContext.startService(intent);
+
+                Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        DownloadItem realmItem = realm.where(DownloadItem.class).equalTo("mId", item.getId()).findFirst();
+                        if (realmItem != null) {
+                            realmItem.deleteFromRealm();
+                        }
+                    }
+                });
+            }
+        });
+        holder.RippleToggleView.toggleTo(item.getStatus());
+    }
+
+    public void setCallback(DownloadItemsChangedCallback callback) {
+        mCallback = callback;
+    }
+
+    private void removeItem(DownloadItem item) {
+        for (DownloadItem downloadItem : mData) {
+            if (downloadItem.getId().equals(item.getId())) {
+                int index = mData.indexOf(downloadItem);
+                mData.remove(index);
+                break;
+            }
+        }
+        if (mCallback != null) {
+            mCallback.onDataChanged();
+        }
     }
 
     @Override
@@ -44,24 +106,46 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
         else return mData.size();
     }
 
-    public class DownloadItemViewHolder extends RecyclerView.ViewHolder {
+    class DownloadItemViewHolder extends RecyclerView.ViewHolder {
 
-        private SimpleDraweeView mDraweeView;
-        private RelativeLayout mBottomRL;
+        @Bind(R.id.row_downloaditem_dv)
+        SimpleDraweeView DraweeView;
 
-        public DownloadItemViewHolder(View itemView) {
+        @Bind(R.id.row_downloaditem_rtv)
+        RippleToggleView RippleToggleView;
+
+        @Bind(R.id.row_downloaditem_progressStr_tv)
+        TextView ProgressStrTV;
+
+        DownloadingView DownloadingView;
+        DownloadRetryView DownloadRetryView;
+        DownloadCompleteView DownloadCompleteView;
+
+        DownloadItemViewHolder(View itemView) {
             super(itemView);
-            mDraweeView = (SimpleDraweeView) itemView.findViewById(R.id.row_downloaditem_dv);
-            mBottomRL = (RelativeLayout) itemView.findViewById(R.id.row_downloaditem_bottom_rl);
-        }
+            ButterKnife.bind(this, itemView);
 
-        public void setUrl(String url) {
-            mDraweeView.setImageURI(Uri.parse(url));
-        }
+            DownloadingView = new DownloadingView(mContext, null);
+            DownloadRetryView = new DownloadRetryView(mContext, null);
+            DownloadCompleteView = new DownloadCompleteView(mContext, null);
 
-        public void setColor(int color) {
-            mBottomRL.setBackground(new ColorDrawable(color));
+            RippleToggleView.addViews(DownloadingView, DownloadRetryView, DownloadCompleteView);
         }
     }
 
+    public void updateItem(DownloadItem item) {
+        int index = mData.indexOf(item);
+        if (index >= 0 && index <= mData.size()) {
+            notifyItemChanged(index);
+        }
+    }
+
+    public void clear() {
+        mData.clear();
+        notifyDataSetChanged();
+    }
+
+    public ArrayList<DownloadItem> getData() {
+        return mData;
+    }
 }

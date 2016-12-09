@@ -1,52 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activity_main_cl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="0dp"
-    android:fitsSystemWindows="false">
+    android:background="@color/SettingBackground"
+    android:fitsSystemWindows="false"
+    android:orientation="vertical"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/toolbar_layout"
+    <ImageView
+        android:id="@+id/activity_main_mask"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="24sp"
+        android:alpha="0.3"
+        android:contentDescription="@string/ImageDescDefault"
+        android:elevation="4dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/black_mask" />
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_marginTop="@dimen/status_bar_height"
-            android:background="?attr/colorPrimary"
-            android:title="DOWNLOADS"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </android.support.design.widget.AppBarLayout>
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:fitsSystemWindows="false">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/activity_managedownload_rv"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="60dp"
+            android:theme="@style/AppTheme.AppBarOverlay">
 
-        </android.support.v7.widget.RecyclerView>
-    </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="@dimen/settings_margin_left"
+                android:text="@string/downloads"
+                android:textColor="@color/MyerSplashThemeColor"
+                android:textSize="@dimen/page_title_textsize"
+                android:textStyle="bold" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/content_activity_search_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_marginBottom="60dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/ripple_effect"
-        android:src="@drawable/vector_ic_more"
-        app:backgroundTint="@color/MyerSplashThemeColor" />
+        </RelativeLayout>
 
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="60dp"
+            android:orientation="vertical">
 
-</android.support.design.widget.CoordinatorLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/activity_managedownload_rv"
+                android:layout_width="match_parent"
+                android:layout_margin="4dp"
+                android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/activity_downloads_no_item_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:alpha="0.6"
+                android:text="@string/no_downloads"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/activity_downloads_more_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_marginBottom="60dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/ripple_effect"
+            android:src="@drawable/vector_ic_more"
+            app:backgroundTint="@color/MyerSplashThemeColor" />
+    </android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

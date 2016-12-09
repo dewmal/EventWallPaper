@@ -3,10 +3,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/MyerSplashDark"
     android:fitsSystemWindows="true"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
     tools:context="activity.AboutActivity">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/banner" />
 
     <ImageView
         android:id="@+id/activity_about_mask"
@@ -22,15 +27,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
         android:orientation="vertical">
-
-        <ImageView
-            android:layout_width="170dp"
-            android:layout_height="120dp"
-            android:layout_gravity="center_horizontal"
-            android:contentDescription="@string/ImageDescDefault"
-            android:src="@drawable/logo" />
 
         <LinearLayout
             android:id="@+id/activity_start_title_tv"
@@ -40,14 +39,22 @@
             android:gravity="center_horizontal"
             android:orientation="horizontal">
 
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/ImageDescDefault"
+                android:src="@drawable/logo" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
                 android:fontFamily="sans-serif-light"
                 android:gravity="center"
                 android:text="@string/myer"
                 android:textColor="@android:color/white"
-                android:textSize="30sp" />
+                android:textSize="40sp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -56,7 +63,7 @@
                 android:gravity="center"
                 android:text="@string/splash"
                 android:textColor="@android:color/white"
-                android:textSize="30sp"
+                android:textSize="40sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -64,11 +71,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:fontFamily="sans-serif-light"
+            android:layout_marginTop="4dp"
             android:alpha="0.3"
+            android:fontFamily="sans-serif-light"
             android:text="@string/for_windows_amp_android"
             android:textColor="@android:color/white"
-            android:textSize="17sp"
+            android:textSize="15sp"
             android:textStyle="normal" />
 
         <LinearLayout
@@ -111,7 +119,7 @@
                     android:layout_gravity="center_horizontal"
                     android:text="@string/credit"
                     android:textColor="@color/MyerSplashThemeColor"
-                    android:textSize="15sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -138,7 +146,7 @@
                     android:layout_gravity="center_horizontal"
                     android:text="@string/feedback"
                     android:textColor="@color/MyerSplashThemeColor"
-                    android:textSize="15sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <android.support.v7.widget.CardView
@@ -159,18 +167,18 @@
                         android:clickable="true">
 
                         <TextView
+                            android:id="@+id/textView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_alignParentTop="true"
                             android:layout_gravity="center_horizontal"
                             android:autoLink="web"
                             android:padding="10sp"
                             android:text="@string/feedback_str"
                             android:textColor="@android:color/white"
                             android:textColorLink="@android:color/black"
-                            android:textSize="14sp"
-                            android:layout_alignParentTop="true"
-                            android:layout_alignParentStart="true"
-                            android:id="@+id/textView" />
+                            android:textSize="14sp" />
 
                     </RelativeLayout>
                 </android.support.v7.widget.CardView>
@@ -189,8 +197,39 @@
                     android:layout_gravity="center_horizontal"
                     android:text="@string/like_this_app"
                     android:textColor="@color/MyerSplashThemeColor"
-                    android:textSize="15sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
+
+                <android.support.v7.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:elevation="0sp"
+                    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+                    card_view:cardBackgroundColor="@android:color/transparent"
+                    card_view:cardCornerRadius="0dp"
+                    card_view:cardElevation="0dp">
+
+                    <RelativeLayout
+                        android:id="@+id/activity_about_donate_rl"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:autoLink="web"
+                            android:padding="10sp"
+                            android:text="@string/buy_me_a_drink"
+                            android:textColor="@android:color/white"
+                            android:textColorLink="@android:color/black"
+                            android:textSize="14sp" />
+
+                    </RelativeLayout>
+                </android.support.v7.widget.CardView>
 
                 <android.support.v7.widget.CardView
                     android:layout_width="wrap_content"

@@ -23,12 +23,13 @@ import java.net.URI;
 import java.util.Date;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 import okhttp3.ResponseBody;
 
 public class DownloadUtil {
     private static String TAG = "DownloadUtil";
 
-    public static File writeResponseBodyToDisk(ResponseBody body, String fileUri, final String url) {
+    public static File writeResponseBodyToDisk(ResponseBody body, String fileUri, final String downloadUrl) {
         try {
             File fileToSave = new File(fileUri);
 
@@ -62,8 +63,20 @@ public class DownloadUtil {
                     int progress = (int) (fileSizeDownloaded / (double) fileSize * 100);
                     if (progress - progressToReport >= 5) {
                         progressToReport = progress;
+                        final int progressToDisplay = progressToReport;
                         NotificationUtil.showProgressNotification("MyerSplash", "Downloading...",
-                                progressToReport, fileUri, Uri.parse(url));
+                                progressToReport, fileUri, Uri.parse(downloadUrl));
+                        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                DownloadItem downloadItem = realm.where(DownloadItem.class)
+                                        .equalTo("mDownloadUrl", downloadUrl).findFirst();
+
+                                if (downloadItem != null) {
+                                    downloadItem.setProgress(progressToDisplay);
+                                }
+                            }
+                        });
                     }
                     //Log.d(TAG, "progress: " + progress + ",last:" + progressToReport);
                 }

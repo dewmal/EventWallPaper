@@ -105,12 +105,6 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    @OnClick(R.id.detail_root_sv)
-    void onClickMaskSV() {
-        hideDetailPanel();
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.detail_share_fab)
     void onClickShare() {
         CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(
@@ -153,16 +147,22 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         mDetailRootScrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                return false;
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_UP: {
+                        tryHide();
+                    }
+                    break;
+                }
+                return true;
             }
         });
 
-        mDetailRootScrollView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DetailView.this.hideDetailPanel();
-            }
-        });
+//        mDetailRootScrollView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                DetailView.this.hideDetailPanel();
+//            }
+//        });
 
         mDetailRootScrollView.setVisibility(View.INVISIBLE);
 
