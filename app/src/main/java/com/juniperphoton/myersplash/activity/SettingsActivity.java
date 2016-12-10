@@ -83,7 +83,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.quick_download_layout)
-    public void toggleQuickDownload(){
+    public void toggleQuickDownload() {
         mQuickDownloadCheckBox.setChecked(!mQuickDownloadCheckBox.isChecked());
     }
 
@@ -93,6 +93,12 @@ public class SettingsActivity extends AppCompatActivity {
         Fresco.getImagePipeline().clearCaches();
         ToastService.sendShortToast("All clear :D");
         mCacheTV.setText("0 MB");
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.clear_database_layout)
+    public void clearDatabase() {
+        ToastService.sendShortToast("All clear :D");
         Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {

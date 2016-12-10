@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:background="@color/SettingBackground"
@@ -23,48 +24,103 @@
                                                      android:layout_height="match_parent"
                                                      android:fitsSystemWindows="false">
 
-        <RelativeLayout
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:theme="@style/AppTheme.AppBarOverlay">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/settings_margin_left"
-                android:text="@string/SettingsC"
-                android:textColor="@color/MyerSplashThemeColor"
-                android:textSize="@dimen/page_title_textsize"
-                android:textStyle="bold"/>
-
-        </RelativeLayout>
-
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
-            app:cardElevation="0dp">
-
-            <LinearLayout
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/SettingBackground"
-                android:orientation="vertical">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                app:cardElevation="4dp">
 
                 <LinearLayout
-                    android:id="@+id/quick_download_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+                    android:background="@color/SettingBackground"
+                    android:orientation="vertical">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:id="@+id/quick_download_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/settings_margin_up_and_down"
+                                android:layout_marginStart="@dimen/settings_margin_left"
+                                android:layout_marginTop="@dimen/settings_margin_up_and_down"
+                                android:text="@string/QuickDownloadTitle"
+                                android:textColor="@android:color/white"
+                                android:textSize="17sp"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/settings_margin_up_and_down"
+                                android:layout_marginStart="@dimen/settings_margin_left"
+                                android:alpha="0.5"
+                                android:paddingEnd="@dimen/settings_margin_left"
+                                android:text="@string/QuickDownload"
+                                android:textColor="@android:color/white"
+                                android:textSize="14sp"
+                                tools:ignore="RtlSymmetry"/>
+                        </LinearLayout>
+
+                        <android.support.v7.widget.AppCompatCheckBox
+                            android:id="@+id/detail_switch_quick_download"
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginRight="10dp"
+                            android:buttonTint="@color/MyerSplashThemeColor"
+                            android:checked="true"
+                            android:foregroundTint="@color/MyerSplashThemeColor"
+                            android:theme="@style/AppTheme"
+                            android:thumbTint="@color/MyerSplashThemeColor"/>
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:contentDescription="@string/ImageDescDefault"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/grey_line"/>
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:cardBackgroundColor="@color/SettingBackground"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/saving_quality_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:orientation="vertical"
+                        android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -72,9 +128,97 @@
                             android:layout_marginBottom="@dimen/settings_margin_up_and_down"
                             android:layout_marginStart="@dimen/settings_margin_left"
                             android:layout_marginTop="@dimen/settings_margin_up_and_down"
-                            android:text="@string/QuickDownloadTitle"
+                            android:text="@string/SavingQuality"
                             android:textColor="@android:color/white"
-                            android:textSize="17sp"/>
+                            android:textSize="17sp"
+                            android:textStyle="normal"/>
+
+                        <TextView
+                            android:id="@+id/saving_quality_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/settings_margin_up_and_down"
+                            android:layout_marginStart="@dimen/settings_margin_left"
+                            android:alpha="0.5"
+                            android:text="@string/SavingHigh"
+                            android:textColor="@android:color/white"
+                            android:textSize="14sp"
+                            android:textStyle="normal"/>
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_margin="0dp"
+                        android:contentDescription="@string/ImageDescDefault"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/grey_line"/>
+
+                    <LinearLayout
+                        android:id="@+id/loading_quality_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:orientation="vertical"
+                        android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/settings_margin_up_and_down"
+                            android:layout_marginStart="@dimen/settings_margin_left"
+                            android:layout_marginTop="@dimen/settings_margin_up_and_down"
+                            android:text="@string/LoadingQuality"
+                            android:textColor="@android:color/white"
+                            android:textSize="17sp"
+                            android:textStyle="normal"/>
+
+                        <TextView
+                            android:id="@+id/loading_quality_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/settings_margin_up_and_down"
+                            android:layout_marginStart="@dimen/settings_margin_left"
+                            android:alpha="0.5"
+                            android:text="@string/LoadingLarge"
+                            android:textColor="@android:color/white"
+                            android:textSize="14sp"
+                            android:textStyle="normal"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:cardBackgroundColor="@color/SettingBackground"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/clear_database_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:orientation="vertical"
+                        android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/settings_margin_up_and_down"
+                            android:layout_marginStart="@dimen/settings_margin_left"
+                            android:layout_marginTop="@dimen/settings_margin_up_and_down"
+                            android:text="@string/cleanup_downloads_list"
+                            android:textColor="@android:color/white"
+                            android:textSize="17sp"
+                            android:textStyle="normal"/>
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -82,146 +226,60 @@
                             android:layout_marginBottom="@dimen/settings_margin_up_and_down"
                             android:layout_marginStart="@dimen/settings_margin_left"
                             android:alpha="0.5"
-                            android:paddingEnd="@dimen/settings_margin_left"
-                            android:text="@string/QuickDownload"
+                            android:text="@string/the_will_only_clear_the_list_in_app"
                             android:textColor="@android:color/white"
-                            android:textSize="14sp"/>
+                            android:textSize="14sp"
+                            android:textStyle="normal"/>
                     </LinearLayout>
 
-                    <android.support.v7.widget.AppCompatCheckBox
-                        android:id="@+id/detail_switch_quick_download"
-                        android:layout_width="wrap_content"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginRight="10dp"
-                        android:buttonTint="@color/MyerSplashThemeColor"
-                        android:checked="true"
-                        android:foregroundTint="@color/MyerSplashThemeColor"
-                        android:theme="@style/AppTheme2"
-                        android:thumbTint="@color/MyerSplashThemeColor"/>
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_margin="0dp"
+                        android:contentDescription="@string/ImageDescDefault"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/grey_line"/>
+
+                    <LinearLayout
+                        android:id="@+id/clear_cache_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:orientation="vertical"
+                        android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/settings_margin_up_and_down"
+                            android:layout_marginStart="@dimen/settings_margin_left"
+                            android:layout_marginTop="@dimen/settings_margin_up_and_down"
+                            android:text="@string/CleanupCache"
+                            android:textColor="@android:color/white"
+                            android:textSize="17sp"
+                            android:textStyle="normal"/>
+
+                        <TextView
+                            android:id="@+id/activity_settings_cacheSize_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/settings_margin_up_and_down"
+                            android:layout_marginStart="@dimen/settings_margin_left"
+                            android:alpha="0.5"
+                            android:text="@string/_0_mb"
+                            android:textColor="@android:color/white"
+                            android:textSize="14sp"
+                            android:textStyle="normal"/>
+                    </LinearLayout>
                 </LinearLayout>
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_margin="0dp"
-                    android:contentDescription="@string/ImageDescDefault"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/grey_line"/>
+            </android.support.v7.widget.CardView>
+        </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/saving_quality_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:orientation="vertical"
-                    android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/settings_margin_up_and_down"
-                        android:layout_marginStart="@dimen/settings_margin_left"
-                        android:layout_marginTop="@dimen/settings_margin_up_and_down"
-                        android:text="@string/SavingQuality"
-                        android:textColor="@android:color/white"
-                        android:textSize="17sp"
-                        android:textStyle="normal"/>
-
-                    <TextView
-                        android:id="@+id/saving_quality_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/settings_margin_up_and_down"
-                        android:layout_marginStart="@dimen/settings_margin_left"
-                        android:alpha="0.5"
-                        android:text="@string/SavingHigh"
-                        android:textColor="@android:color/white"
-                        android:textSize="14sp"
-                        android:textStyle="normal"/>
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_margin="0dp"
-                    android:contentDescription="@string/ImageDescDefault"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/grey_line"/>
-
-                <LinearLayout
-                    android:id="@+id/loading_quality_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:orientation="vertical"
-                    android:theme="@style/ThemeOverlay.AppCompat.Dark">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/settings_margin_up_and_down"
-                        android:layout_marginStart="@dimen/settings_margin_left"
-                        android:layout_marginTop="@dimen/settings_margin_up_and_down"
-                        android:text="@string/LoadingQuality"
-                        android:textColor="@android:color/white"
-                        android:textSize="17sp"
-                        android:textStyle="normal"/>
-
-                    <TextView
-                        android:id="@+id/loading_quality_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/settings_margin_up_and_down"
-                        android:layout_marginStart="@dimen/settings_margin_left"
-                        android:alpha="0.5"
-                        android:text="@string/LoadingLarge"
-                        android:textColor="@android:color/white"
-                        android:textSize="14sp"
-                        android:textStyle="normal"/>
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:contentDescription="@string/ImageDescDefault"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/grey_line"/>
-
-                <LinearLayout
-                    android:id="@+id/clear_cache_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:orientation="vertical"
-                    android:theme="@style/ThemeOverlay.AppCompat.Dark">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginBottom="@dimen/settings_margin_up_and_down"
-                        android:layout_marginStart="@dimen/settings_margin_left"
-                        android:layout_marginTop="@dimen/settings_margin_up_and_down"
-                        android:text="@string/CleanupCache"
-                        android:textColor="@android:color/white"
-                        android:textSize="17sp"
-                        android:textStyle="normal"/>
-
-                    <TextView
-                        android:id="@+id/activity_settings_cacheSize_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginBottom="@dimen/settings_margin_up_and_down"
-                        android:layout_marginStart="@dimen/settings_margin_left"
-                        android:alpha="0.5"
-                        android:text="0 MB"
-                        android:textColor="@android:color/white"
-                        android:textSize="14sp"
-                        android:textStyle="normal"/>
-                </LinearLayout>
-            </LinearLayout>
-        </android.support.v7.widget.CardView>
+        <com.juniperphoton.myersplash.widget.CommonTitleBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="SETTINGS"/>
     </android.support.design.widget.CoordinatorLayout>
 </LinearLayout>

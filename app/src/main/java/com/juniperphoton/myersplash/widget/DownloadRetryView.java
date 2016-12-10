@@ -2,14 +2,17 @@ package com.juniperphoton.myersplash.widget;
 
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.interfaces.ISetThemeColor;
+import com.juniperphoton.myersplash.utils.ColorUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -17,10 +20,13 @@ import butterknife.ButterKnife;
 public class DownloadRetryView extends FrameLayout implements ISetThemeColor {
 
     @Bind(R.id.widget_retry_btn)
-    RelativeLayout mRetryBtn;
+    RelativeLayout retryBtn;
 
     @Bind(R.id.widget_retry_rl)
-    RelativeLayout RetryRL;
+    RelativeLayout retryRL;
+
+    @Bind(R.id.retry_tv)
+    TextView retryTextView;
 
     public DownloadRetryView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -30,11 +36,7 @@ public class DownloadRetryView extends FrameLayout implements ISetThemeColor {
 
     @Override
     public void setThemeBackColor(int color) {
-        RetryRL.setBackground(new ColorDrawable(color));
-    }
-
-    @Override
-    public void setThemeForeColor(int color) {
-
+        retryRL.setBackground(new ColorDrawable(color));
+        retryTextView.setTextColor(ColorUtil.isColorLight(color) ? Color.BLACK : Color.WHITE);
     }
 }

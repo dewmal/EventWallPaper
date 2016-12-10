@@ -49,5 +49,8 @@
     <string name="buy_me_a_drink">Treat me a drink</string>
     <string name="downloads">DOWNLOADS</string>eat
     <string name="no_downloads">NO DOWNLOADS</string>
+    <string name="cleanup_downloads_list">Cleanup downloads list</string>
+    <string name="the_will_only_clear_the_list_in_app">The will only clear the list in app</string>
+    <string name="_0_mb">0 MB</string>
 
 </resources>

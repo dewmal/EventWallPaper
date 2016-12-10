@@ -1,5 +1,7 @@
 package com.juniperphoton.myersplash.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +17,7 @@ import com.juniperphoton.myersplash.callback.DownloadItemsChangedCallback;
 import com.juniperphoton.myersplash.model.DownloadItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -34,7 +37,7 @@ public class ManageDownloadActivity extends AppCompatActivity implements Downloa
     TextView mNoItemTV;
 
     private DownloadsListAdapter mAdapter;
-    private RealmChangeListener<DownloadItem> realmListener;
+    private RealmChangeListener<DownloadItem> mRealmListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -46,7 +49,7 @@ public class ManageDownloadActivity extends AppCompatActivity implements Downloa
         setContentView(R.layout.activity_managedownload);
         ButterKnife.bind(this);
 
-        realmListener = new RealmChangeListener<DownloadItem>() {
+        mRealmListener = new RealmChangeListener<DownloadItem>() {
             @Override
             public void onChange(DownloadItem item) {
                 mAdapter.updateItem(item);
@@ -65,14 +68,51 @@ public class ManageDownloadActivity extends AppCompatActivity implements Downloa
 
     @OnClick(R.id.activity_downloads_more_fab)
     void onClickMore() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("CLEAR OPTIOINS").
+                setItems(R.array.delete_options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        switch (i) {
+                            case 0: {
+                                deleteFromRealm(DownloadItem.DownloadStatus.Downloading);
+                            }
+                            break;
+                            case 1: {
+                                deleteFromRealm(DownloadItem.DownloadStatus.Completed);
+                            }
+                            break;
+                            case 2: {
+                                deleteFromRealm(DownloadItem.DownloadStatus.Failed);
+                            }
+                            break;
+                        }
+                    }
+                })
+                .setPositiveButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+        builder.create().show();
+    }
+
+    private void deleteFromRealm(final DownloadItem.DownloadStatus status) {
+        List<DownloadItem> count = mAdapter.getData();
+
         Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                realm.deleteAll();
+                RealmResults<DownloadItem> items = realm.where(DownloadItem.class).equalTo("mStatus", status.ordinal()).findAll();
+                for (DownloadItem item : items) {
+                    item.removeChangeListener(mRealmListener);
+                    item.deleteFromRealm();
+                }
             }
         });
-        mAdapter.clear();
-        updateNoItemVisibility();
+        initViews();
     }
 
     public void updateNoItemVisibility() {
@@ -86,7 +126,7 @@ public class ManageDownloadActivity extends AppCompatActivity implements Downloa
     }
 
     private void initViews() {
-        final ArrayList<DownloadItem> arrayList = new ArrayList<>();
+        final ArrayList<DownloadItem> list = new ArrayList<>();
 
         Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
             @Override
@@ -94,19 +134,31 @@ public class ManageDownloadActivity extends AppCompatActivity implements Downloa
                 RealmResults<DownloadItem> items = realm.where(DownloadItem.class).findAll();
                 if (items.size() > 0) {
                     for (DownloadItem item : items) {
-                        item.addChangeListener(realmListener);
-                        arrayList.add(item);
+                        item.addChangeListener(mRealmListener);
+                        list.add(0, item);
                     }
                 }
             }
         });
 
         if (mAdapter == null) {
-            mAdapter = new DownloadsListAdapter(arrayList, this);
+            mAdapter = new DownloadsListAdapter(list, this);
             mAdapter.setCallback(this);
+        } else {
+            mAdapter.refreshItems(list);
         }
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                if (position == mAdapter.getItemCount() - 1) {
+                    return 2;
+                } else {
+                    return 1;
+                }
+            }
+        });
         mDownloadsRV.setLayoutManager(layoutManager);
         mDownloadsRV.getItemAnimator().setChangeDuration(0);
         mDownloadsRV.setAdapter(mAdapter);

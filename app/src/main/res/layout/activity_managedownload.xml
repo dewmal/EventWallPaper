@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/SettingBackground"
-    android:fitsSystemWindows="false"
-    android:orientation="vertical"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/SettingBackground"
+              android:fitsSystemWindows="false"
+              android:orientation="vertical"
+              android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
         android:id="@+id/activity_main_mask"
@@ -16,42 +16,25 @@
         android:contentDescription="@string/ImageDescDefault"
         android:elevation="4dp"
         android:scaleType="fitXY"
-        android:src="@drawable/black_mask" />
+        android:src="@drawable/black_mask"/>
 
     <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="false">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:theme="@style/AppTheme.AppBarOverlay">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/settings_margin_left"
-                android:text="@string/downloads"
-                android:textColor="@color/MyerSplashThemeColor"
-                android:textSize="@dimen/page_title_textsize"
-                android:textStyle="bold" />
-
-        </RelativeLayout>
+                                                     xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                     android:layout_width="match_parent"
+                                                     android:layout_height="match_parent"
+                                                     android:fitsSystemWindows="false">
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="60dp"
-            android:orientation="vertical">
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="60dp"
+                        android:orientation="vertical">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/activity_managedownload_rv"
                 android:layout_width="match_parent"
-                android:layout_margin="4dp"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_margin="4dp"/>
 
             <TextView
                 android:id="@+id/activity_downloads_no_item_tv"
@@ -62,7 +45,7 @@
                 android:text="@string/no_downloads"
                 android:textColor="@android:color/white"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
         </RelativeLayout>
 
         <android.support.design.widget.FloatingActionButton
@@ -74,6 +57,11 @@
             android:layout_marginEnd="24dp"
             android:background="@drawable/ripple_effect"
             android:src="@drawable/vector_ic_more"
-            app:backgroundTint="@color/MyerSplashThemeColor" />
+            app:backgroundTint="@color/MyerSplashThemeColor"/>
+
+        <com.juniperphoton.myersplash.widget.CommonTitleBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="DOWNLOADS"/>
     </android.support.design.widget.CoordinatorLayout>
 </LinearLayout>

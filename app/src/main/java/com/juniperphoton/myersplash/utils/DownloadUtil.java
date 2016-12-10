@@ -198,7 +198,7 @@ public class DownloadUtil {
             return;
         }
         if (!NetworkUtil.usingWifi(context)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.ThemeAlertDialogStyle);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setTitle("ATTENTION");
             builder.setMessage("You are not using WiFi network. Continue to download?");
             builder.setPositiveButton("DOWNLOAD", new DialogInterface.OnClickListener() {

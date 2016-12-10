@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/downloading_root_rl"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+                android:id="@+id/downloading_root_rl"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#dd000000" />
+        android:background="#dd000000"/>
 
     <com.juniperphoton.myersplash.widget.ProgressView
         android:id="@+id/downloading_progress_pv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
     <TextView
         android:id="@+id/downloading_progress_tv"
@@ -22,7 +23,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="12dp"
         android:text="30%"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"/>
 
     <RelativeLayout
         android:id="@+id/downloading_cancel_rl"
@@ -37,6 +38,6 @@
             android:layout_width="30dp"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
-            android:src="@drawable/vector_ic_clear" />
+            android:src="@drawable/vector_ic_clear"/>
     </RelativeLayout>
 </RelativeLayout>

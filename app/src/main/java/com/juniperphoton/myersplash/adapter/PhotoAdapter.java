@@ -287,8 +287,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     }
 
     class PhotoViewHolder extends RecyclerView.ViewHolder {
-        static final int TYPE_COMMON_VIEW = 100000;
-        static final int TYPE_FOOTER_VIEW = 100001;
+        static final int TYPE_COMMON_VIEW = 1;
+        static final int TYPE_FOOTER_VIEW = 1<<1;
 
         SimpleDraweeView SimpleDraweeView;
         CardView RootCardView;

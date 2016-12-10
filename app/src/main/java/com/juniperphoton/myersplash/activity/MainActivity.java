@@ -3,6 +3,7 @@ package com.juniperphoton.myersplash.activity;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -183,16 +184,40 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.drawer_settings_ll)
     void onClickSettings() {
-        Intent intent = new Intent(this, SettingsActivity.class);
-        startActivity(intent);
-        //mDrawerLayout.closeDrawer(GravityCompat.START);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent);
+            }
+        }, 200);
     }
 
     @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.drawer_about_ll)
     void onClickAbout() {
-        Intent intent = new Intent(this, AboutActivity.class);
-        startActivity(intent);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+                startActivity(intent);
+            }
+        }, 200);
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.nav_naviToDownload_rl)
+    void onClickNaviToDownloads() {
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(MainActivity.this, ManageDownloadActivity.class);
+                startActivity(intent);
+            }
+        }, 200);
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -202,13 +227,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         if (mLastCategory != -1 && adapter != null) {
             adapter.select(mLastCategory);
         }
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    @OnClick(R.id.nav_naviToDownload_rl)
-    void onClickNaviToDownloads() {
-        Intent intent = new Intent(this, ManageDownloadActivity.class);
-        startActivity(intent);
     }
 
     @Override
@@ -505,8 +523,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     @Override
-    public void onClickQuickDownload(UnsplashImage image) {
-        DownloadUtil.checkAndDownload(this, image);
+    public void onClickQuickDownload(final UnsplashImage image) {
+        DownloadUtil.checkAndDownload(MainActivity.this, image);
     }
 
     @Override

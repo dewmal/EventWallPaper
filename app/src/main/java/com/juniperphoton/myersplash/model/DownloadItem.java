@@ -24,6 +24,8 @@ public class DownloadItem extends RealmObject {
 
     private int mStatus;
 
+    private String mFilePath;
+
     public DownloadItem(String id, String thumbUrl, String downloadUrl) {
         mId = id;
         mThumbUrl = thumbUrl;
@@ -69,6 +71,14 @@ public class DownloadItem extends RealmObject {
                     return "";
             }
         }
+    }
+
+    public void setFilePath(String filePath) {
+        mFilePath = filePath;
+    }
+
+    public String getFilePath() {
+        return mFilePath;
     }
 
     public void setColor(int color) {

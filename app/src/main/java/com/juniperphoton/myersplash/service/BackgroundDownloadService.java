@@ -3,17 +3,13 @@ package com.juniperphoton.myersplash.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 
 import com.juniperphoton.myersplash.cloudservice.CloudService;
-import com.juniperphoton.myersplash.event.DownloadCompletedEvent;
 import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.NotificationUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
 import com.orhanobut.logger.Logger;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.HashMap;
@@ -21,7 +17,6 @@ import java.util.HashMap;
 import io.realm.Realm;
 import okhttp3.ResponseBody;
 import rx.Subscriber;
-import rx.Subscription;
 
 @SuppressWarnings("UnusedDeclaration")
 public class BackgroundDownloadService extends IntentService {
@@ -85,7 +80,16 @@ public class BackgroundDownloadService extends IntentService {
                         }
                     });
                 } else {
-                    EventBus.getDefault().post(new DownloadCompletedEvent(Uri.fromFile(outputFile)));
+                    Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            DownloadItem downloadItem = realm.where(DownloadItem.class).equalTo("mDownloadUrl", url).findFirst();
+                            if (downloadItem != null) {
+                                downloadItem.setStatus(DownloadItem.DownloadStatus.Completed);
+                                downloadItem.setFilePath(outputFile.getPath());
+                            }
+                        }
+                    });
                     NotificationUtil.showCompleteNotification(Uri.parse(url), Uri.fromFile(outputFile));
                 }
                 Logger.d(TAG, "Completed");

@@ -4,6 +4,7 @@ package com.juniperphoton.myersplash.widget;
 import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.support.v4.content.FileProvider;
@@ -11,10 +12,12 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.interfaces.ISetThemeColor;
+import com.juniperphoton.myersplash.utils.ColorUtil;
 
 import java.io.File;
 
@@ -25,12 +28,15 @@ import butterknife.OnClick;
 public class DownloadCompleteView extends FrameLayout implements ISetThemeColor {
 
     @Bind(R.id.widget_set_as_rl)
-    RelativeLayout SetAsBtn;
+    RelativeLayout setAsBtn;
 
     @Bind(R.id.widget_set_as_root_rl)
-    RelativeLayout SetAsRL;
+    RelativeLayout setAsRL;
 
-    private Uri fileUri;
+    @Bind(R.id.set_as_tv)
+    TextView setAsTextView;
+
+    private String mFileUrl;
 
     public DownloadCompleteView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -38,10 +44,14 @@ public class DownloadCompleteView extends FrameLayout implements ISetThemeColor 
         ButterKnife.bind(this);
     }
 
+    public void setFilePath(String filePath) {
+        mFileUrl = filePath;
+    }
+
     @OnClick(R.id.widget_set_as_rl)
     void setAs() {
-        if (fileUri != null) {
-            File file = new File(fileUri.getPath());
+        if (mFileUrl != null) {
+            File file = new File(mFileUrl);
             Uri uri = FileProvider.getUriForFile(App.getInstance(), App.getInstance().getString(R.string.authorities), file);
             Intent intent = WallpaperManager.getInstance(App.getInstance()).getCropAndSetWallpaperIntent(uri);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -51,11 +61,7 @@ public class DownloadCompleteView extends FrameLayout implements ISetThemeColor 
 
     @Override
     public void setThemeBackColor(int color) {
-        SetAsRL.setBackground(new ColorDrawable(color));
-    }
-
-    @Override
-    public void setThemeForeColor(int color) {
-
+        setAsRL.setBackground(new ColorDrawable(color));
+        setAsTextView.setTextColor(ColorUtil.isColorLight(color) ? Color.BLACK : Color.WHITE);
     }
 }
