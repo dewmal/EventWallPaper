@@ -43,7 +43,7 @@
                 android:imeOptions="actionSearch"
                 android:hint="@string/search_in_english"
                 android:inputType="text"
-                android:textColorHint="?android:attr/colorAccent" />
+                android:textColorHint="#afafaf" />
 
             <android.support.v7.widget.CardView
                 android:layout_width="50dp"

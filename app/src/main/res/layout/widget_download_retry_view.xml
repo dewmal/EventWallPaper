@@ -22,4 +22,18 @@
             android:textStyle="bold"/>
     </RelativeLayout>
 
+    <RelativeLayout
+        android:layout_width="50dp"
+        android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:layout_alignParentRight="true">
+
+        <ImageView
+            android:id="@+id/retry_ic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/vector_ic_delete_white"/>
+    </RelativeLayout>
+
 </RelativeLayout>

@@ -70,6 +70,29 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
         holder.ProgressStrTV.setText(item.getProgressStr());
 
         holder.DownloadRetryView.setThemeBackColor(item.getColor());
+        holder.DownloadRetryView.setOnClickDelteListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeItem(item);
+                notifyItemRemoved(holder.getAdapterPosition());
+
+                Intent intent = new Intent(App.getInstance(), BackgroundDownloadService.class);
+                intent.putExtra(BackgroundDownloadService.CANCELED_KEY, true);
+                intent.putExtra(BackgroundDownloadService.URI_KEY, item.getDownloadUrl());
+                mContext.startService(intent);
+
+                Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        DownloadItem realmItem = realm.where(DownloadItem.class).equalTo("mId", item.getId()).findFirst();
+                        if (realmItem != null) {
+                            realmItem.deleteFromRealm();
+                        }
+                    }
+                });
+            }
+        });
+
         holder.DownloadCompleteView.setThemeBackColor(item.getColor());
 
         holder.DownloadingView.setProgress(item.getProgress());

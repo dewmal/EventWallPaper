@@ -81,7 +81,7 @@ public class NotificationUtil {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(App.getInstance())
                 .setContentTitle("Download error.")
                 .setContentText("Please checkAndRequest your network and retry.")
-                .setSmallIcon(R.drawable.vector_ic_clear);
+                .setSmallIcon(R.drawable.vector_ic_clear_white);
 
         builder.addAction(R.drawable.ic_replay_white_48dp, "RETRY", resultPendingIntent);
 

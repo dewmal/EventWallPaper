@@ -22,7 +22,7 @@
         android:contentDescription="@string/ImageDescDefault"
         android:elevation="0dp"
         android:scaleType="fitXY"
-        android:src="@drawable/black_mask" />
+        android:src="@drawable/status_mask" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -44,7 +44,7 @@
                 android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:contentDescription="@string/ImageDescDefault"
-                android:src="@drawable/logo" />
+                android:src="@drawable/ic_logo_raw" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -163,7 +163,7 @@
                         android:id="@+id/email_rl"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="?android:attr/selectableItemBackground"
+                        android:background="@drawable/ripple_rect"
                         android:clickable="true">
 
                         <TextView
@@ -214,7 +214,7 @@
                         android:id="@+id/activity_about_donate_rl"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="?android:attr/selectableItemBackground"
+                        android:background="@drawable/ripple_rect"
                         android:clickable="true">
 
                         <TextView
@@ -245,7 +245,7 @@
                         android:id="@+id/activity_about_rate_rl"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="?android:attr/selectableItemBackground"
+                        android:background="@drawable/ripple_rect"
                         android:clickable="true">
 
                         <TextView

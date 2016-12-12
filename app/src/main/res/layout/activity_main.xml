@@ -15,7 +15,7 @@
         android:contentDescription="@string/ImageDescDefault"
         android:elevation="4dp"
         android:scaleType="fitXY"
-        android:src="@drawable/black_mask" />
+        android:src="@drawable/status_mask" />
 
     <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -77,7 +77,7 @@
                 android:layout_gravity="end|bottom"
                 android:layout_marginBottom="60dp"
                 android:layout_marginEnd="24dp"
-                android:background="@drawable/ripple_effect"
+                android:background="@drawable/ripple"
                 android:src="@drawable/vector_ic_search"
                 app:backgroundTint="@color/MyerSplashThemeColor" />
 

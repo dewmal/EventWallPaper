@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,6 +32,9 @@ public class DownloadingView extends FrameLayout implements ISetThemeColor {
     @Bind(R.id.downloading_cancel_rl)
     RelativeLayout cancelRL;
 
+    @Bind(R.id.cancel_ic)
+    ImageView cancelImageView;
+
     private OnClickListener mListener;
 
     public DownloadingView(Context context, AttributeSet attrs) {
@@ -55,6 +59,7 @@ public class DownloadingView extends FrameLayout implements ISetThemeColor {
         this.progressView.setThemeColor(color);
         if (ColorUtil.isColorLight(color)) {
             progressTV.setTextColor(Color.BLACK);
+            cancelImageView.setImageResource(R.drawable.vector_ic_clear_black);
         } else {
             progressTV.setTextColor(Color.WHITE);
         }

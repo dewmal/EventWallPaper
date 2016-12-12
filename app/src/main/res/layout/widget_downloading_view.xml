@@ -31,13 +31,14 @@
         android:layout_height="match_parent"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:background="@drawable/ripple"
         android:clickable="true">
 
         <ImageView
+            android:id="@+id/cancel_ic"
             android:layout_width="30dp"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
-            android:src="@drawable/vector_ic_clear"/>
+            android:src="@drawable/vector_ic_clear_white"/>
     </RelativeLayout>
 </RelativeLayout>

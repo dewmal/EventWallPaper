@@ -63,6 +63,18 @@
                 android:clickable="true" />
 
             <android.support.design.widget.FloatingActionButton
+                android:id="@+id/detail_share_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="12dp"
+                android:clickable="true"
+                android:src="@drawable/vector_ic_share"
+                app:backgroundTint="@android:color/white"
+                app:fabSize="mini"
+                android:layout_alignTop="@+id/detail_download_fab"
+                android:layout_toStartOf="@+id/detail_download_fab" />
+
+            <android.support.design.widget.FloatingActionButton
                 android:id="@+id/detail_download_fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,17 +86,6 @@
                 android:src="@drawable/vector_ic_file_download"
                 app:backgroundTint="@color/MyerSplashThemeColor" />
 
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/detail_share_fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
-                android:clickable="true"
-                android:src="@drawable/vector_ic_share"
-                app:backgroundTint="@android:color/white"
-                app:fabSize="mini"
-                android:layout_alignTop="@+id/detail_download_fab"
-                android:layout_toStartOf="@+id/detail_download_fab" />
 
         </RelativeLayout>
     </RelativeLayout>

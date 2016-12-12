@@ -64,9 +64,9 @@ public class DownloadItem extends RealmObject {
                 case 0:
                     return "DOWNLOADING";
                 case 1:
-                    return "FAILED";
+                    return "";
                 case 2:
-                    return "COMPLETED";
+                    return "";
                 default:
                     return "";
             }

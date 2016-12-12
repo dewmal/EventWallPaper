@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
+import com.juniperphoton.myersplash.utils.ContextUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -38,8 +39,8 @@ public class CommonTitleBar extends FrameLayout {
         backView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (context instanceof Activity) {
-                    Activity activity = (Activity) context;
+                Activity activity = ContextUtil.getActivity(view);
+                if (activity != null) {
                     activity.finish();
                 }
             }

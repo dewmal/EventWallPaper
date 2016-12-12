@@ -86,6 +86,8 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
     @Bind(R.id.detail_share_fab)
     FloatingActionButton mShareFAB;
 
+    private boolean mAnimating;
+
     public DetailView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
@@ -180,7 +182,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         mDownloadFAB.setLayoutParams(paramsDFAB);
 
         RelativeLayout.LayoutParams paramsSFAB = new RelativeLayout.LayoutParams(mDownloadFAB.getLayoutParams());
-        paramsSFAB.setMargins(0, 0, getResources().getDimensionPixelOffset(R.dimen.share_btn_margin_right),
+        paramsSFAB.setMargins(0, 0, getResources().getDimensionPixelOffset(R.dimen.share_btn_margin_right_hide),
                 getResources().getDimensionPixelOffset(R.dimen.share_btn_margin_bottom));
         paramsSFAB.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
         paramsSFAB.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -192,8 +194,6 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
             mHeroStartY = startY;
             mHeroEndY = endY;
         }
-
-        //Logger.d("start:" + startY + ",end:" + endY);
 
         ValueAnimator valueAnimator = new ValueAnimator();
         valueAnimator.setIntValues(startY, endY);
@@ -221,7 +221,10 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
                     mClickedImage = null;
                 } else {
                     toggleDetailRLAnimation(true);
+                    toggleDownloadBtnAnimation(true);
+                    toggleShareBtnAnimation(true);
                 }
+                mAnimating = false;
             }
 
             @Override
@@ -264,7 +267,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         valueAnimator.addListener(new Animator.AnimatorListener() {
             @Override
             public void onAnimationStart(Animator animation) {
-
+                mAnimating = true;
             }
 
             @Override
@@ -379,6 +382,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
     }
 
     private void hideDetailPanel() {
+        if (mAnimating) return;
         toggleDetailRLAnimation(false);
         toggleDownloadBtnAnimation(false);
         toggleShareBtnAnimation(false);
@@ -446,7 +450,5 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
 
         toggleMaskAnimation(true);
         toggleHeroViewAnimation(itemY, targetPositonY, true);
-        toggleDownloadBtnAnimation(true);
-        toggleShareBtnAnimation(true);
     }
 }
