@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="80dp">
+
+    <LinearLayout
+        android:id="@+id/quick_download_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackground"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/settings_item_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/settings_margin_up_and_down"
+                android:layout_marginStart="@dimen/settings_margin_left"
+                android:layout_marginTop="@dimen/settings_margin_up_and_down"
+                android:text="@string/QuickDownloadTitle"
+                android:textColor="@android:color/white"
+                android:textSize="17sp"/>
+
+            <TextView
+                android:id="@+id/settings_item_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/settings_margin_up_and_down"
+                android:layout_marginStart="@dimen/settings_margin_left"
+                android:alpha="0.5"
+                android:paddingEnd="@dimen/settings_margin_left"
+                android:text="@string/QuickDownload"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                />
+        </LinearLayout>
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/settings_item_checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="10dp"
+            android:buttonTint="@color/MyerSplashThemeColor"
+            android:checked="true"
+            android:foregroundTint="@color/MyerSplashThemeColor"
+            android:theme="@style/AppTheme"
+            android:thumbTint="@color/MyerSplashThemeColor"/>
+
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/divider_view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/grey_line"
+        />
+</RelativeLayout>

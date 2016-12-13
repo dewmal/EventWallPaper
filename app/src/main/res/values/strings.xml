@@ -17,11 +17,11 @@
 
     <string name="ImageDescDefault">Desc</string>
 
-    <string name="SavingHighest">Highest (Up to 8MB)</string>
-    <string name="SavingHigh">High (Up to 3MB)</string>
+    <string name="SavingHighest">Raw</string>
+    <string name="SavingHigh">High (Default)</string>
     <string name="SavingMedium">Medium (500 KB)</string>
 
-    <string name="LoadingLarge">Large</string>
+    <string name="LoadingLarge">Large (Recommended)</string>
     <string name="LoadingSmall">Small</string>
     <string name="LoadingThumbnail">Thumbnail</string>
 

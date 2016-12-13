@@ -23,6 +23,8 @@ public class ToastService {
                     sendInternal(str);
                 }
             });
+        } else {
+            sendInternal(str);
         }
     }
 

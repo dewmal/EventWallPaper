@@ -11,10 +11,10 @@
     </translate>
     <scale
         android:duration="500"
-        android:fromYScale="0.95"
+        android:fromYScale="0.98"
         android:toYScale="1.0"
         android:pivotX="50%p"
         android:pivotY="50%p"
-        android:fromXScale="0.95"
+        android:fromXScale="0.98"
         android:toXScale="1.0"/>
 </set>

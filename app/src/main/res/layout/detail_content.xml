@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/detail_root_sv"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/black"
-    android:clickable="true"
-    android:visibility="visible">
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/detail_root_sv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/black"
+            android:clickable="true"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark"
+            android:visibility="visible">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -18,7 +19,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/img_detail_height"
             android:layout_marginTop="350dp"
-            android:clickable="true">
+            android:clickable="true"
+            android:clipChildren="false">
 
             <RelativeLayout
                 android:id="@+id/detail_backgrd_rl"
@@ -42,7 +44,7 @@
                         android:layout_height="wrap_content"
                         android:text="photo by"
                         android:textColor="@android:color/black"
-                        android:textSize="12dp" />
+                        android:textSize="12dp"/>
 
                     <TextView
                         android:id="@+id/detail_name_tv"
@@ -51,8 +53,35 @@
                         android:text="Juniper Photon"
                         android:textColor="@android:color/black"
                         android:textSize="20dp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"/>
                 </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/copy_url_fl"
+                    android:layout_width="104dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginBottom="25dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/copy_url_background"
+                    android:clickable="true"
+                    android:foreground="@drawable/ripple_rect">
+
+                    <TextView
+                        android:id="@+id/copy_url_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginRight="12dp"
+                        android:layout_marginTop="8dp"
+                        android:text="COPY URL"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"/>
+                </FrameLayout>
 
             </RelativeLayout>
 
@@ -60,31 +89,37 @@
                 android:id="@+id/detail_hero_dv"
                 android:layout_width="match_parent"
                 android:layout_height="270dp"
-                android:clickable="true" />
+                android:clickable="true"/>
 
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/detail_share_fab"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="12dp"
-                android:clickable="true"
-                android:src="@drawable/vector_ic_share"
-                app:backgroundTint="@android:color/white"
-                app:fabSize="mini"
-                android:layout_alignTop="@+id/detail_download_fab"
-                android:layout_toStartOf="@+id/detail_download_fab" />
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/detail_download_fab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:orientation="horizontal"
                 android:layout_marginBottom="@dimen/download_btn_margin_bottom"
                 android:layout_marginEnd="@dimen/download_btn_margin_right"
-                android:clickable="true"
-                android:src="@drawable/vector_ic_file_download"
-                app:backgroundTint="@color/MyerSplashThemeColor" />
+                android:layout_height="wrap_content">
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/detail_share_fab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:clickable="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/vector_ic_share"
+                    app:backgroundTint="@android:color/white"
+                    app:fabSize="mini"/>
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/detail_download_fab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:clickable="true"
+                    android:src="@drawable/vector_ic_file_download"
+                    app:backgroundTint="@color/MyerSplashThemeColor"
+                    app:fabSize="normal"/>
+            </LinearLayout>
 
 
         </RelativeLayout>

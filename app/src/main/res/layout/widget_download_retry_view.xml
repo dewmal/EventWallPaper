@@ -29,7 +29,7 @@
         android:layout_alignParentRight="true">
 
         <ImageView
-            android:id="@+id/retry_ic"
+            android:id="@+id/delete_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"

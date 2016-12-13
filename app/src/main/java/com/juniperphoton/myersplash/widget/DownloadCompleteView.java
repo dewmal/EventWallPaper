@@ -16,24 +16,24 @@ import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.base.App;
-import com.juniperphoton.myersplash.interfaces.ISetThemeColor;
+import com.juniperphoton.myersplash.interfaces.SetThemeColor;
 import com.juniperphoton.myersplash.utils.ColorUtil;
 
 import java.io.File;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class DownloadCompleteView extends FrameLayout implements ISetThemeColor {
+public class DownloadCompleteView extends FrameLayout implements SetThemeColor {
 
-    @Bind(R.id.widget_set_as_rl)
+    @BindView(R.id.widget_set_as_rl)
     RelativeLayout setAsBtn;
 
-    @Bind(R.id.widget_set_as_root_rl)
+    @BindView(R.id.widget_set_as_root_rl)
     RelativeLayout setAsRL;
 
-    @Bind(R.id.set_as_tv)
+    @BindView(R.id.set_as_tv)
     TextView setAsTextView;
 
     private String mFileUrl;

@@ -26,15 +26,22 @@ public class DownloadItem extends RealmObject {
 
     private String mFilePath;
 
-    public DownloadItem(String id, String thumbUrl, String downloadUrl) {
+    private String mFileName;
+
+    public DownloadItem(String id, String thumbUrl, String downloadUrl, String fileName) {
         mId = id;
         mThumbUrl = thumbUrl;
         mDownloadUrl = downloadUrl;
         mStatus = DownloadStatus.Downloading.ordinal();
+        mFileName = fileName;
     }
 
     public DownloadItem() {
 
+    }
+
+    public String getFileName() {
+        return mFileName;
     }
 
     public int getProgress() {

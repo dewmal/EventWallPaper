@@ -1,6 +1,6 @@
 package com.juniperphoton.myersplash.interfaces;
 
 
-public interface ISetThemeColor {
+public interface SetThemeColor {
     void setThemeBackColor(int color);
 }

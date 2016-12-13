@@ -4,12 +4,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark">
+                >
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#dd000000"/>
+        android:background="#B2000000"/>
 
     <com.juniperphoton.myersplash.widget.ProgressView
         android:id="@+id/downloading_progress_pv"

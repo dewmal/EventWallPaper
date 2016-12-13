@@ -13,13 +13,13 @@ import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.adapter.DownloadsListAdapter;
-import com.juniperphoton.myersplash.callback.DownloadItemsChangedCallback;
 import com.juniperphoton.myersplash.model.DownloadItem;
+import com.juniperphoton.myersplash.utils.DownloadUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
@@ -28,12 +28,12 @@ import io.realm.RealmResults;
 import moe.feng.material.statusbar.StatusBarCompat;
 
 
-public class ManageDownloadActivity extends AppCompatActivity implements DownloadItemsChangedCallback {
+public class ManageDownloadActivity extends AppCompatActivity implements DownloadsListAdapter.DownloadStateChangedCallback {
 
-    @Bind(R.id.activity_managedownload_rv)
+    @BindView(R.id.activity_managedownload_rv)
     RecyclerView mDownloadsRV;
 
-    @Bind(R.id.activity_downloads_no_item_tv)
+    @BindView(R.id.activity_downloads_no_item_tv)
     TextView mNoItemTV;
 
     private DownloadsListAdapter mAdapter;
@@ -169,5 +169,10 @@ public class ManageDownloadActivity extends AppCompatActivity implements Downloa
     @Override
     public void onDataChanged() {
         updateNoItemVisibility();
+    }
+
+    @Override
+    public void onRetryDownload(String id) {
+        //DownloadUtil.checkAndDownload(this,m);
     }
 }

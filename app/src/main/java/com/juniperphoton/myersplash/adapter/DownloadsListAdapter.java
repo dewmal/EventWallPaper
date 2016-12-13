@@ -2,7 +2,7 @@ package com.juniperphoton.myersplash.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.Nullable;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +12,9 @@ import android.widget.TextView;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.base.App;
-import com.juniperphoton.myersplash.callback.DownloadItemsChangedCallback;
 import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.service.BackgroundDownloadService;
+import com.juniperphoton.myersplash.utils.DownloadItemTransactionHelper;
 import com.juniperphoton.myersplash.widget.DownloadCompleteView;
 import com.juniperphoton.myersplash.widget.DownloadRetryView;
 import com.juniperphoton.myersplash.widget.DownloadingView;
@@ -23,7 +23,7 @@ import com.juniperphoton.myersplash.widget.RippleToggleLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 
@@ -32,7 +32,7 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
     private Context mContext;
     private List<DownloadItem> mData;
 
-    private DownloadItemsChangedCallback mCallback;
+    private DownloadStateChangedCallback mCallback;
 
     private final static String UPDATE_PROGRESS_PAYLOAD = "UPDATE_PROGRESS_PAYLOAD";
     private final static int ITEM = 1;
@@ -65,12 +65,15 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
             return;
         }
         final DownloadItem item = mData.get(holder.getAdapterPosition());
+
         holder.DownloadCompleteView.setFilePath(item.getFilePath());
+        holder.DownloadCompleteView.setThemeBackColor(item.getColor());
+
         holder.DraweeView.setImageURI(item.getThumbUrl());
         holder.ProgressStrTV.setText(item.getProgressStr());
 
         holder.DownloadRetryView.setThemeBackColor(item.getColor());
-        holder.DownloadRetryView.setOnClickDelteListener(new View.OnClickListener() {
+        holder.DownloadRetryView.setOnClickDeleteListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 removeItem(item);
@@ -81,42 +84,34 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
                 intent.putExtra(BackgroundDownloadService.URI_KEY, item.getDownloadUrl());
                 mContext.startService(intent);
 
-                Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        DownloadItem realmItem = realm.where(DownloadItem.class).equalTo("mId", item.getId()).findFirst();
-                        if (realmItem != null) {
-                            realmItem.deleteFromRealm();
-                        }
-                    }
-                });
+                DownloadItemTransactionHelper.delete(item);
             }
         });
+        holder.DownloadRetryView.setOnClickRetryListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DownloadItemTransactionHelper.updateStatus(item, DownloadItem.DownloadStatus.Downloading);
+                holder.RippleToggleView.toggleTo(item.getStatus());
 
-        holder.DownloadCompleteView.setThemeBackColor(item.getColor());
+                Intent intent = new Intent(mContext, BackgroundDownloadService.class);
+                intent.putExtra("NAME", item.getFileName());
+                intent.putExtra("URI", item.getDownloadUrl());
+                mContext.startService(intent);
+            }
+        });
 
         holder.DownloadingView.setProgress(item.getProgress());
         holder.DownloadingView.setThemeBackColor(item.getColor());
         holder.DownloadingView.setClickCancelListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                removeItem(item);
-                notifyItemRemoved(holder.getAdapterPosition());
+                DownloadItemTransactionHelper.updateStatus(item, DownloadItem.DownloadStatus.Failed);
+                holder.RippleToggleView.toggleTo(item.getStatus());
 
                 Intent intent = new Intent(App.getInstance(), BackgroundDownloadService.class);
                 intent.putExtra(BackgroundDownloadService.CANCELED_KEY, true);
                 intent.putExtra(BackgroundDownloadService.URI_KEY, item.getDownloadUrl());
                 mContext.startService(intent);
-
-                Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        DownloadItem realmItem = realm.where(DownloadItem.class).equalTo("mId", item.getId()).findFirst();
-                        if (realmItem != null) {
-                            realmItem.deleteFromRealm();
-                        }
-                    }
-                });
             }
         });
         holder.RippleToggleView.toggleTo(item.getStatus());
@@ -131,7 +126,7 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
         }
     }
 
-    public void setCallback(DownloadItemsChangedCallback callback) {
+    public void setCallback(DownloadStateChangedCallback callback) {
         mCallback = callback;
     }
 
@@ -163,13 +158,13 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
 
     public class DownloadItemViewHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.row_downloaditem_dv)
+        @BindView(R.id.row_downloaditem_dv)
         SimpleDraweeView DraweeView;
 
-        @Bind(R.id.row_downloaditem_rtv)
+        @BindView(R.id.row_downloaditem_rtv)
         RippleToggleLayout RippleToggleView;
 
-        @Bind(R.id.row_downloaditem_progressStr_tv)
+        @BindView(R.id.row_downloaditem_progressStr_tv)
         TextView ProgressStrTV;
 
         DownloadingView DownloadingView;
@@ -208,5 +203,11 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
 
     public List<DownloadItem> getData() {
         return mData;
+    }
+
+    public interface DownloadStateChangedCallback {
+        void onDataChanged();
+
+        void onRetryDownload(String id);
     }
 }

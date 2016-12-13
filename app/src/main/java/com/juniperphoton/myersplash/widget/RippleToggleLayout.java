@@ -78,6 +78,12 @@ public class RippleToggleLayout extends RelativeLayout {
         if (mDisplayIndex == index) {
             return;
         }
+        for (int i = 0; i < getChildCount(); i++) {
+            if (mDisplayIndex != i) {
+                View childView = getChildAt(i);
+                childView.setVisibility(GONE);
+            }
+        }
         mDisplayIndex = index;
         toggleInternal(animated);
     }

@@ -11,13 +11,13 @@
     <dimen name="img_detail_height">370dp</dimen>
 
     <dimen name="download_btn_margin_right">16dp</dimen>
-    <dimen name="download_btn_margin_right_hide">-100dp</dimen>
-    <dimen name="download_btn_margin_bottom">70dp</dimen>
+    <dimen name="download_btn_margin_right_hide">100dp</dimen>
+    <dimen name="download_btn_margin_bottom">75dp</dimen>
 
     <dimen name="navi_top_banner_height">120dp</dimen>
 
     <dimen name="share_btn_margin_right">86dp</dimen>
-    <dimen name="share_btn_margin_right_hide">-200dp</dimen>
+    <dimen name="share_btn_margin_right_hide">200dp</dimen>
     <dimen name="share_btn_margin_bottom">80dp</dimen>
 
     <dimen name="settings_margin_left">20dp</dimen>

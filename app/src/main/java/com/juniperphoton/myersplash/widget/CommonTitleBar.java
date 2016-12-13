@@ -13,15 +13,15 @@ import android.widget.TextView;
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.utils.ContextUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CommonTitleBar extends FrameLayout {
 
-    @Bind(R.id.back_iv)
+    @BindView(R.id.back_iv)
     View backView;
 
-    @Bind(R.id.title_tv)
+    @BindView(R.id.title_tv)
     TextView textView;
 
     public CommonTitleBar(final Context context, AttributeSet attrs) {

@@ -229,7 +229,8 @@ public class DownloadUtil {
         context.startService(intent);
         ToastService.sendShortToast("Downloading in background.");
 
-        final DownloadItem item = new DownloadItem(image.getId(), image.getListUrl(), fixedUrl);
+        final DownloadItem item = new DownloadItem(image.getId(), image.getListUrl(), fixedUrl,
+                image.getFileNameForDownload());
         item.setColor(image.getThemeColor());
         Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
             @Override

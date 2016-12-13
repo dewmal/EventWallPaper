@@ -13,25 +13,25 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.interfaces.ISetThemeColor;
+import com.juniperphoton.myersplash.interfaces.SetThemeColor;
 import com.juniperphoton.myersplash.utils.ColorUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DownloadRetryView extends FrameLayout implements ISetThemeColor {
+public class DownloadRetryView extends FrameLayout implements SetThemeColor {
 
-    @Bind(R.id.widget_retry_btn)
-    RelativeLayout retryBtn;
-
-    @Bind(R.id.widget_retry_rl)
+    @BindView(R.id.widget_retry_rl)
     RelativeLayout retryRL;
 
-    @Bind(R.id.retry_tv)
+    @BindView(R.id.retry_tv)
     TextView retryTextView;
 
-    @Bind(R.id.retry_ic)
-    ImageView retryImageView;
+    @BindView(R.id.widget_retry_btn)
+    View retyBtn;
+
+    @BindView(R.id.delete_btn)
+    ImageView deleteView;
 
     public DownloadRetryView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -39,8 +39,12 @@ public class DownloadRetryView extends FrameLayout implements ISetThemeColor {
         ButterKnife.bind(this);
     }
 
-    public void setOnClickDelteListener(View.OnClickListener listener) {
-        retryImageView.setOnClickListener(listener);
+    public void setOnClickDeleteListener(View.OnClickListener listener) {
+        deleteView.setOnClickListener(listener);
+    }
+
+    public void setOnClickRetryListener(View.OnClickListener listener){
+        retyBtn.setOnClickListener(listener);
     }
 
     @Override
@@ -48,7 +52,7 @@ public class DownloadRetryView extends FrameLayout implements ISetThemeColor {
         retryRL.setBackground(new ColorDrawable(color));
         retryTextView.setTextColor(ColorUtil.isColorLight(color) ? Color.BLACK : Color.WHITE);
         if (ColorUtil.isColorLight(color)) {
-            retryImageView.setImageResource(R.drawable.vector_ic_delete_black);
+            deleteView.setImageResource(R.drawable.vector_ic_delete_black);
         }
     }
 }
