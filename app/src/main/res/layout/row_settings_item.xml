@@ -23,7 +23,6 @@
                 android:layout_marginBottom="@dimen/settings_margin_up_and_down"
                 android:layout_marginStart="@dimen/settings_margin_left"
                 android:layout_marginTop="@dimen/settings_margin_up_and_down"
-                android:text="@string/QuickDownloadTitle"
                 android:textColor="@android:color/white"
                 android:textSize="17sp"/>
 
@@ -35,7 +34,6 @@
                 android:layout_marginStart="@dimen/settings_margin_left"
                 android:alpha="0.5"
                 android:paddingEnd="@dimen/settings_margin_left"
-                android:text="@string/QuickDownload"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
                 />
