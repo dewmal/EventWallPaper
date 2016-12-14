@@ -6,7 +6,6 @@ import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -287,8 +286,8 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     }
 
     class PhotoViewHolder extends RecyclerView.ViewHolder {
-        static final int TYPE_COMMON_VIEW = 100000;
-        static final int TYPE_FOOTER_VIEW = 100001;
+        static final int TYPE_COMMON_VIEW = 1;
+        static final int TYPE_FOOTER_VIEW = 1<<1;
 
         SimpleDraweeView SimpleDraweeView;
         CardView RootCardView;

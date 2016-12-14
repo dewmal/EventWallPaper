@@ -1,5 +1,6 @@
 package com.juniperphoton.myersplash.adapter;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -14,19 +15,23 @@ import android.widget.TextView;
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.callback.INavigationDrawerCallback;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
-import com.juniperphoton.myersplash.widget.RectView;
 
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+import static android.graphics.Typeface.BOLD;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryListViewHolder> {
 
     private List<UnsplashCategory> mData;
     private Context mContext;
     private int mSelectedIndex = -1;
-    private RectView mLastSelectedRV = null;
+    private View mLastSelectedRV = null;
+    private TextView mLastSelectedTV = null;
     private CardView mLastSelectedCV = null;
     private INavigationDrawerCallback mCallback = null;
-
 
     public CategoryAdapter(List<UnsplashCategory> data, Context context) {
         mData = data;
@@ -47,8 +52,8 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public void onBindViewHolder(final CategoryListViewHolder holder, int position) {
         final int index = holder.getAdapterPosition();
         final UnsplashCategory category = mData.get(index);
-        holder.TitleTextView.setText(category.getTitle());
-        holder.ItemRoot.setOnClickListener(new View.OnClickListener() {
+        holder.titleTextView.setText(category.getTitle());
+        holder.itemRoot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (index == mSelectedIndex) {
@@ -64,17 +69,20 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     }
 
     private void selectItem(CategoryListViewHolder holder, UnsplashCategory category) {
-        holder.LeftRect.setVisibility(View.VISIBLE);
-        holder.ItemRoot.setBackground(new ColorDrawable(ContextCompat.getColor(mContext, R.color.SelectedBackgroundColor)));
+        toggleSelectedAnimation(holder.leftRect, true);
+        holder.titleTextView.setTextColor(Color.BLACK);
+        holder.itemRoot.setBackground(new ColorDrawable(ContextCompat.getColor(mContext, R.color.SelectedBackgroundColor)));
 
         if (mLastSelectedRV != null) {
-            mLastSelectedRV.setVisibility(View.INVISIBLE);
+            toggleSelectedAnimation(mLastSelectedRV, false);
+            mLastSelectedTV.setTextColor(Color.WHITE);
         }
         if (mLastSelectedCV != null) {
             mLastSelectedCV.setBackground(new ColorDrawable(Color.TRANSPARENT));
         }
-        mLastSelectedRV = holder.LeftRect;
-        mLastSelectedCV = holder.ItemRoot;
+        mLastSelectedRV = holder.leftRect;
+        mLastSelectedTV = holder.titleTextView;
+        mLastSelectedCV = holder.itemRoot;
         if (mCallback != null) {
             mCallback.onSelectItem(category);
         }
@@ -83,6 +91,19 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public void select(int i) {
         mSelectedIndex = i;
         notifyDataSetChanged();
+    }
+
+    private void toggleSelectedAnimation(final View view, boolean selected) {
+        float from = selected ? 0 : 1;
+        float to = selected ? 1 : 0;
+        ValueAnimator animator = ValueAnimator.ofFloat(from, to).setDuration(selected ? 500 : 200);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                view.setAlpha((float) animation.getAnimatedValue());
+            }
+        });
+        animator.start();
     }
 
     public int getSelectedIndex() {
@@ -102,15 +123,18 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     }
 
     public class CategoryListViewHolder extends RecyclerView.ViewHolder {
-        public TextView TitleTextView;
-        public CardView ItemRoot;
-        public RectView LeftRect;
+        @BindView(R.id.row_category)
+        TextView titleTextView;
+
+        @BindView(R.id.row_category_cv)
+        CardView itemRoot;
+
+        @BindView(R.id.row_category_rv)
+        View leftRect;
 
         public CategoryListViewHolder(View itemView) {
             super(itemView);
-            TitleTextView = (TextView) itemView.findViewById(R.id.row_category);
-            ItemRoot = (CardView) itemView.findViewById(R.id.row_category_cv);
-            LeftRect = (RectView) itemView.findViewById(R.id.row_cateogory_rv);
+            ButterKnife.bind(this, itemView);
         }
     }
 }

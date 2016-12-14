@@ -12,6 +12,7 @@ import com.juniperphoton.myersplash.R;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import moe.feng.alipay.zerosdk.AlipayZeroSdk;
 import moe.feng.material.statusbar.StatusBarCompat;
 
 public class AboutActivity extends AppCompatActivity {
@@ -46,5 +47,13 @@ public class AboutActivity extends AppCompatActivity {
         Uri uri = Uri.parse("market://details?id=" + getPackageName());
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.activity_about_donate_rl)
+    void donateClick(View view) {
+        if (AlipayZeroSdk.hasInstalledAlipayClient(this)) {
+            AlipayZeroSdk.startAlipayClient(this, "aex09127b4dbo4o7fbvcyb0");
+        }
     }
 }

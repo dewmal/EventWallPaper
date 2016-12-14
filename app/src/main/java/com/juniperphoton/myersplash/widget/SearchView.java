@@ -23,7 +23,7 @@ import com.juniperphoton.myersplash.callback.OnClickSearchCallback;
 import com.juniperphoton.myersplash.utils.DisplayUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -34,13 +34,13 @@ public class SearchView extends FrameLayout {
     private OnClickSearchCallback mSearchCallback;
     private boolean mShown = false;
 
-    @Bind(R.id.detail_search_et)
+    @BindView(R.id.detail_search_et)
     EditText mEditText;
 
-    @Bind(R.id.detail_search_bar_rl)
+    @BindView(R.id.detail_search_bar_rl)
     RelativeLayout mSearchBarRL;
 
-    @Bind(R.id.detail_search_root_rl)
+    @BindView(R.id.detail_search_root_rl)
     RelativeLayout mRootRL;
 
     public SearchView(Context context, AttributeSet attrs) {

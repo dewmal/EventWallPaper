@@ -1,5 +1,7 @@
 package com.juniperphoton.myersplash.utils;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +12,23 @@ import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.base.App;
 
 public class ToastService {
-    public static void sendShortToast(String str) {
+
+    private static Handler mHandler = new Handler(Looper.getMainLooper());
+
+    public static void sendShortToast(final String str) {
+        if (Looper.getMainLooper() != Looper.myLooper()) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    sendInternal(str);
+                }
+            });
+        } else {
+            sendInternal(str);
+        }
+    }
+
+    private static void sendInternal(String str) {
         LayoutInflater inflater = LayoutInflater.from(App.getInstance());
         View view = inflater.inflate(R.layout.toast_layout, null);
 

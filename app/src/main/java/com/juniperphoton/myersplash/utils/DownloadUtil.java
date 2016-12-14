@@ -10,6 +10,8 @@ import android.util.Log;
 
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.base.App;
+import com.juniperphoton.myersplash.model.DownloadItem;
+import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.service.BackgroundDownloadService;
 
 import java.io.File;
@@ -20,12 +22,14 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.Date;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
 import okhttp3.ResponseBody;
 
 public class DownloadUtil {
     private static String TAG = "DownloadUtil";
 
-    public static File writeResponseBodyToDisk(ResponseBody body, String fileUri, final String url) {
+    public static File writeResponseBodyToDisk(ResponseBody body, String fileUri, final String downloadUrl) {
         try {
             File fileToSave = new File(fileUri);
 
@@ -59,8 +63,20 @@ public class DownloadUtil {
                     int progress = (int) (fileSizeDownloaded / (double) fileSize * 100);
                     if (progress - progressToReport >= 5) {
                         progressToReport = progress;
+                        final int progressToDisplay = progressToReport;
                         NotificationUtil.showProgressNotification("MyerSplash", "Downloading...",
-                                progressToReport, fileUri, Uri.parse(url));
+                                progressToReport, fileUri, Uri.parse(downloadUrl));
+                        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                DownloadItem downloadItem = realm.where(DownloadItem.class)
+                                        .equalTo("mDownloadUrl", downloadUrl).findFirst();
+
+                                if (downloadItem != null) {
+                                    downloadItem.setProgress(progressToDisplay);
+                                }
+                            }
+                        });
                     }
                     //Log.d(TAG, "progress: " + progress + ",last:" + progressToReport);
                 }
@@ -176,20 +192,20 @@ public class DownloadUtil {
         return true;
     }
 
-    public static void checkAndDownload(final Activity context, final String fileName, final String url) {
+    public static void checkAndDownload(final Activity context, final UnsplashImage image) {
         if (!RequestUtil.check(context)) {
             ToastService.sendShortToast("No permission to write file into external storage.");
             return;
         }
         if (!NetworkUtil.usingWifi(context)) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.ThemeAlertDialogStyle);
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
             builder.setTitle("ATTENTION");
             builder.setMessage("You are not using WiFi network. Continue to download?");
             builder.setPositiveButton("DOWNLOAD", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
-                    startDownloadService(context, fileName, url);
+                    startDownloadService(context, image);
                 }
             });
             builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
@@ -200,18 +216,28 @@ public class DownloadUtil {
             });
             builder.create().show();
         } else {
-            startDownloadService(context, fileName, url);
+            startDownloadService(context, image);
         }
     }
 
-    private static void startDownloadService(final Activity context, final String fileName, final String url) {
-        String fixedUrl = fixUri(url);
+    private static void startDownloadService(final Activity context, UnsplashImage image) {
+        String fixedUrl = fixUri(image.getDownloadUrl());
 
         Intent intent = new Intent(context, BackgroundDownloadService.class);
-        intent.putExtra("NAME", fileName);
+        intent.putExtra("NAME", image.getFileNameForDownload());
         intent.putExtra("URI", fixedUrl);
         context.startService(intent);
         ToastService.sendShortToast("Downloading in background.");
+
+        final DownloadItem item = new DownloadItem(image.getId(), image.getListUrl(), fixedUrl,
+                image.getFileNameForDownload());
+        item.setColor(image.getThemeColor());
+        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.copyToRealmOrUpdate(item);
+            }
+        });
     }
 
     private static String fixUri(String url) {

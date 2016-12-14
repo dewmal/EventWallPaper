@@ -1,6 +1,6 @@
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <shortcut
-        android:icon="@drawable/ic_search_theme_18dp"
+        android:icon="@drawable/vector_ic_search_theme"
         android:shortcutId="search"
         android:shortcutLongLabel="@string/searchLowercase"
         android:shortcutShortLabel="@string/searchLowercase">
@@ -10,7 +10,7 @@
             android:targetPackage="com.juniperphoton.myersplash" />
     </shortcut>
     <shortcut
-        android:icon="@drawable/dice"
+        android:icon="@drawable/vector_ic_grid"
         android:shortcutId="random"
         android:shortcutLongLabel="@string/random"
         android:shortcutShortLabel="@string/random">

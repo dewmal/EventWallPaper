@@ -12,4 +12,5 @@ public class Constant {
     public static final String SAVING_QUALITY_CONFIG_NAME = "SAVING_QUALITY_CONFIG";
     public static final String LOADING_QUALITY_CONFIG_NAME = "LOADING_QUALITY_CONFIG";
     public static final String QUICK_DOWNLOAD_CONFIG_NAME = "QUICK_DOWNLOAD_CONFIG";
+    public static final String SCROLL_TOOLBAR = "SCROLL_TOOLBAR";
 }

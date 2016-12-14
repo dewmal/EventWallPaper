@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="ProgressView">
+        <attr name="Progress" format="integer"/>
+        <attr name="BackgroundColor" format="color"/>
+    </declare-styleable>
+
+    <declare-styleable name="CommonTitleBar">
+        <attr name="title" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="SettingsItemLayout">
+        <attr name="setting_title" format="string"/>
+        <attr name="setting_content" format="string"/>
+        <attr name="has_checkbox" format="boolean"/>
+        <attr name="show_divider" format="boolean"/>
+    </declare-styleable>
+</resources>

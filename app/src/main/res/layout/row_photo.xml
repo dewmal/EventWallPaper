@@ -57,7 +57,7 @@
                         android:layout_centerInParent="true"
                         android:contentDescription="@string/ImageDescDefault"
                         android:scaleType="fitXY"
-                        android:src="@drawable/ic_file_download_white_24dp" />
+                        android:src="@drawable/vector_ic_file_download" />
                 </RelativeLayout>
 
             </RelativeLayout>

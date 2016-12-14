@@ -13,21 +13,21 @@ import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.utils.ColorUtil;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class DetailActivity extends AppCompatActivity {
 
-    @Bind(R.id.activity_detail_iv)
+    @BindView(R.id.activity_detail_iv)
     SimpleDraweeView mHeroImageView;
 
-    @Bind(R.id.activity_detail_rl)
+    @BindView(R.id.activity_detail_rl)
     RelativeLayout mDetailRootRelativeLayout;
 
-    @Bind(R.id.activity_detail_name_tv)
+    @BindView(R.id.activity_detail_name_tv)
     TextView mNameTextView;
 
-    @Bind(R.id.activity_detail_photoby_tv)
+    @BindView(R.id.activity_detail_photoby_tv)
     TextView mPhotoByTextView;
 
     @Override

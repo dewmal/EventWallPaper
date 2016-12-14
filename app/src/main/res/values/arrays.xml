@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="delete_options">
+        <item>Delete downloading items</item>
+        <item>Delete downloaded items</item>
+        <item>Delete failed items</item>
+    </string-array>
+</resources>

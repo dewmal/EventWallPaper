@@ -3,6 +3,7 @@ package com.juniperphoton.myersplash.activity;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -33,6 +34,7 @@ import com.juniperphoton.myersplash.callback.OnClickQuickDownloadCallback;
 import com.juniperphoton.myersplash.callback.OnClickSearchCallback;
 import com.juniperphoton.myersplash.callback.OnLoadMoreListener;
 import com.juniperphoton.myersplash.cloudservice.CloudService;
+import com.juniperphoton.myersplash.common.Constant;
 import com.juniperphoton.myersplash.common.RandomIntentStatus;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
@@ -48,7 +50,7 @@ import java.io.File;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import moe.feng.material.statusbar.StatusBarCompat;
@@ -64,46 +66,49 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private static final int SEARCH_ID = -10000;
     private static final String CHECK_ONE_POINT_ONE_VERSION = "CHECK_ONE_POINT_ONE_VERSION";
 
-    @Bind(R.id.activity_drawer_rv)
+    @BindView(R.id.activity_drawer_rv)
     RecyclerView mDrawerRecyclerView;
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
 
     @SuppressWarnings("UnusedDeclaration")
-    @Bind(R.id.toolbar_layout)
+    @BindView(R.id.toolbar_layout)
     AppBarLayout mAppBarLayout;
 
-    @Bind(R.id.drawer_layout)
+    @BindView(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
 
-    @Bind(R.id.content_activity_rv)
+    @BindView(R.id.content_activity_rv)
     RecyclerView mContentRecyclerView;
 
-    @Bind(R.id.content_activity_srl)
+    @BindView(R.id.content_activity_srl)
     SwipeRefreshLayout mRefreshLayout;
 
     @SuppressWarnings("UnusedDeclaration")
-    @Bind(R.id.activity_main_cl)
+    @BindView(R.id.activity_main_cl)
     CoordinatorLayout mCoordinatorLayout;
 
-    @Bind(R.id.content_activity_search_fab)
+    @BindView(R.id.content_activity_search_fab)
     FloatingActionButton mSearchFAB;
 
-    @Bind(R.id.activity_main_detail_view)
+    @BindView(R.id.activity_main_detail_view)
     DetailView mDetailView;
 
-    @Bind(R.id.activity_main_search_view)
+    @BindView(R.id.activity_main_search_view)
     com.juniperphoton.myersplash.widget.SearchView mSearchView;
 
-    @Bind(R.id.activity_drawer_bottom_ll)
+    @BindView(R.id.activity_drawer_bottom_ll)
     LinearLayout mDrawerBottomLL;
 
-    @Bind(R.id.no_item_layout)
+    @BindView(R.id.no_item_layout)
     LinearLayout mNoItemLayout;
 
-    @Bind(R.id.no_item_back_tv)
+    @BindView(R.id.no_item_back_tv)
     TextView mGoBackLastCategoryTV;
+
+    @BindView(R.id.nav_naviToDownload_rl)
+    RelativeLayout mNativateToDownloadsRL;
 
     private int mLastCategory = -1;
 
@@ -142,8 +147,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
         restorePhotoList();
         getCategories();
-
-        RequestUtil.checkAndRequest(this);
     }
 
     @Override
@@ -162,6 +165,22 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         if (mContentRecyclerView != null && mContentRecyclerView.getAdapter() != null) {
             mContentRecyclerView.getAdapter().notifyDataSetChanged();
         }
+        boolean scrollBar = LocalSettingHelper.getBoolean(this, Constant.SCROLL_TOOLBAR, true);
+        AppBarLayout.LayoutParams params =
+                (AppBarLayout.LayoutParams) mToolbar.getLayoutParams();
+        if (scrollBar) {
+            params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+                    | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
+        } else {
+            params.setScrollFlags(0);
+        }
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                RequestUtil.checkAndRequest(MainActivity.this);
+            }
+        }, 1000);
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -180,16 +199,40 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.drawer_settings_ll)
     void onClickSettings() {
-        Intent intent = new Intent(this, SettingsActivity.class);
-        startActivity(intent);
-        //mDrawerLayout.closeDrawer(GravityCompat.START);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent);
+            }
+        }, 200);
     }
 
     @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.drawer_about_ll)
     void onClickAbout() {
-        Intent intent = new Intent(this, AboutActivity.class);
-        startActivity(intent);
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+                startActivity(intent);
+            }
+        }, 200);
+    }
+
+    @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.nav_naviToDownload_rl)
+    void onClickNaviToDownloads() {
+        mDrawerLayout.closeDrawer(GravityCompat.START);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(MainActivity.this, ManageDownloadActivity.class);
+                startActivity(intent);
+            }
+        }, 200);
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -200,7 +243,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             adapter.select(mLastCategory);
         }
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -270,6 +312,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
             mDrawerRecyclerView.setLayoutParams(layoutParamsRV);
         }
     }
+
 
     private void handleShortcutsAction() {
         String action = getIntent().getAction();
@@ -496,8 +539,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     @Override
-    public void onClickQuickDownload(UnsplashImage image) {
-        DownloadUtil.checkAndDownload(this, image.getFileNameForDownload(), image.getDownloadUrl());
+    public void onClickQuickDownload(final UnsplashImage image) {
+        DownloadUtil.checkAndDownload(MainActivity.this, image);
     }
 
     @Override

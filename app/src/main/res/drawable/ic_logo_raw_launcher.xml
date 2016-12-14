@@ -1,0 +1,17 @@
+<vector android:height="24dp" android:viewportHeight="500"
+    android:viewportWidth="500" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#222" android:name="圆角矩形 1" android:pathData="m61 59h125c2.2 0 4 1.8 4 4v125.3c0 2.2 -1.8 4 -4 4h-125c-2.2 0 -4 -1.8 -4 -4v-125.3c0 -2.2 1.8 -4 4 -4z"/>
+    <path android:fillColor="#222" android:name="圆角矩形 1 拷贝 2" android:pathData="m315 59h125c2.2 0 4 1.8 4 4v125.3c0 2.2 -1.8 4 -4 4h-125c-2.2 0 -4 -1.8 -4 -4v-125.3c0 -2.2 1.8 -4 4 -4z"/>
+    <path android:fillColor="#2b2b2b" android:name="圆角矩形 1 拷贝" android:pathData="m188.5 59h125c2.2 0 4 1.8 4 4v125.3c0 2.2 -1.8 4 -4 4h-125c-2.2 0 -4 -1.8 -4 -4v-125.3c0 -2.2 1.8 -4 4 -4z"/>
+    <path android:fillColor="#222" android:name="圆角矩形 1" android:pathData="m61 311.7h125c2.2 0 4 1.8 4 4v125.3c0 2.2 -1.8 4 -4 4h-125c-2.2 0 -4 -1.8 -4 -4v-125.3c0 -2.2 1.8 -4 4 -4z"/>
+    <path android:fillColor="#222" android:name="圆角矩形 1 拷贝 2" android:pathData="m315 311.7h125c2.2 0 4 1.8 4 4v125.3c0 2.2 -1.8 4 -4 4h-125c-2.2 0 -4 -1.8 -4 -4v-125.3c0 -2.2 1.8 -4 4 -4z"/>
+    <path android:fillColor="#2b2b2b" android:name="圆角矩形 1 拷贝" android:pathData="m188.5 311.7h125c2.2 0 4 1.8 4 4v125.3c0 2.2 -1.8 4 -4 4h-125c-2.2 0 -4 -1.8 -4 -4v-125.3c0 -2.2 1.8 -4 4 -4z"/>
+    <path android:fillColor="#2b2b2b" android:name="圆角矩形 1" android:pathData="m61 185.8h125c2.2 0 4 1.8 4 4v125.3c0 2.2 -1.8 4 -4 4h-125c-2.2 0 -4 -1.8 -4 -4v-125.3c0 -2.2 1.8 -4 4 -4z"/>
+    <path android:fillColor="#2b2b2b" android:name="圆角矩形 1 拷贝 2" android:pathData="m315 185.8h125c2.2 0 4 1.8 4 4v125.3c0 2.2 -1.8 4 -4 4h-125c-2.2 0 -4 -1.8 -4 -4v-125.3c0 -2.2 1.8 -4 4 -4z"/>
+    <path android:fillColor="#222" android:name="圆角矩形 1 拷贝" android:pathData="m188.5 185.8h125c2.2 0 4 1.8 4 4v125.3c0 2.2 -1.8 4 -4 4h-125c-2.2 0 -4 -1.8 -4 -4v-125.3c0 -2.2 1.8 -4 4 -4z"/>
+    <path android:fillColor="#13b5b1" android:name="3" android:pathData="m158.7 157.8 4.5 51.6 178.8 -15.4 -50.6 -48 -132.7 11.8z"/>
+    <path android:fillAlpha="0.9" android:fillColor="#13b5b1"
+        android:name="2" android:pathData="m339.3 345.2 -4.5 -51.6 -178.8 15.4 50.6 48 132.7 -11.8z"/>
+    <path android:fillAlpha="0.8" android:fillColor="#13b5b1"
+        android:name="1" android:pathData="m158.7 158.7 28.9 -2.7 147.2 137.6 3.6 50.7 -25.3 3.6 -149.9 -136.7 -4.5 -52.5z"/>
+</vector>
