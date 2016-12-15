@@ -13,6 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Handler;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
@@ -115,7 +116,19 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
 
     @OnClick(R.id.detail_name_tv)
     void onClickName() {
+        Uri uri = Uri.parse(mClickedImage.getUserHomePage());
 
+        CustomTabsIntent.Builder intentBuilder = new CustomTabsIntent.Builder();
+
+        intentBuilder.setToolbarColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
+        intentBuilder.setSecondaryToolbarColor(ContextCompat.getColor(mContext, R.color.colorPrimaryDark));
+
+        intentBuilder.setStartAnimations(mContext, R.anim.in_from_right, R.anim.out_from_left);
+        intentBuilder.setExitAnimations(mContext, R.anim.in_from_left, R.anim.out_from_right);
+
+        CustomTabsIntent customTabsIntent = intentBuilder.build();
+
+        customTabsIntent.launchUrl(mContext, uri);
     }
 
     @OnClick(R.id.detail_download_fab)

@@ -6,6 +6,7 @@ import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.common.Constant;
 import com.juniperphoton.myersplash.utils.LocalSettingHelper;
 
+import java.io.PrintStream;
 import java.io.Serializable;
 
 public class UnsplashImage implements Serializable {
@@ -20,7 +21,7 @@ public class UnsplashImage implements Serializable {
 
     }
 
-    public String getId(){
+    public String getId() {
         return id;
     }
 
@@ -68,6 +69,10 @@ public class UnsplashImage implements Serializable {
 
     public String getUserName() {
         return user.getName();
+    }
+
+    public String getUserHomePage() {
+        return user.getHomeUrl();
     }
 
     public class ImageUrl implements Serializable {

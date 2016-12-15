@@ -1,21 +1,29 @@
 package com.juniperphoton.myersplash.activity;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
+import com.juniperphoton.myersplash.utils.PackageUtil;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import moe.feng.alipay.zerosdk.AlipayZeroSdk;
 import moe.feng.material.statusbar.StatusBarCompat;
 
 public class AboutActivity extends AppCompatActivity {
+    @BindView(R.id.version_tv)
+    TextView mVersionTextView;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +34,12 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about);
 
         ButterKnife.bind(this);
+
+        updateVersion();
+    }
+
+    private void updateVersion() {
+        mVersionTextView.setText(PackageUtil.getVersionName(this));
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -36,7 +50,7 @@ public class AboutActivity extends AppCompatActivity {
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"dengweichao@hotmail.com"}); // recipients
 
         String SHARE_SUBJECT = "MyerSplash for Android %s feedback";
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, String.format(SHARE_SUBJECT, getResources().getString(R.string.Version)));
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, String.format(SHARE_SUBJECT, PackageUtil.getVersionName(this)));
         emailIntent.putExtra(Intent.EXTRA_TEXT, "");
         startActivity(emailIntent);
     }
