@@ -95,7 +95,7 @@
             <com.facebook.drawee.view.SimpleDraweeView
                 android:id="@+id/detail_hero_dv"
                 android:layout_width="match_parent"
-                android:layout_height="270dp"
+                android:layout_height="@dimen/img_height"
                 android:clickable="true"/>
 
             <LinearLayout
