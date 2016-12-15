@@ -21,6 +21,9 @@
     <dimen name="share_btn_margin_bottom">80dp</dimen>
 
     <dimen name="settings_margin_left">20dp</dimen>
+    <dimen name="settings_margin_mini_title_bottom">4dp</dimen>
+    <dimen name="settings_margin_mini_title_top">12dp</dimen>
+
     <dimen name="settings_margin_up_and_down">12dp</dimen>
     <dimen name="status_bar_height">24dp</dimen>
 
