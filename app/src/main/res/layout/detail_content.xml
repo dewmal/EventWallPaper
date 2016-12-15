@@ -6,6 +6,7 @@
             android:layout_height="match_parent"
             android:background="@android:color/black"
             android:clickable="true"
+            android:scrollbars="none"
             android:theme="@style/ThemeOverlay.AppCompat.Dark"
             android:visibility="visible">
 
@@ -54,6 +55,12 @@
                         android:textColor="@android:color/black"
                         android:textSize="20dp"
                         android:textStyle="bold"/>
+
+                    <View
+                        android:id="@+id/detail_name_line"
+                        android:layout_width="match_parent"
+                        android:layout_height="2dp"
+                        android:background="@android:color/black"/>
                 </LinearLayout>
 
                 <FrameLayout
@@ -93,19 +100,20 @@
 
             <LinearLayout
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                android:orientation="horizontal"
                 android:layout_marginBottom="@dimen/download_btn_margin_bottom"
                 android:layout_marginEnd="@dimen/download_btn_margin_right"
-                android:layout_height="wrap_content">
+                android:orientation="horizontal">
+
                 <android.support.design.widget.FloatingActionButton
                     android:id="@+id/detail_share_fab"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="8dp"
                     android:clickable="true"
-                    android:layout_gravity="center_vertical"
                     android:src="@drawable/vector_ic_share"
                     app:backgroundTint="@android:color/white"
                     app:fabSize="mini"/>
