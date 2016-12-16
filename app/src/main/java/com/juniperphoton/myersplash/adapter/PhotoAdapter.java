@@ -119,7 +119,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                             if (mOnClickPhotoCallback != null) {
                                 mOnClickPhotoCallback.clickPhotoItem(new RectF(
                                         location[0], location[1],
-                                        holder.SimpleDraweeView.getWidth(), holder.SimpleDraweeView.getHeight()), image, holder.SimpleDraweeView);
+                                        holder.SimpleDraweeView.getWidth(), holder.SimpleDraweeView.getHeight()), image, holder.RootCardView);
                             }
                         }
                     }

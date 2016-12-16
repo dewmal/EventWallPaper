@@ -61,6 +61,13 @@
                     app:setting_content="Hide toolbar while scrolling"
                     app:setting_title="Toolbar scrolling behavior"/>
 
+                <TextView
+                    style="@style/SettingsSubTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/quality"
+                    />
+
                 <com.juniperphoton.myersplash.widget.SettingsItemLayout
                     android:id="@+id/setting_save_quality"
                     android:layout_width="match_parent"
