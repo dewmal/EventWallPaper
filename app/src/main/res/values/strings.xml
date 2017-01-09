@@ -55,4 +55,10 @@
     <string name="personalization">PERSONALIZATION</string>
     <string name="quality">QUALITY</string>
 
+    <string name="saved">Saved :D</string>
+    <string name="tap_to_open_manage">Tap to manage your wallpapers</string>
+    <string name="download_error">Download error :(</string>
+    <string name="download_error_retry">Please check your network and retry.</string>
+    <string name="retry_act">RETRY</string>
+
 </resources>

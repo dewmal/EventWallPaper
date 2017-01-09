@@ -8,10 +8,14 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.util.SparseArray;
 
 import com.juniperphoton.myersplash.R;
+import com.juniperphoton.myersplash.activity.AboutActivity;
+import com.juniperphoton.myersplash.activity.MainActivity;
+import com.juniperphoton.myersplash.activity.ManageDownloadActivity;
 import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.service.BackgroundDownloadService;
 
@@ -79,11 +83,12 @@ public class NotificationUtil {
         PendingIntent resultPendingIntent = PendingIntent.getService(App.getInstance(), 0, intent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(App.getInstance())
-                .setContentTitle("Download error.")
-                .setContentText("Please checkAndRequest your network and retry.")
+                .setContentTitle(App.getInstance().getString(R.string.download_error))
+                .setContentText(App.getInstance().getString(R.string.download_error_retry))
                 .setSmallIcon(R.drawable.vector_ic_clear_white);
 
-        builder.addAction(R.drawable.ic_replay_white_48dp, "RETRY", resultPendingIntent);
+        builder.addAction(R.drawable.ic_replay_white_48dp, App.getInstance().getString(R.string.retry_act),
+                resultPendingIntent);
 
         getNotificationManager().notify(nId, builder.build());
     }
@@ -93,15 +98,16 @@ public class NotificationUtil {
         nId = findNIdByUri(downloadUri);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(App.getInstance())
-                .setContentTitle("Saved :D")
-                .setContentText("Tap to crop and set as wallpaper.")
+                .setContentTitle(App.getInstance().getString(R.string.saved))
+                .setContentText(App.getInstance().getString(R.string.tap_to_open_manage))
                 .setSmallIcon(R.drawable.small_icon);
 
-        File file = new File(fileUri.getPath());
-        Uri uri = FileProvider.getUriForFile(App.getInstance(), App.getInstance().getString(R.string.authorities), file);
-        Intent intent = WallpaperManager.getInstance(App.getInstance()).getCropAndSetWallpaperIntent(uri);
-
+        //File file = new File(fileUri.getPath());
+        //Uri uri = FileProvider.getUriForFile(App.getInstance(), App.getInstance().getString(R.string.authorities), file);
+        //Intent intent =  WallpaperManager.getInstance(App.getInstance()).getCropAndSetWallpaperIntent(uri);
+        Intent intent = new Intent(App.getInstance(), MainActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(App.getInstance());
+        //stackBuilder.addParentStack(ManageDownloadActivity.class);
         stackBuilder.addNextIntent(intent);
 
         PendingIntent resultPendingIntent =

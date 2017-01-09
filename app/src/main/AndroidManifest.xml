@@ -41,7 +41,9 @@
         <activity
             android:name=".activity.ManageDownloadActivity"
             android:label="DOWNLOADS"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".activity.MainActivity">
+        </activity>
 
         <service
             android:name=".service.BackgroundDownloadService"

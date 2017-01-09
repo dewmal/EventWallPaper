@@ -150,6 +150,11 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
     }
@@ -316,22 +321,23 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     private void handleShortcutsAction() {
         String action = getIntent().getAction();
-
-        switch (action) {
-            case "action.search": {
-                if (!mHandledSearch) {
-                    mHandledSearch = true;
-                    onClickSearchFAB();
+        if(action!=null){
+            switch (action) {
+                case "action.search": {
+                    if (!mHandledSearch) {
+                        mHandledSearch = true;
+                        onClickSearchFAB();
+                    }
                 }
-            }
-            break;
+                break;
 
-            case "action.random": {
-                if (mRandomIntentStatus == RandomIntentStatus.NotReceived) {
-                    mRandomIntentStatus = RandomIntentStatus.Pending;
+                case "action.random": {
+                    if (mRandomIntentStatus == RandomIntentStatus.NotReceived) {
+                        mRandomIntentStatus = RandomIntentStatus.Pending;
+                    }
                 }
+                break;
             }
-            break;
         }
     }
 
