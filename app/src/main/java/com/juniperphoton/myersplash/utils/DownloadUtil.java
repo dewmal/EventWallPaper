@@ -227,7 +227,7 @@ public class DownloadUtil {
         intent.putExtra("NAME", image.getFileNameForDownload());
         intent.putExtra("URI", fixedUrl);
         context.startService(intent);
-        ToastService.sendShortToast("Downloading in background.");
+        ToastService.sendShortToast("Downloading in background");
 
         final DownloadItem item = new DownloadItem(image.getId(), image.getListUrl(), fixedUrl,
                 image.getFileNameForDownload());

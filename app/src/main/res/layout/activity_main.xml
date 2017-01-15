@@ -86,7 +86,7 @@
         <include
             android:id="@+id/nav_view"
             layout="@layout/nav_main"
-            android:layout_width="290sp"
+            android:layout_width="290dp"
             android:layout_height="match_parent"
             android:layout_gravity="start"
             android:background="@color/colorAccent"

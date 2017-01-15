@@ -4,16 +4,20 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.adapter.DownloadsListAdapter;
 import com.juniperphoton.myersplash.model.DownloadItem;
+import com.juniperphoton.myersplash.utils.DeviceUtil;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
 
 import java.util.ArrayList;
@@ -27,6 +31,8 @@ import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import moe.feng.material.statusbar.StatusBarCompat;
 
+import static com.juniperphoton.myersplash.utils.DisplayUtil.getDimenInPixel;
+
 
 public class ManageDownloadActivity extends AppCompatActivity implements DownloadsListAdapter.DownloadStateChangedCallback {
 
@@ -35,6 +41,9 @@ public class ManageDownloadActivity extends AppCompatActivity implements Downloa
 
     @BindView(R.id.activity_downloads_no_item_tv)
     TextView mNoItemTV;
+
+    @BindView(R.id.activity_downloads_more_fab)
+    FloatingActionButton mMoreFAB;
 
     private DownloadsListAdapter mAdapter;
     private RealmChangeListener<DownloadItem> mRealmListener;
@@ -164,6 +173,12 @@ public class ManageDownloadActivity extends AppCompatActivity implements Downloa
         mDownloadsRV.setAdapter(mAdapter);
 
         updateNoItemVisibility();
+
+        if (!DeviceUtil.hasNavigationBar(this)) {
+            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mMoreFAB.getLayoutParams();
+            params.setMargins(0, 0, getDimenInPixel(24, this), getDimenInPixel(24, this));
+            mMoreFAB.setLayoutParams(params);
+        }
     }
 
     @Override

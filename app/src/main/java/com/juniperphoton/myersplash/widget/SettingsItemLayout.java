@@ -7,6 +7,7 @@ import android.support.v7.widget.AppCompatCheckBox;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -23,8 +24,8 @@ public class SettingsItemLayout extends FrameLayout {
     @BindView(R.id.settings_item_content)
     TextView contentTextView;
 
-    @BindView(R.id.settings_item_checkbox)
-    AppCompatCheckBox checkBox;
+    @BindView(R.id.settings_item_switch)
+    CompoundButton compoundButton;
 
     @BindView(R.id.divider_view)
     View dividerView;
@@ -52,7 +53,7 @@ public class SettingsItemLayout extends FrameLayout {
         }
 
         if (!hasCheckbox) {
-            checkBox.setVisibility(GONE);
+            compoundButton.setVisibility(GONE);
         }
 
         if (!showDivider) {
@@ -61,15 +62,15 @@ public class SettingsItemLayout extends FrameLayout {
     }
 
     public void setOnCheckedListener(AppCompatCheckBox.OnCheckedChangeListener onCheckedListener) {
-        checkBox.setOnCheckedChangeListener(onCheckedListener);
+        compoundButton.setOnCheckedChangeListener(onCheckedListener);
     }
 
     public void setChecked(boolean checked) {
-        checkBox.setChecked(checked);
+        compoundButton.setChecked(checked);
     }
 
     public boolean getChecked() {
-        return checkBox.isChecked();
+        return compoundButton.isChecked();
     }
 
     public void setTitle(String title) {

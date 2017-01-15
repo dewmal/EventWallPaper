@@ -13,6 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Handler;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
@@ -21,6 +22,9 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -33,6 +37,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.cache.DefaultCacheKeyFactory;
 import com.facebook.imagepipeline.core.ImagePipelineFactory;
 import com.facebook.imagepipeline.request.ImageRequest;
+import com.juniperphoton.flipperviewlib.FlipperView;
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.callback.DetailViewNavigationCallback;
 import com.juniperphoton.myersplash.callback.OnClickPhotoCallback;
@@ -81,6 +86,9 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
     @BindView(R.id.detail_name_tv)
     TextView mNameTextView;
 
+    @BindView(R.id.detail_name_line)
+    View mLineView;
+
     @BindView(R.id.detail_photoby_tv)
     TextView mPhotoByTextView;
 
@@ -96,6 +104,9 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
     @BindView(R.id.copy_url_fl)
     FrameLayout frameLayout;
 
+    @BindView(R.id.copy_url_flipper_view)
+    FlipperView mFlipperView;
+
     private boolean mAnimating;
 
     public DetailView(Context context, AttributeSet attrs) {
@@ -107,7 +118,23 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         initDetailViews();
     }
 
-    @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.detail_name_tv)
+    void onClickName() {
+        Uri uri = Uri.parse(mClickedImage.getUserHomePage());
+
+        CustomTabsIntent.Builder intentBuilder = new CustomTabsIntent.Builder();
+
+        intentBuilder.setToolbarColor(ContextCompat.getColor(mContext, R.color.colorPrimary));
+        intentBuilder.setSecondaryToolbarColor(ContextCompat.getColor(mContext, R.color.colorPrimaryDark));
+
+        intentBuilder.setStartAnimations(mContext, R.anim.in_from_right, R.anim.out_from_left);
+        intentBuilder.setExitAnimations(mContext, R.anim.in_from_left, R.anim.out_from_right);
+
+        CustomTabsIntent customTabsIntent = intentBuilder.build();
+
+        customTabsIntent.launchUrl(mContext, uri);
+    }
+
     @OnClick(R.id.detail_download_fab)
     void onClickDownload() {
         if (mClickedImage == null) {
@@ -116,15 +143,28 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         DownloadUtil.checkAndDownload((Activity) mContext, mClickedImage);
     }
 
-    @OnClick(R.id.copy_url_fl)
+    private boolean mCopied;
+
+    @OnClick(R.id.copy_url_flipper_view)
     void onClickCopy() {
+        if (mCopied) return;
+        mCopied = true;
+
+        mFlipperView.next();
+
         ClipboardManager clipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("MyerSplash", mClickedImage.getDownloadUrl());
         clipboard.setPrimaryClip(clip);
-        ToastService.sendShortToast("Copied :D");
+
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mFlipperView.next();
+                mCopied = false;
+            }
+        }, 2000);
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.detail_share_fab)
     void onClickShare() {
         CacheKey cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(
@@ -179,30 +219,9 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
 
         mDetailRootScrollView.setVisibility(View.INVISIBLE);
 
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(mDetailInfoRootLayout.getLayoutParams());
-        params.setMargins(0, 0, 0,
-                getResources().getDimensionPixelOffset(R.dimen.img_detail_info_height));
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        mDetailInfoRootLayout.setLayoutParams(params);
-
+        mDetailInfoRootLayout.setTranslationY(-getResources().getDimensionPixelOffset(R.dimen.img_detail_info_height));
         mDownloadFAB.setTranslationX(getResources().getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide));
         mShareFAB.setTranslationX(getResources().getDimensionPixelOffset(R.dimen.share_btn_margin_right_hide));
-
-//        if (true) return;
-//
-//        RelativeLayout.LayoutParams paramsDFAB = new RelativeLayout.LayoutParams(mDownloadFAB.getLayoutParams());
-//        paramsDFAB.setMargins(0, 0, getResources().getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide),
-//                getResources().getDimensionPixelOffset(R.dimen.download_btn_margin_bottom));
-//        paramsDFAB.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-//        paramsDFAB.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-//        mDownloadFAB.setLayoutParams(paramsDFAB);
-//
-//        RelativeLayout.LayoutParams paramsSFAB = new RelativeLayout.LayoutParams(mDownloadFAB.getLayoutParams());
-//        paramsSFAB.setMargins(0, 0, getResources().getDimensionPixelOffset(R.dimen.share_btn_margin_right_hide),
-//                getResources().getDimensionPixelOffset(R.dimen.share_btn_margin_bottom));
-//        paramsSFAB.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-//        paramsSFAB.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-//        mShareFAB.setLayoutParams(paramsSFAB);
     }
 
     private void toggleHeroViewAnimation(int startY, int endY, final boolean show) {
@@ -214,6 +233,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         ValueAnimator valueAnimator = new ValueAnimator();
         valueAnimator.setIntValues(startY, endY);
         valueAnimator.setDuration(300);
+        valueAnimator.setInterpolator(new DecelerateInterpolator());
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -235,12 +255,12 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
                     toggleMaskAnimation(false);
                     mClickedView = null;
                     mClickedImage = null;
+                    mAnimating = false;
                 } else {
                     toggleDetailRLAnimation(true);
                     toggleDownloadBtnAnimation(true);
                     toggleShareBtnAnimation(true);
                 }
-                mAnimating = false;
             }
 
             @Override
@@ -263,8 +283,8 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
 
     private void toggleDetailRLAnimation(final boolean show) {
 
-        int startY = show ? (getResources().getDimensionPixelOffset(R.dimen.img_detail_info_height)) : 0;
-        int endY = show ? 0 : (getResources().getDimensionPixelOffset(R.dimen.img_detail_info_height));
+        int startY = show ? (-getResources().getDimensionPixelOffset(R.dimen.img_detail_info_height)) : 0;
+        int endY = show ? 0 : (-getResources().getDimensionPixelOffset(R.dimen.img_detail_info_height));
 
         ValueAnimator valueAnimator = new ValueAnimator();
         valueAnimator.setIntValues(startY, endY);
@@ -273,11 +293,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(mDetailInfoRootLayout.getLayoutParams());
-                params.setMargins(0, 0, 0,
-                        (int) animation.getAnimatedValue());
-                params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                mDetailInfoRootLayout.setLayoutParams(params);
+                mDetailInfoRootLayout.setTranslationY((int) animation.getAnimatedValue());
             }
         });
         valueAnimator.addListener(new Animator.AnimatorListener() {
@@ -290,6 +306,8 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
             public void onAnimationEnd(Animator animation) {
                 if (!show) {
                     toggleHeroViewAnimation(mHeroEndY, mHeroStartY, false);
+                } else {
+                    mAnimating = false;
                 }
             }
 
@@ -318,11 +336,6 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-//                RelativeLayout.LayoutParams paramsFAB = new RelativeLayout.LayoutParams(mDownloadFAB.getLayoutParams());
-//                paramsFAB.setMargins(0, 0, (int) animation.getAnimatedValue(),
-//                        getResources().getDimensionPixelOffset(R.dimen.download_btn_margin_bottom));
-//                paramsFAB.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-//                paramsFAB.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 mDownloadFAB.setTranslationX((int) animation.getAnimatedValue());
             }
         });
@@ -341,11 +354,6 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-//                RelativeLayout.LayoutParams paramsFAB = new RelativeLayout.LayoutParams(mShareFAB.getLayoutParams());
-//                paramsFAB.setMargins(0, 0, (int) animation.getAnimatedValue(),
-//                        getResources().getDimensionPixelOffset(R.dimen.share_btn_margin_bottom));
-//                paramsFAB.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-//                paramsFAB.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 mShareFAB.setTranslationX((int) animation.getAnimatedValue());
             }
         });
@@ -452,9 +460,11 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         int backColor = unsplashImage.getThemeColor();
         if (!ColorUtil.isColorLight(backColor)) {
             mNameTextView.setTextColor(Color.WHITE);
+            mLineView.setBackground(new ColorDrawable(Color.WHITE));
             mPhotoByTextView.setTextColor(Color.WHITE);
         } else {
             mNameTextView.setTextColor(Color.BLACK);
+            mLineView.setBackground(new ColorDrawable(Color.BLACK));
             mPhotoByTextView.setTextColor(Color.BLACK);
         }
 

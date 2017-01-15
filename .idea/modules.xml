@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MyerSplashAndroid.iml" filepath="$PROJECT_DIR$/MyerSplashAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/flipperviewlib/flipperviewlib.iml" filepath="$PROJECT_DIR$/flipperviewlib/flipperviewlib.iml" />
       <module fileurl="file://$PROJECT_DIR$/library-java/lib-java.iml" filepath="$PROJECT_DIR$/library-java/lib-java.iml" />
     </modules>
   </component>

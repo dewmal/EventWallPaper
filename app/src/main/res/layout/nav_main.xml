@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="290dp"
                 android:layout_height="match_parent"
-                android:background="@color/SettingBackground"
+                android:background="#181818"
                 android:clickable="true"
                 android:gravity="start"
                 android:orientation="vertical"
@@ -29,8 +29,8 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
         <RelativeLayout
-            android:layout_width="0dp"
             android:id="@+id/drawer_settings_ll"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
@@ -61,8 +61,8 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="0dp"
             android:id="@+id/drawer_about_ll"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?android:attr/selectableItemBackground"
@@ -82,13 +82,13 @@
                     android:src="@drawable/vector_ic_emoticon"/>
 
                 <TextView
+                    android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="12dp"
                     android:text="ABOUT"
-                    android:textColor="@android:color/white"
-                    android:id="@+id/textView2"/>
+                    android:textColor="@android:color/white"/>
             </LinearLayout>
 
 
@@ -100,7 +100,8 @@
         android:layout_height="@dimen/navi_top_banner_height"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_gravity="top">
+        android:layout_gravity="top"
+        >
 
         <RelativeLayout
             android:id="@+id/nav_naviToDownload_rl"
@@ -108,21 +109,14 @@
             android:layout_height="50dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_marginBottom="4dp"
-            android:layout_marginRight="4dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginRight="2dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true">
 
-            <!--<ImageView-->
-                <!--android:layout_width="30dp"-->
-                <!--android:layout_height="30dp"-->
-                <!--android:layout_centerInParent="true"-->
-                <!--android:alpha="0.3"-->
-                <!--android:src="@drawable/ic_circle"/>-->
-
             <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="8dp"
@@ -141,12 +135,12 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
+                android:layout_marginLeft="8dp"
                 android:fontFamily="sans-serif-light"
                 android:gravity="center"
                 android:text="@string/myer"
                 android:textColor="@android:color/white"
-                android:textSize="@dimen/drawer_title_textsize"/>
+                android:textSize="@dimen/drawer_title_text_size"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -155,7 +149,7 @@
                 android:gravity="center"
                 android:text="@string/splash"
                 android:textColor="@android:color/white"
-                android:textSize="@dimen/drawer_title_textsize"
+                android:textSize="@dimen/drawer_title_text_size"
                 android:textStyle="bold"/>
         </LinearLayout>
 
