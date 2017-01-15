@@ -1,17 +1,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark"
-    tools:context="activity.AboutActivity">
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark"
+                tools:context="activity.AboutActivity">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/banner" />
+        android:src="@drawable/banner"/>
 
     <ImageView
         android:id="@+id/activity_about_mask"
@@ -22,14 +22,14 @@
         android:contentDescription="@string/ImageDescDefault"
         android:elevation="0dp"
         android:scaleType="fitXY"
-        android:src="@drawable/status_mask" />
+        android:src="@drawable/status_mask"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
-        android:layout_alignParentStart="true">
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/activity_start_title_tv"
@@ -44,7 +44,7 @@
                 android:layout_height="40dp"
                 android:layout_gravity="center"
                 android:contentDescription="@string/ImageDescDefault"
-                android:src="@drawable/logo_raw" />
+                android:src="@drawable/logo_raw"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -54,7 +54,7 @@
                 android:gravity="center"
                 android:text="@string/myer"
                 android:textColor="@android:color/white"
-                android:textSize="40sp" />
+                android:textSize="40sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -64,7 +64,7 @@
                 android:text="@string/splash"
                 android:textColor="@android:color/white"
                 android:textSize="40sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
         </LinearLayout>
 
         <TextView
@@ -72,12 +72,12 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="4dp"
-            android:alpha="0.3"
+            android:alpha="0.5"
             android:fontFamily="sans-serif-light"
             android:text="@string/for_windows_amp_android"
             android:textColor="@android:color/white"
             android:textSize="15sp"
-            android:textStyle="normal" />
+            android:textStyle="normal"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -103,7 +103,7 @@
                     android:layout_margin="3dp"
                     android:textColor="@android:color/black"
                     android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
             </android.support.v7.widget.CardView>
 
             <LinearLayout
@@ -120,18 +120,18 @@
                     android:text="@string/credit"
                     android:textColor="@color/MyerSplashThemeColor"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_margin="8dp"
+                    android:layout_margin="4dp"
                     android:maxWidth="250dp"
                     android:text="@string/CreditStr"
                     android:textAlignment="center"
                     android:textColor="@android:color/white"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -147,12 +147,13 @@
                     android:text="@string/feedback"
                     android:textColor="@color/MyerSplashThemeColor"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
 
                 <android.support.v7.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="4dp"
                     android:elevation="0sp"
                     android:theme="@style/ThemeOverlay.AppCompat.Dark"
                     card_view:cardBackgroundColor="@android:color/transparent"
@@ -178,7 +179,7 @@
                             android:text="@string/feedback_str"
                             android:textColor="@android:color/white"
                             android:textColorLink="@android:color/black"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"/>
 
                     </RelativeLayout>
                 </android.support.v7.widget.CardView>
@@ -198,12 +199,13 @@
                     android:text="@string/like_this_app"
                     android:textColor="@color/MyerSplashThemeColor"
                     android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
 
                 <android.support.v7.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="4dp"
                     android:elevation="0sp"
                     android:theme="@style/ThemeOverlay.AppCompat.Dark"
                     card_view:cardBackgroundColor="@android:color/transparent"
@@ -226,7 +228,7 @@
                             android:text="@string/buy_me_a_drink"
                             android:textColor="@android:color/white"
                             android:textColorLink="@android:color/black"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"/>
 
                     </RelativeLayout>
                 </android.support.v7.widget.CardView>
@@ -257,7 +259,7 @@
                             android:text="@string/give_me_a_rate"
                             android:textColor="@android:color/white"
                             android:textColorLink="@android:color/black"
-                            android:textSize="14sp" />
+                            android:textSize="14sp"/>
 
                     </RelativeLayout>
                 </android.support.v7.widget.CardView>

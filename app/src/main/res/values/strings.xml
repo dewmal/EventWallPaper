@@ -45,7 +45,7 @@
     <string name="end">END</string>
     <string name="search_action">android.myersplash.action.search</string>
     <string name="random_action">android.myersplash.action.search</string>
-    <string name="buy_me_a_drink">Treat me a drink</string>
+    <string name="buy_me_a_drink">Treat me a drink via Alipay</string>
     <string name="downloads">DOWNLOADS</string>eat
     <string name="no_downloads">NO DOWNLOADS</string>
     <string name="cleanup_downloads_list">Clean up downloads list</string>
