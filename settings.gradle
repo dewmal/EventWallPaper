@@ -1,2 +1,2 @@
-include ':app', ':lib-java'
+include ':app', ':lib-java', ':flipperviewlib'
 project(':lib-java').projectDir = new File('library-java')

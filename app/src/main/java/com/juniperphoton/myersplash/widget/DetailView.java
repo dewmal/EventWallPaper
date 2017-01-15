@@ -37,6 +37,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.facebook.imagepipeline.cache.DefaultCacheKeyFactory;
 import com.facebook.imagepipeline.core.ImagePipelineFactory;
 import com.facebook.imagepipeline.request.ImageRequest;
+import com.juniperphoton.flipperviewlib.FlipperView;
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.callback.DetailViewNavigationCallback;
 import com.juniperphoton.myersplash.callback.OnClickPhotoCallback;
@@ -103,6 +104,9 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
     @BindView(R.id.copy_url_fl)
     FrameLayout frameLayout;
 
+    @BindView(R.id.copy_url_flipper_view)
+    FlipperView mFlipperView;
+
     private boolean mAnimating;
 
     public DetailView(Context context, AttributeSet attrs) {
@@ -139,12 +143,26 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         DownloadUtil.checkAndDownload((Activity) mContext, mClickedImage);
     }
 
-    @OnClick(R.id.copy_url_fl)
+    private boolean mCopied;
+
+    @OnClick(R.id.copy_url_flipper_view)
     void onClickCopy() {
+        if (mCopied) return;
+        mCopied = true;
+
+        mFlipperView.next();
+
         ClipboardManager clipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("MyerSplash", mClickedImage.getDownloadUrl());
         clipboard.setPrimaryClip(clip);
-        ToastService.sendShortToast("Copied :D");
+
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mFlipperView.next();
+                mCopied = false;
+            }
+        }, 2000);
     }
 
     @OnClick(R.id.detail_share_fab)

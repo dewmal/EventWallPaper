@@ -36,4 +36,5 @@ dependencies {
     compile 'moe.feng:AlipayZeroSdk:1.1'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     compile project(':lib-java')
+    compile project(path: ':flipperviewlib')
 }
