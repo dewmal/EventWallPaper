@@ -1,8 +1,8 @@
 package com.juniperphoton.myersplash.adapter;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
@@ -21,16 +21,14 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static android.graphics.Typeface.BOLD;
-
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryListViewHolder> {
 
     private List<UnsplashCategory> mData;
     private Context mContext;
     private int mSelectedIndex = -1;
-    private View mLastSelectedRV = null;
-    private TextView mLastSelectedTV = null;
-    private CardView mLastSelectedCV = null;
+    private View mLastLeftPlaceHolder = null;
+    private CardView mLastSelectedRoot = null;
+    private TextView mLastText;
     private INavigationDrawerCallback mCallback = null;
 
     public CategoryAdapter(List<UnsplashCategory> data, Context context) {
@@ -69,20 +67,24 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     }
 
     private void selectItem(CategoryListViewHolder holder, UnsplashCategory category) {
-        toggleSelectedAnimation(holder.leftRect, true);
-        holder.titleTextView.setTextColor(Color.BLACK);
-        holder.itemRoot.setBackground(new ColorDrawable(ContextCompat.getColor(mContext, R.color.SelectedBackgroundColor)));
+        holder.itemRoot.setBackground(new ColorDrawable(Color.BLACK));
+        holder.titleTextView.setTypeface(Typeface.DEFAULT_BOLD);
+        holder.titleTextView.setTextColor(ContextCompat.getColor(mContext, R.color.MyerSplashThemeColor));
+        //holder.leftRect.setVisibility(View.VISIBLE);
 
-        if (mLastSelectedRV != null) {
-            toggleSelectedAnimation(mLastSelectedRV, false);
-            mLastSelectedTV.setTextColor(Color.WHITE);
+        if (mLastLeftPlaceHolder != null) {
+            mLastLeftPlaceHolder.setVisibility(View.GONE);
         }
-        if (mLastSelectedCV != null) {
-            mLastSelectedCV.setBackground(new ColorDrawable(Color.TRANSPARENT));
+        if (mLastSelectedRoot != null) {
+            mLastSelectedRoot.setBackground(new ColorDrawable(Color.TRANSPARENT));
         }
-        mLastSelectedRV = holder.leftRect;
-        mLastSelectedTV = holder.titleTextView;
-        mLastSelectedCV = holder.itemRoot;
+        if (mLastText != null) {
+            mLastText.setTypeface(Typeface.DEFAULT);
+            mLastText.setTextColor(Color.WHITE);
+        }
+        mLastLeftPlaceHolder = holder.leftRect;
+        mLastSelectedRoot = holder.itemRoot;
+        mLastText = holder.titleTextView;
         if (mCallback != null) {
             mCallback.onSelectItem(category);
         }
@@ -91,19 +93,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     public void select(int i) {
         mSelectedIndex = i;
         notifyDataSetChanged();
-    }
-
-    private void toggleSelectedAnimation(final View view, boolean selected) {
-        float from = selected ? 0 : 1;
-        float to = selected ? 1 : 0;
-        ValueAnimator animator = ValueAnimator.ofFloat(from, to).setDuration(selected ? 500 : 200);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                view.setAlpha((float) animation.getAnimatedValue());
-            }
-        });
-        animator.start();
     }
 
     public int getSelectedIndex() {
@@ -129,12 +118,13 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         @BindView(R.id.row_category_cv)
         CardView itemRoot;
 
-        @BindView(R.id.row_category_rv)
+        @BindView(R.id.row_category_selected)
         View leftRect;
 
         public CategoryListViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            leftRect.setVisibility(View.GONE);
         }
     }
 }

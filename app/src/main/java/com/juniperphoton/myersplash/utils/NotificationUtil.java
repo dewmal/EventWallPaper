@@ -105,9 +105,9 @@ public class NotificationUtil {
         //File file = new File(fileUri.getPath());
         //Uri uri = FileProvider.getUriForFile(App.getInstance(), App.getInstance().getString(R.string.authorities), file);
         //Intent intent =  WallpaperManager.getInstance(App.getInstance()).getCropAndSetWallpaperIntent(uri);
-        Intent intent = new Intent(App.getInstance(), MainActivity.class);
+        Intent intent = new Intent(App.getInstance(), ManageDownloadActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(App.getInstance());
-        //stackBuilder.addParentStack(ManageDownloadActivity.class);
+        stackBuilder.addParentStack(ManageDownloadActivity.class);
         stackBuilder.addNextIntent(intent);
 
         PendingIntent resultPendingIntent =

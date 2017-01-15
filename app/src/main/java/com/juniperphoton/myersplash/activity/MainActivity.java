@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     TextView mGoBackLastCategoryTV;
 
     @BindView(R.id.nav_naviToDownload_rl)
-    RelativeLayout mNativateToDownloadsRL;
+    RelativeLayout mNavigateToDownloadsRL;
 
     private int mLastCategory = -1;
 
@@ -126,7 +126,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
         super.onCreate(savedInstanceState);
 
         StatusBarCompat.setUpActivity(this);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
         setContentView(R.layout.activity_main);

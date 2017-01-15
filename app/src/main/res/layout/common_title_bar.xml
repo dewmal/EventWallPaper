@@ -27,7 +27,7 @@
         android:layout_centerVertical="true"
         android:text="@string/SettingsC"
         android:textColor="@android:color/white"
-        android:textSize="@dimen/page_title_textsize"
+        android:textSize="@dimen/page_title_text_size"
         android:textStyle="bold"/>
 
 </LinearLayout>

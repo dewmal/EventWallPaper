@@ -14,15 +14,17 @@
     <RelativeLayout
         android:id="@+id/row_category_rl"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground">
+        android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackground"
+        >
 
         <View
-            android:id="@+id/row_category_rv"
-            android:layout_width="match_parent"
+            android:id="@+id/row_category_selected"
+            android:layout_width="8dp"
             android:layout_height="match_parent"
-            android:alpha="0"
-            android:background="@color/MyerSplashThemeDarkColor"/>
+            android:layout_centerVertical="true"
+            android:background="@color/MyerSplashThemeDarkColor"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/row_category"
