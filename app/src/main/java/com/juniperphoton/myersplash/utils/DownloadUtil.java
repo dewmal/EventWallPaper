@@ -19,11 +19,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URI;
 import java.util.Date;
 
 import io.realm.Realm;
-import io.realm.RealmResults;
 import okhttp3.ResponseBody;
 
 public class DownloadUtil {
@@ -70,8 +68,7 @@ public class DownloadUtil {
                             @Override
                             public void execute(Realm realm) {
                                 DownloadItem downloadItem = realm.where(DownloadItem.class)
-                                        .equalTo("mDownloadUrl", downloadUrl).findFirst();
-
+                                        .equalTo(DownloadItem.DOWNLOAD_URL, downloadUrl).findFirst();
                                 if (downloadItem != null) {
                                     downloadItem.setProgress(progressToDisplay);
                                 }
@@ -123,7 +120,7 @@ public class DownloadUtil {
      * @return 路径
      */
     public static String getGalleryPath() {
-        File mediaStorageDir = null;
+        File mediaStorageDir;
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
             if (null == path) return "";
@@ -194,21 +191,21 @@ public class DownloadUtil {
 
     public static void checkAndDownload(final Activity context, final UnsplashImage image) {
         if (!RequestUtil.check(context)) {
-            ToastService.sendShortToast("No permission to write file into external storage.");
+            ToastService.sendShortToast(context.getString(R.string.no_permission));
             return;
         }
         if (!NetworkUtil.usingWifi(context)) {
             AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle("ATTENTION");
-            builder.setMessage("You are not using WiFi network. Continue to download?");
-            builder.setPositiveButton("DOWNLOAD", new DialogInterface.OnClickListener() {
+            builder.setTitle(R.string.attention);
+            builder.setMessage(R.string.wifi_attention_content);
+            builder.setPositiveButton(R.string.download, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
                     startDownloadService(context, image);
                 }
             });
-            builder.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
@@ -224,10 +221,10 @@ public class DownloadUtil {
         String fixedUrl = fixUri(image.getDownloadUrl());
 
         Intent intent = new Intent(context, BackgroundDownloadService.class);
-        intent.putExtra("NAME", image.getFileNameForDownload());
-        intent.putExtra("URI", fixedUrl);
+        intent.putExtra(Params.NAME_KEY, image.getFileNameForDownload());
+        intent.putExtra(Params.URL_KEY, fixedUrl);
         context.startService(intent);
-        ToastService.sendShortToast("Downloading in background");
+        ToastService.sendShortToast(context.getString(R.string.downloading_in_background));
 
         final DownloadItem item = new DownloadItem(image.getId(), image.getListUrl(), fixedUrl,
                 image.getFileNameForDownload());

@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.RectF;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Handler;
@@ -17,14 +16,11 @@ import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
-import android.support.v7.widget.CardView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
-import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -54,10 +50,9 @@ import butterknife.OnClick;
 
 @SuppressWarnings("UnusedDeclaration")
 public class DetailView extends FrameLayout implements OnClickPhotoCallback {
-
     private static final String TAG = DetailView.class.getName();
     private static final int RESULT_CODE = 10000;
-    private static final String SHARE_TEXT = "Share %s's amazing photo from MyerSplash app. %s";
+    private static final String SHARE_TEXT = "Share %s's amazing photo from MyerSplash app. Download this photo: %s";
 
     private Context mContext;
 
@@ -89,7 +84,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
     @BindView(R.id.detail_name_line)
     View mLineView;
 
-    @BindView(R.id.detail_photoby_tv)
+    @BindView(R.id.detail_photo_by_tv)
     TextView mPhotoByTextView;
 
     @BindView(R.id.detail_download_fab)
@@ -101,13 +96,20 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
     @BindView(R.id.copy_url_tv)
     TextView mCopyUrlTextView;
 
+    @BindView(R.id.copied_url_tv)
+    TextView mCopiedUrlTextView;
+
     @BindView(R.id.copy_url_fl)
-    FrameLayout frameLayout;
+    FrameLayout mCopyLayout;
+
+    @BindView(R.id.copied_url_fl)
+    FrameLayout mCopiedLayout;
 
     @BindView(R.id.copy_url_flipper_view)
     FlipperView mFlipperView;
 
     private boolean mAnimating;
+    private boolean mCopied;
 
     public DetailView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -143,8 +145,6 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         DownloadUtil.checkAndDownload((Activity) mContext, mClickedImage);
     }
 
-    private boolean mCopied;
-
     @OnClick(R.id.copy_url_flipper_view)
     void onClickCopy() {
         if (mCopied) return;
@@ -153,7 +153,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         mFlipperView.next();
 
         ClipboardManager clipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("MyerSplash", mClickedImage.getDownloadUrl());
+        ClipData clip = ClipData.newPlainText(mContext.getString(R.string.app_name), mClickedImage.getDownloadUrl());
         clipboard.setPrimaryClip(clip);
 
         postDelayed(new Runnable() {
@@ -186,7 +186,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         }
 
         if (mCopyFileForSharing == null || !mCopyFileForSharing.exists() || !copied) {
-            ToastService.sendShortToast("Something went wrong :-(");
+            ToastService.sendShortToast(mContext.getString(R.string.something_wrong));
             return;
         }
 
@@ -233,7 +233,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         ValueAnimator valueAnimator = new ValueAnimator();
         valueAnimator.setIntValues(startY, endY);
         valueAnimator.setDuration(300);
-        valueAnimator.setInterpolator(new DecelerateInterpolator());
+        valueAnimator.setInterpolator(new FastOutSlowInInterpolator());
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -282,7 +282,6 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
     }
 
     private void toggleDetailRLAnimation(final boolean show) {
-
         int startY = show ? (-getResources().getDimensionPixelOffset(R.dimen.img_detail_info_height)) : 0;
         int endY = show ? 0 : (-getResources().getDimensionPixelOffset(R.dimen.img_detail_info_height));
 
@@ -448,13 +447,20 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         mDetailInfoRootLayout.setBackground(new ColorDrawable(unsplashImage.getThemeColor()));
         int themeColor = unsplashImage.getThemeColor();
         int alpha = Color.alpha(themeColor);
-        if (!ColorUtil.isColorLight(unsplashImage.getThemeColor())) {
+
+        //Dark
+        if (!ColorUtil.isColorLight(themeColor)) {
             mCopyUrlTextView.setTextColor(Color.BLACK);
-            frameLayout.setBackgroundResource(R.drawable.copy_url_background_white);
+            int backColor = Color.argb(255, Color.red(Color.WHITE),
+                    Color.green(Color.WHITE), Color.blue(Color.WHITE));
+            mCopyLayout.setBackgroundColor(backColor);
         } else {
             mCopyUrlTextView.setTextColor(Color.WHITE);
-            frameLayout.setBackgroundResource(R.drawable.copy_url_background);
+            int backColor = Color.argb(255, Color.red(Color.BLACK),
+                    Color.green(Color.BLACK), Color.blue(Color.BLACK));
+            mCopyLayout.setBackgroundColor(backColor);
         }
+
         mNameTextView.setText(unsplashImage.getUserName());
 
         int backColor = unsplashImage.getThemeColor();
@@ -471,8 +477,8 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         mHeroDV.setImageURI(unsplashImage.getListUrl());
         mDetailRootScrollView.setVisibility(View.VISIBLE);
 
-        int[] heroImgePosition = new int[2];
-        mDetailImgRL.getLocationOnScreen(heroImgePosition);
+        int[] heroImagePosition = new int[2];
+        mDetailImgRL.getLocationOnScreen(heroImagePosition);
 
         int itemY = (int) rectF.top;
 
@@ -481,9 +487,9 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
 
         mDetailImgRL.setLayoutParams(params);
 
-        int targetPositonY = getTargetY();
+        int targetPositionY = getTargetY();
 
         toggleMaskAnimation(true);
-        toggleHeroViewAnimation(itemY, targetPositonY, true);
+        toggleHeroViewAnimation(itemY, targetPositionY, true);
     }
 }

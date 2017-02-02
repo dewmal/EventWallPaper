@@ -22,7 +22,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryListViewHolder> {
-
     private List<UnsplashCategory> mData;
     private Context mContext;
     private int mSelectedIndex = -1;

@@ -4,10 +4,12 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
 
+import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.cloudservice.CloudService;
 import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.NotificationUtil;
+import com.juniperphoton.myersplash.utils.Params;
 import com.juniperphoton.myersplash.utils.ToastService;
 import com.orhanobut.logger.Logger;
 
@@ -23,12 +25,6 @@ public class BackgroundDownloadService extends IntentService {
     private static String TAG = BackgroundDownloadService.class.getName();
     private static HashMap<String, Subscriber> subscriptionMap = new HashMap<>();
 
-    public static final String URI_KEY = "URI";
-    public static final String NAME_KEY = "NAME";
-    public static final String CANCELED_KEY = "CANCELED";
-    public static final String FILE_PATH_KEY = "FILE_PATH";
-    public static final String CANCEL_NID_KEY = "CANCEL_NID";
-
     public BackgroundDownloadService(String name) {
         super(name);
     }
@@ -39,11 +35,11 @@ public class BackgroundDownloadService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        String url = intent.getStringExtra(URI_KEY);
-        String fileName = intent.getStringExtra(NAME_KEY);
-        boolean canceled = intent.getBooleanExtra(CANCELED_KEY, false);
+        String url = intent.getStringExtra(Params.URL_KEY);
+        String fileName = intent.getStringExtra(Params.NAME_KEY);
+        boolean canceled = intent.getBooleanExtra(Params.CANCELED_KEY, false);
 
-        int nId = intent.getIntExtra(CANCEL_NID_KEY, NotificationUtil.NOT_ALLOCATED_ID);
+        int nId = intent.getIntExtra(Params.CANCEL_NID_KEY, NotificationUtil.NOT_ALLOCATED_ID);
         if (nId != NotificationUtil.NOT_ALLOCATED_ID) {
             NotificationUtil.cancelNotificationById(nId);
         }
@@ -53,11 +49,13 @@ public class BackgroundDownloadService extends IntentService {
             if (subscriber != null) {
                 subscriber.unsubscribe();
                 NotificationUtil.cancelNotification(Uri.parse(url));
-                ToastService.sendShortToast("Download has been cancelled");
+                ToastService.sendShortToast(getString(R.string.cancelled_download));
             }
         } else {
             String filePath = downloadImage(url, fileName);
-            NotificationUtil.showProgressNotification("MyerSplash", "Downloading...", 0, filePath, Uri.parse(url));
+            NotificationUtil.showProgressNotification(getString(R.string.app_name),
+                    getString(R.string.downloading),
+                    0, filePath, Uri.parse(url));
         }
     }
 
@@ -73,9 +71,10 @@ public class BackgroundDownloadService extends IntentService {
                     Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
                         @Override
                         public void execute(Realm realm) {
-                            DownloadItem downloadItem = realm.where(DownloadItem.class).equalTo("mDownloadUrl", url).findFirst();
+                            DownloadItem downloadItem = realm.where(DownloadItem.class)
+                                    .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst();
                             if (downloadItem != null) {
-                                downloadItem.setStatus(DownloadItem.DownloadStatus.Failed);
+                                downloadItem.setStatus(DownloadItem.DOWNLOAD_STATUS_FAILED);
                             }
                         }
                     });
@@ -83,16 +82,17 @@ public class BackgroundDownloadService extends IntentService {
                     Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
                         @Override
                         public void execute(Realm realm) {
-                            DownloadItem downloadItem = realm.where(DownloadItem.class).equalTo("mDownloadUrl", url).findFirst();
+                            DownloadItem downloadItem = realm.where(DownloadItem.class)
+                                    .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst();
                             if (downloadItem != null) {
-                                downloadItem.setStatus(DownloadItem.DownloadStatus.Completed);
+                                downloadItem.setStatus(DownloadItem.DOWNLOAD_STATUS_OK);
                                 downloadItem.setFilePath(outputFile.getPath());
                             }
                         }
                     });
                     NotificationUtil.showCompleteNotification(Uri.parse(url), Uri.fromFile(outputFile));
                 }
-                Logger.d(TAG, "Completed");
+                Logger.d(TAG, getString(R.string.completed));
             }
 
             @Override
@@ -101,9 +101,10 @@ public class BackgroundDownloadService extends IntentService {
                 Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
-                        DownloadItem downloadItem = realm.where(DownloadItem.class).equalTo("mDownloadUrl", url).findFirst();
+                        DownloadItem downloadItem = realm.where(DownloadItem.class)
+                                .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst();
                         if (downloadItem != null) {
-                            downloadItem.setStatus(DownloadItem.DownloadStatus.Failed);
+                            downloadItem.setStatus(DownloadItem.DOWNLOAD_STATUS_FAILED);
                         }
                     }
                 });

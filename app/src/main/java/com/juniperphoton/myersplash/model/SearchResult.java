@@ -1,6 +1,5 @@
 package com.juniperphoton.myersplash.model;
 
-
 import java.util.List;
 
 public class SearchResult {

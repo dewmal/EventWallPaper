@@ -11,17 +11,14 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.adapter.DownloadsListAdapter;
 import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.utils.DeviceUtil;
-import com.juniperphoton.myersplash.utils.DownloadUtil;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -33,10 +30,9 @@ import moe.feng.material.statusbar.StatusBarCompat;
 
 import static com.juniperphoton.myersplash.utils.DisplayUtil.getDimenInPixel;
 
-
-public class ManageDownloadActivity extends AppCompatActivity implements DownloadsListAdapter.DownloadStateChangedCallback {
-
-    @BindView(R.id.activity_managedownload_rv)
+public class ManageDownloadActivity extends AppCompatActivity
+        implements DownloadsListAdapter.DownloadStateChangedCallback {
+    @BindView(R.id.activity_manage_download_rv)
     RecyclerView mDownloadsRV;
 
     @BindView(R.id.activity_downloads_no_item_tv)
@@ -79,27 +75,27 @@ public class ManageDownloadActivity extends AppCompatActivity implements Downloa
     void onClickMore() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("CLEAR OPTIOINS").
+        builder.setTitle(R.string.clear_options_title).
                 setItems(R.array.delete_options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         switch (i) {
                             case 0: {
-                                deleteFromRealm(DownloadItem.DownloadStatus.Downloading);
+                                deleteFromRealm(DownloadItem.DOWNLOAD_STATUS_DOWNLOADING);
                             }
                             break;
                             case 1: {
-                                deleteFromRealm(DownloadItem.DownloadStatus.Completed);
+                                deleteFromRealm(DownloadItem.DOWNLOAD_STATUS_OK);
                             }
                             break;
                             case 2: {
-                                deleteFromRealm(DownloadItem.DownloadStatus.Failed);
+                                deleteFromRealm(DownloadItem.DOWNLOAD_STATUS_FAILED);
                             }
                             break;
                         }
                     }
                 })
-                .setPositiveButton("CANCEL", new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
@@ -108,13 +104,11 @@ public class ManageDownloadActivity extends AppCompatActivity implements Downloa
         builder.create().show();
     }
 
-    private void deleteFromRealm(final DownloadItem.DownloadStatus status) {
-        List<DownloadItem> count = mAdapter.getData();
-
+    private void deleteFromRealm(final int status) {
         Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                RealmResults<DownloadItem> items = realm.where(DownloadItem.class).equalTo("mStatus", status.ordinal()).findAll();
+                RealmResults<DownloadItem> items = realm.where(DownloadItem.class).equalTo("mStatus", status).findAll();
                 for (DownloadItem item : items) {
                     item.removeChangeListener(mRealmListener);
                     item.deleteFromRealm();

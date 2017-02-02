@@ -17,20 +17,20 @@
         android:orientation="vertical">
 
         <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/row_downloaditem_dv"
+            android:id="@+id/row_download_item_dv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true" />
 
         <com.juniperphoton.myersplash.widget.RippleToggleLayout
-            android:id="@+id/row_downloaditem_rtv"
+            android:id="@+id/row_download_item_rtv"
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="50dp" />
 
         <TextView
-            android:id="@+id/row_downloaditem_progressStr_tv"
+            android:id="@+id/row_download_item_progress_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"

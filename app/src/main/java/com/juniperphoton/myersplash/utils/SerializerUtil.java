@@ -12,7 +12,6 @@ import java.io.FileOutputStream;
 import java.lang.reflect.Type;
 
 public class SerializerUtil {
-
     public static String CATEGORY_LIST_FILE_NAME = "categories.list";
     public static String IMAGE_LIST_FILE_NAME = "images.list";
 

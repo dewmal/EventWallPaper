@@ -1,6 +1,5 @@
 package com.juniperphoton.myersplash.widget;
 
-
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
