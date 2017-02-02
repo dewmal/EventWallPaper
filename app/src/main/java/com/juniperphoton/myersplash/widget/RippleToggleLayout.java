@@ -3,14 +3,11 @@ package com.juniperphoton.myersplash.widget;
 import android.animation.Animator;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.RelativeLayout;
 
 import com.juniperphoton.myersplash.utils.AnimatorListenerImpl;
-
-import java.util.List;
 
 import butterknife.ButterKnife;
 

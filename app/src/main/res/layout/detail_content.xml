@@ -40,7 +40,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/detail_photoby_tv"
+                        android:id="@+id/detail_photo_by_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="photo by"
@@ -69,22 +69,19 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginRight="0dp"
-                    android:clipChildren="false"
-                    android:clipToPadding="false"
-                    android:padding="20dp">
+                    android:layout_margin="20dp"
+                    >
 
                     <android.support.v7.widget.CardView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        app:cardCornerRadius="2dp"
                         >
 
                         <FrameLayout
                             android:id="@+id/copy_url_fl"
-                            android:layout_width="104dp"
+                            android:layout_width="@dimen/copy_url_width"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/copy_url_background"
                             android:foreground="@drawable/ripple_rect">
 
                             <TextView
@@ -106,15 +103,18 @@
                     <android.support.v7.widget.CardView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        app:cardCornerRadius="2dp"
                         >
 
                         <FrameLayout
-                            android:layout_width="104dp"
+                            android:id="@+id/copied_url_fl"
+                            android:layout_width="@dimen/copy_url_width"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/copied_background"
+                            android:background="@color/MyerSplashLikedHeartColor"
                             android:foreground="@drawable/ripple_rect">
 
                             <TextView
+                                android:id="@+id/copied_url_tv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -128,8 +128,6 @@
                                 android:textStyle="bold"/>
                         </FrameLayout>
                     </android.support.v7.widget.CardView>
-
-
                 </com.juniperphoton.flipperviewlib.FlipperView>
 
             </RelativeLayout>

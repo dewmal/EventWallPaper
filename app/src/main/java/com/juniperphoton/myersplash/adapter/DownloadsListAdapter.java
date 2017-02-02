@@ -2,7 +2,6 @@ package com.juniperphoton.myersplash.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +14,7 @@ import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.service.BackgroundDownloadService;
 import com.juniperphoton.myersplash.utils.DownloadItemTransactionHelper;
+import com.juniperphoton.myersplash.utils.Params;
 import com.juniperphoton.myersplash.widget.DownloadCompleteView;
 import com.juniperphoton.myersplash.widget.DownloadRetryView;
 import com.juniperphoton.myersplash.widget.DownloadingView;
@@ -25,7 +25,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.Realm;
 
 public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdapter.DownloadItemViewHolder> {
 
@@ -46,7 +45,7 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
     @Override
     public DownloadItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == ITEM) {
-            View view = LayoutInflater.from(mContext).inflate(R.layout.row_downloaditem, parent, false);
+            View view = LayoutInflater.from(mContext).inflate(R.layout.row_download_item, parent, false);
             int width = mContext.getResources().getDisplayMetrics().widthPixels;
             ViewGroup.LayoutParams params = view.getLayoutParams();
             params.height = (int) (width / 1.7d);
@@ -80,8 +79,8 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
                 notifyItemRemoved(holder.getAdapterPosition());
 
                 Intent intent = new Intent(App.getInstance(), BackgroundDownloadService.class);
-                intent.putExtra(BackgroundDownloadService.CANCELED_KEY, true);
-                intent.putExtra(BackgroundDownloadService.URI_KEY, item.getDownloadUrl());
+                intent.putExtra(Params.CANCELED_KEY, true);
+                intent.putExtra(Params.URL_KEY, item.getDownloadUrl());
                 mContext.startService(intent);
 
                 DownloadItemTransactionHelper.delete(item);
@@ -90,12 +89,12 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
         holder.DownloadRetryView.setOnClickRetryListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DownloadItemTransactionHelper.updateStatus(item, DownloadItem.DownloadStatus.Downloading);
+                DownloadItemTransactionHelper.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_DOWNLOADING);
                 holder.RippleToggleView.toggleTo(item.getStatus());
 
                 Intent intent = new Intent(mContext, BackgroundDownloadService.class);
-                intent.putExtra("NAME", item.getFileName());
-                intent.putExtra("URI", item.getDownloadUrl());
+                intent.putExtra(Params.NAME_KEY, item.getFileName());
+                intent.putExtra(Params.URL_KEY, item.getDownloadUrl());
                 mContext.startService(intent);
             }
         });
@@ -105,12 +104,12 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
         holder.DownloadingView.setClickCancelListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DownloadItemTransactionHelper.updateStatus(item, DownloadItem.DownloadStatus.Failed);
+                DownloadItemTransactionHelper.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_FAILED);
                 holder.RippleToggleView.toggleTo(item.getStatus());
 
                 Intent intent = new Intent(App.getInstance(), BackgroundDownloadService.class);
-                intent.putExtra(BackgroundDownloadService.CANCELED_KEY, true);
-                intent.putExtra(BackgroundDownloadService.URI_KEY, item.getDownloadUrl());
+                intent.putExtra(Params.CANCELED_KEY, true);
+                intent.putExtra(Params.URL_KEY, item.getDownloadUrl());
                 mContext.startService(intent);
             }
         });
@@ -157,14 +156,13 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
     }
 
     public class DownloadItemViewHolder extends RecyclerView.ViewHolder {
-
-        @BindView(R.id.row_downloaditem_dv)
+        @BindView(R.id.row_download_item_dv)
         SimpleDraweeView DraweeView;
 
-        @BindView(R.id.row_downloaditem_rtv)
+        @BindView(R.id.row_download_item_rtv)
         RippleToggleLayout RippleToggleView;
 
-        @BindView(R.id.row_downloaditem_progressStr_tv)
+        @BindView(R.id.row_download_item_progress_tv)
         TextView ProgressStrTV;
 
         DownloadingView DownloadingView;

@@ -8,7 +8,7 @@ public class DisplayUtil {
         return context.getResources().getDisplayMetrics().density;
     }
 
-    public static int getDimenInPixel(int valueinDP, Context context) {
-        return (int) (valueinDP * getDpi(context));
+    public static int getDimenInPixel(int valueInDP, Context context) {
+        return (int) (valueInDP * getDpi(context));
     }
 }

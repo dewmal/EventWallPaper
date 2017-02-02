@@ -2,33 +2,23 @@ package com.juniperphoton.myersplash.utils;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.util.SparseArray;
 
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.activity.AboutActivity;
-import com.juniperphoton.myersplash.activity.MainActivity;
 import com.juniperphoton.myersplash.activity.ManageDownloadActivity;
 import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.service.BackgroundDownloadService;
 
-import java.io.File;
 import java.util.HashMap;
 
 import static android.app.PendingIntent.FLAG_UPDATE_CURRENT;
-import static com.juniperphoton.myersplash.service.BackgroundDownloadService.CANCEL_NID_KEY;
-import static com.juniperphoton.myersplash.service.BackgroundDownloadService.NAME_KEY;
-import static com.juniperphoton.myersplash.service.BackgroundDownloadService.URI_KEY;
 
 public class NotificationUtil {
-
     private static int mLastId = 0;
     public static int NOT_ALLOCATED_ID = -10000;
     private static HashMap<Uri, Integer> uriHashMap = new HashMap<>();
@@ -76,9 +66,9 @@ public class NotificationUtil {
         }
 
         Intent intent = new Intent(App.getInstance(), BackgroundDownloadService.class);
-        intent.putExtra(NAME_KEY, fileName);
-        intent.putExtra(URI_KEY, url);
-        intent.putExtra(CANCEL_NID_KEY, nId);
+        intent.putExtra(Params.NAME_KEY, fileName);
+        intent.putExtra(Params.URL_KEY, url);
+        intent.putExtra(Params.CANCEL_NID_KEY, nId);
 
         PendingIntent resultPendingIntent = PendingIntent.getService(App.getInstance(), 0, intent, 0);
 
@@ -105,21 +95,15 @@ public class NotificationUtil {
         //File file = new File(fileUri.getPath());
         //Uri uri = FileProvider.getUriForFile(App.getInstance(), App.getInstance().getString(R.string.authorities), file);
         //Intent intent =  WallpaperManager.getInstance(App.getInstance()).getCropAndSetWallpaperIntent(uri);
-        Intent intent = new Intent(App.getInstance(), ManageDownloadActivity.class);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(App.getInstance());
-        stackBuilder.addParentStack(ManageDownloadActivity.class);
-        stackBuilder.addNextIntent(intent);
-
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(0, FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(resultPendingIntent);
+        injectIntent(builder);
 
         if (nId != NOT_ALLOCATED_ID) {
             getNotificationManager().notify(nId, builder.build());
         }
     }
 
-    public static void showProgressNotification(String title, String content, int progress, String filePath, Uri downloadUri) {
+    public static void showProgressNotification(String title, String content, int progress,
+                                                String filePath, Uri downloadUri) {
         int nId;
         nId = findNIdByUri(downloadUri);
         if (nId == NOT_ALLOCATED_ID) {
@@ -138,19 +122,17 @@ public class NotificationUtil {
         } else {
             builder.setProgress(100, progress, false);
         }
-
-//        if (builder.mActions.size() == 0) {
-//            Intent cancelIntent = new Intent(App.getInstance(), BackgroundDownloadService.class);
-//            cancelIntent.putExtra(URI_KEY, downloadUri.toString());
-//            cancelIntent.putExtra(CANCEL_NID_KEY, nId);
-//            cancelIntent.putExtra(CANCELED_KEY, true);
-//            cancelIntent.putExtra(FILE_PATH_KEY, filePath);
-//
-//            PendingIntent resultPendingIntent = PendingIntent.getService(App.getInstance(), 0,
-//                    cancelIntent, FLAG_UPDATE_CURRENT);
-//
-//            builder.addAction(R.drawable.ic_replay_white_48dp, "CANCEL", resultPendingIntent);
-//        }
+        injectIntent(builder);
         getNotificationManager().notify(nId, builder.build());
+    }
+
+    private static void injectIntent(NotificationCompat.Builder builder) {
+        Intent intent = new Intent(App.getInstance(), ManageDownloadActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(App.getInstance());
+        stackBuilder.addNextIntent(intent);
+
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(0, FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(resultPendingIntent);
     }
 }

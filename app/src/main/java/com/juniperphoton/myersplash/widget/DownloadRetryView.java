@@ -1,6 +1,5 @@
 package com.juniperphoton.myersplash.widget;
 
-
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -28,7 +27,7 @@ public class DownloadRetryView extends FrameLayout implements SetThemeColor {
     TextView retryTextView;
 
     @BindView(R.id.widget_retry_btn)
-    View retyBtn;
+    View retryBtn;
 
     @BindView(R.id.delete_btn)
     ImageView deleteView;
@@ -44,7 +43,7 @@ public class DownloadRetryView extends FrameLayout implements SetThemeColor {
     }
 
     public void setOnClickRetryListener(View.OnClickListener listener){
-        retyBtn.setOnClickListener(listener);
+        retryBtn.setOnClickListener(listener);
     }
 
     @Override

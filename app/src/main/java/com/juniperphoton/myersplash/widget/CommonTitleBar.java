@@ -1,6 +1,5 @@
 package com.juniperphoton.myersplash.widget;
 
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -17,7 +16,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class CommonTitleBar extends FrameLayout {
-
     @BindView(R.id.back_iv)
     View backView;
 

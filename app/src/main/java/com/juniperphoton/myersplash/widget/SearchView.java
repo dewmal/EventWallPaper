@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -20,6 +21,7 @@ import android.widget.RelativeLayout;
 
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.callback.OnClickSearchCallback;
+import com.juniperphoton.myersplash.utils.AnimatorListenerImpl;
 import com.juniperphoton.myersplash.utils.DisplayUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
 
@@ -29,7 +31,6 @@ import butterknife.OnClick;
 
 @SuppressWarnings("UnusedDeclaration")
 public class SearchView extends FrameLayout {
-
     private Context mContext;
     private OnClickSearchCallback mSearchCallback;
     private boolean mShown = false;
@@ -90,34 +91,19 @@ public class SearchView extends FrameLayout {
                 mRootRL.setBackground(new ColorDrawable((int) animation.getAnimatedValue()));
             }
         });
-        backgroundAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
+        backgroundAnimator.addListener(new AnimatorListenerImpl() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 if (!show) {
                     SearchView.this.setVisibility(INVISIBLE);
                 }
             }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
-            }
         });
         backgroundAnimator.start();
 
         ValueAnimator offsetAnimator = ValueAnimator.ofFloat(show ? -getOffsetY() : 0f, show ? 0f : -getOffsetY());
         offsetAnimator.setDuration(300);
-        offsetAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        offsetAnimator.setInterpolator(new DecelerateInterpolator());
         offsetAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -146,7 +132,7 @@ public class SearchView extends FrameLayout {
         return DisplayUtil.getDimenInPixel(180, mContext);
     }
 
-    public void hide(){
+    public void hide() {
         InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
         toggleAnimation(false);

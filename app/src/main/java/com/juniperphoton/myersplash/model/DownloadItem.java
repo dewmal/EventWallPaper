@@ -1,15 +1,26 @@
 package com.juniperphoton.myersplash.model;
 
+import android.support.annotation.IntDef;
+import android.view.PixelCopy;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 public class DownloadItem extends RealmObject {
-
-    public enum DownloadStatus {
-        Downloading,
-        Failed,
-        Completed
+    @IntDef({DOWNLOAD_STATUS_DOWNLOADING, DOWNLOAD_STATUS_OK, DOWNLOAD_STATUS_FAILED})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface DownloadStatus {
     }
+
+    public static final int DOWNLOAD_STATUS_DOWNLOADING = 0;
+    public static final int DOWNLOAD_STATUS_FAILED = 1;
+    public static final int DOWNLOAD_STATUS_OK = 2;
+
+    public static final String ID_KEY = "mId";
+    public static final String DOWNLOAD_URL = "mDownloadUrl";
 
     private String mThumbUrl;
 
@@ -32,7 +43,7 @@ public class DownloadItem extends RealmObject {
         mId = id;
         mThumbUrl = thumbUrl;
         mDownloadUrl = downloadUrl;
-        mStatus = DownloadStatus.Downloading.ordinal();
+        mStatus = DOWNLOAD_STATUS_DOWNLOADING;
         mFileName = fileName;
     }
 
@@ -48,10 +59,11 @@ public class DownloadItem extends RealmObject {
         return mProgress;
     }
 
-    public void setStatus(DownloadStatus status) {
-        mStatus = status.ordinal();
+    public void setStatus(@DownloadStatus int status) {
+        mStatus = status;
     }
 
+    @DownloadStatus
     public int getStatus() {
         return mStatus;
     }
@@ -59,7 +71,7 @@ public class DownloadItem extends RealmObject {
     public void setProgress(int progress) {
         mProgress = progress;
         if (mProgress >= 100) {
-            mStatus = DownloadStatus.Completed.ordinal();
+            mStatus = DOWNLOAD_STATUS_OK;
         }
     }
 
@@ -68,12 +80,8 @@ public class DownloadItem extends RealmObject {
             return "";
         } else {
             switch (mStatus) {
-                case 0:
+                case DOWNLOAD_STATUS_DOWNLOADING:
                     return "DOWNLOADING";
-                case 1:
-                    return "";
-                case 2:
-                    return "";
                 default:
                     return "";
             }

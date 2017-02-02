@@ -13,9 +13,6 @@ public class App extends Application {
         return instance;
     }
 
-    /**
-     * 初始化数据
-     */
     @Override
     public void onCreate() {
         super.onCreate();

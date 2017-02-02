@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
-            android:text="SET AS"
+            android:text="@string/set_as_wallpaper"
             android:textStyle="bold"/>
     </RelativeLayout>
 </RelativeLayout>

@@ -23,7 +23,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:layout_width="50dp"
+        android:layout_width="70dp"
         android:layout_height="match_parent"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:layout_alignParentRight="true">

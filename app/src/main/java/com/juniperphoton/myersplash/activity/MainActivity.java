@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private int mSelectedCategoryID = 0;
     private String mQuery;
     private String mUrl = CloudService.BASE_URL;
-    private RandomIntentStatus mRandomIntentStatus = RandomIntentStatus.NotReceived;
+    private int mRandomIntentStatus = RandomIntentStatus.NOT_RECEIVED;
     private boolean mHandledSearch = false;
 
     @Override
@@ -322,7 +322,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
 
     private void handleShortcutsAction() {
         String action = getIntent().getAction();
-        if(action!=null){
+        if (action != null) {
             switch (action) {
                 case "action.search": {
                     if (!mHandledSearch) {
@@ -333,8 +333,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
                 break;
 
                 case "action.random": {
-                    if (mRandomIntentStatus == RandomIntentStatus.NotReceived) {
-                        mRandomIntentStatus = RandomIntentStatus.Pending;
+                    if (mRandomIntentStatus == RandomIntentStatus.NOT_RECEIVED) {
+                        mRandomIntentStatus = RandomIntentStatus.PENDING;
                     }
                 }
                 break;
@@ -392,8 +392,8 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     private void setCategoryList(List<UnsplashCategory> unsplashCategories) {
         CategoryAdapter adapter = new CategoryAdapter(unsplashCategories, MainActivity.this);
         adapter.setCallback(MainActivity.this);
-        adapter.select(mRandomIntentStatus == RandomIntentStatus.Pending ? 0 : 1);
-        mRandomIntentStatus = RandomIntentStatus.Handled;
+        adapter.select(mRandomIntentStatus == RandomIntentStatus.PENDING ? 0 : 1);
+        mRandomIntentStatus = RandomIntentStatus.HANDLED;
         mDrawerRecyclerView.setAdapter(adapter);
     }
 

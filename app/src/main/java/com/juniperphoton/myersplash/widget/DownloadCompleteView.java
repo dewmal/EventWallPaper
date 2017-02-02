@@ -1,6 +1,5 @@
 package com.juniperphoton.myersplash.widget;
 
-
 import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;

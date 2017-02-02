@@ -1,37 +1,37 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/detail_search_root_rl"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/transparent"
-    android:clickable="true"
-    android:orientation="vertical">
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/detail_search_root_rl"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:clickable="true"
+                android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/detail_search_bar_rl"
         android:layout_width="match_parent"
-        android:background="@android:color/black"
-        android:layout_height="140dp">
+        android:layout_height="130dp"
+        android:background="@android:color/black">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_marginLeft="12dp"
             android:layout_marginTop="35dp"
             android:text="@string/search"
             android:textColor="@android:color/white"
-            android:textSize="25sp"
-            android:textStyle="bold" />
+            android:textSize="20sp"
+            android:textStyle="bold"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="40dp"
             android:layout_alignParentBottom="true"
-            android:layout_marginEnd="0dp"
-            android:layout_marginStart="0dp"
-            android:background="@android:color/white"
-            android:layout_marginBottom="10dp">
+            android:layout_marginBottom="10dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            android:background="@android:color/white">
 
             <EditText
                 android:id="@+id/detail_search_et"
@@ -40,30 +40,31 @@
                 android:layout_marginEnd="12dp"
                 android:layout_marginStart="12dp"
                 android:background="@android:color/white"
-                android:imeOptions="actionSearch"
                 android:hint="@string/search_in_english"
+                android:imeOptions="actionSearch"
                 android:inputType="text"
-                android:textColorHint="#afafaf" />
+                android:textColorHint="#afafaf"
+                android:textSize="15sp"/>
 
             <android.support.v7.widget.CardView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_alignParentEnd="true"
-                card_view:cardCornerRadius="0dp"
-                card_view:cardBackgroundColor="@color/MyerSplashThemeColor">
+                card_view:cardBackgroundColor="@color/MyerSplashThemeColor"
+                card_view:cardCornerRadius="0dp">
 
                 <RelativeLayout
                     android:id="@+id/detail_search_btn_rl"
                     android:layout_width="match_parent"
-                    android:background="?attr/selectableItemBackground"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackground">
 
                     <ImageView
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:layout_centerInParent="true"
                         android:contentDescription="@string/ImageDescDefault"
-                        android:src="@drawable/vector_ic_search" />
+                        android:src="@drawable/vector_ic_search"/>
                 </RelativeLayout>
 
             </android.support.v7.widget.CardView>

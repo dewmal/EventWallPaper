@@ -5,13 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatCheckBox;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineFactory;
@@ -28,8 +24,7 @@ import io.realm.Realm;
 import moe.feng.material.statusbar.StatusBarCompat;
 
 public class SettingsActivity extends AppCompatActivity {
-
-    private final String TAG = SettingsActivity.class.getName();
+    private final static String TAG = "SettingsActivity";
 
     private String[] savingStrings;
 
@@ -99,7 +94,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.setting_scroll_appbar)
-    public void toggleToolbarScolling(View view) {
+    public void toggleToolbarScrolling(View view) {
         scrollBarItem.setChecked(!scrollBarItem.getChecked());
     }
 

@@ -33,7 +33,7 @@
     <string name="myer">Myer</string>
     <string name="splash">Splash</string>
     <string name="for_windows_amp_android"><![CDATA[for Windows 10 & Android & iOS later]]></string>
-    <string name="search">SEARCH</string>
+    <string name="search">SEARCH PHOTOS</string>
     <string name="searchLowercase">Search</string>
     <string name="random">Random</string>
 
@@ -60,5 +60,15 @@
     <string name="download_error">Download error :(</string>
     <string name="download_error_retry">Please check your network and retry.</string>
     <string name="retry_act">RETRY</string>
+    <string name="clear_options_title">CLEAR OPTIONS</string>
+    <string name="cancel">CANCEL</string>
+    <string name="cancelled_download">Download has been cancelled</string>
+    <string name="downloading">Downloading...</string>
+    <string name="completed">Completed</string>
+    <string name="no_permission">No permission to write file into external storage.</string>
+    <string name="attention">ATTENTION</string>
+    <string name="wifi_attention_content">You are not using WiFi network. Continue to download?</string>
+    <string name="download">DOWNLOAD</string>
+    <string name="downloading_in_background">Downloading in background</string>
 
 </resources>

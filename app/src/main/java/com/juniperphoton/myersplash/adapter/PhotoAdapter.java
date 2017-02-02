@@ -28,7 +28,6 @@ import com.juniperphoton.myersplash.utils.LocalSettingHelper;
 import java.util.List;
 
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder> {
-
     private final int FOOTER_FLAG_NOT_SHOW = 0;
     private final int FOOTER_FLAG_SHOW = 1;
     private final int FOOTER_FLAG_SHOW_END = 1 << 1 | FOOTER_FLAG_SHOW;
@@ -40,7 +39,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     private OnClickPhotoCallback mOnClickPhotoCallback;
     private OnClickQuickDownloadCallback mOnClickDownloadCallback;
 
-    private boolean isAutoLoadMore = true;//是否自动加载，当数据不满一屏幕会自动加载
+    private boolean isAutoLoadMore = true;
     private int footerFlag = FOOTER_FLAG_SHOW;
 
     private RecyclerView mRecyclerView;
@@ -232,11 +231,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         });
     }
 
-    /**
-     * 刷新加载更多的数据
-     *
-     * @param data 照片列表
-     */
     public void setLoadMoreData(List<UnsplashImage> data) {
         int size = mData.size();
         mData.addAll(data);
@@ -295,7 +289,6 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         RelativeLayout RippleMaskRL;
 
         RelativeLayout FooterRL;
-        RelativeLayout containerRL;
 
         PhotoViewHolder(View itemView, int type, int footerFlag) {
             super(itemView);

@@ -1,6 +1,5 @@
 package com.juniperphoton.myersplash.widget;
 
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.v7.widget.AppCompatCheckBox;
