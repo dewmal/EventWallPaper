@@ -70,5 +70,6 @@
     <string name="wifi_attention_content">You are not using WiFi network. Continue to download?</string>
     <string name="download">DOWNLOAD</string>
     <string name="downloading_in_background">Downloading in background</string>
+    <string name="something_wrong">Something went wrong :-(</string>
 
 </resources>

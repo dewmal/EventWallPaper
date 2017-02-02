@@ -13,16 +13,7 @@
         android:scaleType="centerCrop"
         android:src="@drawable/banner"/>
 
-    <ImageView
-        android:id="@+id/activity_about_mask"
-        android:layout_width="match_parent"
-        android:layout_height="24sp"
-        android:layout_alignParentTop="true"
-        android:alpha="0.3"
-        android:contentDescription="@string/ImageDescDefault"
-        android:elevation="0dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/status_mask"/>
+    <include layout="@layout/status_placeholer"/>
 
     <LinearLayout
         android:layout_width="match_parent"

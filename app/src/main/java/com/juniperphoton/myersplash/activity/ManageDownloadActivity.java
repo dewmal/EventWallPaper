@@ -32,7 +32,7 @@ import static com.juniperphoton.myersplash.utils.DisplayUtil.getDimenInPixel;
 
 public class ManageDownloadActivity extends AppCompatActivity
         implements DownloadsListAdapter.DownloadStateChangedCallback {
-    @BindView(R.id.activity_managedownload_rv)
+    @BindView(R.id.activity_manage_download_rv)
     RecyclerView mDownloadsRV;
 
     @BindView(R.id.activity_downloads_no_item_tv)

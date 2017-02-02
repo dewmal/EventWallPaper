@@ -52,7 +52,7 @@ import butterknife.OnClick;
 public class DetailView extends FrameLayout implements OnClickPhotoCallback {
     private static final String TAG = DetailView.class.getName();
     private static final int RESULT_CODE = 10000;
-    private static final String SHARE_TEXT = "Share %s's amazing photo from MyerSplash app. %s";
+    private static final String SHARE_TEXT = "Share %s's amazing photo from MyerSplash app. Download this photo: %s";
 
     private Context mContext;
 
@@ -153,7 +153,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         mFlipperView.next();
 
         ClipboardManager clipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
-        ClipData clip = ClipData.newPlainText("MyerSplash", mClickedImage.getDownloadUrl());
+        ClipData clip = ClipData.newPlainText(mContext.getString(R.string.app_name), mClickedImage.getDownloadUrl());
         clipboard.setPrimaryClip(clip);
 
         postDelayed(new Runnable() {
@@ -186,7 +186,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         }
 
         if (mCopyFileForSharing == null || !mCopyFileForSharing.exists() || !copied) {
-            ToastService.sendShortToast("Something went wrong :-(");
+            ToastService.sendShortToast(mContext.getString(R.string.something_wrong));
             return;
         }
 

@@ -3,26 +3,19 @@
               xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/SettingBackground"
+              android:background="@android:color/black"
               android:fitsSystemWindows="false"
               android:orientation="vertical"
               android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <ImageView
-        android:id="@+id/activity_main_mask"
-        android:layout_width="match_parent"
-        android:layout_height="24sp"
-        android:alpha="0.3"
-        android:contentDescription="@string/ImageDescDefault"
-        android:elevation="4dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/status_mask"/>
+    <include layout="@layout/status_placeholer"/>
 
-    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                     xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                     android:layout_width="match_parent"
-                                                     android:layout_height="match_parent"
-                                                     android:fitsSystemWindows="false">
+    <android.support.design.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="false">
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                         android:layout_width="match_parent"
@@ -31,7 +24,7 @@
                         android:orientation="vertical">
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/activity_managedownload_rv"
+                android:id="@+id/activity_manage_download_rv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="4dp"/>
