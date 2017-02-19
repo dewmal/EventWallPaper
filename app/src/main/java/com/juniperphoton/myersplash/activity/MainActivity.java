@@ -205,40 +205,40 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.drawer_settings_ll)
     void onClickSettings() {
-        mDrawerLayout.closeDrawer(GravityCompat.START);
-        new Handler().postDelayed(new Runnable() {
+        //mDrawerLayout.closeDrawer(GravityCompat.START);
+        mDrawerLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
                 Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(intent);
             }
-        }, 200);
+        }, 000);
     }
 
     @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.drawer_about_ll)
     void onClickAbout() {
-        mDrawerLayout.closeDrawer(GravityCompat.START);
-        new Handler().postDelayed(new Runnable() {
+        //mDrawerLayout.closeDrawer(GravityCompat.START);
+        mDrawerLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
                 Intent intent = new Intent(MainActivity.this, AboutActivity.class);
                 startActivity(intent);
             }
-        }, 200);
+        }, 000);
     }
 
     @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.nav_naviToDownload_rl)
     void onClickNaviToDownloads() {
-        mDrawerLayout.closeDrawer(GravityCompat.START);
-        new Handler().postDelayed(new Runnable() {
+        //mDrawerLayout.closeDrawer(GravityCompat.START);
+        mDrawerLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
                 Intent intent = new Intent(MainActivity.this, ManageDownloadActivity.class);
                 startActivity(intent);
             }
-        }, 200);
+        }, 000);
     }
 
     @SuppressWarnings("UnusedDeclaration")

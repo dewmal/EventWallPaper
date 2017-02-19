@@ -18,7 +18,6 @@ public class DeviceUtil {
         } catch (java.lang.NoSuchMethodError e) {
             e.printStackTrace();
         }
-        Logger.d(String.valueOf(hasBackKey));
 
         Point size = getNavigationBarSize(context);
         return size.y > 0;

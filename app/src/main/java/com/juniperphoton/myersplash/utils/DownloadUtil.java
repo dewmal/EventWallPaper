@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.util.Date;
 
@@ -40,7 +41,7 @@ public class DownloadUtil {
                 inputStream = body.byteStream();
                 outputStream = new FileOutputStream(fileToSave);
 
-                byte[] fileReader = new byte[4096];
+                byte[] buffer = new byte[4096];
 
                 long fileSize = body.contentLength();
                 long fileSizeDownloaded = 0;
@@ -48,13 +49,13 @@ public class DownloadUtil {
                 int progressToReport = 0;
 
                 while (true) {
-                    int read = inputStream.read(fileReader);
+                    int read = inputStream.read(buffer);
 
                     if (read == -1) {
                         break;
                     }
 
-                    outputStream.write(fileReader, 0, read);
+                    outputStream.write(buffer, 0, read);
 
                     fileSizeDownloaded += read;
 
@@ -83,9 +84,9 @@ public class DownloadUtil {
 
                 outputStream.flush();
 
-                //NotificationUtil.showCompleteNotification(Uri.parse(url), Uri.fromFile(fileToSave));
-
                 return fileToSave;
+            } catch (InterruptedIOException e0) {
+                return null;
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -100,7 +101,7 @@ public class DownloadUtil {
                 new SingleMediaScanner(App.getInstance(), fileToSave);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            ToastService.sendShortToast(e.getMessage());
             return null;
         }
     }
