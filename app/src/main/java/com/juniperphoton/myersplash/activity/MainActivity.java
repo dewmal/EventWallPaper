@@ -44,7 +44,7 @@ import com.juniperphoton.myersplash.utils.LocalSettingHelper;
 import com.juniperphoton.myersplash.utils.RequestUtil;
 import com.juniperphoton.myersplash.utils.SerializerUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
-import com.juniperphoton.myersplash.widget.DetailView;
+import com.juniperphoton.myersplash.widget.ImageDetailView;
 
 import java.io.File;
 import java.lang.reflect.Type;
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     FloatingActionButton mSearchFAB;
 
     @BindView(R.id.activity_main_detail_view)
-    DetailView mDetailView;
+    ImageDetailView mDetailView;
 
     @BindView(R.id.activity_main_search_view)
     com.juniperphoton.myersplash.widget.SearchView mSearchView;

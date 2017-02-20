@@ -20,7 +20,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -49,8 +48,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 @SuppressWarnings("UnusedDeclaration")
-public class DetailView extends FrameLayout implements OnClickPhotoCallback {
-    private static final String TAG = DetailView.class.getName();
+public class ImageDetailView extends FrameLayout implements OnClickPhotoCallback {
+    private static final String TAG = ImageDetailView.class.getName();
     private static final int RESULT_CODE = 10000;
     private static final String SHARE_TEXT = "Share %s's amazing photo from MyerSplash app. Download this photo: %s";
 
@@ -90,6 +89,9 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
     @BindView(R.id.detail_download_fab)
     FloatingActionButton mDownloadFAB;
 
+    @BindView(R.id.detail_cancel_download_fab)
+    FloatingActionButton mCancelDownloadFAB;
+
     @BindView(R.id.detail_share_fab)
     FloatingActionButton mShareFAB;
 
@@ -106,12 +108,18 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
     FrameLayout mCopiedLayout;
 
     @BindView(R.id.copy_url_flipper_view)
-    FlipperView mFlipperView;
+    FlipperView mCopyUrlFlipperView;
+
+    @BindView(R.id.download_flipper_view)
+    FlipperView mDownloadFlipperView;
+
+//    @BindView(R.id.detail_progress_ring)
+//    RingProgressView mProgressView;
 
     private boolean mAnimating;
     private boolean mCopied;
 
-    public DetailView(Context context, AttributeSet attrs) {
+    public ImageDetailView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         LayoutInflater.from(context).inflate(R.layout.detail_content, this, true);
@@ -142,7 +150,16 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         if (mClickedImage == null) {
             return;
         }
+        mDownloadFlipperView.next(1);
         DownloadUtil.checkAndDownload((Activity) mContext, mClickedImage);
+    }
+
+    @OnClick(R.id.detail_cancel_download_fab)
+    void onClickCancel() {
+        if (mClickedImage == null) {
+            return;
+        }
+        mDownloadFlipperView.next(0);
     }
 
     @OnClick(R.id.copy_url_flipper_view)
@@ -150,7 +167,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         if (mCopied) return;
         mCopied = true;
 
-        mFlipperView.next();
+        mCopyUrlFlipperView.next();
 
         ClipboardManager clipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText(mContext.getString(R.string.app_name), mClickedImage.getDownloadUrl());
@@ -159,7 +176,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         postDelayed(new Runnable() {
             @Override
             public void run() {
-                mFlipperView.next();
+                mCopyUrlFlipperView.next();
                 mCopied = false;
             }
         }, 2000);
@@ -220,14 +237,28 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         mDetailRootScrollView.setVisibility(View.INVISIBLE);
 
         mDetailInfoRootLayout.setTranslationY(-getResources().getDimensionPixelOffset(R.dimen.img_detail_info_height));
-        mDownloadFAB.setTranslationX(getResources().getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide));
+        mDownloadFlipperView.setTranslationX(getResources().getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide));
         mShareFAB.setTranslationX(getResources().getDimensionPixelOffset(R.dimen.share_btn_margin_right_hide));
+
+//        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 360);
+//        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//            @Override
+//            public void onAnimationUpdate(ValueAnimator animation) {
+//                mProgressView.setRotation((float) animation.getAnimatedValue());
+//            }
+//        });
+//        valueAnimator.setDuration(300);
+//        valueAnimator.setRepeatMode(ValueAnimator.RESTART);
+//        valueAnimator.setRepeatCount(ValueAnimator.INFINITE);
+//        valueAnimator.start();
     }
 
     private void toggleHeroViewAnimation(int startY, int endY, final boolean show) {
         if (show) {
             mHeroStartY = startY;
             mHeroEndY = endY;
+        } else {
+            mDownloadFlipperView.next(0);
         }
 
         ValueAnimator valueAnimator = new ValueAnimator();
@@ -335,7 +366,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                mDownloadFAB.setTranslationX((int) animation.getAnimatedValue());
+                mDownloadFlipperView.setTranslationX((int) animation.getAnimatedValue());
             }
         });
         valueAnimator.start();

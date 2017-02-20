@@ -71,5 +71,6 @@
     <string name="download">DOWNLOAD</string>
     <string name="downloading_in_background">Downloading in background</string>
     <string name="something_wrong">Something went wrong :-(</string>
+    <string name="copy_url">COPY URL</string>
 
 </resources>
