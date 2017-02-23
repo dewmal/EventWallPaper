@@ -2,17 +2,17 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android">
     <translate xmlns:android="http://schemas.android.com/apk/res/android"
                android:duration="500"
-               android:fromXDelta="0"
                android:fromYDelta="0"
+               android:fromXDelta="0"
                android:interpolator="@android:anim/decelerate_interpolator"
-               android:toXDelta="-20%p"
-               android:toYDelta="0">
+               android:toYDelta="-10%p"
+               android:toXDelta="0">
 
     </translate>
     <scale
         android:duration="500"
-        android:toXScale="0.98"
-        android:toYScale="0.98"
+        android:toXScale="0.8"
+        android:toYScale="0.8"
         android:pivotX="50%p"
         android:pivotY="50%p"
         android:fromXScale="1.0"

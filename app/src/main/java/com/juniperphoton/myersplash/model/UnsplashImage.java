@@ -28,6 +28,9 @@ public class UnsplashImage implements Serializable {
     public String getListUrl() {
         final int choice = LocalSettingHelper.getInt(App.getInstance(), Constant.LOADING_QUALITY_CONFIG_NAME, 0);
         String url = null;
+        if (urls == null) {
+            return null;
+        }
         switch (choice) {
             case 0:
                 url = urls.regular;

@@ -54,7 +54,6 @@ public class SerializerUtil {
 
             return gson.fromJson(byteArrayOutputStream.toString(), type);
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }

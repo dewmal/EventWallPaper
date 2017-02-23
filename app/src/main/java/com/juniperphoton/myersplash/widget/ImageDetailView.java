@@ -36,15 +36,11 @@ import com.facebook.imagepipeline.core.ImagePipelineFactory;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.juniperphoton.flipperviewlib.FlipperView;
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.callback.DetailViewNavigationCallback;
-import com.juniperphoton.myersplash.callback.OnClickPhotoCallback;
 import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.model.UnsplashImage;
-import com.juniperphoton.myersplash.service.BackgroundDownloadService;
 import com.juniperphoton.myersplash.utils.ColorUtil;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
-import com.juniperphoton.myersplash.utils.Params;
 import com.juniperphoton.myersplash.utils.ToastService;
 
 import java.io.File;
@@ -56,7 +52,7 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 
 @SuppressWarnings("UnusedDeclaration")
-public class ImageDetailView extends FrameLayout implements OnClickPhotoCallback {
+public class ImageDetailView extends FrameLayout {
     private static final String TAG = ImageDetailView.class.getName();
     private static final int RESULT_CODE = 10000;
     private static final String SHARE_TEXT = "Share %s's amazing photo from MyerSplash app. Download this photo: %s";
@@ -497,7 +493,6 @@ public class ImageDetailView extends FrameLayout implements OnClickPhotoCallback
         return false;
     }
 
-    @Override
     public void clickPhotoItem(final RectF rectF, final UnsplashImage unsplashImage, View itemView) {
         if (mClickedView != null) {
             return;

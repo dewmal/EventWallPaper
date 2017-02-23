@@ -19,6 +19,30 @@ public class UnsplashCategory {
 
     }
 
+    public static UnsplashCategory getFeaturedCategory(){
+        UnsplashCategory featureCategory = new UnsplashCategory();
+        featureCategory.setId(UnsplashCategory.FEATURED_CATEGORY_ID);
+        featureCategory.setTitle(UnsplashCategory.FEATURE_S);
+
+        return featureCategory;
+    }
+
+    public static UnsplashCategory getNewCategory(){
+        UnsplashCategory newCategory = new UnsplashCategory();
+        newCategory.setId(UnsplashCategory.NEW_CATEGORY_ID);
+        newCategory.setTitle(UnsplashCategory.NEW_S);
+
+        return newCategory;
+    }
+
+    public static UnsplashCategory getRandomCategory(){
+        UnsplashCategory randomCategory = new UnsplashCategory();
+        randomCategory.setId(UnsplashCategory.RANDOM_CATEOGORY_ID);
+        randomCategory.setTitle(UnsplashCategory.RANDOM_S);
+
+        return randomCategory;
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -49,7 +73,7 @@ public class UnsplashCategory {
         return links.html;
     }
 
-    public class links {
+    public static class links {
         private String self;
         private String photos;
         private String html;

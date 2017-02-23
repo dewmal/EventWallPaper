@@ -2,88 +2,59 @@ package com.juniperphoton.myersplash.activity;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.graphics.RectF;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.google.gson.reflect.TypeToken;
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.adapter.CategoryAdapter;
-import com.juniperphoton.myersplash.adapter.PhotoAdapter;
+import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter;
 import com.juniperphoton.myersplash.callback.DetailViewNavigationCallback;
-import com.juniperphoton.myersplash.callback.INavigationDrawerCallback;
-import com.juniperphoton.myersplash.callback.OnClickQuickDownloadCallback;
 import com.juniperphoton.myersplash.callback.OnClickSearchCallback;
-import com.juniperphoton.myersplash.callback.OnLoadMoreListener;
-import com.juniperphoton.myersplash.cloudservice.CloudService;
 import com.juniperphoton.myersplash.common.Constant;
 import com.juniperphoton.myersplash.common.RandomIntentStatus;
+import com.juniperphoton.myersplash.fragment.MainListFragment;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.utils.DeviceUtil;
-import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.LocalSettingHelper;
 import com.juniperphoton.myersplash.utils.RequestUtil;
 import com.juniperphoton.myersplash.utils.SerializerUtil;
-import com.juniperphoton.myersplash.utils.ToastService;
 import com.juniperphoton.myersplash.widget.ImageDetailView;
+import com.juniperphoton.myersplash.widget.PivotTitleBar;
 
 import java.io.File;
-import java.lang.reflect.Type;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import moe.feng.material.statusbar.StatusBarCompat;
-import rx.Subscriber;
 
 import static com.juniperphoton.myersplash.utils.DisplayUtil.getDimenInPixel;
 
-public class MainActivity extends BaseActivity implements INavigationDrawerCallback,
-        OnLoadMoreListener, OnClickQuickDownloadCallback, DetailViewNavigationCallback, OnClickSearchCallback {
+@SuppressWarnings("UnusedDeclaration")
+public class MainActivity extends BaseActivity implements DetailViewNavigationCallback,
+        OnClickSearchCallback, MainListFragment.Callback {
 
     private static final String TAG = MainActivity.class.getName();
 
     private static final int SEARCH_ID = -10000;
     private static final String CHECK_ONE_POINT_ONE_VERSION = "CHECK_ONE_POINT_ONE_VERSION";
 
-    @BindView(R.id.activity_drawer_rv)
-    RecyclerView mDrawerRecyclerView;
+    @BindView(R.id.pivot_title_bar)
+    PivotTitleBar mPivotTitleBar;
 
-    @BindView(R.id.toolbar)
-    Toolbar mToolbar;
+//    @Nullable
+//    @BindView(R.id.tool_bar)
+//    Toolbar mToolbar;
 
     @SuppressWarnings("UnusedDeclaration")
     @BindView(R.id.toolbar_layout)
     AppBarLayout mAppBarLayout;
-
-    @BindView(R.id.drawer_layout)
-    DrawerLayout mDrawerLayout;
-
-    @BindView(R.id.content_activity_rv)
-    RecyclerView mContentRecyclerView;
-
-    @BindView(R.id.content_activity_srl)
-    SwipeRefreshLayout mRefreshLayout;
 
     @SuppressWarnings("UnusedDeclaration")
     @BindView(R.id.activity_main_cl)
@@ -98,26 +69,12 @@ public class MainActivity extends BaseActivity implements INavigationDrawerCallb
     @BindView(R.id.activity_main_search_view)
     com.juniperphoton.myersplash.widget.SearchView mSearchView;
 
-    @BindView(R.id.activity_drawer_bottom_ll)
-    LinearLayout mDrawerBottomLL;
+    @BindView(R.id.view_pager)
+    ViewPager mViewPager;
 
-    @BindView(R.id.no_item_layout)
-    LinearLayout mNoItemLayout;
+    private MainListFragmentAdapter mMainListFragmentAdapter;
 
-    @BindView(R.id.no_item_back_tv)
-    TextView mGoBackLastCategoryTV;
-
-    @BindView(R.id.nav_naviToDownload_rl)
-    RelativeLayout mNavigateToDownloadsRL;
-
-    private int mLastCategory = -1;
-
-    private PhotoAdapter mAdapter;
-
-    private int mCurrentRequestPage = 1;
-    private int mSelectedCategoryID = 0;
     private String mQuery;
-    private String mUrl = CloudService.BASE_URL;
     private int mRandomIntentStatus = RandomIntentStatus.NOT_RECEIVED;
     private boolean mHandledSearch = false;
 
@@ -126,8 +83,6 @@ public class MainActivity extends BaseActivity implements INavigationDrawerCallb
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
-        setSupportActionBar(mToolbar);
 
         initMainViews();
         handleShortcutsAction();
@@ -139,9 +94,6 @@ public class MainActivity extends BaseActivity implements INavigationDrawerCallb
             }
             LocalSettingHelper.putBoolean(this, CHECK_ONE_POINT_ONE_VERSION, true);
         }
-
-        restorePhotoList();
-        getCategories();
     }
 
     @Override
@@ -162,86 +114,29 @@ public class MainActivity extends BaseActivity implements INavigationDrawerCallb
     @Override
     protected void onResume() {
         super.onResume();
-        if (mContentRecyclerView != null && mContentRecyclerView.getAdapter() != null) {
-            mContentRecyclerView.getAdapter().notifyDataSetChanged();
-        }
         boolean scrollBar = LocalSettingHelper.getBoolean(this, Constant.SCROLL_TOOLBAR, true);
         AppBarLayout.LayoutParams params =
-                (AppBarLayout.LayoutParams) mToolbar.getLayoutParams();
+                (AppBarLayout.LayoutParams) mPivotTitleBar.getLayoutParams();
         if (scrollBar) {
             params.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
                     | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
         } else {
             params.setScrollFlags(0);
         }
+        mPivotTitleBar.setLayoutParams(params);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                RequestUtil.checkAndRequest(MainActivity.this);
-            }
-        }, 1000);
+        RequestUtil.checkAndRequest(MainActivity.this);
     }
 
-    @SuppressWarnings("UnusedDeclaration")
-    @OnClick(R.id.toolbar)
+    @OnClick(R.id.pivot_title_bar)
     void onClickToolbar() {
-        mContentRecyclerView.smoothScrollToPosition(0);
+        //mContentRecyclerView.smoothScrollToPosition(0);
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.content_activity_search_fab)
     void onClickSearchFAB() {
         mSearchFAB.hide();
         mSearchView.toggleAnimation(true);
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    @OnClick(R.id.drawer_settings_ll)
-    void onClickSettings() {
-        //mDrawerLayout.closeDrawer(GravityCompat.START);
-        mDrawerLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-                startActivity(intent);
-            }
-        }, 000);
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    @OnClick(R.id.drawer_about_ll)
-    void onClickAbout() {
-        //mDrawerLayout.closeDrawer(GravityCompat.START);
-        mDrawerLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(MainActivity.this, AboutActivity.class);
-                startActivity(intent);
-            }
-        }, 000);
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    @OnClick(R.id.nav_naviToDownload_rl)
-    void onClickNaviToDownloads() {
-        //mDrawerLayout.closeDrawer(GravityCompat.START);
-        mDrawerLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(MainActivity.this, ManageDownloadActivity.class);
-                startActivity(intent);
-            }
-        }, 000);
-    }
-
-    @SuppressWarnings("UnusedDeclaration")
-    @OnClick(R.id.no_item_back_rl)
-    void onClickReturn() {
-        CategoryAdapter adapter = getCategoryAdapter();
-        if (mLastCategory != -1 && adapter != null) {
-            adapter.select(mLastCategory);
-        }
     }
 
     @Override
@@ -251,68 +146,52 @@ public class MainActivity extends BaseActivity implements INavigationDrawerCallb
     }
 
     private void initMainViews() {
-        if (mDrawerLayout != null) {
-            final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                    this, mDrawerLayout, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-            mDrawerLayout.addDrawerListener(toggle);
-            mDrawerLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    toggle.syncState();
-                }
-            });
-        }
-
-        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mCurrentRequestPage = 1;
-                loadPhotoList();
-            }
-        });
-
-        mDrawerRecyclerView.setLayoutManager(new LinearLayoutManager(this,
-                LinearLayoutManager.VERTICAL, false));
-        mContentRecyclerView.setLayoutManager(new LinearLayoutManager(this,
-                LinearLayoutManager.VERTICAL, false));
-
-        mContentRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (dy > 20) {
-                    mSearchFAB.hide();
-                    toggleToolbarAnimation(false);
-                } else if (dy < -20) {
-                    mSearchFAB.show();
-                    toggleToolbarAnimation(true);
-                }
-            }
-        });
-
         mDetailView.setNavigationCallback(this);
         mSearchView.setSearchCallback(this);
+        mPivotTitleBar.setOnClickTitleListener(new PivotTitleBar.OnClickTitleListener() {
+            @Override
+            public void onSingleTap(int index) {
+                if (mViewPager != null) {
+                    mViewPager.setCurrentItem(index);
+                }
+            }
+
+            @Override
+            public void onDoubleTap(int index) {
+                if (mViewPager != null) {
+                    mViewPager.setCurrentItem(index);
+                    //((MainListFragment) mMainListFragmentAdapter.getItem(index)).requestRefresh();
+                }
+            }
+        });
+
+        mMainListFragmentAdapter = new MainListFragmentAdapter(this, getSupportFragmentManager());
+        mViewPager.setAdapter(mMainListFragmentAdapter);
+        mViewPager.setCurrentItem(1);
+        mViewPager.setOffscreenPageLimit(2);
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                mPivotTitleBar.setSelected(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         if (!DeviceUtil.hasNavigationBar(this)) {
             CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mSearchFAB.getLayoutParams();
             params.setMargins(0, 0, getDimenInPixel(24, this), getDimenInPixel(24, this));
             mSearchFAB.setLayoutParams(params);
-
-            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) mDrawerBottomLL.getLayoutParams();
-            layoutParams.setMargins(0, 0, 0, 0);
-            mDrawerBottomLL.setLayoutParams(layoutParams);
-
-            RelativeLayout.LayoutParams layoutParamsRV = (RelativeLayout.LayoutParams) mDrawerRecyclerView.getLayoutParams();
-            layoutParamsRV.setMargins(0, getResources().getDimensionPixelSize(R.dimen.navi_top_banner_height), 0, getDimenInPixel(70, this));
-            mDrawerRecyclerView.setLayoutParams(layoutParamsRV);
         }
     }
-
 
     private void handleShortcutsAction() {
         String action = getIntent().getAction();
@@ -336,169 +215,6 @@ public class MainActivity extends BaseActivity implements INavigationDrawerCallb
         }
     }
 
-    private void getCategories() {
-        List<UnsplashCategory> categories = restoreCategoryList();
-        if (categories != null && categories.size() > 0) {
-            configCategoryList(categories);
-            setCategoryList(categories);
-            return;
-        }
-        CloudService.getInstance().getCategories(new Subscriber<List<UnsplashCategory>>() {
-            @Override
-            public void onCompleted() {
-
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onNext(List<UnsplashCategory> unsplashCategories) {
-                SerializerUtil.serializeToFile(MainActivity.this, unsplashCategories,
-                        SerializerUtil.CATEGORY_LIST_FILE_NAME);
-
-                configCategoryList(unsplashCategories);
-                setCategoryList(unsplashCategories);
-            }
-        });
-    }
-
-    private void configCategoryList(List<UnsplashCategory> unsplashCategories) {
-        UnsplashCategory featureCategory = new UnsplashCategory();
-        featureCategory.setId(UnsplashCategory.FEATURED_CATEGORY_ID);
-        featureCategory.setTitle(UnsplashCategory.FEATURE_S);
-
-        UnsplashCategory newCategory = new UnsplashCategory();
-        newCategory.setId(UnsplashCategory.NEW_CATEGORY_ID);
-        newCategory.setTitle(UnsplashCategory.NEW_S);
-
-        UnsplashCategory randomCategory = new UnsplashCategory();
-        randomCategory.setId(UnsplashCategory.RANDOM_CATEOGORY_ID);
-        randomCategory.setTitle(UnsplashCategory.RANDOM_S);
-
-        unsplashCategories.add(0, featureCategory);
-        unsplashCategories.add(0, newCategory);
-        unsplashCategories.add(0, randomCategory);
-    }
-
-    private void setCategoryList(List<UnsplashCategory> unsplashCategories) {
-        CategoryAdapter adapter = new CategoryAdapter(unsplashCategories, MainActivity.this);
-        adapter.setCallback(MainActivity.this);
-        adapter.select(mRandomIntentStatus == RandomIntentStatus.PENDING ? 0 : 1);
-        mRandomIntentStatus = RandomIntentStatus.HANDLED;
-        mDrawerRecyclerView.setAdapter(adapter);
-    }
-
-    private void setCachedImageList(List<UnsplashImage> unsplashImages) {
-        mAdapter = new PhotoAdapter(unsplashImages, MainActivity.this);
-        setupCallback(mAdapter);
-        mContentRecyclerView.setAdapter(mAdapter);
-    }
-
-    private void setImageList(List<UnsplashImage> unsplashImages) {
-        if (mAdapter != null && mAdapter.getFirstImage() != null) {
-            if (mAdapter.getFirstImage().getId().equals(unsplashImages.get(0).getId())) {
-                return;
-            }
-        }
-        mAdapter = new PhotoAdapter(unsplashImages, MainActivity.this);
-        setupCallback(mAdapter);
-        mContentRecyclerView.setAdapter(mAdapter);
-    }
-
-    private void setupCallback(PhotoAdapter adapter) {
-        adapter.setOnLoadMoreListener(this);
-        adapter.setOnClickItemListener(mDetailView);
-        adapter.setOnClickDownloadCallback(this);
-    }
-
-    private List<UnsplashCategory> restoreCategoryList() {
-        Type type = new TypeToken<List<UnsplashCategory>>() {
-        }.getType();
-        return SerializerUtil.deSerializeFromFile(type, this,
-                SerializerUtil.CATEGORY_LIST_FILE_NAME);
-    }
-
-    private boolean restorePhotoList() {
-        Type type = new TypeToken<List<UnsplashImage>>() {
-        }.getType();
-        List<UnsplashImage> unsplashCategories = SerializerUtil.deSerializeFromFile(type, this,
-                SerializerUtil.IMAGE_LIST_FILE_NAME);
-
-        if (unsplashCategories != null) {
-            if (unsplashCategories.size() > 0) {
-                Log.d(TAG, "Cached category list");
-                setCachedImageList(unsplashCategories);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public void onSelectItem(UnsplashCategory category) {
-        mSelectedCategoryID = category.getId();
-        if (category.getTitle() == null) return;
-
-        mToolbar.setTitle(category.getTitle().toUpperCase());
-        mDrawerLayout.closeDrawer(GravityCompat.START);
-        mCurrentRequestPage = 1;
-        mUrl = category.getRequestUrl();
-        mRefreshLayout.setRefreshing(true);
-        loadPhotoList();
-    }
-
-    private void loadPhotoList() {
-        Subscriber<List<UnsplashImage>> subscriber = new Subscriber<List<UnsplashImage>>() {
-            @Override
-            public void onCompleted() {
-                mRefreshLayout.setRefreshing(false);
-                if (mCurrentRequestPage == 1) {
-                    ToastService.sendShortToast("Loaded :D");
-                }
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                mRefreshLayout.setRefreshing(false);
-                ToastService.sendShortToast("Fail to send request.");
-            }
-
-            @Override
-            public void onNext(List<UnsplashImage> images) {
-                if (mCurrentRequestPage == 1 || mAdapter == null) {
-                    setImageList(images);
-                    if (mSelectedCategoryID == UnsplashCategory.NEW_CATEGORY_ID) {
-                        SerializerUtil.serializeToFile(MainActivity.this, images,
-                                SerializerUtil.IMAGE_LIST_FILE_NAME);
-                    }
-                } else {
-                    mAdapter.setLoadMoreData(images);
-                }
-                PhotoAdapter photoAdapter = getPhotoAdapter();
-                if (photoAdapter == null) {
-                    updateNoItemVisibility(true);
-                } else if (images.size() == 0 && photoAdapter.getItemCount() == 0) {
-                    updateNoItemVisibility(true);
-                } else {
-                    updateNoItemVisibility(false);
-                }
-            }
-        };
-
-        if (mSelectedCategoryID == UnsplashCategory.FEATURED_CATEGORY_ID) {
-            CloudService.getInstance().getFeaturedPhotos(subscriber, mUrl, mCurrentRequestPage);
-        } else if (mSelectedCategoryID == SEARCH_ID) {
-            CloudService.getInstance().searchPhotos(subscriber, mUrl, mCurrentRequestPage, mQuery);
-        } else if (mSelectedCategoryID == UnsplashCategory.RANDOM_CATEOGORY_ID) {
-            CloudService.getInstance().getRandomPhotos(subscriber, CloudService.RANDOM_PHOTOS_URL);
-        } else {
-            CloudService.getInstance().getPhotos(subscriber, mUrl, mCurrentRequestPage);
-        }
-    }
-
     private void toggleToolbarAnimation(boolean show) {
         ValueAnimator valueAnimator = new ValueAnimator();
         valueAnimator.setDuration(300);
@@ -515,33 +231,6 @@ public class MainActivity extends BaseActivity implements INavigationDrawerCallb
             }
         });
         valueAnimator.start();
-    }
-
-    public void updateNoItemVisibility(boolean show) {
-        if (show) {
-            mNoItemLayout.setVisibility(View.VISIBLE);
-        } else {
-            mNoItemLayout.setVisibility(View.GONE);
-        }
-    }
-
-    public CategoryAdapter getCategoryAdapter() {
-        return ((CategoryAdapter) mDrawerRecyclerView.getAdapter());
-    }
-
-    public PhotoAdapter getPhotoAdapter() {
-        return ((PhotoAdapter) mContentRecyclerView.getAdapter());
-    }
-
-    @Override
-    public void OnLoadMore() {
-        ++mCurrentRequestPage;
-        loadPhotoList();
-    }
-
-    @Override
-    public void onClickQuickDownload(final UnsplashImage image) {
-        DownloadUtil.checkAndDownload(MainActivity.this, image);
     }
 
     @Override
@@ -566,29 +255,19 @@ public class MainActivity extends BaseActivity implements INavigationDrawerCallb
 
     @Override
     public void onClickSearch(String keyword) {
-        mCurrentRequestPage = 1;
-        mAdapter = null;
-        mSelectedCategoryID = SEARCH_ID;
-        mUrl = CloudService.SEARCH_URL;
-        mQuery = keyword;
-        mRefreshLayout.setRefreshing(true);
-        mToolbar.setTitle(keyword.toUpperCase());
-        mContentRecyclerView.setAdapter(null);
-
-        CategoryAdapter adapter = getCategoryAdapter();
-        if (adapter != null) {
-            mLastCategory = adapter.getSelectedIndex();
-            if (mLastCategory != -1) {
-                mGoBackLastCategoryTV.setText(String.format(getString(R.string.return_to_content),
-                        adapter.getCategoryByIndex(mLastCategory).getTitle().toUpperCase()));
-                adapter.select(-1);
-            }
-        }
-
-        mSearchFAB.show();
-        loadPhotoList();
+//        mCurrentRequestPage = 1;
+//        mAdapter = null;
+//        mUrl = CloudService.SEARCH_URL;
+//        mQuery = keyword;
+//        mRefreshLayout.setRefreshing(true);
+//
+//        //// TODO: 2/24/2017
+//        //mToolbar.setTitle(keyword.toUpperCase());
+//        mContentRecyclerView.setAdapter(null);
+//
+//        mSearchFAB.show();
+//        loadPhotoList();
     }
-
 
     @Override
     public void onBackPressed() {
@@ -600,10 +279,23 @@ public class MainActivity extends BaseActivity implements INavigationDrawerCallb
         if (mDetailView.tryHide()) {
             return;
         }
-        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        super.onBackPressed();
+    }
+
+    @Override
+    public void onScrollHide() {
+        mSearchFAB.hide();
+        toggleToolbarAnimation(false);
+    }
+
+    @Override
+    public void onScrollShow() {
+        mSearchFAB.show();
+        toggleToolbarAnimation(true);
+    }
+
+    @Override
+    public void clickPhotoItem(RectF rectF, UnsplashImage unsplashImage, View itemView) {
+        mDetailView.clickPhotoItem(rectF, unsplashImage, itemView);
     }
 }

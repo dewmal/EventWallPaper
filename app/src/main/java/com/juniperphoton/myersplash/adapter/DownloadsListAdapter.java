@@ -21,7 +21,6 @@ import com.juniperphoton.myersplash.widget.DownloadCompleteView;
 import com.juniperphoton.myersplash.widget.DownloadRetryView;
 import com.juniperphoton.myersplash.widget.DownloadingView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;

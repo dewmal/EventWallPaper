@@ -18,10 +18,10 @@ import android.widget.RelativeLayout;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.callback.OnClickPhotoCallback;
 import com.juniperphoton.myersplash.callback.OnClickQuickDownloadCallback;
 import com.juniperphoton.myersplash.callback.OnLoadMoreListener;
 import com.juniperphoton.myersplash.common.Constant;
+import com.juniperphoton.myersplash.fragment.MainListFragment;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.utils.LocalSettingHelper;
 
@@ -36,7 +36,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
     private Context mContext;
     private OnLoadMoreListener mOnLoadMoreListener;
-    private OnClickPhotoCallback mOnClickPhotoCallback;
+    private MainListFragment.Callback mOnClickPhotoCallback;
     private OnClickQuickDownloadCallback mOnClickDownloadCallback;
 
     private boolean isAutoLoadMore = true;
@@ -112,6 +112,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                 holder.RippleMaskRL.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if (regularUrl == null) {
+                            return;
+                        }
                         if (Fresco.getImagePipeline().isInBitmapMemoryCache(Uri.parse(regularUrl))) {
                             int[] location = new int[2];
                             holder.SimpleDraweeView.getLocationOnScreen(location);
@@ -260,7 +263,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         mOnLoadMoreListener = loadMoreListener;
     }
 
-    public void setOnClickItemListener(OnClickPhotoCallback callback) {
+    public void setOnClickItemListener(MainListFragment.Callback callback) {
         mOnClickPhotoCallback = callback;
     }
 
@@ -281,7 +284,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
     class PhotoViewHolder extends RecyclerView.ViewHolder {
         static final int TYPE_COMMON_VIEW = 1;
-        static final int TYPE_FOOTER_VIEW = 1<<1;
+        static final int TYPE_FOOTER_VIEW = 1 << 1;
 
         SimpleDraweeView SimpleDraweeView;
         CardView RootCardView;

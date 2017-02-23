@@ -2,19 +2,19 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android">
     <translate xmlns:android="http://schemas.android.com/apk/res/android"
                android:duration="500"
-               android:fromXDelta="-20%p"
-               android:fromYDelta="0"
+               android:fromYDelta="-10%p"
+               android:fromXDelta="0"
                android:interpolator="@android:anim/decelerate_interpolator"
-               android:toXDelta="0"
-               android:toYDelta="0">
+               android:toYDelta="0"
+               android:toXDelta="0">
 
     </translate>
     <scale
         android:duration="500"
-        android:fromYScale="0.98"
+        android:fromYScale="0.8"
         android:toYScale="1.0"
         android:pivotX="50%p"
         android:pivotY="50%p"
-        android:fromXScale="0.98"
+        android:fromXScale="0.8"
         android:toXScale="1.0"/>
 </set>
