@@ -34,7 +34,7 @@ import moe.feng.material.statusbar.StatusBarCompat;
 
 import static com.juniperphoton.myersplash.utils.DisplayUtil.getDimenInPixel;
 
-public class ManageDownloadActivity extends AppCompatActivity
+public class ManageDownloadActivity extends BaseActivity
         implements DownloadsListAdapter.DownloadStateChangedCallback {
     @BindView(R.id.activity_manage_download_rv)
     RecyclerView mDownloadsRV;
@@ -51,10 +51,6 @@ public class ManageDownloadActivity extends AppCompatActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        StatusBarCompat.setUpActivity(this);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-
         setContentView(R.layout.activity_managedownload);
         ButterKnife.bind(this);
 

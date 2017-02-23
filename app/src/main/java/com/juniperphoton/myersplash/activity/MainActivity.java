@@ -58,7 +58,7 @@ import rx.Subscriber;
 
 import static com.juniperphoton.myersplash.utils.DisplayUtil.getDimenInPixel;
 
-public class MainActivity extends AppCompatActivity implements INavigationDrawerCallback,
+public class MainActivity extends BaseActivity implements INavigationDrawerCallback,
         OnLoadMoreListener, OnClickQuickDownloadCallback, DetailViewNavigationCallback, OnClickSearchCallback {
 
     private static final String TAG = MainActivity.class.getName();
@@ -124,12 +124,6 @@ public class MainActivity extends AppCompatActivity implements INavigationDrawer
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        StatusBarCompat.setUpActivity(this);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
