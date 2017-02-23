@@ -8,8 +8,6 @@ import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.WindowManager;
 
-import com.orhanobut.logger.Logger;
-
 public class DeviceUtil {
     public static boolean hasNavigationBar(Context context) {
         boolean hasBackKey = false;

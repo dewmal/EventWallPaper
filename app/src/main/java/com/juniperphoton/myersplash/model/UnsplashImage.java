@@ -56,7 +56,7 @@ public class UnsplashImage implements Serializable {
                 url = urls.small;
                 break;
         }
-        return url + "/";
+        return url;
     }
 
     public String getFileNameForDownload() {

@@ -1,6 +1,7 @@
 package com.juniperphoton.myersplash.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -76,7 +77,6 @@ public class DownloadUtil {
                             }
                         });
                     }
-                    //Log.d(TAG, "progress: " + progress + ",last:" + progressToReport);
                 }
                 long endTime = new Date().getTime();
 
@@ -190,6 +190,13 @@ public class DownloadUtil {
         return true;
     }
 
+    public static void cancelDownload(Context context, UnsplashImage image) {
+        Intent intent = new Intent(App.getInstance(), BackgroundDownloadService.class);
+        intent.putExtra(Params.CANCELED_KEY, true);
+        intent.putExtra(Params.URL_KEY, image.getDownloadUrl());
+        context.startService(intent);
+    }
+
     public static void checkAndDownload(final Activity context, final UnsplashImage image) {
         if (!RequestUtil.check(context)) {
             ToastService.sendShortToast(context.getString(R.string.no_permission));
@@ -219,15 +226,14 @@ public class DownloadUtil {
     }
 
     private static void startDownloadService(final Activity context, UnsplashImage image) {
-        String fixedUrl = fixUri(image.getDownloadUrl());
-
         Intent intent = new Intent(context, BackgroundDownloadService.class);
         intent.putExtra(Params.NAME_KEY, image.getFileNameForDownload());
-        intent.putExtra(Params.URL_KEY, fixedUrl);
+        intent.putExtra(Params.URL_KEY, image.getDownloadUrl());
         context.startService(intent);
+
         ToastService.sendShortToast(context.getString(R.string.downloading_in_background));
 
-        final DownloadItem item = new DownloadItem(image.getId(), image.getListUrl(), fixedUrl,
+        final DownloadItem item = new DownloadItem(image.getId(), image.getListUrl(), image.getDownloadUrl(),
                 image.getFileNameForDownload());
         item.setColor(image.getThemeColor());
         Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
@@ -236,13 +242,5 @@ public class DownloadUtil {
                 realm.copyToRealmOrUpdate(item);
             }
         });
-    }
-
-    private static String fixUri(String url) {
-        String outputUrl = url;
-        if (outputUrl.endsWith("/")) {
-            outputUrl = outputUrl.substring(0, outputUrl.length() - 1);
-        }
-        return outputUrl;
     }
 }

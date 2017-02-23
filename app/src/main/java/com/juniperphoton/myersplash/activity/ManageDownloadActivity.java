@@ -7,8 +7,11 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -19,6 +22,7 @@ import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.utils.DeviceUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,6 +61,7 @@ public class ManageDownloadActivity extends AppCompatActivity
         mRealmListener = new RealmChangeListener<DownloadItem>() {
             @Override
             public void onChange(DownloadItem item) {
+                Log.d("manage", "onChange");
                 mAdapter.updateItem(item);
             }
         };
@@ -73,7 +78,6 @@ public class ManageDownloadActivity extends AppCompatActivity
 
     @OnClick(R.id.activity_downloads_more_fab)
     void onClickMore() {
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.clear_options_title).
                 setItems(R.array.delete_options, new DialogInterface.OnClickListener() {
@@ -108,7 +112,8 @@ public class ManageDownloadActivity extends AppCompatActivity
         Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                RealmResults<DownloadItem> items = realm.where(DownloadItem.class).equalTo("mStatus", status).findAll();
+                RealmResults<DownloadItem> items = realm.where(DownloadItem.class)
+                        .equalTo("mStatus", status).findAll();
                 for (DownloadItem item : items) {
                     item.removeChangeListener(mRealmListener);
                     item.deleteFromRealm();
@@ -129,26 +134,24 @@ public class ManageDownloadActivity extends AppCompatActivity
     }
 
     private void initViews() {
-        final ArrayList<DownloadItem> list = new ArrayList<>();
+        List<DownloadItem> downloadItems = new ArrayList<>();
 
-        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                RealmResults<DownloadItem> items = realm.where(DownloadItem.class).findAll();
-                if (items.size() > 0) {
-                    for (DownloadItem item : items) {
-                        item.addChangeListener(mRealmListener);
-                        list.add(0, item);
-                    }
-                }
-            }
-        });
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+
+        RealmResults<DownloadItem> items = realm.where(DownloadItem.class).findAll();
+        for (DownloadItem item : items) {
+            downloadItems.add(item);
+            item.addChangeListener(mRealmListener);
+        }
+
+        realm.commitTransaction();
 
         if (mAdapter == null) {
-            mAdapter = new DownloadsListAdapter(list, this);
+            mAdapter = new DownloadsListAdapter(downloadItems, this);
             mAdapter.setCallback(this);
         } else {
-            mAdapter.refreshItems(list);
+            mAdapter.refreshItems(downloadItems);
         }
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
@@ -163,9 +166,9 @@ public class ManageDownloadActivity extends AppCompatActivity
             }
         });
         mDownloadsRV.setLayoutManager(layoutManager);
-        mDownloadsRV.getItemAnimator().setChangeDuration(0);
+        ((SimpleItemAnimator) mDownloadsRV.getItemAnimator()).setSupportsChangeAnimations(false);
+        //mDownloadsRV.setItemAnimator(new DefaultItemAnimator());
         mDownloadsRV.setAdapter(mAdapter);
-
         updateNoItemVisibility();
 
         if (!DeviceUtil.hasNavigationBar(this)) {

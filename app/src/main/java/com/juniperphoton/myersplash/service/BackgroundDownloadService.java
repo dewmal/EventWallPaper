@@ -3,6 +3,7 @@ package com.juniperphoton.myersplash.service;
 import android.app.IntentService;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.cloudservice.CloudService;
@@ -11,7 +12,6 @@ import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.NotificationUtil;
 import com.juniperphoton.myersplash.utils.Params;
 import com.juniperphoton.myersplash.utils.ToastService;
-import com.orhanobut.logger.Logger;
 
 import java.io.File;
 import java.util.HashMap;
@@ -45,6 +45,7 @@ public class BackgroundDownloadService extends IntentService {
         }
 
         if (canceled) {
+            Log.d(TAG, "on handle intent cancelled");
             Subscriber subscriber = subscriptionMap.get(url);
             if (subscriber != null) {
                 subscriber.unsubscribe();
@@ -52,6 +53,7 @@ public class BackgroundDownloadService extends IntentService {
                 ToastService.sendShortToast(getString(R.string.cancelled_download));
             }
         } else {
+            Log.d(TAG, "on handle intent progress");
             String filePath = downloadImage(url, fileName);
             NotificationUtil.showProgressNotification(getString(R.string.app_name),
                     getString(R.string.downloading),
@@ -92,11 +94,13 @@ public class BackgroundDownloadService extends IntentService {
                     });
                     NotificationUtil.showCompleteNotification(Uri.parse(url), Uri.fromFile(outputFile));
                 }
-                Logger.d(TAG, getString(R.string.completed));
+                Log.d(TAG, getString(R.string.completed));
             }
 
             @Override
             public void onError(Throwable e) {
+                e.printStackTrace();
+                Log.d(TAG, "on handle intent error " + e.getMessage() + ",url:" + url);
                 NotificationUtil.showErrorNotification(Uri.parse(url), fileName, url);
                 Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
                     @Override
@@ -112,7 +116,7 @@ public class BackgroundDownloadService extends IntentService {
 
             @Override
             public void onNext(ResponseBody responseBody) {
-                Logger.d(TAG, "outputFile download onNext,size" + responseBody.contentLength());
+                Log.d(TAG, "outputFile download onNext,size" + responseBody.contentLength());
                 this.outputFile = DownloadUtil.writeResponseBodyToDisk(responseBody, file.getPath(), url);
             }
         };

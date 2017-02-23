@@ -17,9 +17,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -34,11 +36,15 @@ import com.facebook.imagepipeline.core.ImagePipelineFactory;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.juniperphoton.flipperviewlib.FlipperView;
 import com.juniperphoton.myersplash.R;
+import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.callback.DetailViewNavigationCallback;
 import com.juniperphoton.myersplash.callback.OnClickPhotoCallback;
+import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.model.UnsplashImage;
+import com.juniperphoton.myersplash.service.BackgroundDownloadService;
 import com.juniperphoton.myersplash.utils.ColorUtil;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
+import com.juniperphoton.myersplash.utils.Params;
 import com.juniperphoton.myersplash.utils.ToastService;
 
 import java.io.File;
@@ -46,6 +52,8 @@ import java.io.File;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ImageDetailView extends FrameLayout implements OnClickPhotoCallback {
@@ -113,8 +121,8 @@ public class ImageDetailView extends FrameLayout implements OnClickPhotoCallback
     @BindView(R.id.download_flipper_view)
     FlipperView mDownloadFlipperView;
 
-//    @BindView(R.id.detail_progress_ring)
-//    RingProgressView mProgressView;
+    @BindView(R.id.detail_progress_ring)
+    RingProgressView mProgressView;
 
     private boolean mAnimating;
     private boolean mCopied;
@@ -143,23 +151,6 @@ public class ImageDetailView extends FrameLayout implements OnClickPhotoCallback
         CustomTabsIntent customTabsIntent = intentBuilder.build();
 
         customTabsIntent.launchUrl(mContext, uri);
-    }
-
-    @OnClick(R.id.detail_download_fab)
-    void onClickDownload() {
-        if (mClickedImage == null) {
-            return;
-        }
-        mDownloadFlipperView.next(1);
-        DownloadUtil.checkAndDownload((Activity) mContext, mClickedImage);
-    }
-
-    @OnClick(R.id.detail_cancel_download_fab)
-    void onClickCancel() {
-        if (mClickedImage == null) {
-            return;
-        }
-        mDownloadFlipperView.next(0);
     }
 
     @OnClick(R.id.copy_url_flipper_view)
@@ -220,6 +211,13 @@ public class ImageDetailView extends FrameLayout implements OnClickPhotoCallback
         ((Activity) mContext).startActivityForResult(Intent.createChooser(intent, "Share"), RESULT_CODE, null);
     }
 
+    private RealmChangeListener<DownloadItem> mListener = new RealmChangeListener<DownloadItem>() {
+        @Override
+        public void onChange(DownloadItem element) {
+            mProgressView.setProgress(element.getProgress());
+        }
+    };
+
     private void initDetailViews() {
         mDetailRootScrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -240,17 +238,50 @@ public class ImageDetailView extends FrameLayout implements OnClickPhotoCallback
         mDownloadFlipperView.setTranslationX(getResources().getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide));
         mShareFAB.setTranslationX(getResources().getDimensionPixelOffset(R.dimen.share_btn_margin_right_hide));
 
-//        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 360);
-//        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator animation) {
-//                mProgressView.setRotation((float) animation.getAnimatedValue());
-//            }
-//        });
-//        valueAnimator.setDuration(300);
-//        valueAnimator.setRepeatMode(ValueAnimator.RESTART);
-//        valueAnimator.setRepeatCount(ValueAnimator.INFINITE);
-//        valueAnimator.start();
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 360);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mProgressView.setRotation((float) animation.getAnimatedValue());
+            }
+        });
+        valueAnimator.setInterpolator(new LinearInterpolator());
+        valueAnimator.setDuration(1200);
+        valueAnimator.setRepeatMode(ValueAnimator.RESTART);
+        valueAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        valueAnimator.start();
+    }
+
+    @OnClick(R.id.detail_download_fab)
+    void onClickDownload() {
+        Log.d(TAG, "onClickDownload");
+        if (mClickedImage == null) {
+            return;
+        }
+        mDownloadFlipperView.next(1);
+        DownloadUtil.checkAndDownload((Activity) mContext, mClickedImage);
+
+        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                DownloadItem downloadItem = realm.where(DownloadItem.class)
+                        .equalTo(DownloadItem.ID_KEY, mClickedImage.getId()).findFirst();
+                if (downloadItem != null) {
+                    downloadItem.addChangeListener(mListener);
+                }
+            }
+        });
+    }
+
+    @OnClick(R.id.detail_cancel_download_fab)
+    void onClickCancelDownload() {
+        Log.d(TAG, "onClickCancelDownload");
+        if (mClickedImage == null) {
+            return;
+        }
+        mDownloadFlipperView.next(0);
+
+        DownloadUtil.cancelDownload(mContext, mClickedImage);
     }
 
     private void toggleHeroViewAnimation(int startY, int endY, final boolean show) {
@@ -289,7 +320,7 @@ public class ImageDetailView extends FrameLayout implements OnClickPhotoCallback
                     mAnimating = false;
                 } else {
                     toggleDetailRLAnimation(true);
-                    toggleDownloadBtnAnimation(true);
+                    toggleDownloadFlipperViewAnimation(true);
                     toggleShareBtnAnimation(true);
                 }
             }
@@ -354,7 +385,7 @@ public class ImageDetailView extends FrameLayout implements OnClickPhotoCallback
         valueAnimator.start();
     }
 
-    private void toggleDownloadBtnAnimation(final boolean show) {
+    private void toggleDownloadFlipperViewAnimation(final boolean show) {
         int normalX = getResources().getDimensionPixelOffset(R.dimen.download_btn_margin_right);
 
         int hideX = getResources().getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide);
@@ -438,7 +469,7 @@ public class ImageDetailView extends FrameLayout implements OnClickPhotoCallback
     private void hideDetailPanel() {
         if (mAnimating) return;
         toggleDetailRLAnimation(false);
-        toggleDownloadBtnAnimation(false);
+        toggleDownloadFlipperViewAnimation(false);
         toggleShareBtnAnimation(false);
     }
 
@@ -455,7 +486,7 @@ public class ImageDetailView extends FrameLayout implements OnClickPhotoCallback
                     boolean ok = mCopyFileForSharing.delete();
                 }
             }
-        }, 15000);
+        }, 30000);
     }
 
     public boolean tryHide() {

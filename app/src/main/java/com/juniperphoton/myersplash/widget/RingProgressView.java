@@ -13,7 +13,7 @@ public class RingProgressView extends View {
     private static final int STROKE_WIDTH = 5;
 
     private Paint mPaint;
-    private int mProgress = 50;
+    private int mProgress = 10;
     private int mColor = Color.WHITE;
     private RectF mRect;
 
@@ -52,7 +52,7 @@ public class RingProgressView extends View {
         mPaint.setColor(mColor);
         mRect.set(center - radius, center - radius, center + radius, center + radius);
         int angle = (int) (360 * mProgress / 100f);
-        canvas.drawArc(mRect, -90, angle, true, mPaint);
+        canvas.drawArc(mRect, -90, angle, false, mPaint);
     }
 }
 

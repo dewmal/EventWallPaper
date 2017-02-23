@@ -19,7 +19,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class DownloadingView extends FrameLayout implements SetThemeColor {
-
     @BindView(R.id.downloading_progress_pv)
     ProgressView progressView;
 

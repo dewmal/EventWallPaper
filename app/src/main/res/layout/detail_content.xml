@@ -106,7 +106,7 @@
                             android:id="@+id/copied_url_fl"
                             android:layout_width="@dimen/copy_url_width"
                             android:layout_height="wrap_content"
-                            android:background="@color/MyerSplashLikedHeartColor"
+                            android:background="@android:color/white"
                             android:foreground="@drawable/ripple_rect">
 
                             <TextView
@@ -119,7 +119,7 @@
                                 android:layout_marginRight="12dp"
                                 android:layout_marginTop="8dp"
                                 android:text="COPIED :D"
-                                android:textColor="@android:color/white"
+                                android:textColor="@android:color/black"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
                         </FrameLayout>
@@ -159,35 +159,35 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    app:defaultIndex="0">
+                    app:defaultIndex="0"
+                    app:tapToFlip="false">
 
                     <android.support.design.widget.FloatingActionButton
                         android:id="@+id/detail_download_fab"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:clickable="true"
                         android:src="@drawable/vector_ic_file_download"
                         app:backgroundTint="@color/MyerSplashThemeColor"
                         app:fabSize="normal" />
 
                     <FrameLayout
-                        android:layout_width="50dp"
-                        android:layout_height="50dp">
+                        android:layout_width="56dp"
+                        android:layout_height="56dp">
 
                         <android.support.design.widget.FloatingActionButton
                             android:id="@+id/detail_cancel_download_fab"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:clickable="true"
                             android:src="@drawable/ic_clear"
                             app:backgroundTint="@color/MyerSplashLikedHeartColor"
                             app:fabSize="normal" />
 
-                        <!--<com.juniperphoton.myersplash.widget.RingProgressView-->
-                            <!--android:id="@+id/detail_progress_ring"-->
-                            <!--android:layout_width="match_parent"-->
-                            <!--android:layout_height="match_parent"-->
-                            <!--android:layout_gravity="center" />-->
+                        <com.juniperphoton.myersplash.widget.RingProgressView
+                            android:id="@+id/detail_progress_ring"
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:layout_gravity="center"
+                            android:elevation="50dp" />
                     </FrameLayout>
 
                 </com.juniperphoton.flipperviewlib.FlipperView>

@@ -7,6 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 public class DownloadItem extends RealmObject {
@@ -39,6 +40,9 @@ public class DownloadItem extends RealmObject {
 
     private String mFileName;
 
+    @Ignore
+    private int mDisplayStatus = -1;
+
     public DownloadItem(String id, String thumbUrl, String downloadUrl, String fileName) {
         mId = id;
         mThumbUrl = thumbUrl;
@@ -49,6 +53,14 @@ public class DownloadItem extends RealmObject {
 
     public DownloadItem() {
 
+    }
+
+    public int getLastStatus() {
+        return mDisplayStatus;
+    }
+
+    public void syncStatus() {
+        mDisplayStatus = mStatus;
     }
 
     public String getFileName() {
@@ -63,7 +75,6 @@ public class DownloadItem extends RealmObject {
         mStatus = status;
     }
 
-    @DownloadStatus
     public int getStatus() {
         return mStatus;
     }
