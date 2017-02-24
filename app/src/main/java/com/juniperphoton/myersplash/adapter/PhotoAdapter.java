@@ -23,6 +23,7 @@ import com.juniperphoton.myersplash.callback.OnLoadMoreListener;
 import com.juniperphoton.myersplash.common.Constant;
 import com.juniperphoton.myersplash.fragment.MainListFragment;
 import com.juniperphoton.myersplash.model.UnsplashImage;
+import com.juniperphoton.myersplash.utils.ColorUtil;
 import com.juniperphoton.myersplash.utils.LocalSettingHelper;
 
 import java.util.List;
@@ -89,9 +90,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             final UnsplashImage image = mData.get(index);
             final String regularUrl = image.getListUrl();
 
-            int backColor = index % 2 == 0 ?
-                    ContextCompat.getColor(mContext, R.color.BackColor1) :
-                    ContextCompat.getColor(mContext, R.color.BackColor2);
+            int backColor = ColorUtil.getDarkerColor(image.getThemeColor(), 0.5f);
 
             if (LocalSettingHelper.getBoolean(mContext, Constant.QUICK_DOWNLOAD_CONFIG_NAME, false)) {
                 holder.DownloadRL.setVisibility(View.VISIBLE);
