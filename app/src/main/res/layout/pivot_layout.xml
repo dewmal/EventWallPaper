@@ -52,5 +52,6 @@
         android:layout_centerVertical="true"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="12dp"
+        android:alpha="0.3"
         android:src="@drawable/ic_more" />
 </RelativeLayout>
