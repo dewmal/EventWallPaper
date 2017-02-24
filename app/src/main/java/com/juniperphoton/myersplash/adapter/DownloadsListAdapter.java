@@ -26,6 +26,8 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.juniperphoton.myersplash.model.DownloadItem.DISPLAY_STATUS_NOT_SPECIFIED;
+
 public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdapter.DownloadItemViewHolder> {
     private Context mContext;
     private List<DownloadItem> mData;
@@ -117,11 +119,12 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
         });
 
         int last = item.getLastStatus();
-        if (last != item.getStatus()) {
+        if (last != item.getStatus() && last != DISPLAY_STATUS_NOT_SPECIFIED) {
             holder.flipperView.next(item.getStatus());
             item.syncStatus();
         } else {
             holder.flipperView.next(item.getStatus(), false);
+            item.syncStatus();
         }
     }
 

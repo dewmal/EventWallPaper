@@ -20,6 +20,8 @@ public class DownloadItem extends RealmObject {
     public static final int DOWNLOAD_STATUS_FAILED = 1;
     public static final int DOWNLOAD_STATUS_OK = 2;
 
+    public static final int DISPLAY_STATUS_NOT_SPECIFIED = -1;
+
     public static final String ID_KEY = "mId";
     public static final String DOWNLOAD_URL = "mDownloadUrl";
 
@@ -41,7 +43,7 @@ public class DownloadItem extends RealmObject {
     private String mFileName;
 
     @Ignore
-    private int mDisplayStatus = -1;
+    private int mDisplayStatus = DISPLAY_STATUS_NOT_SPECIFIED;
 
     public DownloadItem(String id, String thumbUrl, String downloadUrl, String fileName) {
         mId = id;
