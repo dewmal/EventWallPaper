@@ -1,5 +1,6 @@
 package com.juniperphoton.myersplash.activity;
 
+import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.RectF;
@@ -10,18 +11,18 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter;
-import com.juniperphoton.myersplash.callback.DetailViewNavigationCallback;
-import com.juniperphoton.myersplash.callback.OnClickSearchCallback;
 import com.juniperphoton.myersplash.common.Constant;
 import com.juniperphoton.myersplash.common.RandomIntentStatus;
 import com.juniperphoton.myersplash.event.ScrollToTopEvent;
 import com.juniperphoton.myersplash.fragment.MainListFragment;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
+import com.juniperphoton.myersplash.utils.AnimatorListenerImpl;
 import com.juniperphoton.myersplash.utils.DeviceUtil;
 import com.juniperphoton.myersplash.utils.LocalSettingHelper;
 import com.juniperphoton.myersplash.utils.RequestUtil;
@@ -37,8 +38,8 @@ import butterknife.OnClick;
 import static com.juniperphoton.myersplash.utils.DisplayUtil.getDimenInPixel;
 
 @SuppressWarnings("UnusedDeclaration")
-public class MainActivity extends BaseActivity implements DetailViewNavigationCallback,
-        OnClickSearchCallback, MainListFragment.Callback {
+public class MainActivity extends BaseActivity implements ImageDetailView.DetailViewNavigationCallback,
+        MainListFragment.Callback {
 
     private static final String TAG = MainActivity.class.getName();
 
@@ -71,7 +72,7 @@ public class MainActivity extends BaseActivity implements DetailViewNavigationCa
 
     private String mQuery;
     private int mRandomIntentStatus = RandomIntentStatus.NOT_RECEIVED;
-    private boolean mHandledSearch = false;
+    private boolean mHandledSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,8 +118,44 @@ public class MainActivity extends BaseActivity implements DetailViewNavigationCa
 
     @OnClick(R.id.content_activity_search_fab)
     void onClickSearchFAB() {
-        mSearchFAB.hide();
-        mSearchView.toggleAnimation(true);
+        toggleSearchView(true);
+    }
+
+    private void toggleSearchView(final boolean show) {
+        if (show) {
+            mSearchFAB.hide();
+        } else {
+            mSearchFAB.show();
+        }
+        int[] location = new int[2];
+        mSearchFAB.getLocationOnScreen(location);
+
+        int x = (int) (location[0] + mSearchFAB.getWidth() / 2f);
+        int y = (int) (location[1] + mSearchFAB.getHeight() / 2f);
+
+        int width = getWindow().getDecorView().getWidth();
+        int height = getWindow().getDecorView().getHeight();
+
+        int radius = (int) (Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)));
+        Animator animator;
+        animator = ViewAnimationUtils.createCircularReveal(mSearchView, x, y, show ? 0 : radius, show ? radius : 0);
+        animator.addListener(new AnimatorListenerImpl() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                if (!show) {
+                    mSearchView.clear();
+                    mSearchView.setVisibility(View.GONE);
+                }
+            }
+        });
+        mSearchView.setVisibility(View.VISIBLE);
+        if (show) {
+            mSearchView.showKeyboard();
+            mSearchView.onShowing();
+        } else {
+            mSearchView.onHiding();
+        }
+        animator.start();
     }
 
     @Override
@@ -134,7 +171,7 @@ public class MainActivity extends BaseActivity implements DetailViewNavigationCa
             case 1:
                 return UnsplashCategory.NEW_CATEGORY_ID;
             case 2:
-                return UnsplashCategory.RANDOM_CATEOGORY_ID;
+                return UnsplashCategory.RANDOM_CATEGORY_ID;
             default:
                 return UnsplashCategory.NEW_CATEGORY_ID;
         }
@@ -142,7 +179,6 @@ public class MainActivity extends BaseActivity implements DetailViewNavigationCa
 
     private void initMainViews() {
         mDetailView.setNavigationCallback(this);
-        mSearchView.setSearchCallback(this);
         mPivotTitleBar.setOnClickTitleListener(new PivotTitleBar.OnClickTitleListener() {
             @Override
             public void onSingleTap(int index) {
@@ -200,7 +236,6 @@ public class MainActivity extends BaseActivity implements DetailViewNavigationCa
                     }
                 }
                 break;
-
                 case "action.random": {
                     if (mRandomIntentStatus == RandomIntentStatus.NOT_RECEIVED) {
                         mRandomIntentStatus = RandomIntentStatus.PENDING;
@@ -209,24 +244,6 @@ public class MainActivity extends BaseActivity implements DetailViewNavigationCa
                 break;
             }
         }
-    }
-
-    private void toggleToolbarAnimation(boolean show) {
-        ValueAnimator valueAnimator = new ValueAnimator();
-        valueAnimator.setDuration(300);
-        valueAnimator.setInterpolator(new DecelerateInterpolator(1.5f));
-        if (show) {
-            valueAnimator.setIntValues(200, 0);
-        } else {
-            valueAnimator.setIntValues(0, 200);
-        }
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                //mAppBarLayout.scrollTo(0, (int) animation.getAnimatedValue());
-            }
-        });
-        valueAnimator.start();
     }
 
     @Override
@@ -250,26 +267,12 @@ public class MainActivity extends BaseActivity implements DetailViewNavigationCa
     }
 
     @Override
-    public void onClickSearch(String keyword) {
-//        mCurrentRequestPage = 1;
-//        mAdapter = null;
-//        mUrl = CloudService.SEARCH_URL;
-//        mQuery = keyword;
-//        mRefreshLayout.setRefreshing(true);
-//
-//        //// TODO: 2/24/2017
-//        //mToolbar.setTitle(keyword.toUpperCase());
-//        mContentRecyclerView.setAdapter(null);
-//
-//        mSearchFAB.show();
-//        loadPhotoList();
-    }
-
-    @Override
     public void onBackPressed() {
-        if (mSearchView.getShown()) {
-            mSearchView.hide();
-            mSearchFAB.show();
+        if (mSearchView.getVisibility() == View.VISIBLE) {
+            if (mSearchView.tryHide()) {
+                return;
+            }
+            toggleSearchView(false);
             return;
         }
         if (mDetailView.tryHide()) {
@@ -281,13 +284,11 @@ public class MainActivity extends BaseActivity implements DetailViewNavigationCa
     @Override
     public void onScrollHide() {
         mSearchFAB.hide();
-        toggleToolbarAnimation(false);
     }
 
     @Override
     public void onScrollShow() {
         mSearchFAB.show();
-        toggleToolbarAnimation(true);
     }
 
     @Override

@@ -90,7 +90,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             final UnsplashImage image = mData.get(index);
             final String regularUrl = image.getListUrl();
 
-            int backColor = ColorUtil.getDarkerColor(image.getThemeColor(), 0.5f);
+            int backColor = ColorUtil.getDarkerColor(image.getThemeColor(), 1f);
 
             if (LocalSettingHelper.getBoolean(mContext, Constant.QUICK_DOWNLOAD_CONFIG_NAME, false)) {
                 holder.DownloadRL.setVisibility(View.VISIBLE);
@@ -231,6 +231,12 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
                 }
             }
         });
+    }
+
+    public void clear() {
+        footerFlag = FOOTER_FLAG_NOT_SHOW;
+        mData.clear();
+        notifyDataSetChanged();
     }
 
     public void setLoadMoreData(List<UnsplashImage> data) {

@@ -1,59 +1,90 @@
 package com.juniperphoton.myersplash.widget;
 
-import android.animation.Animator;
-import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Handler;
-import android.support.v4.content.ContextCompat;
+import android.graphics.RectF;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.callback.OnClickSearchCallback;
-import com.juniperphoton.myersplash.utils.AnimatorListenerImpl;
-import com.juniperphoton.myersplash.utils.DisplayUtil;
+import com.juniperphoton.myersplash.adapter.SearchTextAdapter;
+import com.juniperphoton.myersplash.event.RequestSearchEvent;
+import com.juniperphoton.myersplash.fragment.MainListFragment;
+import com.juniperphoton.myersplash.model.UnsplashCategory;
+import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.utils.ToastService;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT;
+
 @SuppressWarnings("UnusedDeclaration")
-public class SearchView extends FrameLayout {
+public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobalLayoutListener {
+    private static final String TAG = "SearchView";
+
     private Context mContext;
-    private OnClickSearchCallback mSearchCallback;
-    private boolean mShown = false;
 
     @BindView(R.id.detail_search_et)
     EditText mEditText;
 
-    @BindView(R.id.detail_search_bar_rl)
-    RelativeLayout mSearchBarRL;
-
     @BindView(R.id.detail_search_root_rl)
     RelativeLayout mRootRL;
+
+    @BindView(R.id.search_result_root)
+    FrameLayout mResultRoot;
+
+    @BindView(R.id.search_detail_view)
+    ImageDetailView mDetailView;
+
+//    @BindView(R.id.search_recommendation_list)
+//    RecyclerView mList;
+
+    private SearchTextAdapter mAdapter;
+
+    private static UnsplashCategory sSearchCategory = new UnsplashCategory();
+    private static List<UnsplashCategory> sCategoryList = new ArrayList<>();
+
+    static {
+        sSearchCategory.setId(UnsplashCategory.SEARCH_ID);
+
+        sCategoryList.add(UnsplashCategory.getSearchCategory("Buildings"));
+        sCategoryList.add(UnsplashCategory.getSearchCategory("Food"));
+        sCategoryList.add(UnsplashCategory.getSearchCategory("Nature"));
+        sCategoryList.add(UnsplashCategory.getSearchCategory("Objects"));
+        sCategoryList.add(UnsplashCategory.getSearchCategory("People"));
+        sCategoryList.add(UnsplashCategory.getSearchCategory("Tech"));
+    }
+
+    private MainListFragment mFragment;
 
     public SearchView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         mContext = context;
 
-        LayoutInflater.from(mContext).inflate(R.layout.detail_search, this);
+        LayoutInflater.from(mContext).inflate(R.layout.search_layout, this);
 
         ButterKnife.bind(this);
 
-        mSearchBarRL.setTranslationY(-getOffsetY());
         mRootRL.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -68,86 +99,85 @@ public class SearchView extends FrameLayout {
                     return true;
                 }
                 return false;
-
             }
         });
-        this.setVisibility(INVISIBLE);
-    }
 
-    public void setSearchCallback(OnClickSearchCallback callback) {
-        mSearchCallback = callback;
-    }
-
-    public void toggleAnimation(final boolean show) {
-        mShown = show;
-        this.setVisibility(VISIBLE);
-
-        ValueAnimator backgroundAnimator = ValueAnimator.ofArgb(show ? Color.TRANSPARENT : ContextCompat.getColor(mContext, R.color.MaskColor),
-                show ? ContextCompat.getColor(mContext, R.color.MaskColor) : Color.TRANSPARENT);
-        backgroundAnimator.setDuration(300);
-        backgroundAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        AppCompatActivity activity = (AppCompatActivity) context;
+        mFragment = new MainListFragment();
+        mFragment.setCategory(sSearchCategory, new MainListFragment.Callback() {
             @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                mRootRL.setBackground(new ColorDrawable((int) animation.getAnimatedValue()));
+            public void onScrollHide() {
+
             }
-        });
-        backgroundAnimator.addListener(new AnimatorListenerImpl() {
+
             @Override
-            public void onAnimationEnd(Animator animation) {
-                if (!show) {
-                    SearchView.this.setVisibility(INVISIBLE);
-                }
-            }
-        });
-        backgroundAnimator.start();
+            public void onScrollShow() {
 
-        ValueAnimator offsetAnimator = ValueAnimator.ofFloat(show ? -getOffsetY() : 0f, show ? 0f : -getOffsetY());
-        offsetAnimator.setDuration(300);
-        offsetAnimator.setInterpolator(new DecelerateInterpolator());
-        offsetAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            }
+
             @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                mSearchBarRL.setTranslationY((float) animation.getAnimatedValue());
+            public void clickPhotoItem(RectF rectF, UnsplashImage unsplashImage, View itemView) {
+                mDetailView.clickPhotoItem(rectF, unsplashImage, itemView);
             }
         });
-        offsetAnimator.start();
-        if (show) {
-            new Handler().postAtTime(new Runnable() {
-                @Override
-                public void run() {
-                    mEditText.requestFocus();
-                    InputMethodManager inputMethodManager = (InputMethodManager) mContext.
-                            getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputMethodManager.showSoftInput(mEditText, 0);
-                }
-            }, 200);
-        }
+        activity.getSupportFragmentManager().beginTransaction().replace(R.id.search_result_root, mFragment)
+                .commit();
+        //initSearchRecommendation();
     }
 
-    public boolean getShown() {
-        return mShown;
+//    private void initSearchRecommendation() {
+//        mList.setLayoutManager(new GridLayoutManager(mContext, 3));
+//        mAdapter = new SearchTextAdapter(mContext);
+//        mAdapter.setData(sCategoryList);
+//        mList.setAdapter(mAdapter);
+//    }
+
+    public void onShowing() {
+        mFragment.register();
     }
 
-    private float getOffsetY() {
-        return DisplayUtil.getDimenInPixel(180, mContext);
+    public void onHiding() {
+        mFragment.unregister();
+        hideKeyboard();
     }
 
-    public void hide() {
+    public void clear() {
+        mFragment.clear();
+        mEditText.setText("");
+    }
+
+    public void showKeyboard() {
+        mEditText.getViewTreeObserver().addOnGlobalLayoutListener(this);
+    }
+
+    public void hideKeyboard() {
         InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
-        toggleAnimation(false);
-        mEditText.setText("");
     }
 
     @OnClick(R.id.detail_search_btn_rl)
     void onClickSearch() {
+        hideKeyboard();
+        Log.d(TAG, "onClickSearch");
         if (mEditText.getText().toString().equals("")) {
             ToastService.sendShortToast("Input the keyword to search.");
             return;
         }
-        if (mSearchCallback != null) {
-            mSearchCallback.onClickSearch(mEditText.getText().toString());
-            hide();
+        EventBus.getDefault().post(new RequestSearchEvent(mEditText.getText().toString()));
+    }
+
+    public boolean tryHide() {
+        if (mDetailView.tryHide()) {
+            return true;
         }
+        return false;
+    }
+
+    @Override
+    public void onGlobalLayout() {
+        mEditText.requestFocus();
+        final InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(mEditText, SHOW_IMPLICIT);
+        mEditText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
     }
 }

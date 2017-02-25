@@ -45,7 +45,7 @@
             android:layout_marginBottom="60dp"
             android:layout_marginEnd="24dp"
             android:background="@drawable/ripple"
-            android:src="@drawable/vector_ic_search"
+            android:src="@drawable/vector_ic_search_white"
             app:backgroundTint="@color/MyerSplashThemeColor" />
 
     </android.support.design.widget.CoordinatorLayout>
@@ -58,6 +58,7 @@
     <com.juniperphoton.myersplash.widget.SearchView
         android:id="@+id/activity_main_search_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
 </RelativeLayout>

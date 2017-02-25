@@ -36,7 +36,6 @@ import com.facebook.imagepipeline.core.ImagePipelineFactory;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.juniperphoton.flipperviewlib.FlipperView;
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.callback.DetailViewNavigationCallback;
 import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.utils.ColorUtil;
@@ -431,16 +430,22 @@ public class ImageDetailView extends FrameLayout {
             @Override
             public void onAnimationStart(Animator animation) {
                 if (show) {
-                    mNavigationCallback.onShow();
+                    if (mNavigationCallback != null) {
+                        mNavigationCallback.onShow();
+                    }
                 } else {
-                    mNavigationCallback.onHide();
+                    if (mNavigationCallback != null) {
+                        mNavigationCallback.onHide();
+                    }
                 }
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
                 if (show) {
-                    mNavigationCallback.onShown();
+                    if (mNavigationCallback != null) {
+                        mNavigationCallback.onShown();
+                    }
                 } else {
                     mDetailRootScrollView.setVisibility(View.INVISIBLE);
                     if (mNavigationCallback != null) {
@@ -548,5 +553,15 @@ public class ImageDetailView extends FrameLayout {
 
         toggleMaskAnimation(true);
         toggleHeroViewAnimation(itemY, targetPositionY, true);
+    }
+
+    public interface DetailViewNavigationCallback {
+        void onShow();
+
+        void onHide();
+
+        void onShown();
+
+        void onHidden();
     }
 }

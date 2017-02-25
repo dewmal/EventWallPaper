@@ -18,6 +18,7 @@ import com.juniperphoton.myersplash.adapter.PhotoAdapter;
 import com.juniperphoton.myersplash.callback.OnClickQuickDownloadCallback;
 import com.juniperphoton.myersplash.callback.OnLoadMoreListener;
 import com.juniperphoton.myersplash.cloudservice.CloudService;
+import com.juniperphoton.myersplash.event.RequestSearchEvent;
 import com.juniperphoton.myersplash.event.ScrollToTopEvent;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
@@ -28,6 +29,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -51,18 +53,22 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
 
     private UnsplashCategory mCategory;
     private int mNext = 1;
-    private boolean mLoaded;
+    private boolean mLoadedData;
     private boolean mVisible;
     private boolean mLoadView;
     private boolean mRefreshing;
+
+    private String mQuery;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_list, null, false);
         ButterKnife.bind(this, view);
         mLoadView = true;
-        if (mVisible && !mLoaded) {
-            init();
+        init();
+        if (mVisible && !mLoadedData) {
+            loadPhotoList();
+            mLoadedData = true;
         }
         return view;
     }
@@ -77,18 +83,37 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
         super.setUserVisibleHint(isVisibleToUser);
         Log.d(TAG, "isVisibleToUser:" + isVisibleToUser);
         mVisible = isVisibleToUser;
-        if (mVisible && !mLoaded && mLoadView) {
-            init();
+        if (mVisible && !mLoadedData && mLoadView) {
+            loadPhotoList();
+            mLoadedData = true;
         }
         if (mVisible) {
-            EventBus.getDefault().register(this);
+            register();
         } else if (EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().unregister(this);
+            unregister();
         }
     }
 
     public MainListFragment() {
         super();
+    }
+
+    public void register() {
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    public void unregister() {
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
+    }
+
+    public void clear() {
+        if (mAdapter != null) {
+            mAdapter.clear();
+        }
     }
 
     public void requestRefresh() {
@@ -128,8 +153,6 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
                 }
             }
         });
-        loadPhotoList();
-        mLoaded = true;
     }
 
     @Override
@@ -173,7 +196,7 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
         }
     }
 
-    private void setSignalOfRequestEnd(){
+    private void setSignalOfRequestEnd() {
         mRefreshLayout.setRefreshing(false);
         mRefreshing = false;
     }
@@ -224,8 +247,11 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
             case UnsplashCategory.NEW_CATEGORY_ID:
                 CloudService.getInstance().getPhotos(subscriber, mCategory.getRequestUrl(), mNext);
                 break;
-            case UnsplashCategory.RANDOM_CATEOGORY_ID:
+            case UnsplashCategory.RANDOM_CATEGORY_ID:
                 CloudService.getInstance().getRandomPhotos(subscriber, mCategory.getRequestUrl());
+                break;
+            case UnsplashCategory.SEARCH_ID:
+                CloudService.getInstance().searchPhotos(subscriber, mCategory.getRequestUrl(), mNext, mQuery);
                 break;
         }
     }
@@ -233,14 +259,23 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
     @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ScrollToTopEvent event) {
-        boolean refresh = event.requestRefresh;
-        int id = event.categoryId;
-        if (id == mCategory.getId()) {
+        if (event.categoryId == mCategory.getId()) {
             mContentRecyclerView.smoothScrollToPosition(0);
+            if (event.requestRefresh) {
+                requestRefresh();
+            }
         }
-        if (refresh) {
-            requestRefresh();
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(RequestSearchEvent event) {
+        if (mCategory.getId() != UnsplashCategory.SEARCH_ID) {
+            return;
         }
+        Log.d(TAG, "RequestSearchEvent received:" + event.query);
+        mQuery = event.query;
+        requestRefresh();
     }
 
     public interface Callback {
