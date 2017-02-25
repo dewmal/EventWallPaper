@@ -22,7 +22,6 @@ import com.juniperphoton.myersplash.event.ScrollToTopEvent;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
-import com.juniperphoton.myersplash.utils.SerializerUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
 
 import org.greenrobot.eventbus.EventBus;
@@ -174,6 +173,11 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
         }
     }
 
+    private void setSignalOfRequestEnd(){
+        mRefreshLayout.setRefreshing(false);
+        mRefreshing = false;
+    }
+
     private void loadPhotoList() {
         mRefreshing = true;
         if (mNext == 1) {
@@ -182,21 +186,20 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
         Subscriber<List<UnsplashImage>> subscriber = new Subscriber<List<UnsplashImage>>() {
             @Override
             public void onCompleted() {
-                mRefreshLayout.setRefreshing(false);
-                mRefreshing = false;
+                setSignalOfRequestEnd();
             }
 
             @Override
             public void onError(Throwable e) {
+                setSignalOfRequestEnd();
                 ToastService.sendShortToast("Fail to send request.");
+                updateNoItemVisibility(true);
             }
 
             @Override
             public void onNext(List<UnsplashImage> images) {
                 if (mNext == 1 || mAdapter == null) {
                     setImageList(images);
-                    SerializerUtil.serializeToFile(getActivity(), images,
-                            SerializerUtil.IMAGE_LIST_FILE_NAME);
                 } else {
                     mAdapter.setLoadMoreData(images);
                 }

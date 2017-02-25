@@ -25,13 +25,10 @@ import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.utils.DeviceUtil;
 import com.juniperphoton.myersplash.utils.LocalSettingHelper;
 import com.juniperphoton.myersplash.utils.RequestUtil;
-import com.juniperphoton.myersplash.utils.SerializerUtil;
 import com.juniperphoton.myersplash.widget.ImageDetailView;
 import com.juniperphoton.myersplash.widget.PivotTitleBar;
 
 import org.greenrobot.eventbus.EventBus;
-
-import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,14 +43,9 @@ public class MainActivity extends BaseActivity implements DetailViewNavigationCa
     private static final String TAG = MainActivity.class.getName();
 
     private static final int SEARCH_ID = -10000;
-    private static final String CHECK_ONE_POINT_ONE_VERSION = "CHECK_ONE_POINT_ONE_VERSION";
 
     @BindView(R.id.pivot_title_bar)
     PivotTitleBar mPivotTitleBar;
-
-//    @Nullable
-//    @BindView(R.id.tool_bar)
-//    Toolbar mToolbar;
 
     @SuppressWarnings("UnusedDeclaration")
     @BindView(R.id.toolbar_layout)
@@ -89,14 +81,6 @@ public class MainActivity extends BaseActivity implements DetailViewNavigationCa
 
         initMainViews();
         handleShortcutsAction();
-
-        if (!LocalSettingHelper.checkKey(this, CHECK_ONE_POINT_ONE_VERSION)) {
-            File file = this.getFileStreamPath(SerializerUtil.CATEGORY_LIST_FILE_NAME);
-            if (file != null) {
-                file.delete();
-            }
-            LocalSettingHelper.putBoolean(this, CHECK_ONE_POINT_ONE_VERSION, true);
-        }
     }
 
     @Override
@@ -129,11 +113,6 @@ public class MainActivity extends BaseActivity implements DetailViewNavigationCa
         mPivotTitleBar.setLayoutParams(params);
 
         RequestUtil.checkAndRequest(MainActivity.this);
-    }
-
-    @OnClick(R.id.pivot_title_bar)
-    void onClickToolbar() {
-        //mContentRecyclerView.smoothScrollToPosition(0);
     }
 
     @OnClick(R.id.content_activity_search_fab)
