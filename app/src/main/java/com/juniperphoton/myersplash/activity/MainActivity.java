@@ -18,6 +18,7 @@ import com.juniperphoton.myersplash.callback.DetailViewNavigationCallback;
 import com.juniperphoton.myersplash.callback.OnClickSearchCallback;
 import com.juniperphoton.myersplash.common.Constant;
 import com.juniperphoton.myersplash.common.RandomIntentStatus;
+import com.juniperphoton.myersplash.event.ScrollToTopEvent;
 import com.juniperphoton.myersplash.fragment.MainListFragment;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
@@ -27,6 +28,8 @@ import com.juniperphoton.myersplash.utils.RequestUtil;
 import com.juniperphoton.myersplash.utils.SerializerUtil;
 import com.juniperphoton.myersplash.widget.ImageDetailView;
 import com.juniperphoton.myersplash.widget.PivotTitleBar;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 
@@ -145,6 +148,19 @@ public class MainActivity extends BaseActivity implements DetailViewNavigationCa
         mDetailView.deleteShareFileInDelay();
     }
 
+    private int getIdByIndex(int index) {
+        switch (index) {
+            case 0:
+                return UnsplashCategory.FEATURED_CATEGORY_ID;
+            case 1:
+                return UnsplashCategory.NEW_CATEGORY_ID;
+            case 2:
+                return UnsplashCategory.RANDOM_CATEOGORY_ID;
+            default:
+                return UnsplashCategory.NEW_CATEGORY_ID;
+        }
+    }
+
     private void initMainViews() {
         mDetailView.setNavigationCallback(this);
         mSearchView.setSearchCallback(this);
@@ -153,6 +169,7 @@ public class MainActivity extends BaseActivity implements DetailViewNavigationCa
             public void onSingleTap(int index) {
                 if (mViewPager != null) {
                     mViewPager.setCurrentItem(index);
+                    EventBus.getDefault().post(new ScrollToTopEvent(getIdByIndex(index), false));
                 }
             }
 
@@ -160,7 +177,7 @@ public class MainActivity extends BaseActivity implements DetailViewNavigationCa
             public void onDoubleTap(int index) {
                 if (mViewPager != null) {
                     mViewPager.setCurrentItem(index);
-                    //((MainListFragment) mMainListFragmentAdapter.getItem(index)).requestRefresh();
+                    EventBus.getDefault().post(new ScrollToTopEvent(getIdByIndex(index), true));
                 }
             }
         });

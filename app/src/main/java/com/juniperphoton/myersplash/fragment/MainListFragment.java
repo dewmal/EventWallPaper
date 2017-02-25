@@ -18,11 +18,16 @@ import com.juniperphoton.myersplash.adapter.PhotoAdapter;
 import com.juniperphoton.myersplash.callback.OnClickQuickDownloadCallback;
 import com.juniperphoton.myersplash.callback.OnLoadMoreListener;
 import com.juniperphoton.myersplash.cloudservice.CloudService;
+import com.juniperphoton.myersplash.event.ScrollToTopEvent;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.SerializerUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -75,6 +80,11 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
         mVisible = isVisibleToUser;
         if (mVisible && !mLoaded && mLoadView) {
             init();
+        }
+        if (mVisible) {
+            EventBus.getDefault().register(this);
+        } else if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
         }
     }
 
@@ -214,6 +224,19 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
             case UnsplashCategory.RANDOM_CATEOGORY_ID:
                 CloudService.getInstance().getRandomPhotos(subscriber, mCategory.getRequestUrl());
                 break;
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(ScrollToTopEvent event) {
+        boolean refresh = event.requestRefresh;
+        int id = event.categoryId;
+        if (id == mCategory.getId()) {
+            mContentRecyclerView.smoothScrollToPosition(0);
+        }
+        if (refresh) {
+            requestRefresh();
         }
     }
 
