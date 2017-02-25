@@ -57,7 +57,6 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_list, null, false);
         ButterKnife.bind(this, view);
         mLoadView = true;
-        Log.d(TAG, "onCreateView");
         if (mVisible && !mLoaded) {
             init();
         }
@@ -67,7 +66,6 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart");
     }
 
     @Override
@@ -82,7 +80,6 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
 
     public MainListFragment() {
         super();
-        Log.d(TAG, "constructor");
     }
 
     public void requestRefresh() {
@@ -169,7 +166,9 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
 
     private void loadPhotoList() {
         mRefreshing = true;
-        mRefreshLayout.setRefreshing(true);
+        if (mNext == 1) {
+            mRefreshLayout.setRefreshing(true);
+        }
         Subscriber<List<UnsplashImage>> subscriber = new Subscriber<List<UnsplashImage>>() {
             @Override
             public void onCompleted() {
