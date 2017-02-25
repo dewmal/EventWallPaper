@@ -4,8 +4,10 @@ import android.graphics.Color;
 
 import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.common.Constant;
+import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.LocalSettingHelper;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.io.Serializable;
 
@@ -60,6 +62,12 @@ public class UnsplashImage implements Serializable {
                 break;
         }
         return url;
+    }
+
+    public boolean hasDownloaded() {
+        String path = DownloadUtil.getGalleryPath() + File.separator + getFileNameForDownload();
+        File file = new File(path);
+        return file.exists();
     }
 
     public String getFileNameForDownload() {

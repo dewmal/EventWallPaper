@@ -5,7 +5,7 @@ import android.content.Context;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.support.v4.content.ContextCompat;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +28,9 @@ import com.juniperphoton.myersplash.utils.LocalSettingHelper;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder> {
     private final int FOOTER_FLAG_NOT_SHOW = 0;
     private final int FOOTER_FLAG_SHOW = 1;
@@ -45,11 +48,12 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
+    private int mLastPosition = -1;
 
     public PhotoAdapter(List<UnsplashImage> data, Context context) {
         mData = data;
         mContext = context;
-        lastPosition = -1;
+        mLastPosition = -1;
         if (data.size() >= 10) {
             isAutoLoadMore = true;
             footerFlag = FOOTER_FLAG_SHOW;
@@ -86,60 +90,18 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     @Override
     public void onBindViewHolder(final PhotoViewHolder holder, int position) {
         if (holder.getItemViewType() == PhotoAdapter.PhotoViewHolder.TYPE_COMMON_VIEW) {
-            final int index = holder.getAdapterPosition();
-            final UnsplashImage image = mData.get(index);
-            final String regularUrl = image.getListUrl();
-
-            int backColor = ColorUtil.getDarkerColor(image.getThemeColor(), 1f);
-
-            if (LocalSettingHelper.getBoolean(mContext, Constant.QUICK_DOWNLOAD_CONFIG_NAME, false)) {
-                holder.DownloadRL.setVisibility(View.VISIBLE);
-                holder.DownloadRL.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (mOnClickDownloadCallback != null) {
-                            mOnClickDownloadCallback.onClickQuickDownload(image);
-                        }
-                    }
-                });
-            } else {
-                holder.DownloadRL.setVisibility(View.GONE);
-            }
-            if (holder.SimpleDraweeView != null) {
-                holder.RootCardView.setBackground(new ColorDrawable(backColor));
-                holder.SimpleDraweeView.setImageURI(regularUrl);
-                holder.RippleMaskRL.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (regularUrl == null) {
-                            return;
-                        }
-                        if (Fresco.getImagePipeline().isInBitmapMemoryCache(Uri.parse(regularUrl))) {
-                            int[] location = new int[2];
-                            holder.SimpleDraweeView.getLocationOnScreen(location);
-                            if (mOnClickPhotoCallback != null) {
-                                mOnClickPhotoCallback.clickPhotoItem(new RectF(
-                                        location[0], location[1],
-                                        holder.SimpleDraweeView.getWidth(), holder.SimpleDraweeView.getHeight()), image, holder.RootCardView);
-                            }
-                        }
-                    }
-                });
-            }
-            animateContainer(holder.RootCardView, position);
+            holder.bind(mData.get(holder.getAdapterPosition()), position);
         }
     }
 
-    private int lastPosition = -1;
-
     private void animateContainer(final View container, int position) {
         int lastItemIndex = findLastVisibleItemPosition(mLayoutManager);
-        if (position >= getMaxPhotoCountOnScreen() || position <= lastPosition
+        if (position >= getMaxPhotoCountOnScreen() || position <= mLastPosition
                 || (lastItemIndex >= getMaxPhotoCountOnScreen())) {
             return;
         }
 
-        lastPosition = position;
+        mLastPosition = position;
 
         int delay = 300 * (position + 1);
         int duration = 800;
@@ -200,7 +162,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         mRecyclerView = recyclerView;
-        lastPosition = -1;
+        mLastPosition = -1;
         mLayoutManager = recyclerView.getLayoutManager();
         startLoadMore(recyclerView, mLayoutManager);
     }
@@ -287,30 +249,87 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         mOnLoadMoreListener.OnLoadMore();
     }
 
-    class PhotoViewHolder extends RecyclerView.ViewHolder {
+    public class PhotoViewHolder extends RecyclerView.ViewHolder {
         static final int TYPE_COMMON_VIEW = 1;
         static final int TYPE_FOOTER_VIEW = 1 << 1;
 
-        SimpleDraweeView SimpleDraweeView;
-        CardView RootCardView;
-        RelativeLayout DownloadRL;
-        RelativeLayout RippleMaskRL;
+        @Nullable
+        @BindView(R.id.row_photo_iv)
+        SimpleDraweeView mSimpleDraweeView;
 
-        RelativeLayout FooterRL;
+        @Nullable
+        @BindView(R.id.row_photo_cv)
+        CardView mRootCardView;
 
-        PhotoViewHolder(View itemView, int type, int footerFlag) {
+        @Nullable
+        @BindView(R.id.row_photo_download_rl)
+        RelativeLayout mDownloadRL;
+
+        @Nullable
+        @BindView(R.id.row_photo_ripple_mask_rl)
+        RelativeLayout mRippleMaskRL;
+
+        @Nullable
+        @BindView(R.id.row_footer_rl)
+        RelativeLayout mFooterRL;
+
+        public PhotoViewHolder(View itemView, int type, int footerFlag) {
             super(itemView);
+            ButterKnife.bind(this, itemView);
             if (type == TYPE_COMMON_VIEW) {
-                SimpleDraweeView = (SimpleDraweeView) itemView.findViewById(R.id.row_photo_iv);
-                RootCardView = (CardView) itemView.findViewById(R.id.row_photo_cv);
-                DownloadRL = (RelativeLayout) itemView.findViewById(R.id.row_photo_download_rl);
-                RippleMaskRL = (RelativeLayout) itemView.findViewById(R.id.row_photo_ripple_mask_rl);
+                // Ignore
             } else {
-                FooterRL = (RelativeLayout) itemView.findViewById(R.id.row_footer_rl);
                 if (footerFlag == FOOTER_FLAG_NOT_SHOW) {
-                    FooterRL.setVisibility(View.INVISIBLE);
+                    mFooterRL.setVisibility(View.INVISIBLE);
                 }
             }
+        }
+
+        public void bind(final UnsplashImage image, int pos) {
+            final String regularUrl = image.getListUrl();
+
+            int backColor = ColorUtil.getDarkerColor(image.getThemeColor(), 1f);
+
+            if (LocalSettingHelper.getBoolean(mContext, Constant.QUICK_DOWNLOAD_CONFIG_NAME, false)) {
+                if (!image.hasDownloaded()) {
+                    mDownloadRL.setVisibility(View.VISIBLE);
+                    mDownloadRL.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (mOnClickDownloadCallback != null) {
+                                mOnClickDownloadCallback.onClickQuickDownload(image);
+                            }
+                        }
+                    });
+                } else {
+                    mDownloadRL.setVisibility(View.GONE);
+                }
+            } else {
+                mDownloadRL.setVisibility(View.GONE);
+            }
+            if (mSimpleDraweeView != null) {
+                mRootCardView.setBackground(new ColorDrawable(backColor));
+                mSimpleDraweeView.setImageURI(regularUrl);
+                mRippleMaskRL.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (regularUrl == null) {
+                            return;
+                        }
+                        if (!Fresco.getImagePipeline().isInBitmapMemoryCache(Uri.parse(regularUrl))) {
+                            return;
+                        }
+                        int[] location = new int[2];
+                        mSimpleDraweeView.getLocationOnScreen(location);
+                        if (mOnClickPhotoCallback != null) {
+                            mOnClickPhotoCallback.clickPhotoItem(new RectF(
+                                    location[0], location[1],
+                                    mSimpleDraweeView.getWidth(), mSimpleDraweeView.getHeight()), image, mRootCardView);
+                        }
+                    }
+                });
+            }
+            animateContainer(mRootCardView, pos);
         }
     }
 }
