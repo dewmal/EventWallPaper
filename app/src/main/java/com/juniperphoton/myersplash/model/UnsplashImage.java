@@ -64,10 +64,19 @@ public class UnsplashImage implements Serializable {
         return url;
     }
 
+    public String getPathForDownload() {
+        String path = DownloadUtil.getGalleryPath() + File.separator + getFileNameForDownload();
+        return path;
+    }
+
     public boolean hasDownloaded() {
         String path = DownloadUtil.getGalleryPath() + File.separator + getFileNameForDownload();
         File file = new File(path);
-        return file.exists();
+        boolean exist = file.exists();
+        if (exist && file.getTotalSpace() > 50 * 1024) {
+            return true;
+        }
+        return false;
     }
 
     public String getFileNameForDownload() {

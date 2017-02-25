@@ -3,6 +3,7 @@ package com.juniperphoton.myersplash.widget;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.WallpaperManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.os.Handler;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -36,6 +38,7 @@ import com.facebook.imagepipeline.core.ImagePipelineFactory;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.juniperphoton.flipperviewlib.FlipperView;
 import com.juniperphoton.myersplash.R;
+import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.utils.ColorUtil;
@@ -118,6 +121,9 @@ public class ImageDetailView extends FrameLayout {
 
     @BindView(R.id.detail_progress_ring)
     RingProgressView mProgressView;
+
+    @BindView(R.id.detail_set_as_fab)
+    FloatingActionButton mSetAsFAB;
 
     private boolean mAnimating;
     private boolean mCopied;
@@ -210,6 +216,9 @@ public class ImageDetailView extends FrameLayout {
         @Override
         public void onChange(DownloadItem element) {
             mProgressView.setProgress(element.getProgress());
+            if (element.getProgress() >= 100) {
+                mDownloadFlipperView.next(2);
+            }
         }
     };
 
@@ -277,6 +286,18 @@ public class ImageDetailView extends FrameLayout {
         mDownloadFlipperView.next(0);
 
         DownloadUtil.cancelDownload(mContext, mClickedImage);
+    }
+
+    @OnClick(R.id.detail_set_as_fab)
+    void onClickSetAsFAB() {
+        String url = mClickedImage.getPathForDownload();
+        if (url != null) {
+            File file = new File(url);
+            Uri uri = FileProvider.getUriForFile(App.getInstance(), App.getInstance().getString(R.string.authorities), file);
+            Intent intent = WallpaperManager.getInstance(App.getInstance()).getCropAndSetWallpaperIntent(uri);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            App.getInstance().startActivity(intent);
+        }
     }
 
     private void toggleHeroViewAnimation(int startY, int endY, final boolean show) {
@@ -548,6 +569,10 @@ public class ImageDetailView extends FrameLayout {
         params.setMargins(0, itemY - (int) (20 * 3.5), 0, 0);
 
         mDetailImgRL.setLayoutParams(params);
+
+        if (mClickedImage.hasDownloaded()) {
+            mDownloadFlipperView.next(2);
+        }
 
         int targetPositionY = getTargetY();
 
