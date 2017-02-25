@@ -29,6 +29,7 @@
             android:paddingStart="12dp"
             android:textColor="@android:color/black"
             android:textColorHint="@color/HintColor"
+            android:textCursorDrawable="@drawable/cursor"
             android:textSize="15sp"
             tools:text="Lake" />
 
@@ -55,10 +56,10 @@
         android:layout_below="@id/search_box" />
 
     <!--<android.support.v7.widget.RecyclerView-->
-        <!--android:id="@+id/search_recommendation_list"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_below="@id/search_box" />-->
+    <!--android:id="@+id/search_recommendation_list"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_below="@id/search_box" />-->
 
     <com.juniperphoton.myersplash.widget.ImageDetailView
         android:id="@+id/search_detail_view"
