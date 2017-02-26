@@ -121,6 +121,9 @@ public class MainActivity extends BaseActivity implements ImageDetailView.Detail
         toggleSearchView(true);
     }
 
+    private int mLastX;
+    private int mLastY;
+
     private void toggleSearchView(final boolean show) {
         if (show) {
             mSearchFAB.hide();
@@ -130,15 +133,17 @@ public class MainActivity extends BaseActivity implements ImageDetailView.Detail
         int[] location = new int[2];
         mSearchFAB.getLocationOnScreen(location);
 
-        int x = (int) (location[0] + mSearchFAB.getWidth() / 2f);
-        int y = (int) (location[1] + mSearchFAB.getHeight() / 2f);
+        if (show) {
+            mLastX = (int) (location[0] + mSearchFAB.getWidth() / 2f);
+            mLastY = (int) (location[1] + mSearchFAB.getHeight() / 2f);
+        }
 
         int width = getWindow().getDecorView().getWidth();
         int height = getWindow().getDecorView().getHeight();
 
         int radius = (int) (Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)));
         Animator animator;
-        animator = ViewAnimationUtils.createCircularReveal(mSearchView, x, y, show ? 0 : radius, show ? radius : 0);
+        animator = ViewAnimationUtils.createCircularReveal(mSearchView, mLastX, mLastY, show ? 0 : radius, show ? radius : 0);
         animator.addListener(new AnimatorListenerImpl() {
             @Override
             public void onAnimationEnd(Animator animation) {
