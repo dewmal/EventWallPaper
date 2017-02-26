@@ -3,7 +3,7 @@ package com.juniperphoton.myersplash.model;
 import com.google.gson.annotations.SerializedName;
 
 public class UnsplashImageFeatured {
-    @SerializedName("mCoverPhoto")
+    @SerializedName("coverPhoto")
     private UnsplashImage mCoverPhoto;
 
     public UnsplashImageFeatured() {

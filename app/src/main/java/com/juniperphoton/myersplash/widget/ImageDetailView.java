@@ -41,7 +41,9 @@ import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.model.UnsplashImage;
+import com.juniperphoton.myersplash.utils.AnimatorListenerImpl;
 import com.juniperphoton.myersplash.utils.ColorUtil;
+import com.juniperphoton.myersplash.utils.DownloadItemTransactionHelper;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
 
@@ -128,6 +130,8 @@ public class ImageDetailView extends FrameLayout {
 
     @BindView(R.id.detail_set_as_fab)
     FloatingActionButton mSetAsFAB;
+
+    private DownloadItem mAssociatedDownloadItem;
 
     private RealmChangeListener<DownloadItem> mListener = new RealmChangeListener<DownloadItem>() {
         @Override
@@ -268,16 +272,18 @@ public class ImageDetailView extends FrameLayout {
         valueAnimator.start();
     }
 
-    private void associateWithDownloadItem() {
-        Realm realm = Realm.getDefaultInstance();
-        realm.beginTransaction();
-        DownloadItem downloadItem = realm.where(DownloadItem.class)
-                .equalTo(DownloadItem.ID_KEY, mClickedImage.getId()).findFirst();
-        if (downloadItem != null) {
-            downloadItem.removeChangeListeners();
-            downloadItem.addChangeListener(mListener);
+    private void associateWithDownloadItem(DownloadItem item) {
+        if (item == null) {
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            mAssociatedDownloadItem = realm.where(DownloadItem.class)
+                    .equalTo(DownloadItem.ID_KEY, mClickedImage.getId()).findFirst();
+            realm.commitTransaction();
         }
-        realm.commitTransaction();
+        if (mAssociatedDownloadItem != null) {
+            mAssociatedDownloadItem.removeChangeListeners();
+            mAssociatedDownloadItem.addChangeListener(mListener);
+        }
     }
 
     @OnClick(R.id.detail_download_fab)
@@ -289,7 +295,7 @@ public class ImageDetailView extends FrameLayout {
         mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING);
         DownloadUtil.checkAndDownload((Activity) mContext, mClickedImage);
 
-        associateWithDownloadItem();
+        associateWithDownloadItem(null);
     }
 
     @OnClick(R.id.detail_cancel_download_fab)
@@ -300,6 +306,7 @@ public class ImageDetailView extends FrameLayout {
         }
         mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD);
 
+        DownloadItemTransactionHelper.updateStatus(mAssociatedDownloadItem, DownloadItem.DOWNLOAD_STATUS_FAILED);
         DownloadUtil.cancelDownload(mContext, mClickedImage);
     }
 
@@ -335,12 +342,7 @@ public class ImageDetailView extends FrameLayout {
                 mDetailImgRL.setLayoutParams(params);
             }
         });
-        valueAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
+        valueAnimator.addListener(new AnimatorListenerImpl() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 if (!show && mClickedView != null) {
@@ -354,16 +356,6 @@ public class ImageDetailView extends FrameLayout {
                     toggleDownloadFlipperViewAnimation(true);
                     toggleShareBtnAnimation(true);
                 }
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
             }
         });
         valueAnimator.start();
@@ -527,6 +519,10 @@ public class ImageDetailView extends FrameLayout {
     }
 
     public boolean tryHide() {
+        if (mAssociatedDownloadItem != null && mAssociatedDownloadItem.isValid()) {
+            mAssociatedDownloadItem.removeChangeListener(mListener);
+            mAssociatedDownloadItem = null;
+        }
         if (mDetailRootScrollView.getVisibility() == View.VISIBLE) {
             hideDetailPanel();
             return true;
@@ -596,12 +592,13 @@ public class ImageDetailView extends FrameLayout {
             mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK);
         }
 
-        DownloadItem item = DownloadUtil.getDownloadItemById(unsplashImage.getId());
-        if (item != null) {
-            Log.d(TAG, "found down item,status:" + item.getStatus());
-            switch (item.getStatus()) {
+        mAssociatedDownloadItem = DownloadUtil.getDownloadItemById(unsplashImage.getId());
+        if (mAssociatedDownloadItem != null) {
+            Log.d(TAG, "found down item,status:" + mAssociatedDownloadItem.getStatus());
+            switch (mAssociatedDownloadItem.getStatus()) {
                 case DownloadItem.DOWNLOAD_STATUS_DOWNLOADING:
                     mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING);
+                    mProgressView.setProgress(mAssociatedDownloadItem.getProgress());
                     break;
                 case DownloadItem.DOWNLOAD_STATUS_FAILED:
                     break;
@@ -609,7 +606,7 @@ public class ImageDetailView extends FrameLayout {
                     mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK);
                     break;
             }
-            associateWithDownloadItem();
+            associateWithDownloadItem(mAssociatedDownloadItem);
         }
 
         int targetPositionY = getTargetY();

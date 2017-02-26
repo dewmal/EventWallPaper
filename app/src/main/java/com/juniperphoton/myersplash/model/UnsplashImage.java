@@ -1,5 +1,7 @@
 package com.juniperphoton.myersplash.model;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
 import com.google.gson.annotations.SerializedName;
@@ -75,7 +77,7 @@ public class UnsplashImage implements Serializable {
         return url;
     }
 
-    public String getTagForDownloadUrl() {
+    private String getTagForDownloadUrl() {
         final int choice = LocalSettingHelper.getInt(App.getInstance(), Constant.SAVING_QUALITY_CONFIG_NAME, 1);
         String tag = "";
         switch (choice) {
@@ -93,16 +95,18 @@ public class UnsplashImage implements Serializable {
     }
 
     public String getPathForDownload() {
-        String path = DownloadUtil.getGalleryPath() + File.separator + getFileNameForDownload();
-        return path;
+        return DownloadUtil.getGalleryPath() + File.separator + getFileNameForDownload();
     }
 
     public boolean hasDownloaded() {
         String path = DownloadUtil.getGalleryPath() + File.separator + getFileNameForDownload();
         File file = new File(path);
         boolean exist = file.exists();
-        if (exist && file.getTotalSpace() > 50 * 1024) {
-            return true;
+        if (exist) {
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            Bitmap bitmap = BitmapFactory.decodeFile(path, options);
+            return bitmap != null && options.outWidth != -1 && options.outHeight != -1;
         }
         return false;
     }
@@ -123,7 +127,7 @@ public class UnsplashImage implements Serializable {
         return mUser.getHomeUrl();
     }
 
-    public static class ImageUrl implements Serializable {
+    private static class ImageUrl implements Serializable {
         @SerializedName("raw")
         private String mRaw;
 

@@ -136,15 +136,13 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
     private int getMaxPhotoCountOnScreen() {
         int height = mRecyclerView.getHeight();
         int imgHeight = mRecyclerView.getResources().getDimensionPixelSize(R.dimen.img_height);
-        int max = (int) Math.ceil((double) height / (double) imgHeight);
-        return max;
+        return (int) Math.ceil((double) height / (double) imgHeight);
     }
 
     @Override
     public int getItemCount() {
         if (mData == null) return 0;
-        int size = footerFlag != FOOTER_FLAG_NOT_SHOW ? mData.size() + 1 : mData.size();
-        return size;
+        return footerFlag != FOOTER_FLAG_NOT_SHOW ? mData.size() + 1 : mData.size();
     }
 
     @Override
@@ -249,7 +247,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         mOnLoadMoreListener.OnLoadMore();
     }
 
-    public class PhotoViewHolder extends RecyclerView.ViewHolder {
+    class PhotoViewHolder extends RecyclerView.ViewHolder {
         static final int TYPE_COMMON_VIEW = 1;
         static final int TYPE_FOOTER_VIEW = 1 << 1;
 
@@ -273,7 +271,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         @BindView(R.id.row_footer_rl)
         RelativeLayout mFooterRL;
 
-        public PhotoViewHolder(View itemView, int type, int footerFlag) {
+        PhotoViewHolder(View itemView, int type, int footerFlag) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             if (type == TYPE_COMMON_VIEW) {
@@ -286,6 +284,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         }
 
         public void bind(final UnsplashImage image, int pos) {
+            if (image == null) return;
             final String regularUrl = image.getListUrl();
 
             int backColor = ColorUtil.getDarkerColor(image.getThemeColor(), 0.7f);
