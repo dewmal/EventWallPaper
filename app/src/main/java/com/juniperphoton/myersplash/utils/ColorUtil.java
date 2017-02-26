@@ -16,6 +16,7 @@ public class ColorUtil {
     }
 
     public static int getDarkerColor(int color, float alpha) {
-        return Color.argb((int) (255 * alpha), Color.red(color), Color.green(color), Color.blue(color));
+        return Color.rgb((int) (Color.red(color) * alpha), (int) (Color.green(color) * alpha),
+                (int) (Color.blue(color) * alpha));
     }
 }

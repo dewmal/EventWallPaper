@@ -288,7 +288,7 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
         public void bind(final UnsplashImage image, int pos) {
             final String regularUrl = image.getListUrl();
 
-            int backColor = ColorUtil.getDarkerColor(image.getThemeColor(), 1f);
+            int backColor = ColorUtil.getDarkerColor(image.getThemeColor(), 0.7f);
 
             if (LocalSettingHelper.getBoolean(mContext, Constant.QUICK_DOWNLOAD_CONFIG_NAME, false)) {
                 if (!image.hasDownloaded()) {
