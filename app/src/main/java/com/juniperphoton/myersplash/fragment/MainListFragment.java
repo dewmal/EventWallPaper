@@ -34,6 +34,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import rx.Subscriber;
 
 public class MainListFragment extends Fragment implements OnLoadMoreListener, OnClickQuickDownloadCallback {
@@ -48,6 +49,9 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
 
     @BindView(R.id.no_item_layout)
     LinearLayout mNoItemLayout;
+
+    @BindView(R.id.no_item_retry_btn)
+    View mRetryBtn;
 
     private Callback mCallback;
 
@@ -153,6 +157,12 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
                 }
             }
         });
+        mRetryBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadPhotoList();
+            }
+        });
     }
 
     @Override
@@ -184,16 +194,8 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
         mContentRecyclerView.setAdapter(mAdapter);
     }
 
-    public PhotoAdapter getPhotoAdapter() {
-        return ((PhotoAdapter) mContentRecyclerView.getAdapter());
-    }
-
     public void updateNoItemVisibility(boolean show) {
-        if (show) {
-            mNoItemLayout.setVisibility(View.VISIBLE);
-        } else {
-            mNoItemLayout.setVisibility(View.GONE);
-        }
+        mNoItemLayout.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     private void setSignalOfRequestEnd() {
@@ -216,7 +218,11 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
             public void onError(Throwable e) {
                 setSignalOfRequestEnd();
                 ToastService.sendShortToast("Fail to send request.");
-                updateNoItemVisibility(true);
+                if (mAdapter != null && mAdapter.getItemCount() > 0) {
+                    updateNoItemVisibility(false);
+                } else {
+                    updateNoItemVisibility(true);
+                }
             }
 
             @Override
@@ -226,10 +232,9 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
                 } else {
                     mAdapter.setLoadMoreData(images);
                 }
-                PhotoAdapter photoAdapter = getPhotoAdapter();
-                if (photoAdapter == null) {
+                if (mAdapter == null) {
                     updateNoItemVisibility(true);
-                } else if (images.size() == 0 && photoAdapter.getItemCount() == 0) {
+                } else if (images.size() == 0 && mAdapter.getItemCount() == 0) {
                     updateNoItemVisibility(true);
                 } else {
                     updateNoItemVisibility(false);

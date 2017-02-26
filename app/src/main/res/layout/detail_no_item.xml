@@ -26,4 +26,22 @@
         android:text="No items. Please refresh again."
         android:textColor="@android:color/white"
         android:textSize="20sp" />
+
+    <FrameLayout
+        android:id="@+id/no_item_retry_btn"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="12dp"
+        android:foreground="@drawable/ripple_rect">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/SettingBackground"
+            android:gravity="center"
+            android:text="RETRY"
+            android:textStyle="bold" />
+    </FrameLayout>
+
 </LinearLayout>
