@@ -35,6 +35,7 @@
     <string name="for_windows_amp_android"><![CDATA[for Windows 10 & Android]]></string>
     <string name="search">SEARCH PHOTOS</string>
     <string name="searchLowercase">Search</string>
+    <string name="downloadLowercase">Downloads</string>
     <string name="random">Random</string>
 
     <string name="search_in_english">Search in English</string>
@@ -72,6 +73,6 @@
     <string name="downloading_in_background">Downloading in background</string>
     <string name="something_wrong">Something went wrong :-(</string>
     <string name="copy_url">COPY URL</string>
-    <string name="failed_to_downoad">Failed to download :(</string>
+    <string name="failed_to_download">Failed to download :(</string>
 
 </resources>

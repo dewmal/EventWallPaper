@@ -142,7 +142,7 @@ public class ImageDetailView extends FrameLayout {
                     break;
                 case DownloadItem.DOWNLOAD_STATUS_FAILED:
                     mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD);
-                    ToastService.sendShortToast(mContext.getString(R.string.failed_to_downoad));
+                    ToastService.sendShortToast(mContext.getString(R.string.failed_to_download));
                     break;
                 case DownloadItem.DOWNLOAD_STATUS_OK:
                     mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK);

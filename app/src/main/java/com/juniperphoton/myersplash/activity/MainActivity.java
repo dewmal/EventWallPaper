@@ -9,6 +9,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 
@@ -69,8 +70,8 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
     private MainListFragmentAdapter mMainListFragmentAdapter;
 
     private String mQuery;
-    private int mRandomIntentStatus = RandomIntentStatus.NOT_RECEIVED;
-    private boolean mHandledSearch;
+    private boolean mHandleShortcut;
+    private int mDefaultIndex = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +79,9 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        initMainViews();
         handleShortcutsAction();
+
+        initMainViews();
     }
 
     @Override
@@ -116,13 +118,13 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
 
     @OnClick(R.id.content_activity_search_fab)
     void onClickSearchFAB() {
-        toggleSearchView(true);
+        toggleSearchView(true, true);
     }
 
     private int mLastX;
     private int mLastY;
 
-    private void toggleSearchView(final boolean show) {
+    private void toggleSearchView(final boolean show, boolean useAnimation) {
         if (show) {
             mSearchFAB.hide();
         } else {
@@ -140,8 +142,7 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
         int height = getWindow().getDecorView().getHeight();
 
         int radius = (int) (Math.sqrt(Math.pow(width, 2) + Math.pow(height, 2)));
-        Animator animator;
-        animator = ViewAnimationUtils.createCircularReveal(mSearchView, mLastX, mLastY, show ? 0 : radius, show ? radius : 0);
+        Animator animator = ViewAnimationUtils.createCircularReveal(mSearchView, mLastX, mLastY, show ? 0 : radius, show ? radius : 0);
         animator.addListener(new AnimatorListenerImpl() {
             @Override
             public void onAnimationEnd(Animator animation) {
@@ -158,7 +159,9 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
         } else {
             mSearchView.onHiding();
         }
-        animator.start();
+        if (useAnimation) {
+            animator.start();
+        }
     }
 
     @Override
@@ -199,15 +202,15 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
                 }
             }
         });
+        mPivotTitleBar.setSelected(mDefaultIndex);
 
         mMainListFragmentAdapter = new MainListFragmentAdapter(this, getSupportFragmentManager());
         mViewPager.setAdapter(mMainListFragmentAdapter);
-        mViewPager.setCurrentItem(1);
+        mViewPager.setCurrentItem(mDefaultIndex);
         mViewPager.setOffscreenPageLimit(2);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
@@ -229,22 +232,29 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
     }
 
     private void handleShortcutsAction() {
+        if (mHandleShortcut) {
+            return;
+        }
         String action = getIntent().getAction();
         if (action != null) {
             switch (action) {
-                case "action.search": {
-                    if (!mHandledSearch) {
-                        mHandledSearch = true;
-                        onClickSearchFAB();
-                    }
-                }
-                break;
-                case "action.random": {
-                    if (mRandomIntentStatus == RandomIntentStatus.NOT_RECEIVED) {
-                        mRandomIntentStatus = RandomIntentStatus.PENDING;
-                    }
-                }
-                break;
+                case "action.search":
+                    mHandleShortcut = true;
+                    mAppBarLayout.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            toggleSearchView(true, false);
+                        }
+                    });
+                    break;
+                case "action.download":
+                    Intent intent = new Intent(this, ManageDownloadActivity.class);
+                    startActivity(intent);
+                    break;
+                case "action.random":
+                    mHandleShortcut = true;
+                    mDefaultIndex = 2;
+                    break;
             }
         }
     }
@@ -275,7 +285,7 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
             if (mSearchView.tryHide()) {
                 return;
             }
-            toggleSearchView(false);
+            toggleSearchView(false, true);
             return;
         }
         if (mDetailView.tryHide()) {
