@@ -1,7 +1,6 @@
 package com.juniperphoton.myersplash.model;
 
 import android.support.annotation.IntDef;
-import android.view.PixelCopy;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -77,6 +76,7 @@ public class DownloadItem extends RealmObject {
         mStatus = status;
     }
 
+    @DownloadStatus
     public int getStatus() {
         return mStatus;
     }

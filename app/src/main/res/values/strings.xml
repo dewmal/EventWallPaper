@@ -72,5 +72,6 @@
     <string name="downloading_in_background">Downloading in background</string>
     <string name="something_wrong">Something went wrong :-(</string>
     <string name="copy_url">COPY URL</string>
+    <string name="failed_to_downoad">Failed to download :(</string>
 
 </resources>

@@ -59,6 +59,10 @@ public class ImageDetailView extends FrameLayout {
     private static final int RESULT_CODE = 10000;
     private static final String SHARE_TEXT = "Share %s's amazing photo from MyerSplash app. Download this photo: %s";
 
+    private static final int DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD = 0;
+    private static final int DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING = 1;
+    private static final int DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK = 2;
+
     private Context mContext;
 
     private File mCopyFileForSharing;
@@ -69,7 +73,7 @@ public class ImageDetailView extends FrameLayout {
     private View mClickedView;
     private UnsplashImage mClickedImage;
 
-    private DetailViewNavigationCallback mNavigationCallback;
+    private StateListener mNavigationCallback;
 
     @BindView(R.id.detail_root_sv)
     ScrollView mDetailRootScrollView;
@@ -124,6 +128,24 @@ public class ImageDetailView extends FrameLayout {
 
     @BindView(R.id.detail_set_as_fab)
     FloatingActionButton mSetAsFAB;
+
+    private RealmChangeListener<DownloadItem> mListener = new RealmChangeListener<DownloadItem>() {
+        @Override
+        public void onChange(DownloadItem element) {
+            switch (element.getStatus()) {
+                case DownloadItem.DOWNLOAD_STATUS_DOWNLOADING:
+                    mProgressView.setProgress(element.getProgress());
+                    break;
+                case DownloadItem.DOWNLOAD_STATUS_FAILED:
+                    mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD);
+                    ToastService.sendShortToast(mContext.getString(R.string.failed_to_downoad));
+                    break;
+                case DownloadItem.DOWNLOAD_STATUS_OK:
+                    mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK);
+                    break;
+            }
+        }
+    };
 
     private boolean mAnimating;
     private boolean mCopied;
@@ -212,16 +234,6 @@ public class ImageDetailView extends FrameLayout {
         ((Activity) mContext).startActivityForResult(Intent.createChooser(intent, "Share"), RESULT_CODE, null);
     }
 
-    private RealmChangeListener<DownloadItem> mListener = new RealmChangeListener<DownloadItem>() {
-        @Override
-        public void onChange(DownloadItem element) {
-            mProgressView.setProgress(element.getProgress());
-            if (element.getProgress() >= 100) {
-                mDownloadFlipperView.next(2);
-            }
-        }
-    };
-
     private void initDetailViews() {
         mDetailRootScrollView.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -256,25 +268,28 @@ public class ImageDetailView extends FrameLayout {
         valueAnimator.start();
     }
 
+    private void associateWithDownloadItem() {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        DownloadItem downloadItem = realm.where(DownloadItem.class)
+                .equalTo(DownloadItem.ID_KEY, mClickedImage.getId()).findFirst();
+        if (downloadItem != null) {
+            downloadItem.removeChangeListeners();
+            downloadItem.addChangeListener(mListener);
+        }
+        realm.commitTransaction();
+    }
+
     @OnClick(R.id.detail_download_fab)
     void onClickDownload() {
         Log.d(TAG, "onClickDownload");
         if (mClickedImage == null) {
             return;
         }
-        mDownloadFlipperView.next(1);
+        mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING);
         DownloadUtil.checkAndDownload((Activity) mContext, mClickedImage);
 
-        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                DownloadItem downloadItem = realm.where(DownloadItem.class)
-                        .equalTo(DownloadItem.ID_KEY, mClickedImage.getId()).findFirst();
-                if (downloadItem != null) {
-                    downloadItem.addChangeListener(mListener);
-                }
-            }
-        });
+        associateWithDownloadItem();
     }
 
     @OnClick(R.id.detail_cancel_download_fab)
@@ -283,7 +298,7 @@ public class ImageDetailView extends FrameLayout {
         if (mClickedImage == null) {
             return;
         }
-        mDownloadFlipperView.next(0);
+        mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD);
 
         DownloadUtil.cancelDownload(mContext, mClickedImage);
     }
@@ -305,7 +320,7 @@ public class ImageDetailView extends FrameLayout {
             mHeroStartY = startY;
             mHeroEndY = endY;
         } else {
-            mDownloadFlipperView.next(0);
+            mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD);
         }
 
         ValueAnimator valueAnimator = new ValueAnimator();
@@ -452,11 +467,11 @@ public class ImageDetailView extends FrameLayout {
             public void onAnimationStart(Animator animation) {
                 if (show) {
                     if (mNavigationCallback != null) {
-                        mNavigationCallback.onShow();
+                        mNavigationCallback.onShowing();
                     }
                 } else {
                     if (mNavigationCallback != null) {
-                        mNavigationCallback.onHide();
+                        mNavigationCallback.onHiding();
                     }
                 }
             }
@@ -495,7 +510,7 @@ public class ImageDetailView extends FrameLayout {
         toggleShareBtnAnimation(false);
     }
 
-    public void setNavigationCallback(DetailViewNavigationCallback callback) {
+    public void setNavigationCallback(StateListener callback) {
         mNavigationCallback = callback;
     }
 
@@ -519,7 +534,14 @@ public class ImageDetailView extends FrameLayout {
         return false;
     }
 
-    public void clickPhotoItem(final RectF rectF, final UnsplashImage unsplashImage, View itemView) {
+    /**
+     * Show detailed image
+     *
+     * @param rectF         Original occupied rect
+     * @param unsplashImage Image
+     * @param itemView      View to be clicked
+     */
+    public void showDetailedImage(final RectF rectF, final UnsplashImage unsplashImage, View itemView) {
         if (mClickedView != null) {
             return;
         }
@@ -534,12 +556,12 @@ public class ImageDetailView extends FrameLayout {
         //Dark
         if (!ColorUtil.isColorLight(themeColor)) {
             mCopyUrlTextView.setTextColor(Color.BLACK);
-            int backColor = Color.argb(255, Color.red(Color.WHITE),
+            int backColor = Color.argb(200, Color.red(Color.WHITE),
                     Color.green(Color.WHITE), Color.blue(Color.WHITE));
             mCopyLayout.setBackgroundColor(backColor);
         } else {
             mCopyUrlTextView.setTextColor(Color.WHITE);
-            int backColor = Color.argb(255, Color.red(Color.BLACK),
+            int backColor = Color.argb(200, Color.red(Color.BLACK),
                     Color.green(Color.BLACK), Color.blue(Color.BLACK));
             mCopyLayout.setBackgroundColor(backColor);
         }
@@ -571,7 +593,23 @@ public class ImageDetailView extends FrameLayout {
         mDetailImgRL.setLayoutParams(params);
 
         if (mClickedImage.hasDownloaded()) {
-            mDownloadFlipperView.next(2);
+            mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK);
+        }
+
+        DownloadItem item = DownloadUtil.getDownloadItemById(unsplashImage.getId());
+        if (item != null) {
+            Log.d(TAG, "found down item,status:" + item.getStatus());
+            switch (item.getStatus()) {
+                case DownloadItem.DOWNLOAD_STATUS_DOWNLOADING:
+                    mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING);
+                    break;
+                case DownloadItem.DOWNLOAD_STATUS_FAILED:
+                    break;
+                case DownloadItem.DOWNLOAD_STATUS_OK:
+                    mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK);
+                    break;
+            }
+            associateWithDownloadItem();
         }
 
         int targetPositionY = getTargetY();
@@ -580,10 +618,10 @@ public class ImageDetailView extends FrameLayout {
         toggleHeroViewAnimation(itemY, targetPositionY, true);
     }
 
-    public interface DetailViewNavigationCallback {
-        void onShow();
+    public interface StateListener {
+        void onShowing();
 
-        void onHide();
+        void onHiding();
 
         void onShown();
 

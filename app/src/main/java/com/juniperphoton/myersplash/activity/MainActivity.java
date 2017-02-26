@@ -1,7 +1,6 @@
 package com.juniperphoton.myersplash.activity;
 
 import android.animation.Animator;
-import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.RectF;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewAnimationUtils;
-import android.view.animation.DecelerateInterpolator;
 
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter;
@@ -38,7 +36,7 @@ import butterknife.OnClick;
 import static com.juniperphoton.myersplash.utils.DisplayUtil.getDimenInPixel;
 
 @SuppressWarnings("UnusedDeclaration")
-public class MainActivity extends BaseActivity implements ImageDetailView.DetailViewNavigationCallback,
+public class MainActivity extends BaseActivity implements ImageDetailView.StateListener,
         MainListFragment.Callback {
 
     private static final String TAG = MainActivity.class.getName();
@@ -252,12 +250,12 @@ public class MainActivity extends BaseActivity implements ImageDetailView.Detail
     }
 
     @Override
-    public void onShow() {
+    public void onShowing() {
         mSearchFAB.hide();
     }
 
     @Override
-    public void onHide() {
+    public void onHiding() {
 
     }
 
@@ -298,6 +296,6 @@ public class MainActivity extends BaseActivity implements ImageDetailView.Detail
 
     @Override
     public void clickPhotoItem(RectF rectF, UnsplashImage unsplashImage, View itemView) {
-        mDetailView.clickPhotoItem(rectF, unsplashImage, itemView);
+        mDetailView.showDetailedImage(rectF, unsplashImage, itemView);
     }
 }

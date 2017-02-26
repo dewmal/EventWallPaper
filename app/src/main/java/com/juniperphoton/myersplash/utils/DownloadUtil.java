@@ -18,6 +18,7 @@ import com.juniperphoton.myersplash.service.BackgroundDownloadService;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.OutputStream;
@@ -91,14 +92,18 @@ public class DownloadUtil {
                 e.printStackTrace();
                 return null;
             } finally {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
+                try {
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
 
-                if (outputStream != null) {
-                    outputStream.close();
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
+                    new SingleMediaScanner(App.getInstance(), fileToSave);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                new SingleMediaScanner(App.getInstance(), fileToSave);
             }
         } catch (Exception e) {
             ToastService.sendShortToast(e.getMessage());
@@ -107,12 +112,15 @@ public class DownloadUtil {
     }
 
     public static File getFileToSave(String expectedName) {
+        String galleryPath = getGalleryPath();
+        if (galleryPath == null) {
+            return null;
+        }
         File folder = new File(getGalleryPath());
         if (!folder.exists()) {
             folder.mkdirs();
         }
-        File fileToSave = new File(folder + File.separator + expectedName);
-        return fileToSave;
+        return new File(folder + File.separator + expectedName);
     }
 
     /**
@@ -174,12 +182,16 @@ public class DownloadUtil {
                 e.printStackTrace();
                 return false;
             } finally {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
+                try {
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
 
-                if (outputStream != null) {
-                    outputStream.close();
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         } catch (Exception e) {
@@ -223,6 +235,16 @@ public class DownloadUtil {
         } else {
             startDownloadService(context, image);
         }
+    }
+
+    public static DownloadItem getDownloadItemById(String id) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        DownloadItem item = realm.where(DownloadItem.class)
+                .equalTo(DownloadItem.ID_KEY, id)
+                .findFirst();
+        realm.commitTransaction();
+        return item;
     }
 
     private static void startDownloadService(final Activity context, UnsplashImage image) {

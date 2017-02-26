@@ -2,10 +2,7 @@ package com.juniperphoton.myersplash.widget;
 
 import android.content.Context;
 import android.graphics.RectF;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -117,7 +114,7 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
 
             @Override
             public void clickPhotoItem(RectF rectF, UnsplashImage unsplashImage, View itemView) {
-                mDetailView.clickPhotoItem(rectF, unsplashImage, itemView);
+                mDetailView.showDetailedImage(rectF, unsplashImage, itemView);
             }
         });
         activity.getSupportFragmentManager().beginTransaction().replace(R.id.search_result_root, mFragment)
@@ -167,10 +164,7 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
     }
 
     public boolean tryHide() {
-        if (mDetailView.tryHide()) {
-            return true;
-        }
-        return false;
+        return mDetailView.tryHide();
     }
 
     @Override
