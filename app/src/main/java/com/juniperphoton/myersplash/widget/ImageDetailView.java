@@ -3,6 +3,7 @@ package com.juniperphoton.myersplash.widget;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.WallpaperManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -15,12 +16,14 @@ import android.os.Handler;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -35,10 +38,12 @@ import com.facebook.imagepipeline.core.ImagePipelineFactory;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.juniperphoton.flipperviewlib.FlipperView;
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.callback.DetailViewNavigationCallback;
-import com.juniperphoton.myersplash.callback.OnClickPhotoCallback;
+import com.juniperphoton.myersplash.base.App;
+import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.model.UnsplashImage;
+import com.juniperphoton.myersplash.utils.AnimatorListenerImpl;
 import com.juniperphoton.myersplash.utils.ColorUtil;
+import com.juniperphoton.myersplash.utils.DownloadItemTransactionHelper;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
 
@@ -47,12 +52,18 @@ import java.io.File;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
 
 @SuppressWarnings("UnusedDeclaration")
-public class DetailView extends FrameLayout implements OnClickPhotoCallback {
-    private static final String TAG = DetailView.class.getName();
+public class ImageDetailView extends FrameLayout {
+    private static final String TAG = ImageDetailView.class.getName();
     private static final int RESULT_CODE = 10000;
     private static final String SHARE_TEXT = "Share %s's amazing photo from MyerSplash app. Download this photo: %s";
+
+    private static final int DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD = 0;
+    private static final int DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING = 1;
+    private static final int DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK = 2;
 
     private Context mContext;
 
@@ -64,7 +75,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
     private View mClickedView;
     private UnsplashImage mClickedImage;
 
-    private DetailViewNavigationCallback mNavigationCallback;
+    private StateListener mNavigationCallback;
 
     @BindView(R.id.detail_root_sv)
     ScrollView mDetailRootScrollView;
@@ -90,6 +101,9 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
     @BindView(R.id.detail_download_fab)
     FloatingActionButton mDownloadFAB;
 
+    @BindView(R.id.detail_cancel_download_fab)
+    FloatingActionButton mCancelDownloadFAB;
+
     @BindView(R.id.detail_share_fab)
     FloatingActionButton mShareFAB;
 
@@ -106,12 +120,41 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
     FrameLayout mCopiedLayout;
 
     @BindView(R.id.copy_url_flipper_view)
-    FlipperView mFlipperView;
+    FlipperView mCopyUrlFlipperView;
+
+    @BindView(R.id.download_flipper_view)
+    FlipperView mDownloadFlipperView;
+
+    @BindView(R.id.detail_progress_ring)
+    RingProgressView mProgressView;
+
+    @BindView(R.id.detail_set_as_fab)
+    FloatingActionButton mSetAsFAB;
+
+    private DownloadItem mAssociatedDownloadItem;
+
+    private RealmChangeListener<DownloadItem> mListener = new RealmChangeListener<DownloadItem>() {
+        @Override
+        public void onChange(DownloadItem element) {
+            switch (element.getStatus()) {
+                case DownloadItem.DOWNLOAD_STATUS_DOWNLOADING:
+                    mProgressView.setProgress(element.getProgress());
+                    break;
+                case DownloadItem.DOWNLOAD_STATUS_FAILED:
+                    mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD);
+                    ToastService.sendShortToast(mContext.getString(R.string.failed_to_download));
+                    break;
+                case DownloadItem.DOWNLOAD_STATUS_OK:
+                    mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK);
+                    break;
+            }
+        }
+    };
 
     private boolean mAnimating;
     private boolean mCopied;
 
-    public DetailView(Context context, AttributeSet attrs) {
+    public ImageDetailView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
         LayoutInflater.from(context).inflate(R.layout.detail_content, this, true);
@@ -137,20 +180,12 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         customTabsIntent.launchUrl(mContext, uri);
     }
 
-    @OnClick(R.id.detail_download_fab)
-    void onClickDownload() {
-        if (mClickedImage == null) {
-            return;
-        }
-        DownloadUtil.checkAndDownload((Activity) mContext, mClickedImage);
-    }
-
     @OnClick(R.id.copy_url_flipper_view)
     void onClickCopy() {
         if (mCopied) return;
         mCopied = true;
 
-        mFlipperView.next();
+        mCopyUrlFlipperView.next();
 
         ClipboardManager clipboard = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText(mContext.getString(R.string.app_name), mClickedImage.getDownloadUrl());
@@ -159,7 +194,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         postDelayed(new Runnable() {
             @Override
             public void run() {
-                mFlipperView.next();
+                mCopyUrlFlipperView.next();
                 mCopied = false;
             }
         }, 2000);
@@ -220,14 +255,79 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         mDetailRootScrollView.setVisibility(View.INVISIBLE);
 
         mDetailInfoRootLayout.setTranslationY(-getResources().getDimensionPixelOffset(R.dimen.img_detail_info_height));
-        mDownloadFAB.setTranslationX(getResources().getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide));
+        mDownloadFlipperView.setTranslationX(getResources().getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide));
         mShareFAB.setTranslationX(getResources().getDimensionPixelOffset(R.dimen.share_btn_margin_right_hide));
+
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 360);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                mProgressView.setRotation((float) animation.getAnimatedValue());
+            }
+        });
+        valueAnimator.setInterpolator(new LinearInterpolator());
+        valueAnimator.setDuration(1200);
+        valueAnimator.setRepeatMode(ValueAnimator.RESTART);
+        valueAnimator.setRepeatCount(ValueAnimator.INFINITE);
+        valueAnimator.start();
+    }
+
+    private void associateWithDownloadItem(DownloadItem item) {
+        if (item == null) {
+            Realm realm = Realm.getDefaultInstance();
+            realm.beginTransaction();
+            mAssociatedDownloadItem = realm.where(DownloadItem.class)
+                    .equalTo(DownloadItem.ID_KEY, mClickedImage.getId()).findFirst();
+            realm.commitTransaction();
+        }
+        if (mAssociatedDownloadItem != null) {
+            mAssociatedDownloadItem.removeChangeListeners();
+            mAssociatedDownloadItem.addChangeListener(mListener);
+        }
+    }
+
+    @OnClick(R.id.detail_download_fab)
+    void onClickDownload() {
+        Log.d(TAG, "onClickDownload");
+        if (mClickedImage == null) {
+            return;
+        }
+        mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING);
+        DownloadUtil.checkAndDownload((Activity) mContext, mClickedImage);
+
+        associateWithDownloadItem(null);
+    }
+
+    @OnClick(R.id.detail_cancel_download_fab)
+    void onClickCancelDownload() {
+        Log.d(TAG, "onClickCancelDownload");
+        if (mClickedImage == null) {
+            return;
+        }
+        mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD);
+
+        DownloadItemTransactionHelper.updateStatus(mAssociatedDownloadItem, DownloadItem.DOWNLOAD_STATUS_FAILED);
+        DownloadUtil.cancelDownload(mContext, mClickedImage);
+    }
+
+    @OnClick(R.id.detail_set_as_fab)
+    void onClickSetAsFAB() {
+        String url = mClickedImage.getPathForDownload();
+        if (url != null) {
+            File file = new File(url);
+            Uri uri = FileProvider.getUriForFile(App.getInstance(), App.getInstance().getString(R.string.authorities), file);
+            Intent intent = WallpaperManager.getInstance(App.getInstance()).getCropAndSetWallpaperIntent(uri);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            App.getInstance().startActivity(intent);
+        }
     }
 
     private void toggleHeroViewAnimation(int startY, int endY, final boolean show) {
         if (show) {
             mHeroStartY = startY;
             mHeroEndY = endY;
+        } else {
+            mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD);
         }
 
         ValueAnimator valueAnimator = new ValueAnimator();
@@ -242,12 +342,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
                 mDetailImgRL.setLayoutParams(params);
             }
         });
-        valueAnimator.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-
-            }
-
+        valueAnimator.addListener(new AnimatorListenerImpl() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 if (!show && mClickedView != null) {
@@ -258,19 +353,9 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
                     mAnimating = false;
                 } else {
                     toggleDetailRLAnimation(true);
-                    toggleDownloadBtnAnimation(true);
+                    toggleDownloadFlipperViewAnimation(true);
                     toggleShareBtnAnimation(true);
                 }
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-
             }
         });
         valueAnimator.start();
@@ -323,7 +408,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         valueAnimator.start();
     }
 
-    private void toggleDownloadBtnAnimation(final boolean show) {
+    private void toggleDownloadFlipperViewAnimation(final boolean show) {
         int normalX = getResources().getDimensionPixelOffset(R.dimen.download_btn_margin_right);
 
         int hideX = getResources().getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide);
@@ -335,7 +420,7 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                mDownloadFAB.setTranslationX((int) animation.getAnimatedValue());
+                mDownloadFlipperView.setTranslationX((int) animation.getAnimatedValue());
             }
         });
         valueAnimator.start();
@@ -373,16 +458,22 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
             @Override
             public void onAnimationStart(Animator animation) {
                 if (show) {
-                    mNavigationCallback.onShow();
+                    if (mNavigationCallback != null) {
+                        mNavigationCallback.onShowing();
+                    }
                 } else {
-                    mNavigationCallback.onHide();
+                    if (mNavigationCallback != null) {
+                        mNavigationCallback.onHiding();
+                    }
                 }
             }
 
             @Override
             public void onAnimationEnd(Animator animation) {
                 if (show) {
-                    mNavigationCallback.onShown();
+                    if (mNavigationCallback != null) {
+                        mNavigationCallback.onShown();
+                    }
                 } else {
                     mDetailRootScrollView.setVisibility(View.INVISIBLE);
                     if (mNavigationCallback != null) {
@@ -407,11 +498,11 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
     private void hideDetailPanel() {
         if (mAnimating) return;
         toggleDetailRLAnimation(false);
-        toggleDownloadBtnAnimation(false);
+        toggleDownloadFlipperViewAnimation(false);
         toggleShareBtnAnimation(false);
     }
 
-    public void setNavigationCallback(DetailViewNavigationCallback callback) {
+    public void setNavigationCallback(StateListener callback) {
         mNavigationCallback = callback;
     }
 
@@ -424,10 +515,14 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
                     boolean ok = mCopyFileForSharing.delete();
                 }
             }
-        }, 15000);
+        }, 30000);
     }
 
     public boolean tryHide() {
+        if (mAssociatedDownloadItem != null && mAssociatedDownloadItem.isValid()) {
+            mAssociatedDownloadItem.removeChangeListener(mListener);
+            mAssociatedDownloadItem = null;
+        }
         if (mDetailRootScrollView.getVisibility() == View.VISIBLE) {
             hideDetailPanel();
             return true;
@@ -435,8 +530,14 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         return false;
     }
 
-    @Override
-    public void clickPhotoItem(final RectF rectF, final UnsplashImage unsplashImage, View itemView) {
+    /**
+     * Show detailed image
+     *
+     * @param rectF         Original occupied rect
+     * @param unsplashImage Image
+     * @param itemView      View to be clicked
+     */
+    public void showDetailedImage(final RectF rectF, final UnsplashImage unsplashImage, View itemView) {
         if (mClickedView != null) {
             return;
         }
@@ -451,12 +552,12 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
         //Dark
         if (!ColorUtil.isColorLight(themeColor)) {
             mCopyUrlTextView.setTextColor(Color.BLACK);
-            int backColor = Color.argb(255, Color.red(Color.WHITE),
+            int backColor = Color.argb(200, Color.red(Color.WHITE),
                     Color.green(Color.WHITE), Color.blue(Color.WHITE));
             mCopyLayout.setBackgroundColor(backColor);
         } else {
             mCopyUrlTextView.setTextColor(Color.WHITE);
-            int backColor = Color.argb(255, Color.red(Color.BLACK),
+            int backColor = Color.argb(200, Color.red(Color.BLACK),
                     Color.green(Color.BLACK), Color.blue(Color.BLACK));
             mCopyLayout.setBackgroundColor(backColor);
         }
@@ -487,9 +588,40 @@ public class DetailView extends FrameLayout implements OnClickPhotoCallback {
 
         mDetailImgRL.setLayoutParams(params);
 
+        if (mClickedImage.hasDownloaded()) {
+            mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK);
+        }
+
+        mAssociatedDownloadItem = DownloadUtil.getDownloadItemById(unsplashImage.getId());
+        if (mAssociatedDownloadItem != null) {
+            Log.d(TAG, "found down item,status:" + mAssociatedDownloadItem.getStatus());
+            switch (mAssociatedDownloadItem.getStatus()) {
+                case DownloadItem.DOWNLOAD_STATUS_DOWNLOADING:
+                    mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING);
+                    mProgressView.setProgress(mAssociatedDownloadItem.getProgress());
+                    break;
+                case DownloadItem.DOWNLOAD_STATUS_FAILED:
+                    break;
+                case DownloadItem.DOWNLOAD_STATUS_OK:
+                    mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK);
+                    break;
+            }
+            associateWithDownloadItem(mAssociatedDownloadItem);
+        }
+
         int targetPositionY = getTargetY();
 
         toggleMaskAnimation(true);
         toggleHeroViewAnimation(itemY, targetPositionY, true);
+    }
+
+    public interface StateListener {
+        void onShowing();
+
+        void onHiding();
+
+        void onShown();
+
+        void onHidden();
     }
 }

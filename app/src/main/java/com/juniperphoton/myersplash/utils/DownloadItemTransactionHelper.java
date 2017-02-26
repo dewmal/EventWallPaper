@@ -33,4 +33,17 @@ public class DownloadItemTransactionHelper {
             }
         });
     }
+
+    public static void updateStatus(final String id, @DownloadItem.DownloadStatus final int status) {
+        Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                DownloadItem realmItem = realm.where(DownloadItem.class).equalTo(DownloadItem.ID_KEY,
+                        id).findFirst();
+                if (realmItem != null) {
+                    realmItem.setStatus(status);
+                }
+            }
+        });
+    }
 }

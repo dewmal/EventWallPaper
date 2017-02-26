@@ -7,7 +7,7 @@
               android:fitsSystemWindows="false"
               android:orientation="vertical">
 
-    <include layout="@layout/status_placeholer"/>
+    <include layout="@layout/status_placeholder"/>
 
     <android.support.design.widget.CoordinatorLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

@@ -2,13 +2,15 @@ package com.juniperphoton.myersplash.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.juniperphoton.flipperviewlib.FlipperView;
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.model.DownloadItem;
@@ -18,26 +20,24 @@ import com.juniperphoton.myersplash.utils.Params;
 import com.juniperphoton.myersplash.widget.DownloadCompleteView;
 import com.juniperphoton.myersplash.widget.DownloadRetryView;
 import com.juniperphoton.myersplash.widget.DownloadingView;
-import com.juniperphoton.myersplash.widget.RippleToggleLayout;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdapter.DownloadItemViewHolder> {
+import static com.juniperphoton.myersplash.model.DownloadItem.DISPLAY_STATUS_NOT_SPECIFIED;
 
+public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdapter.DownloadItemViewHolder> {
     private Context mContext;
     private List<DownloadItem> mData;
 
     private DownloadStateChangedCallback mCallback;
 
-    private final static String UPDATE_PROGRESS_PAYLOAD = "UPDATE_PROGRESS_PAYLOAD";
     private final static int ITEM = 1;
     private final static int FOOTER = 1 << 1;
 
-    public DownloadsListAdapter(ArrayList<DownloadItem> data, Context context) {
+    public DownloadsListAdapter(List<DownloadItem> data, Context context) {
         mData = data;
         mContext = context;
     }
@@ -50,10 +50,10 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
             ViewGroup.LayoutParams params = view.getLayoutParams();
             params.height = (int) (width / 1.7d);
             view.setLayoutParams(params);
-            return new DownloadItemViewHolder(view, viewType);
+            return new DownloadItemViewHolder(view);
         } else if (viewType == FOOTER) {
             View footer = LayoutInflater.from(mContext).inflate(R.layout.row_footer_blank, parent, false);
-            return new DownloadItemViewHolder(footer, viewType);
+            return new DownloadItemViewHolder(footer);
         }
         return null;
     }
@@ -65,32 +65,36 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
         }
         final DownloadItem item = mData.get(holder.getAdapterPosition());
 
-        holder.DownloadCompleteView.setFilePath(item.getFilePath());
-        holder.DownloadCompleteView.setThemeBackColor(item.getColor());
+        holder.downloadCompleteView.setFilePath(item.getFilePath());
+        holder.downloadCompleteView.setThemeBackColor(item.getColor());
 
-        holder.DraweeView.setImageURI(item.getThumbUrl());
-        holder.ProgressStrTV.setText(item.getProgressStr());
+        holder.draweeView.setImageURI(item.getThumbUrl());
+        holder.downloadingView.setProgress(item.getProgress());
 
-        holder.DownloadRetryView.setThemeBackColor(item.getColor());
-        holder.DownloadRetryView.setOnClickDeleteListener(new View.OnClickListener() {
+        holder.downloadRetryView.setThemeBackColor(item.getColor());
+        holder.downloadRetryView.setOnClickDeleteListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                removeItem(item);
-                notifyItemRemoved(holder.getAdapterPosition());
+                try {
+                    mData.remove(holder.getAdapterPosition());
+                    notifyItemRemoved(holder.getAdapterPosition());
 
-                Intent intent = new Intent(App.getInstance(), BackgroundDownloadService.class);
-                intent.putExtra(Params.CANCELED_KEY, true);
-                intent.putExtra(Params.URL_KEY, item.getDownloadUrl());
-                mContext.startService(intent);
+                    Intent intent = new Intent(App.getInstance(), BackgroundDownloadService.class);
+                    intent.putExtra(Params.CANCELED_KEY, true);
+                    intent.putExtra(Params.URL_KEY, item.getDownloadUrl());
+                    mContext.startService(intent);
 
-                DownloadItemTransactionHelper.delete(item);
+                    DownloadItemTransactionHelper.delete(item);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
-        holder.DownloadRetryView.setOnClickRetryListener(new View.OnClickListener() {
+        holder.downloadRetryView.setOnClickRetryListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DownloadItemTransactionHelper.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_DOWNLOADING);
-                holder.RippleToggleView.toggleTo(item.getStatus());
+                holder.flipperView.next(item.getStatus());
 
                 Intent intent = new Intent(mContext, BackgroundDownloadService.class);
                 intent.putExtra(Params.NAME_KEY, item.getFileName());
@@ -99,13 +103,13 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
             }
         });
 
-        holder.DownloadingView.setProgress(item.getProgress());
-        holder.DownloadingView.setThemeBackColor(item.getColor());
-        holder.DownloadingView.setClickCancelListener(new View.OnClickListener() {
+        holder.downloadingView.setProgress(item.getProgress());
+        holder.downloadingView.setThemeBackColor(item.getColor());
+        holder.downloadingView.setClickCancelListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DownloadItemTransactionHelper.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_FAILED);
-                holder.RippleToggleView.toggleTo(item.getStatus());
+                holder.flipperView.next(item.getStatus());
 
                 Intent intent = new Intent(App.getInstance(), BackgroundDownloadService.class);
                 intent.putExtra(Params.CANCELED_KEY, true);
@@ -113,15 +117,14 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
                 mContext.startService(intent);
             }
         });
-        holder.RippleToggleView.toggleTo(item.getStatus());
-    }
 
-    @Override
-    public void onBindViewHolder(DownloadItemViewHolder holder, int position, List<Object> payloads) {
-        super.onBindViewHolder(holder, position, payloads);
-        if (payloads.contains(UPDATE_PROGRESS_PAYLOAD)) {
-            final DownloadItem item = mData.get(holder.getAdapterPosition());
-            holder.DownloadingView.setProgress(item.getProgress());
+        int last = item.getLastStatus();
+        if (last != item.getStatus() && last != DISPLAY_STATUS_NOT_SPECIFIED) {
+            holder.flipperView.next(item.getStatus());
+            item.syncStatus();
+        } else {
+            holder.flipperView.next(item.getStatus(), false);
+            item.syncStatus();
         }
     }
 
@@ -156,36 +159,37 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
     }
 
     public class DownloadItemViewHolder extends RecyclerView.ViewHolder {
+        @Nullable
         @BindView(R.id.row_download_item_dv)
-        SimpleDraweeView DraweeView;
+        SimpleDraweeView draweeView;
 
-        @BindView(R.id.row_download_item_rtv)
-        RippleToggleLayout RippleToggleView;
+        @Nullable
+        @BindView(R.id.row_download_flipper_view)
+        FlipperView flipperView;
 
-        @BindView(R.id.row_download_item_progress_tv)
-        TextView ProgressStrTV;
+        @Nullable
+        @BindView(R.id.row_downloading_view)
+        DownloadingView downloadingView;
 
-        DownloadingView DownloadingView;
-        DownloadRetryView DownloadRetryView;
-        DownloadCompleteView DownloadCompleteView;
+        @Nullable
+        @BindView(R.id.row_download_retry_view)
+        DownloadRetryView downloadRetryView;
 
-        public DownloadItemViewHolder(View itemView, int viewType) {
+        @Nullable
+        @BindView(R.id.row_download_complete_view)
+        DownloadCompleteView downloadCompleteView;
+
+        public DownloadItemViewHolder(View itemView) {
             super(itemView);
-            if (viewType == ITEM) {
-                ButterKnife.bind(this, itemView);
-                DownloadingView = new DownloadingView(mContext, null);
-                DownloadRetryView = new DownloadRetryView(mContext, null);
-                DownloadCompleteView = new DownloadCompleteView(mContext, null);
-
-                RippleToggleView.addViews(DownloadingView, DownloadRetryView, DownloadCompleteView);
-            }
+            ButterKnife.bind(this, itemView);
         }
     }
 
     public void updateItem(DownloadItem item) {
         int index = mData.indexOf(item);
         if (index >= 0 && index <= mData.size()) {
-            notifyItemChanged(index, UPDATE_PROGRESS_PAYLOAD);
+            Log.d("adapter", "notifyItemChanged:" + index);
+            notifyItemChanged(index);
         }
     }
 

@@ -1,12 +1,12 @@
 package com.juniperphoton.myersplash.model;
 
 import android.support.annotation.IntDef;
-import android.view.PixelCopy;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Ignore;
 import io.realm.annotations.PrimaryKey;
 
 public class DownloadItem extends RealmObject {
@@ -18,6 +18,8 @@ public class DownloadItem extends RealmObject {
     public static final int DOWNLOAD_STATUS_DOWNLOADING = 0;
     public static final int DOWNLOAD_STATUS_FAILED = 1;
     public static final int DOWNLOAD_STATUS_OK = 2;
+
+    public static final int DISPLAY_STATUS_NOT_SPECIFIED = -1;
 
     public static final String ID_KEY = "mId";
     public static final String DOWNLOAD_URL = "mDownloadUrl";
@@ -39,6 +41,9 @@ public class DownloadItem extends RealmObject {
 
     private String mFileName;
 
+    @Ignore
+    private int mDisplayStatus = DISPLAY_STATUS_NOT_SPECIFIED;
+
     public DownloadItem(String id, String thumbUrl, String downloadUrl, String fileName) {
         mId = id;
         mThumbUrl = thumbUrl;
@@ -49,6 +54,14 @@ public class DownloadItem extends RealmObject {
 
     public DownloadItem() {
 
+    }
+
+    public int getLastStatus() {
+        return mDisplayStatus;
+    }
+
+    public void syncStatus() {
+        mDisplayStatus = mStatus;
     }
 
     public String getFileName() {

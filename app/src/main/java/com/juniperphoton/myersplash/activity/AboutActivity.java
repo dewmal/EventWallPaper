@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
@@ -16,21 +14,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import moe.feng.alipay.zerosdk.AlipayZeroSdk;
-import moe.feng.material.statusbar.StatusBarCompat;
 
-public class AboutActivity extends AppCompatActivity {
+public class AboutActivity extends BaseActivity {
     @BindView(R.id.version_tv)
     TextView mVersionTextView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        StatusBarCompat.setUpActivity(this);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-
         setContentView(R.layout.activity_about);
-
         ButterKnife.bind(this);
 
         updateVersion();

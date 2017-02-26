@@ -14,4 +14,9 @@ public class ColorUtil {
         int b = Color.blue(color);
         return 0.299 * r + 0.587 * g + 0.114 * b;
     }
+
+    public static int getDarkerColor(int color, float alpha) {
+        return Color.rgb((int) (Color.red(color) * alpha), (int) (Color.green(color) * alpha),
+                (int) (Color.blue(color) * alpha));
+    }
 }

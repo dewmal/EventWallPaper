@@ -1,6 +1,7 @@
 package com.juniperphoton.myersplash.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -17,7 +18,9 @@ import com.juniperphoton.myersplash.service.BackgroundDownloadService;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.io.OutputStream;
 import java.util.Date;
 
@@ -40,7 +43,7 @@ public class DownloadUtil {
                 inputStream = body.byteStream();
                 outputStream = new FileOutputStream(fileToSave);
 
-                byte[] fileReader = new byte[4096];
+                byte[] buffer = new byte[4096];
 
                 long fileSize = body.contentLength();
                 long fileSizeDownloaded = 0;
@@ -48,13 +51,13 @@ public class DownloadUtil {
                 int progressToReport = 0;
 
                 while (true) {
-                    int read = inputStream.read(fileReader);
+                    int read = inputStream.read(buffer);
 
                     if (read == -1) {
                         break;
                     }
 
-                    outputStream.write(fileReader, 0, read);
+                    outputStream.write(buffer, 0, read);
 
                     fileSizeDownloaded += read;
 
@@ -75,7 +78,6 @@ public class DownloadUtil {
                             }
                         });
                     }
-                    //Log.d(TAG, "progress: " + progress + ",last:" + progressToReport);
                 }
                 long endTime = new Date().getTime();
 
@@ -83,35 +85,42 @@ public class DownloadUtil {
 
                 outputStream.flush();
 
-                //NotificationUtil.showCompleteNotification(Uri.parse(url), Uri.fromFile(fileToSave));
-
                 return fileToSave;
+            } catch (InterruptedIOException e0) {
+                return null;
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
             } finally {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
+                try {
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
 
-                if (outputStream != null) {
-                    outputStream.close();
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
+                    new SingleMediaScanner(App.getInstance(), fileToSave);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                new SingleMediaScanner(App.getInstance(), fileToSave);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            ToastService.sendShortToast(e.getMessage());
             return null;
         }
     }
 
     public static File getFileToSave(String expectedName) {
+        String galleryPath = getGalleryPath();
+        if (galleryPath == null) {
+            return null;
+        }
         File folder = new File(getGalleryPath());
         if (!folder.exists()) {
             folder.mkdirs();
         }
-        File fileToSave = new File(folder + File.separator + expectedName);
-        return fileToSave;
+        return new File(folder + File.separator + expectedName);
     }
 
     /**
@@ -173,12 +182,16 @@ public class DownloadUtil {
                 e.printStackTrace();
                 return false;
             } finally {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
+                try {
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
 
-                if (outputStream != null) {
-                    outputStream.close();
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         } catch (Exception e) {
@@ -187,6 +200,13 @@ public class DownloadUtil {
         }
 
         return true;
+    }
+
+    public static void cancelDownload(Context context, UnsplashImage image) {
+        Intent intent = new Intent(App.getInstance(), BackgroundDownloadService.class);
+        intent.putExtra(Params.CANCELED_KEY, true);
+        intent.putExtra(Params.URL_KEY, image.getDownloadUrl());
+        context.startService(intent);
     }
 
     public static void checkAndDownload(final Activity context, final UnsplashImage image) {
@@ -217,16 +237,25 @@ public class DownloadUtil {
         }
     }
 
-    private static void startDownloadService(final Activity context, UnsplashImage image) {
-        String fixedUrl = fixUri(image.getDownloadUrl());
+    public static DownloadItem getDownloadItemById(String id) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
+        DownloadItem item = realm.where(DownloadItem.class)
+                .equalTo(DownloadItem.ID_KEY, id)
+                .findFirst();
+        realm.commitTransaction();
+        return item;
+    }
 
+    private static void startDownloadService(final Activity context, UnsplashImage image) {
         Intent intent = new Intent(context, BackgroundDownloadService.class);
         intent.putExtra(Params.NAME_KEY, image.getFileNameForDownload());
-        intent.putExtra(Params.URL_KEY, fixedUrl);
+        intent.putExtra(Params.URL_KEY, image.getDownloadUrl());
         context.startService(intent);
+
         ToastService.sendShortToast(context.getString(R.string.downloading_in_background));
 
-        final DownloadItem item = new DownloadItem(image.getId(), image.getListUrl(), fixedUrl,
+        final DownloadItem item = new DownloadItem(image.getId(), image.getListUrl(), image.getDownloadUrl(),
                 image.getFileNameForDownload());
         item.setColor(image.getThemeColor());
         Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
@@ -235,13 +264,5 @@ public class DownloadUtil {
                 realm.copyToRealmOrUpdate(item);
             }
         });
-    }
-
-    private static String fixUri(String url) {
-        String outputUrl = url;
-        if (outputUrl.endsWith("/")) {
-            outputUrl = outputUrl.substring(0, outputUrl.length() - 1);
-        }
-        return outputUrl;
     }
 }

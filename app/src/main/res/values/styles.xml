@@ -1,4 +1,5 @@
 <resources>
+
     <style name="AppBaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">#c2000000</item>
@@ -7,6 +8,7 @@
         <item name="actionBarStyle">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
         <item name="android:actionBarStyle">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
     </style>
+
     <style name="AppTheme" parent="AppBaseTheme">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowContentTransitions">true</item>
@@ -24,4 +26,12 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="PivotItem">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:gravity">center</item>
+    </style>
 </resources>

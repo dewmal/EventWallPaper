@@ -12,4 +12,5 @@
     <color name="MyerSplashDark">#1d1d1d</color>
     <color name="SettingBackground">#FF151515</color>
     <color name="MaskColor">#cc000000</color>
+    <color name="HintColor">#afafaf</color>
 </resources>

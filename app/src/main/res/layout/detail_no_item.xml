@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:cardview="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
+    android:layout_marginBottom="50dp"
     android:orientation="vertical"
     android:visibility="gone">
 
@@ -13,43 +13,35 @@
         android:layout_gravity="center_horizontal"
         android:alpha="0.5"
         android:fontFamily="sans-serif-light"
-        android:text="@string/no_item"
+        android:text="Uh oh :-("
         android:textColor="@android:color/white"
-        android:textSize="50sp" />
+        android:textSize="40sp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:alpha="0.2"
+        android:alpha="0.5"
         android:fontFamily="sans-serif-light"
-        android:text="@string/search_by_other_keywords"
+        android:text="No items. Please refresh again."
         android:textColor="@android:color/white"
-        android:textSize="15sp" />
+        android:textSize="20sp" />
 
-    <android.support.v7.widget.CardView
+    <FrameLayout
+        android:id="@+id/no_item_retry_btn"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
         android:layout_marginTop="12dp"
-        cardview:cardBackgroundColor="@color/MyerSplashThemeColor"
-        cardview:cardElevation="0dp">
+        android:foreground="@drawable/ripple_rect">
 
-        <RelativeLayout
-            android:id="@+id/no_item_back_rl"
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true">
+            android:background="@color/SettingBackground"
+            android:gravity="center"
+            android:text="RETRY"
+            android:textStyle="bold" />
+    </FrameLayout>
 
-            <TextView
-                android:id="@+id/no_item_back_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:textColor="@android:color/black"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-        </RelativeLayout>
-
-    </android.support.v7.widget.CardView>
 </LinearLayout>

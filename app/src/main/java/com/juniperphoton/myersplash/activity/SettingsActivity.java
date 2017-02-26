@@ -4,9 +4,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.CompoundButton;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -21,43 +19,38 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
-import moe.feng.material.statusbar.StatusBarCompat;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity {
     private final static String TAG = "SettingsActivity";
 
-    private String[] savingStrings;
+    private String[] mSavingStrings;
 
-    private String[] loadingStrings;
+    private String[] mLoadingStrings;
 
     @BindView(R.id.setting_save_quality)
-    SettingsItemLayout savingQualityItem;
+    SettingsItemLayout mSavingQualityItem;
 
     @BindView(R.id.setting_load_quality)
-    SettingsItemLayout loadingQualityItem;
+    SettingsItemLayout mLoadingQualityItem;
 
     @BindView(R.id.setting_clear_cache)
-    SettingsItemLayout clearCacheItem;
+    SettingsItemLayout mClearCacheItem;
 
     @BindView(R.id.setting_quick_download)
-    SettingsItemLayout quickDownloadItem;
+    SettingsItemLayout mQuickDownloadItem;
 
     @BindView(R.id.setting_scroll_appbar)
-    SettingsItemLayout scrollBarItem;
+    SettingsItemLayout mScrollBarItem;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        StatusBarCompat.setUpActivity(this);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
 
         boolean quickDownload = LocalSettingHelper.getBoolean(this, Constant.QUICK_DOWNLOAD_CONFIG_NAME, false);
-        quickDownloadItem.setChecked(quickDownload);
-        quickDownloadItem.setOnCheckedListener(new CompoundButton.OnCheckedChangeListener() {
+        mQuickDownloadItem.setChecked(quickDownload);
+        mQuickDownloadItem.setOnCheckedListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 LocalSettingHelper.putBoolean(SettingsActivity.this, Constant.QUICK_DOWNLOAD_CONFIG_NAME, isChecked);
@@ -65,37 +58,37 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         boolean scrollBar = LocalSettingHelper.getBoolean(this, Constant.SCROLL_TOOLBAR, true);
-        scrollBarItem.setChecked(scrollBar);
-        scrollBarItem.setOnCheckedListener(new CompoundButton.OnCheckedChangeListener() {
+        mScrollBarItem.setChecked(scrollBar);
+        mScrollBarItem.setOnCheckedListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 LocalSettingHelper.putBoolean(SettingsActivity.this, Constant.SCROLL_TOOLBAR, isChecked);
             }
         });
 
-        savingStrings = new String[]{getString(R.string.SavingHighest),
+        mSavingStrings = new String[]{getString(R.string.SavingHighest),
                 getString(R.string.SavingHigh), getString(R.string.SavingMedium)};
 
-        loadingStrings = new String[]{getString(R.string.LoadingLarge),
+        mLoadingStrings = new String[]{getString(R.string.LoadingLarge),
                 getString(R.string.LoadingSmall), getString(R.string.LoadingThumbnail)};
 
         final int savingChoice = LocalSettingHelper.getInt(this, Constant.SAVING_QUALITY_CONFIG_NAME, 1);
-        savingQualityItem.setContent(savingStrings[savingChoice]);
+        mSavingQualityItem.setContent(mSavingStrings[savingChoice]);
 
         final int loadingChoice = LocalSettingHelper.getInt(this, Constant.LOADING_QUALITY_CONFIG_NAME, 0);
-        loadingQualityItem.setContent(loadingStrings[loadingChoice]);
+        mLoadingQualityItem.setContent(mLoadingStrings[loadingChoice]);
     }
 
     @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.setting_quick_download)
     public void toggleQuickDownload(View view) {
-        quickDownloadItem.setChecked(!quickDownloadItem.getChecked());
+        mQuickDownloadItem.setChecked(!mQuickDownloadItem.getChecked());
     }
 
     @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.setting_scroll_appbar)
     public void toggleToolbarScrolling(View view) {
-        scrollBarItem.setChecked(!scrollBarItem.getChecked());
+        mScrollBarItem.setChecked(!mScrollBarItem.getChecked());
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -103,7 +96,7 @@ public class SettingsActivity extends AppCompatActivity {
     public void clearUp(View view) {
         Fresco.getImagePipeline().clearCaches();
         ToastService.sendShortToast("All clear :D");
-        clearCacheItem.setContent("0 MB");
+        mClearCacheItem.setContent("0 MB");
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -125,13 +118,13 @@ public class SettingsActivity extends AppCompatActivity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
         builder.setTitle(getString(R.string.SavingQuality));
-        builder.setSingleChoiceItems(savingStrings, choice,
+        builder.setSingleChoiceItems(mSavingStrings, choice,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         LocalSettingHelper.putInt(SettingsActivity.this, Constant.SAVING_QUALITY_CONFIG_NAME, which);
                         dialog.dismiss();
-                        savingQualityItem.setContent(savingStrings[which]);
+                        mSavingQualityItem.setContent(mSavingStrings[which]);
                     }
                 });
         builder.show();
@@ -144,13 +137,13 @@ public class SettingsActivity extends AppCompatActivity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
         builder.setTitle(getString(R.string.LoadingQuality));
-        builder.setSingleChoiceItems(loadingStrings, choice,
+        builder.setSingleChoiceItems(mLoadingStrings, choice,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         LocalSettingHelper.putInt(SettingsActivity.this, Constant.LOADING_QUALITY_CONFIG_NAME, which);
                         dialog.dismiss();
-                        loadingQualityItem.setContent(loadingStrings[which]);
+                        mLoadingQualityItem.setContent(mLoadingStrings[which]);
                     }
                 });
         builder.show();
@@ -159,7 +152,6 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        clearCacheItem.setContent(String.valueOf(ImagePipelineFactory.getInstance().getMainFileCache().getSize() / 1024 / 1024) + " MB");
+        mClearCacheItem.setContent(String.valueOf(ImagePipelineFactory.getInstance().getMainFileCache().getSize() / 1024 / 1024) + " MB");
     }
 }

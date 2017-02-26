@@ -1,0 +1,68 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/detail_search_root_rl"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#d9000000"
+    android:clickable="true"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/search_box"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginTop="36dp"
+        android:background="@android:color/white">
+
+        <EditText
+            android:id="@+id/detail_search_et"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="50dp"
+            android:background="@android:color/white"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:hint="@string/search_in_english"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:paddingStart="12dp"
+            android:textColor="@android:color/black"
+            android:textColorHint="@color/HintColor"
+            android:textCursorDrawable="@drawable/cursor"
+            android:textSize="15sp"
+            tools:text="Lake" />
+
+        <RelativeLayout
+            android:id="@+id/detail_search_btn_rl"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:background="?attr/selectableItemBackground">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_centerInParent="true"
+                android:contentDescription="@string/ImageDescDefault"
+                android:src="@drawable/vector_ic_search" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/search_result_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/search_box" />
+
+    <!--<android.support.v7.widget.RecyclerView-->
+    <!--android:id="@+id/search_recommendation_list"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_below="@id/search_box" />-->
+
+    <com.juniperphoton.myersplash.widget.ImageDetailView
+        android:id="@+id/search_detail_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</RelativeLayout>
