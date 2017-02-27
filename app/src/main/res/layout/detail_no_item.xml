@@ -13,7 +13,7 @@
         android:layout_gravity="center_horizontal"
         android:alpha="0.5"
         android:fontFamily="sans-serif-light"
-        android:text="Uh oh :-("
+        android:text="@string/uh_oh"
         android:textColor="@android:color/white"
         android:textSize="40sp" />
 
@@ -23,7 +23,7 @@
         android:layout_gravity="center_horizontal"
         android:alpha="0.5"
         android:fontFamily="sans-serif-light"
-        android:text="No items. Please refresh again."
+        android:text="@string/no_items_please_try_again"
         android:textColor="@android:color/white"
         android:textSize="20sp" />
 
@@ -40,7 +40,7 @@
             android:layout_height="match_parent"
             android:background="@color/SettingBackground"
             android:gravity="center"
-            android:text="RETRY"
+            android:text="@string/retry"
             android:textStyle="bold" />
     </FrameLayout>
 
