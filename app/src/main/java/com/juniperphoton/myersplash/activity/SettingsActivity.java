@@ -11,15 +11,19 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineFactory;
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.common.Constant;
+import com.juniperphoton.myersplash.event.RefreshAllEvent;
 import com.juniperphoton.myersplash.utils.LocalSettingHelper;
 import com.juniperphoton.myersplash.utils.ToastService;
 import com.juniperphoton.myersplash.widget.SettingsItemLayout;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
 
+@SuppressWarnings("UnusedDeclaration")
 public class SettingsActivity extends BaseActivity {
     private final static String TAG = "SettingsActivity";
 
@@ -79,27 +83,25 @@ public class SettingsActivity extends BaseActivity {
         mLoadingQualityItem.setContent(mLoadingStrings[loadingChoice]);
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.setting_quick_download)
     public void toggleQuickDownload(View view) {
         mQuickDownloadItem.setChecked(!mQuickDownloadItem.getChecked());
+        EventBus.getDefault().post(new RefreshAllEvent());
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.setting_scroll_appbar)
     public void toggleToolbarScrolling(View view) {
         mScrollBarItem.setChecked(!mScrollBarItem.getChecked());
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.setting_clear_cache)
     public void clearUp(View view) {
         Fresco.getImagePipeline().clearCaches();
         ToastService.sendShortToast("All clear :D");
         mClearCacheItem.setContent("0 MB");
+        EventBus.getDefault().post(new RefreshAllEvent());
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.setting_clear_database)
     public void clearDatabase(View view) {
         ToastService.sendShortToast("All clear :D");
@@ -111,7 +113,6 @@ public class SettingsActivity extends BaseActivity {
         });
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.setting_save_quality)
     void setSavingQuality(View view) {
         final int choice = LocalSettingHelper.getInt(this, Constant.SAVING_QUALITY_CONFIG_NAME, 1);
@@ -130,7 +131,6 @@ public class SettingsActivity extends BaseActivity {
         builder.show();
     }
 
-    @SuppressWarnings("UnusedDeclaration")
     @OnClick(R.id.setting_load_quality)
     void setLoadingQuality(View view) {
         final int choice = LocalSettingHelper.getInt(this, Constant.LOADING_QUALITY_CONFIG_NAME, 0);

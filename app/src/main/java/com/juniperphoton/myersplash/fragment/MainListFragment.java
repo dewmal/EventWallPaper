@@ -18,6 +18,7 @@ import com.juniperphoton.myersplash.adapter.PhotoAdapter;
 import com.juniperphoton.myersplash.callback.OnClickQuickDownloadCallback;
 import com.juniperphoton.myersplash.callback.OnLoadMoreListener;
 import com.juniperphoton.myersplash.cloudservice.CloudService;
+import com.juniperphoton.myersplash.event.RefreshAllEvent;
 import com.juniperphoton.myersplash.event.RequestSearchEvent;
 import com.juniperphoton.myersplash.event.ScrollToTopEvent;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
@@ -29,12 +30,10 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import rx.Subscriber;
 
 public class MainListFragment extends Fragment implements OnLoadMoreListener, OnClickQuickDownloadCallback {
@@ -160,6 +159,7 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
         mRetryBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                updateNoItemVisibility(false);
                 loadPhotoList();
             }
         });
@@ -269,6 +269,14 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
             if (event.requestRefresh) {
                 requestRefresh();
             }
+        }
+    }
+
+    @SuppressWarnings("unused")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(RefreshAllEvent event) {
+        if (mAdapter != null) {
+            mAdapter.notifyDataSetChanged();
         }
     }
 
