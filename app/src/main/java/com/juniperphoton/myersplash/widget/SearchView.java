@@ -1,8 +1,11 @@
 package com.juniperphoton.myersplash.widget;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.graphics.RectF;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -21,6 +24,7 @@ import com.juniperphoton.myersplash.event.RequestSearchEvent;
 import com.juniperphoton.myersplash.fragment.MainListFragment;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
+import com.juniperphoton.myersplash.utils.AnimatorListenerImpl;
 import com.juniperphoton.myersplash.utils.ToastService;
 
 import org.greenrobot.eventbus.EventBus;
@@ -52,6 +56,12 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
     @BindView(R.id.search_detail_view)
     ImageDetailView mDetailView;
 
+    @BindView(R.id.detail_search_btn)
+    View mSearchBtn;
+
+    @BindView(R.id.detail_clear_btn)
+    View mClearBtn;
+
 //    @BindView(R.id.search_recommendation_list)
 //    RecyclerView mList;
 
@@ -63,15 +73,16 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
     static {
         sSearchCategory.setId(UnsplashCategory.SEARCH_ID);
 
-        sCategoryList.add(UnsplashCategory.getSearchCategory("Buildings"));
-        sCategoryList.add(UnsplashCategory.getSearchCategory("Food"));
-        sCategoryList.add(UnsplashCategory.getSearchCategory("Nature"));
-        sCategoryList.add(UnsplashCategory.getSearchCategory("Objects"));
-        sCategoryList.add(UnsplashCategory.getSearchCategory("People"));
-        sCategoryList.add(UnsplashCategory.getSearchCategory("Tech"));
+//        sCategoryList.add(UnsplashCategory.getSearchCategory("Buildings"));
+//        sCategoryList.add(UnsplashCategory.getSearchCategory("Food"));
+//        sCategoryList.add(UnsplashCategory.getSearchCategory("Nature"));
+//        sCategoryList.add(UnsplashCategory.getSearchCategory("Objects"));
+//        sCategoryList.add(UnsplashCategory.getSearchCategory("People"));
+//        sCategoryList.add(UnsplashCategory.getSearchCategory("Tech"));
     }
 
     private MainListFragment mFragment;
+    private boolean mAnimating;
 
     public SearchView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -99,6 +110,29 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
             }
         });
 
+        mEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (mEditText.getText() != null && !mEditText.getText().toString().equals("")) {
+                    if (mSearchBtn.getScaleX() != 1) {
+                        toggleButtons(true, true);
+                    }
+                } else {
+                    if (mSearchBtn.getScaleX() != 0) {
+                        //toggleButtons(false, true);
+                    }
+                }
+            }
+        });
+
         AppCompatActivity activity = (AppCompatActivity) context;
         mFragment = new MainListFragment();
         mFragment.setCategory(sSearchCategory, new MainListFragment.Callback() {
@@ -122,6 +156,29 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
         //initSearchRecommendation();
     }
 
+    private void toggleButtons(final boolean show, final boolean animation) {
+        if (!animation) {
+            mSearchBtn.setScaleX(show ? 1f : 0f);
+            mSearchBtn.setScaleY(show ? 1f : 0f);
+            mClearBtn.setScaleX(show ? 1f : 0f);
+            mClearBtn.setScaleY(show ? 1f : 0f);
+        } else {
+            if (mAnimating) return;
+            mAnimating = true;
+            mSearchBtn.animate().scaleX(show ? 1f : 0f).scaleY(show ? 1f : 0f).setDuration(200)
+                    .setStartDelay(100)
+                    .setListener(new AnimatorListenerImpl() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            mAnimating = false;
+                        }
+                    })
+                    .start();
+            mClearBtn.animate().scaleX(show ? 1f : 0f).scaleY(show ? 1f : 0f).setDuration(200)
+                    .start();
+        }
+    }
+
 //    private void initSearchRecommendation() {
 //        mList.setLayoutManager(new GridLayoutManager(mContext, 3));
 //        mAdapter = new SearchTextAdapter(mContext);
@@ -131,11 +188,13 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
 
     public void onShowing() {
         mFragment.register();
+        toggleButtons(false, false);
     }
 
     public void onHiding() {
         mFragment.unregister();
         hideKeyboard();
+        toggleButtons(false, false);
     }
 
     public void clear() {
@@ -152,7 +211,7 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
         imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
     }
 
-    @OnClick(R.id.detail_search_btn_rl)
+    @OnClick(R.id.detail_search_btn)
     void onClickSearch() {
         hideKeyboard();
         Log.d(TAG, "onClickSearch");
@@ -161,6 +220,12 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
             return;
         }
         EventBus.getDefault().post(new RequestSearchEvent(mEditText.getText().toString()));
+    }
+
+    @OnClick(R.id.detail_clear_btn)
+    void onClickClear() {
+        mEditText.setText("");
+        toggleButtons(false, true);
     }
 
     public boolean tryHide() {
