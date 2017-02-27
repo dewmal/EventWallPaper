@@ -99,14 +99,23 @@ public class UnsplashImage implements Serializable {
     }
 
     public boolean hasDownloaded() {
-        String path = DownloadUtil.getGalleryPath() + File.separator + getFileNameForDownload();
+        String path = getPathForDownload();
         File file = new File(path);
         boolean exist = file.exists();
         if (exist) {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            Bitmap bitmap = BitmapFactory.decodeFile(path, options);
-            return bitmap != null && options.outWidth != -1 && options.outHeight != -1;
+            try {
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 20;
+                Bitmap bitmap = BitmapFactory.decodeFile(path, options);
+                boolean valid = bitmap != null;
+                if (bitmap != null) {
+                    bitmap.recycle();
+                }
+                return valid;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
         }
         return false;
     }

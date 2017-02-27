@@ -142,7 +142,6 @@ public class ImageDetailView extends FrameLayout {
                     break;
                 case DownloadItem.DOWNLOAD_STATUS_FAILED:
                     mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD);
-                    ToastService.sendShortToast(mContext.getString(R.string.failed_to_download));
                     break;
                 case DownloadItem.DOWNLOAD_STATUS_OK:
                     mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK);
@@ -563,6 +562,7 @@ public class ImageDetailView extends FrameLayout {
         }
 
         mNameTextView.setText(unsplashImage.getUserName());
+        mProgressView.setProgress(5);
 
         int backColor = unsplashImage.getThemeColor();
         if (!ColorUtil.isColorLight(backColor)) {
@@ -603,7 +603,9 @@ public class ImageDetailView extends FrameLayout {
                 case DownloadItem.DOWNLOAD_STATUS_FAILED:
                     break;
                 case DownloadItem.DOWNLOAD_STATUS_OK:
-                    mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK);
+                    if (mClickedImage.hasDownloaded()) {
+                        mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK);
+                    }
                     break;
             }
             associateWithDownloadItem(mAssociatedDownloadItem);
