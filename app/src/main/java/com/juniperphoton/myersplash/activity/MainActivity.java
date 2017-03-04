@@ -119,8 +119,10 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                 if ((Math.abs(verticalOffset) - appBarLayout.getHeight()) == 0) {
                     mTagView.animate().alpha(1f).setDuration(400).start();
+                    mSearchFAB.hide();
                 } else {
                     mTagView.animate().alpha(0f).setDuration(200).start();
+                    mSearchFAB.show();
                 }
             }
         });
@@ -311,12 +313,10 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
 
     @Override
     public void onScrollHide() {
-        mSearchFAB.hide();
     }
 
     @Override
     public void onScrollShow() {
-        mSearchFAB.show();
     }
 
     @Override
