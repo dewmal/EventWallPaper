@@ -122,13 +122,13 @@ public class PivotTitleBar extends FrameLayout {
     public String getSelectedString(){
         switch (mSelectedItem){
             case 0:
-                return UnsplashCategory.FEATURE_S;
+                return UnsplashCategory.FEATURE_S.toUpperCase();
             case 1:
-                return UnsplashCategory.NEW_S;
+                return UnsplashCategory.NEW_S.toUpperCase();
             case 2:
-                return UnsplashCategory.RANDOM_S;
+                return UnsplashCategory.RANDOM_S.toUpperCase();
             default:
-                return UnsplashCategory.NEW_S;
+                return UnsplashCategory.NEW_S.toUpperCase();
         }
     }
 
