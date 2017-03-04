@@ -9,8 +9,8 @@ android {
         applicationId "com.juniperphoton.myersplash"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 55
-        versionName "2.0.1"
+        versionCode 60
+        versionName "2.1.0"
     }
 }
 
