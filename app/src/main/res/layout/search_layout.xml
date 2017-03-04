@@ -1,90 +1,109 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/detail_search_root_rl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#d9000000"
-    android:clickable="true"
-    android:orientation="vertical">
+    android:background="#d9000000">
 
-    <RelativeLayout
-        android:id="@+id/search_box"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/search_toolbar_layout"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="12dp"
-        android:layout_marginTop="36dp"
-        android:background="@android:color/white">
+        android:layout_height="wrap_content"
+        android:background="@color/SettingBackground"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <EditText
-            android:id="@+id/detail_search_et"
+        <RelativeLayout
+            android:id="@+id/search_box"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="100dp"
-            android:background="@android:color/white"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:hint="@string/search_in_english"
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:maxLines="1"
-            android:paddingStart="12dp"
-            android:textColor="@android:color/black"
-            android:textColorHint="@color/HintColor"
-            android:textCursorDrawable="@drawable/cursor"
-            android:textSize="15sp"
-            tools:text="Lake" />
-
-        <LinearLayout
-            android:layout_width="100dp"
             android:layout_height="50dp"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/ripple">
+            android:layout_marginTop="30dp"
+            android:background="@android:color/white"
+            app:layout_scrollFlags="scroll|enterAlways">
 
-            <FrameLayout
-                android:id="@+id/detail_clear_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackgroundBorderless">
+            <EditText
+                android:id="@+id/detail_search_et"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="100dp"
+                android:background="@color/SettingBackground"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:hint="@string/search_in_english"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingStart="12dp"
+                android:textColor="@android:color/white"
+                android:textColorHint="@color/HintColor"
+                android:textCursorDrawable="@drawable/cursor"
+                android:textSize="15sp"
+                tools:text="Lake" />
 
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center_vertical"
-                    android:padding="10dp"
-                    android:src="@drawable/ic_close" />
-            </FrameLayout>
+            <LinearLayout
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_alignParentRight="true"
+                android:background="@color/SettingBackground">
 
-            <FrameLayout
-                android:id="@+id/detail_search_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?attr/selectableItemBackgroundBorderless">
+                <FrameLayout
+                    android:id="@+id/detail_clear_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless">
 
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="center_vertical"
-                    android:padding="10dp"
-                    android:src="@drawable/vector_ic_search" />
-            </FrameLayout>
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center_vertical"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_close" />
+                </FrameLayout>
 
-        </LinearLayout>
-    </RelativeLayout>
+                <FrameLayout
+                    android:id="@+id/detail_search_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center_vertical"
+                        android:padding="10dp"
+                        android:src="@drawable/vector_ic_search_white" />
+                </FrameLayout>
+
+            </LinearLayout>
+        </RelativeLayout>
+    </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
         android:id="@+id/search_result_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/search_box" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <!--<android.support.v7.widget.RecyclerView-->
-    <!--android:id="@+id/search_recommendation_list"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_below="@id/search_box" />-->
+    <TextView
+        android:id="@+id/search_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="40dp"
+        android:alpha="0"
+        android:background="@android:color/black"
+        android:paddingBottom="4dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="4dp"
+        tools:text="# LAKE"
+        android:textColor="@android:color/white"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        tools:alpha="1" />
 
     <com.juniperphoton.myersplash.widget.ImageDetailView
         android:id="@+id/search_detail_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

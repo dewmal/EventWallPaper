@@ -9,14 +9,12 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter;
 import com.juniperphoton.myersplash.common.Constant;
-import com.juniperphoton.myersplash.common.RandomIntentStatus;
 import com.juniperphoton.myersplash.event.ScrollToTopEvent;
 import com.juniperphoton.myersplash.fragment.MainListFragment;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
@@ -147,8 +145,10 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
             @Override
             public void onAnimationEnd(Animator animation) {
                 if (!show) {
-                    mSearchView.clear();
+                    mSearchView.reset();
                     mSearchView.setVisibility(View.GONE);
+                } else {
+                    mSearchView.onShown();
                 }
             }
         });

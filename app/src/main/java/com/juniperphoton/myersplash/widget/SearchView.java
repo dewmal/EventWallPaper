@@ -3,6 +3,7 @@ package com.juniperphoton.myersplash.widget;
 import android.animation.Animator;
 import android.content.Context;
 import android.graphics.RectF;
+import android.support.design.widget.AppBarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,11 +13,12 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.adapter.SearchTextAdapter;
@@ -48,7 +50,7 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
     EditText mEditText;
 
     @BindView(R.id.detail_search_root_rl)
-    RelativeLayout mRootRL;
+    ViewGroup mRootRL;
 
     @BindView(R.id.search_result_root)
     FrameLayout mResultRoot;
@@ -62,8 +64,14 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
     @BindView(R.id.detail_clear_btn)
     View mClearBtn;
 
-//    @BindView(R.id.search_recommendation_list)
-//    RecyclerView mList;
+    @BindView(R.id.search_tag)
+    TextView mSearchTag;
+
+    @BindView(R.id.search_toolbar_layout)
+    AppBarLayout mAppBarLayout;
+
+    @BindView(R.id.search_box)
+    View mSearchBox;
 
     private SearchTextAdapter mAdapter;
 
@@ -72,13 +80,6 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
 
     static {
         sSearchCategory.setId(UnsplashCategory.SEARCH_ID);
-
-//        sCategoryList.add(UnsplashCategory.getSearchCategory("Buildings"));
-//        sCategoryList.add(UnsplashCategory.getSearchCategory("Food"));
-//        sCategoryList.add(UnsplashCategory.getSearchCategory("Nature"));
-//        sCategoryList.add(UnsplashCategory.getSearchCategory("Objects"));
-//        sCategoryList.add(UnsplashCategory.getSearchCategory("People"));
-//        sCategoryList.add(UnsplashCategory.getSearchCategory("Tech"));
     }
 
     private MainListFragment mFragment;
@@ -123,11 +124,11 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
             public void afterTextChanged(Editable s) {
                 if (mEditText.getText() != null && !mEditText.getText().toString().equals("")) {
                     if (mSearchBtn.getScaleX() != 1) {
-                        toggleButtons(true, true);
+                        toggleSearchButtons(true, true);
                     }
                 } else {
                     if (mSearchBtn.getScaleX() != 0) {
-                        //toggleButtons(false, true);
+                        //toggleSearchButtons(false, true);
                     }
                 }
             }
@@ -138,12 +139,12 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
         mFragment.setCategory(sSearchCategory, new MainListFragment.Callback() {
             @Override
             public void onScrollHide() {
-
+                //mSearchTag.animate().alpha(1f).setDuration(200).start();
             }
 
             @Override
             public void onScrollShow() {
-
+                //mSearchTag.animate().alpha(0f).setDuration(100).start();
             }
 
             @Override
@@ -153,10 +154,26 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
         });
         activity.getSupportFragmentManager().beginTransaction().replace(R.id.search_result_root, mFragment)
                 .commit();
-        //initSearchRecommendation();
+
+        mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                Log.d(TAG, "vertical offset=" + verticalOffset + ",height:" + appBarLayout.getHeight());
+                float fraction = Math.abs(verticalOffset) * 1.0f / appBarLayout.getHeight();
+                mSearchTag.setAlpha(fraction);
+            }
+        });
+
+        mSearchTag.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mAppBarLayout.offsetTopAndBottom(mAppBarLayout.getHeight());
+                mAppBarLayout.requestLayout();
+            }
+        });
     }
 
-    private void toggleButtons(final boolean show, final boolean animation) {
+    private void toggleSearchButtons(final boolean show, final boolean animation) {
         if (!animation) {
             mSearchBtn.setScaleX(show ? 1f : 0f);
             mSearchBtn.setScaleY(show ? 1f : 0f);
@@ -188,16 +205,28 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
 
     public void onShowing() {
         mFragment.register();
-        toggleButtons(false, false);
+        toggleSearchButtons(false, false);
     }
 
     public void onHiding() {
         mFragment.unregister();
         hideKeyboard();
-        toggleButtons(false, false);
+        toggleSearchButtons(false, false);
+        mSearchTag.animate().alpha(0).setDuration(100).start();
     }
 
-    public void clear() {
+    public void onShown() {
+        AppBarLayout.LayoutParams layoutParams = (AppBarLayout.LayoutParams) mSearchBox.getLayoutParams();
+        layoutParams.setScrollFlags(AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL
+                | AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS);
+        mSearchBox.setLayoutParams(layoutParams);
+    }
+
+    public void reset() {
+        AppBarLayout.LayoutParams layoutParams = (AppBarLayout.LayoutParams) mSearchBox.getLayoutParams();
+        layoutParams.setScrollFlags(0);
+        mSearchBox.setLayoutParams(layoutParams);
+        mFragment.scrollToTop();
         mFragment.clear();
         mEditText.setText("");
     }
@@ -219,13 +248,14 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
             ToastService.sendShortToast("Input the keyword to search.");
             return;
         }
+        mSearchTag.setText("# " + mEditText.getText().toString().toUpperCase());
         EventBus.getDefault().post(new RequestSearchEvent(mEditText.getText().toString()));
     }
 
     @OnClick(R.id.detail_clear_btn)
     void onClickClear() {
         mEditText.setText("");
-        toggleButtons(false, true);
+        toggleSearchButtons(false, true);
     }
 
     public boolean tryHide() {

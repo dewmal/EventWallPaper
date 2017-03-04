@@ -120,5 +120,4 @@ public class CloudService {
                 .observeOn(Schedulers.io())
                 .subscribe(subscriber);
     }
-
 }
