@@ -158,7 +158,6 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
         mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                Log.d(TAG, "vertical offset=" + verticalOffset + ",height:" + appBarLayout.getHeight());
                 float fraction = Math.abs(verticalOffset) * 1.0f / appBarLayout.getHeight();
                 mSearchTag.setAlpha(fraction);
             }
