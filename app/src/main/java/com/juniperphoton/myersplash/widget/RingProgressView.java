@@ -34,6 +34,9 @@ public class RingProgressView extends View {
 
     public void setProgress(final int value) {
         mProgress = value;
+        if (mProgress < 5) {
+            mProgress = 5;
+        }
         invalidate();
     }
 
