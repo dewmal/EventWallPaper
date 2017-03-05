@@ -17,17 +17,15 @@ public class RingProgressView extends View {
     private int mColor = Color.WHITE;
     private RectF mRect;
 
-    private Context mContext;
-
     public RingProgressView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
-
+        
         mPaint = new Paint();
         mPaint.setColor(mColor);
         mPaint.setStrokeWidth(STROKE_WIDTH);
         mPaint.setAntiAlias(true);
         mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeCap(Paint.Cap.ROUND);
 
         mRect = new RectF();
     }
