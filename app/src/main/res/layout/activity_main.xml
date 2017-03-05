@@ -37,6 +37,13 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+        <TextView
+            android:id="@+id/main_search_tag"
+            style="@style/TagTextView"
+            android:alpha="0"
+            tools:alpha="1"
+            android:text="# NEW" />
+
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/content_activity_search_fab"
             android:layout_width="wrap_content"

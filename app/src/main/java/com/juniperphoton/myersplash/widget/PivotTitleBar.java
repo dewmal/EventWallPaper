@@ -16,6 +16,7 @@ import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.activity.AboutActivity;
 import com.juniperphoton.myersplash.activity.ManageDownloadActivity;
 import com.juniperphoton.myersplash.activity.SettingsActivity;
+import com.juniperphoton.myersplash.model.UnsplashCategory;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -116,6 +117,19 @@ public class PivotTitleBar extends FrameLayout {
     public void setSelected(int index) {
         toggleAnimation(mSelectedItem, index);
         mSelectedItem = index;
+    }
+
+    public String getSelectedString(){
+        switch (mSelectedItem){
+            case 0:
+                return UnsplashCategory.FEATURE_S.toUpperCase();
+            case 1:
+                return UnsplashCategory.NEW_S.toUpperCase();
+            case 2:
+                return UnsplashCategory.RANDOM_S.toUpperCase();
+            default:
+                return UnsplashCategory.NEW_S.toUpperCase();
+        }
     }
 
     private void toggleAnimation(int prevIndex, int newIndex) {

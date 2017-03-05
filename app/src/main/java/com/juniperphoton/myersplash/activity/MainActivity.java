@@ -9,14 +9,13 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter;
 import com.juniperphoton.myersplash.common.Constant;
-import com.juniperphoton.myersplash.common.RandomIntentStatus;
 import com.juniperphoton.myersplash.event.ScrollToTopEvent;
 import com.juniperphoton.myersplash.fragment.MainListFragment;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
@@ -67,6 +66,9 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
     @BindView(R.id.view_pager)
     ViewPager mViewPager;
 
+    @BindView(R.id.main_search_tag)
+    TextView mTagView;
+
     private MainListFragmentAdapter mMainListFragmentAdapter;
 
     private String mQuery;
@@ -112,6 +114,18 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
             params.setScrollFlags(0);
         }
         mPivotTitleBar.setLayoutParams(params);
+        mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if ((Math.abs(verticalOffset) - appBarLayout.getHeight()) == 0) {
+                    mTagView.animate().alpha(1f).setDuration(400).start();
+                    mSearchFAB.hide();
+                } else {
+                    mTagView.animate().alpha(0f).setDuration(200).start();
+                    mSearchFAB.show();
+                }
+            }
+        });
 
         RequestUtil.checkAndRequest(MainActivity.this);
     }
@@ -147,8 +161,10 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
             @Override
             public void onAnimationEnd(Animator animation) {
                 if (!show) {
-                    mSearchView.clear();
+                    mSearchView.reset();
                     mSearchView.setVisibility(View.GONE);
+                } else {
+                    mSearchView.onShown();
                 }
             }
         });
@@ -216,6 +232,7 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
             @Override
             public void onPageSelected(int position) {
                 mPivotTitleBar.setSelected(position);
+                mTagView.setText("# " + mPivotTitleBar.getSelectedString());
             }
 
             @Override
@@ -296,12 +313,10 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
 
     @Override
     public void onScrollHide() {
-        mSearchFAB.hide();
     }
 
     @Override
     public void onScrollShow() {
-        mSearchFAB.show();
     }
 
     @Override

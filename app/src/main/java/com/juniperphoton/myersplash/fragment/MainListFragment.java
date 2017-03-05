@@ -101,6 +101,12 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
         super();
     }
 
+    public void scrollToTop() {
+        if (mContentRecyclerView != null) {
+            mContentRecyclerView.smoothScrollToPosition(0);
+        }
+    }
+
     public void register() {
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
