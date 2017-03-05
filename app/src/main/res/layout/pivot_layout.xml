@@ -26,21 +26,18 @@
         <TextView
             android:id="@+id/pivot_item_0"
             style="@style/PivotItem"
-            android:layout_weight="1"
             android:alpha="0.3"
             android:text="FEATURED" />
 
         <TextView
             android:id="@+id/pivot_item_1"
             style="@style/PivotItem"
-            android:layout_weight="1"
             android:alpha="1"
             android:text="NEW" />
 
         <TextView
             android:id="@+id/pivot_item_2"
             style="@style/PivotItem"
-            android:layout_weight="1"
             android:alpha="0.3"
             android:text="RANDOM" />
     </LinearLayout>

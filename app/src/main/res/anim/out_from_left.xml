@@ -11,8 +11,8 @@
     </translate>
     <scale
         android:duration="500"
-        android:toXScale="0.8"
-        android:toYScale="0.8"
+        android:toXScale="0.95"
+        android:toYScale="0.95"
         android:pivotX="50%p"
         android:pivotY="50%p"
         android:fromXScale="1.0"
