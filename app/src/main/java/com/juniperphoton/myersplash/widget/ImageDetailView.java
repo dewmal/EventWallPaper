@@ -39,6 +39,7 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.juniperphoton.flipperviewlib.FlipperView;
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.base.App;
+import com.juniperphoton.myersplash.event.DownloadStartedEvent;
 import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.utils.AnimatorListenerImpl;
@@ -46,6 +47,10 @@ import com.juniperphoton.myersplash.utils.ColorUtil;
 import com.juniperphoton.myersplash.utils.DownloadItemTransactionHelper;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 
@@ -160,6 +165,18 @@ public class ImageDetailView extends FrameLayout {
         ButterKnife.bind(this, this);
 
         initDetailViews();
+    }
+
+    public void registerEventBus() {
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    public void unregisterEventBus() {
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
     }
 
     @OnClick(R.id.detail_name_tv)
@@ -291,10 +308,7 @@ public class ImageDetailView extends FrameLayout {
         if (mClickedImage == null) {
             return;
         }
-        mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING);
         DownloadUtil.checkAndDownload((Activity) mContext, mClickedImage);
-
-        associateWithDownloadItem(null);
     }
 
     @OnClick(R.id.detail_cancel_download_fab)
@@ -615,6 +629,14 @@ public class ImageDetailView extends FrameLayout {
 
         toggleMaskAnimation(true);
         toggleHeroViewAnimation(itemY, targetPositionY, true);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void receivedDownloadStarted(DownloadStartedEvent event) {
+        if (event.id.equals(mClickedImage.getId())) {
+            mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING);
+            associateWithDownloadItem(null);
+        }
     }
 
     public interface StateListener {
