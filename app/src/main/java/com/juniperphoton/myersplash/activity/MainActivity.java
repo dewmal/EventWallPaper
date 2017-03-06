@@ -9,9 +9,9 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
@@ -241,7 +241,7 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
         });
 
         if (!DeviceUtil.hasNavigationBar(this)) {
-            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mSearchFAB.getLayoutParams();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mSearchFAB.getLayoutParams();
             params.setMargins(0, 0, getDimenInPixel(24, this), getDimenInPixel(24, this));
             mSearchFAB.setLayoutParams(params);
         }

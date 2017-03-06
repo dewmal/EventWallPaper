@@ -8,9 +8,7 @@
 
     <include layout="@layout/status_placeholder" />
 
-    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <android.support.design.widget.CoordinatorLayout
         android:id="@+id/activity_main_cl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -41,19 +39,8 @@
             android:id="@+id/main_search_tag"
             style="@style/TagTextView"
             android:alpha="0"
-            tools:alpha="1"
-            android:text="# NEW" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/content_activity_search_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:layout_marginBottom="60dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/ripple"
-            android:src="@drawable/vector_ic_search_white"
-            app:backgroundTint="@color/MyerSplashThemeColor" />
+            android:text="# NEW"
+            tools:alpha="1" />
 
     </android.support.design.widget.CoordinatorLayout>
 
@@ -62,10 +49,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/content_activity_search_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="60dp"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/ripple"
+        android:src="@drawable/vector_ic_search_white"
+        app:backgroundTint="@color/MyerSplashThemeColor" />
+
     <com.juniperphoton.myersplash.widget.SearchView
         android:id="@+id/activity_main_search_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
-
 </RelativeLayout>

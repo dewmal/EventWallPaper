@@ -23,10 +23,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.facebook.binaryresource.BinaryResource;
@@ -83,16 +82,16 @@ public class ImageDetailView extends FrameLayout {
     private StateListener mNavigationCallback;
 
     @BindView(R.id.detail_root_sv)
-    ScrollView mDetailRootScrollView;
+    ViewGroup mDetailRootScrollView;
 
     @BindView(R.id.detail_hero_dv)
     SimpleDraweeView mHeroDV;
 
     @BindView(R.id.detail_backgrd_rl)
-    RelativeLayout mDetailInfoRootLayout;
+    ViewGroup mDetailInfoRootLayout;
 
     @BindView(R.id.detail_img_rl)
-    RelativeLayout mDetailImgRL;
+    ViewGroup mDetailImgRL;
 
     @BindView(R.id.detail_name_tv)
     TextView mNameTextView;
@@ -350,9 +349,7 @@ public class ImageDetailView extends FrameLayout {
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(mDetailImgRL.getLayoutParams());
-                params.setMargins(0, (int) animation.getAnimatedValue(), 0, 0);
-                mDetailImgRL.setLayoutParams(params);
+                mDetailImgRL.setTranslationY((int) animation.getAnimatedValue());
             }
         });
         valueAnimator.addListener(new AnimatorListenerImpl() {
@@ -596,11 +593,6 @@ public class ImageDetailView extends FrameLayout {
         mDetailImgRL.getLocationOnScreen(heroImagePosition);
 
         int itemY = (int) rectF.top;
-
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(mDetailImgRL.getLayoutParams());
-        params.setMargins(0, itemY - (int) (20 * 3.5), 0, 0);
-
-        mDetailImgRL.setLayoutParams(params);
 
         if (mClickedImage.hasDownloaded()) {
             mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK);
