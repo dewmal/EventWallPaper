@@ -77,5 +77,6 @@
     <string name="uh_oh">Uh oh :-(</string>
     <string name="no_items_please_try_again">No items. Please try again.</string>
     <string name="retry">RETRY</string>
+    <string name="downloads_title">DOWNLOADS</string>
 
 </resources>
