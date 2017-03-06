@@ -21,7 +21,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.adapter.SearchTextAdapter;
 import com.juniperphoton.myersplash.event.RequestSearchEvent;
 import com.juniperphoton.myersplash.fragment.MainListFragment;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
@@ -72,8 +71,6 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
 
     @BindView(R.id.search_box)
     View mSearchBox;
-
-    private SearchTextAdapter mAdapter;
 
     private static UnsplashCategory sSearchCategory = new UnsplashCategory();
     private static List<UnsplashCategory> sCategoryList = new ArrayList<>();
@@ -128,7 +125,7 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
                     }
                 } else {
                     if (mSearchBtn.getScaleX() != 0) {
-                        //toggleSearchButtons(false, true);
+                        // Ignore
                     }
                 }
             }
@@ -139,12 +136,10 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
         mFragment.setCategory(sSearchCategory, new MainListFragment.Callback() {
             @Override
             public void onScrollHide() {
-                //mTagView.animate().alpha(1f).setDuration(200).start();
             }
 
             @Override
             public void onScrollShow() {
-                //mTagView.animate().alpha(0f).setDuration(100).start();
             }
 
             @Override
@@ -193,13 +188,6 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
                     .start();
         }
     }
-
-//    private void initSearchRecommendation() {
-//        mList.setLayoutManager(new GridLayoutManager(mContext, 3));
-//        mAdapter = new SearchTextAdapter(mContext);
-//        mAdapter.setData(sCategoryList);
-//        mList.setAdapter(mAdapter);
-//    }
 
     public void onShowing() {
         mFragment.register();

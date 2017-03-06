@@ -1,66 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-                                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                                    xmlns:fresco="http://schemas.android.com/apk/res-auto"
-                                    android:id="@+id/row_photo_cv"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:clickable="true"
-                                    android:theme="@style/ThemeOverlay.AppCompat.Dark"
-                                    card_view:cardBackgroundColor="#90000000"
-                                    card_view:cardCornerRadius="0dp"
-                                    card_view:cardElevation="0dp">
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/row_photo_cv"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    card_view:cardBackgroundColor="#90000000"
+    card_view:cardCornerRadius="0dp"
+    card_view:cardElevation="0dp">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:card_view="http://schemas.android.com/tools"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:clickable="true">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/img_height"
+        android:clickable="true">
+
+        <com.facebook.drawee.view.SimpleDraweeView
+            android:id="@+id/row_photo_iv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            fresco:backgroundTint="@color/colorPrimaryDark" />
 
         <RelativeLayout
+            android:id="@+id/row_photo_ripple_mask_rl"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/img_height"
+            android:layout_height="match_parent"
             android:background="?android:attr/selectableItemBackground"
             android:clickable="true">
 
-            <com.facebook.drawee.view.SimpleDraweeView
-                android:id="@+id/row_photo_iv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                fresco:backgroundTint="@color/colorPrimaryDark"/>
-
-            <RelativeLayout
-                android:id="@+id/row_photo_ripple_mask_rl"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+            <FrameLayout
+                android:id="@+id/row_photo_download_rl"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true">
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:visibility="visible">
 
-                <RelativeLayout
-                    android:id="@+id/row_photo_download_rl"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentEnd="true"
-                    android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:clickable="true"
-                    android:visibility="visible">
-
-                    <ImageView
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:layout_centerInParent="true"
-                        android:contentDescription="@string/ImageDescDefault"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/vector_ic_file_download"/>
-                </RelativeLayout>
-
-            </RelativeLayout>
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/ImageDescDefault"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/vector_ic_file_download" />
+            </FrameLayout>
 
         </RelativeLayout>
 

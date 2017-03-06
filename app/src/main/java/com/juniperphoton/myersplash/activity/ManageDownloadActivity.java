@@ -4,7 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -170,7 +170,7 @@ public class ManageDownloadActivity extends BaseActivity
         updateNoItemVisibility();
 
         if (!DeviceUtil.hasNavigationBar(this)) {
-            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mMoreFAB.getLayoutParams();
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) mMoreFAB.getLayoutParams();
             params.setMargins(0, 0, getDimenInPixel(24, this), getDimenInPixel(24, this));
             mMoreFAB.setLayoutParams(params);
         }
