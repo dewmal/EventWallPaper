@@ -313,6 +313,9 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
     @Override
     public void onHidden() {
         mSearchFAB.show();
+        if (mAppBarLayout.getHeight() - Math.abs(mAppBarLayout.getTop()) < 0.01) {
+            mTagView.animate().alpha(1f).setDuration(300).start();
+        }
     }
 
     @Override
@@ -340,6 +343,11 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
 
     @Override
     public void clickPhotoItem(RectF rectF, UnsplashImage unsplashImage, View itemView) {
+        int[] location = new int[2];
+        mTagView.getLocationOnScreen(location);
+        if (rectF.top <= (location[1] + mTagView.getHeight())) {
+            mTagView.animate().alpha(0f).setDuration(100).start();
+        }
         mDetailView.showDetailedImage(rectF, unsplashImage, itemView);
     }
 }
