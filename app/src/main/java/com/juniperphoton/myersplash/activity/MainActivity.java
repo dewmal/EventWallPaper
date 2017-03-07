@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewAnimationUtils;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
@@ -74,6 +75,8 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
     private String mQuery;
     private boolean mHandleShortcut;
     private int mDefaultIndex = 1;
+    private int mLastX;
+    private int mLastY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,30 +116,26 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
         } else {
             params.setScrollFlags(0);
         }
+
+        mDetailView.registerEventBus();
+        mSearchView.registerEventBus();
+
         mPivotTitleBar.setLayoutParams(params);
-        mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if ((Math.abs(verticalOffset) - appBarLayout.getHeight()) == 0) {
-                    mTagView.animate().alpha(1f).setDuration(400).start();
-                    mSearchFAB.hide();
-                } else {
-                    mTagView.animate().alpha(0f).setDuration(200).start();
-                    mSearchFAB.show();
-                }
-            }
-        });
 
         RequestUtil.checkAndRequest(MainActivity.this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mDetailView.unregisterEventBus();
+        mSearchView.unregisterEventBus();
     }
 
     @OnClick(R.id.content_activity_search_fab)
     void onClickSearchFAB() {
         toggleSearchView(true, true);
     }
-
-    private int mLastX;
-    private int mLastY;
 
     private void toggleSearchView(final boolean show, boolean useAnimation) {
         if (show) {
@@ -242,10 +241,30 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
         });
 
         if (!DeviceUtil.hasNavigationBar(this)) {
-            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mSearchFAB.getLayoutParams();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mSearchFAB.getLayoutParams();
             params.setMargins(0, 0, getDimenInPixel(24, this), getDimenInPixel(24, this));
             mSearchFAB.setLayoutParams(params);
         }
+
+        mAppBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if ((Math.abs(verticalOffset) - appBarLayout.getHeight()) == 0) {
+                    mTagView.animate().alpha(1f).setDuration(300).start();
+                    mSearchFAB.hide();
+                } else {
+                    mTagView.animate().alpha(0f).setDuration(100).start();
+                    mSearchFAB.show();
+                }
+            }
+        });
+
+        mTagView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EventBus.getDefault().post(new ScrollToTopEvent(getIdByIndex(mPivotTitleBar.getSelectedItem()), false));
+            }
+        });
     }
 
     private void handleShortcutsAction() {
@@ -294,6 +313,9 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
     @Override
     public void onHidden() {
         mSearchFAB.show();
+        if (mAppBarLayout.getHeight() - Math.abs(mAppBarLayout.getTop()) < 0.01) {
+            mTagView.animate().alpha(1f).setDuration(300).start();
+        }
     }
 
     @Override
@@ -321,6 +343,11 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
 
     @Override
     public void clickPhotoItem(RectF rectF, UnsplashImage unsplashImage, View itemView) {
+        int[] location = new int[2];
+        mTagView.getLocationOnScreen(location);
+        if (rectF.top <= (location[1] + mTagView.getHeight())) {
+            mTagView.animate().alpha(0f).setDuration(100).start();
+        }
         mDetailView.showDetailedImage(rectF, unsplashImage, itemView);
     }
 }

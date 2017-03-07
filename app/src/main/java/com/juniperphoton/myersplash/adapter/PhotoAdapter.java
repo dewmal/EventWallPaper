@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.RelativeLayout;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -261,15 +260,15 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
 
         @Nullable
         @BindView(R.id.row_photo_download_rl)
-        RelativeLayout mDownloadRL;
+        ViewGroup mDownloadRL;
 
         @Nullable
         @BindView(R.id.row_photo_ripple_mask_rl)
-        RelativeLayout mRippleMaskRL;
+        ViewGroup mRippleMaskRL;
 
         @Nullable
         @BindView(R.id.row_footer_rl)
-        RelativeLayout mFooterRL;
+        ViewGroup mFooterRL;
 
         PhotoViewHolder(View itemView, int type, int footerFlag) {
             super(itemView);

@@ -21,7 +21,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.adapter.SearchTextAdapter;
 import com.juniperphoton.myersplash.event.RequestSearchEvent;
 import com.juniperphoton.myersplash.fragment.MainListFragment;
 import com.juniperphoton.myersplash.model.UnsplashCategory;
@@ -65,15 +64,13 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
     View mClearBtn;
 
     @BindView(R.id.search_tag)
-    TextView mSearchTag;
+    TextView mTagView;
 
     @BindView(R.id.search_toolbar_layout)
     AppBarLayout mAppBarLayout;
 
     @BindView(R.id.search_box)
     View mSearchBox;
-
-    private SearchTextAdapter mAdapter;
 
     private static UnsplashCategory sSearchCategory = new UnsplashCategory();
     private static List<UnsplashCategory> sCategoryList = new ArrayList<>();
@@ -128,7 +125,7 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
                     }
                 } else {
                     if (mSearchBtn.getScaleX() != 0) {
-                        //toggleSearchButtons(false, true);
+                        // Ignore
                     }
                 }
             }
@@ -139,12 +136,10 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
         mFragment.setCategory(sSearchCategory, new MainListFragment.Callback() {
             @Override
             public void onScrollHide() {
-                //mSearchTag.animate().alpha(1f).setDuration(200).start();
             }
 
             @Override
             public void onScrollShow() {
-                //mSearchTag.animate().alpha(0f).setDuration(100).start();
             }
 
             @Override
@@ -159,15 +154,14 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
             @Override
             public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
                 float fraction = Math.abs(verticalOffset) * 1.0f / appBarLayout.getHeight();
-                mSearchTag.setAlpha(fraction);
+                mTagView.setAlpha(fraction);
             }
         });
 
-        mSearchTag.setOnClickListener(new OnClickListener() {
+        mTagView.setOnTouchListener(new OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                mAppBarLayout.offsetTopAndBottom(mAppBarLayout.getHeight());
-                mAppBarLayout.requestLayout();
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
             }
         });
     }
@@ -195,13 +189,6 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
         }
     }
 
-//    private void initSearchRecommendation() {
-//        mList.setLayoutManager(new GridLayoutManager(mContext, 3));
-//        mAdapter = new SearchTextAdapter(mContext);
-//        mAdapter.setData(sCategoryList);
-//        mList.setAdapter(mAdapter);
-//    }
-
     public void onShowing() {
         mFragment.register();
         toggleSearchButtons(false, false);
@@ -211,7 +198,7 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
         mFragment.unregister();
         hideKeyboard();
         toggleSearchButtons(false, false);
-        mSearchTag.animate().alpha(0).setDuration(100).start();
+        mTagView.animate().alpha(0).setDuration(100).start();
     }
 
     public void onShown() {
@@ -247,7 +234,7 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
             ToastService.sendShortToast("Input the keyword to search.");
             return;
         }
-        mSearchTag.setText("# " + mEditText.getText().toString().toUpperCase());
+        mTagView.setText("# " + mEditText.getText().toString().toUpperCase());
         EventBus.getDefault().post(new RequestSearchEvent(mEditText.getText().toString()));
     }
 
@@ -267,5 +254,13 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
         final InputMethodManager imm = (InputMethodManager) mContext.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(mEditText, SHOW_IMPLICIT);
         mEditText.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+    }
+
+    public void registerEventBus() {
+        mDetailView.registerEventBus();
+    }
+
+    public void unregisterEventBus() {
+        mDetailView.unregisterEventBus();
     }
 }

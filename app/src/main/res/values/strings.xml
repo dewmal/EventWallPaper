@@ -7,7 +7,7 @@
     <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
 
     <string name="action_settings">Settings</string>
-    <string name="CreditStr">Photos are from Unsplash, a website providing free (do whatever you want) high-resolution photos</string>
+    <string name="CreditStr">Photos are from Unsplash, an amazing website providing free high-resolution photos.</string>
     <string name="SavingQuality">Saving quality</string>
     <string name="LoadingQuality">Loading quality in list</string>
     <string name="CleanupCache">Clean up cache</string>
@@ -77,5 +77,8 @@
     <string name="uh_oh">Uh oh :-(</string>
     <string name="no_items_please_try_again">No items. Please try again.</string>
     <string name="retry">RETRY</string>
+    <string name="downloads_title">DOWNLOADS</string>
+    <string name="thanks_to">THANKS TO</string>
+    <string name="contribute_your_code">Contribute your code</string>
 
 </resources>

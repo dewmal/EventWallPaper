@@ -23,10 +23,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.facebook.binaryresource.BinaryResource;
@@ -39,6 +38,7 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.juniperphoton.flipperviewlib.FlipperView;
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.base.App;
+import com.juniperphoton.myersplash.event.DownloadStartedEvent;
 import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.utils.AnimatorListenerImpl;
@@ -46,6 +46,10 @@ import com.juniperphoton.myersplash.utils.ColorUtil;
 import com.juniperphoton.myersplash.utils.DownloadItemTransactionHelper;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 
@@ -78,16 +82,16 @@ public class ImageDetailView extends FrameLayout {
     private StateListener mNavigationCallback;
 
     @BindView(R.id.detail_root_sv)
-    ScrollView mDetailRootScrollView;
+    ViewGroup mDetailRootScrollView;
 
     @BindView(R.id.detail_hero_dv)
     SimpleDraweeView mHeroDV;
 
     @BindView(R.id.detail_backgrd_rl)
-    RelativeLayout mDetailInfoRootLayout;
+    ViewGroup mDetailInfoRootLayout;
 
     @BindView(R.id.detail_img_rl)
-    RelativeLayout mDetailImgRL;
+    ViewGroup mDetailImgRL;
 
     @BindView(R.id.detail_name_tv)
     TextView mNameTextView;
@@ -160,6 +164,18 @@ public class ImageDetailView extends FrameLayout {
         ButterKnife.bind(this, this);
 
         initDetailViews();
+    }
+
+    public void registerEventBus() {
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
+    }
+
+    public void unregisterEventBus() {
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
+        }
     }
 
     @OnClick(R.id.detail_name_tv)
@@ -291,10 +307,7 @@ public class ImageDetailView extends FrameLayout {
         if (mClickedImage == null) {
             return;
         }
-        mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING);
         DownloadUtil.checkAndDownload((Activity) mContext, mClickedImage);
-
-        associateWithDownloadItem(null);
     }
 
     @OnClick(R.id.detail_cancel_download_fab)
@@ -336,9 +349,7 @@ public class ImageDetailView extends FrameLayout {
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(mDetailImgRL.getLayoutParams());
-                params.setMargins(0, (int) animation.getAnimatedValue(), 0, 0);
-                mDetailImgRL.setLayoutParams(params);
+                mDetailImgRL.setTranslationY((int) animation.getAnimatedValue());
             }
         });
         valueAnimator.addListener(new AnimatorListenerImpl() {
@@ -583,11 +594,6 @@ public class ImageDetailView extends FrameLayout {
 
         int itemY = (int) rectF.top;
 
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(mDetailImgRL.getLayoutParams());
-        params.setMargins(0, itemY - (int) (20 * 3.5), 0, 0);
-
-        mDetailImgRL.setLayoutParams(params);
-
         if (mClickedImage.hasDownloaded()) {
             mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK);
         }
@@ -615,6 +621,14 @@ public class ImageDetailView extends FrameLayout {
 
         toggleMaskAnimation(true);
         toggleHeroViewAnimation(itemY, targetPositionY, true);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void receivedDownloadStarted(DownloadStartedEvent event) {
+        if (event.id.equals(mClickedImage.getId())) {
+            mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING);
+            associateWithDownloadItem(null);
+        }
     }
 
     public interface StateListener {

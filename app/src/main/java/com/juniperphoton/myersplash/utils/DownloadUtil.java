@@ -11,9 +11,12 @@ import android.util.Log;
 
 import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.base.App;
+import com.juniperphoton.myersplash.event.DownloadStartedEvent;
 import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.service.BackgroundDownloadService;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -223,6 +226,7 @@ public class DownloadUtil {
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
                     startDownloadService(context, image);
+                    EventBus.getDefault().post(new DownloadStartedEvent(image.getId()));
                 }
             });
             builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -234,6 +238,7 @@ public class DownloadUtil {
             builder.create().show();
         } else {
             startDownloadService(context, image);
+            EventBus.getDefault().post(new DownloadStartedEvent(image.getId()));
         }
     }
 

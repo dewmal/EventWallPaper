@@ -1,60 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:app="http://schemas.android.com/apk/res-auto"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@android:color/black"
-              android:fitsSystemWindows="false"
-              android:orientation="vertical"
-              android:theme="@style/ThemeOverlay.AppCompat.Dark">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:fitsSystemWindows="false"
+    android:orientation="vertical"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-    <include layout="@layout/status_placeholder"/>
+    <include layout="@layout/status_placeholder" android:id="@+id/manage_download_status"/>
 
-    <android.support.design.widget.CoordinatorLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="false">
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/activity_manage_download_rv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/manage_download_title_bar" />
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="60dp"
-                        android:orientation="vertical">
+    <TextView
+        android:id="@+id/activity_downloads_no_item_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:alpha="0.6"
+        android:text="@string/no_downloads"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/activity_manage_download_rv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="4dp"/>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/activity_downloads_more_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="60dp"
+        android:layout_marginRight="24dp"
+        android:background="@drawable/ripple"
+        android:src="@drawable/vector_ic_more"
+        app:backgroundTint="@color/MyerSplashThemeColor"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="25dp" />
 
-            <TextView
-                android:id="@+id/activity_downloads_no_item_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:alpha="0.6"
-                android:text="@string/no_downloads"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
-        </RelativeLayout>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/activity_downloads_more_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:layout_marginBottom="60dp"
-            android:layout_marginEnd="24dp"
-            android:background="@drawable/ripple"
-            android:src="@drawable/vector_ic_more"
-            app:backgroundTint="@color/MyerSplashThemeColor"/>
-
-        <com.juniperphoton.myersplash.widget.CommonTitleBar
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:title="DOWNLOADS"/>
-    </android.support.design.widget.CoordinatorLayout>
-</LinearLayout>
+    <com.juniperphoton.myersplash.widget.CommonTitleBar
+        android:id="@+id/manage_download_title_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/manage_download_status"
+        app:title="@string/downloads_title" />
+</android.support.constraint.ConstraintLayout>

@@ -4,7 +4,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,7 +42,13 @@ public class ManageDownloadActivity extends BaseActivity
     FloatingActionButton mMoreFAB;
 
     private DownloadsListAdapter mAdapter;
-    private RealmChangeListener<DownloadItem> mRealmListener;
+    private RealmChangeListener<DownloadItem> mItemStatusListener;
+    private RealmChangeListener<RealmResults<DownloadItem>> mListener = new RealmChangeListener<RealmResults<DownloadItem>>() {
+        @Override
+        public void onChange(RealmResults<DownloadItem> element) {
+            updateNoItemVisibility();
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,7 +56,7 @@ public class ManageDownloadActivity extends BaseActivity
         setContentView(R.layout.activity_managedownload);
         ButterKnife.bind(this);
 
-        mRealmListener = new RealmChangeListener<DownloadItem>() {
+        mItemStatusListener = new RealmChangeListener<DownloadItem>() {
             @Override
             public void onChange(DownloadItem item) {
                 Log.d("manage", "onChange");
@@ -107,7 +113,7 @@ public class ManageDownloadActivity extends BaseActivity
                 RealmResults<DownloadItem> items = realm.where(DownloadItem.class)
                         .equalTo("mStatus", status).findAll();
                 for (DownloadItem item : items) {
-                    item.removeChangeListener(mRealmListener);
+                    item.removeChangeListener(mItemStatusListener);
                     item.deleteFromRealm();
                 }
             }
@@ -134,8 +140,9 @@ public class ManageDownloadActivity extends BaseActivity
         RealmResults<DownloadItem> items = realm.where(DownloadItem.class).findAll();
         for (DownloadItem item : items) {
             downloadItems.add(item);
-            item.addChangeListener(mRealmListener);
+            item.addChangeListener(mItemStatusListener);
         }
+        items.addChangeListener(mListener);
 
         realm.commitTransaction();
 
@@ -159,12 +166,11 @@ public class ManageDownloadActivity extends BaseActivity
         });
         mDownloadsRV.setLayoutManager(layoutManager);
         ((SimpleItemAnimator) mDownloadsRV.getItemAnimator()).setSupportsChangeAnimations(false);
-        //mDownloadsRV.setItemAnimator(new DefaultItemAnimator());
         mDownloadsRV.setAdapter(mAdapter);
         updateNoItemVisibility();
 
         if (!DeviceUtil.hasNavigationBar(this)) {
-            CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mMoreFAB.getLayoutParams();
+            ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) mMoreFAB.getLayoutParams();
             params.setMargins(0, 0, getDimenInPixel(24, this), getDimenInPixel(24, this));
             mMoreFAB.setLayoutParams(params);
         }
