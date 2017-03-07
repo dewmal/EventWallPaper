@@ -5,4 +5,15 @@
         <item>Delete downloaded items</item>
         <item>Delete failed items</item>
     </string-array>
+    <string-array name="thanks_array">
+        <item>Fresco</item>
+        <item>Realm</item>
+        <item>EventBus</item>
+        <item>RxJava</item>
+        <item>Retrofit</item>
+        <item>ButterKnife</item>
+        <item>AlipayZeroSdk</item>
+        <item>Gson</item>
+        <item>ConstraintLayout from Google</item>
+    </string-array>
 </resources>
