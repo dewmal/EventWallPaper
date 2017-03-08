@@ -103,7 +103,6 @@ public class DownloadUtil {
                     if (outputStream != null) {
                         outputStream.close();
                     }
-                    new SingleMediaScanner(App.getInstance(), fileToSave);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

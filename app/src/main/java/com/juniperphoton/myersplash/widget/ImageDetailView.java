@@ -329,7 +329,7 @@ public class ImageDetailView extends FrameLayout {
 
     @OnClick(R.id.detail_set_as_fab)
     void onClickSetAsFAB() {
-        String url = mClickedImage.getPathForDownload();
+        String url = mClickedImage.getPathForDownload() + ".jpg";
         if (url != null) {
             File file = new File(url);
             Uri uri = FileProvider.getUriForFile(App.getInstance(), App.getInstance().getString(R.string.authorities), file);

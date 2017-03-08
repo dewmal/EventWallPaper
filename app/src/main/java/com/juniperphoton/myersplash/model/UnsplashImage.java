@@ -1,7 +1,5 @@
 package com.juniperphoton.myersplash.model;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 
 import com.google.gson.annotations.SerializedName;
@@ -99,29 +97,13 @@ public class UnsplashImage implements Serializable {
     }
 
     public boolean hasDownloaded() {
-        String path = getPathForDownload();
+        String path = getPathForDownload() + ".jpg";
         File file = new File(path);
-        boolean exist = file.exists();
-        if (exist) {
-            try {
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = 64;
-                Bitmap bitmap = BitmapFactory.decodeFile(path, options);
-                boolean valid = bitmap != null;
-                if (bitmap != null) {
-                    bitmap.recycle();
-                }
-                return valid;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-        return false;
+        return file.exists();
     }
 
     public String getFileNameForDownload() {
-        return mUser.getName() + "-" + mId + "-" + getTagForDownloadUrl() + ".jpg";
+        return mUser.getName() + "-" + mId + "-" + getTagForDownloadUrl();
     }
 
     public int getThemeColor() {
