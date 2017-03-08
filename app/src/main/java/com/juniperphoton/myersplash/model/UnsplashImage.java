@@ -105,7 +105,7 @@ public class UnsplashImage implements Serializable {
         if (exist) {
             try {
                 BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = 20;
+                options.inSampleSize = 64;
                 Bitmap bitmap = BitmapFactory.decodeFile(path, options);
                 boolean valid = bitmap != null;
                 if (bitmap != null) {
@@ -121,7 +121,7 @@ public class UnsplashImage implements Serializable {
     }
 
     public String getFileNameForDownload() {
-        return mUser.getName() + "-" + mCreatedAt + getTagForDownloadUrl() + ".jpg";
+        return mUser.getName() + "-" + mId + "-" + getTagForDownloadUrl() + ".jpg";
     }
 
     public int getThemeColor() {

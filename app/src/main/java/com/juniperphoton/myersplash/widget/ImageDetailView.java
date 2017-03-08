@@ -58,6 +58,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 @SuppressWarnings("UnusedDeclaration")
 public class ImageDetailView extends FrameLayout {
@@ -371,6 +376,26 @@ public class ImageDetailView extends FrameLayout {
         valueAnimator.start();
     }
 
+    private void checkDownloadStatus() {
+        Observable.just(mClickedImage)
+                .observeOn(Schedulers.io())
+                .map(new Func1<UnsplashImage, Boolean>() {
+                    @Override
+                    public Boolean call(UnsplashImage unsplashImage) {
+                        return mClickedImage.hasDownloaded();
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean b) {
+                        if (b) {
+                            mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK);
+                        }
+                    }
+                });
+    }
+
     private int getTargetY() {
         return (((Activity) mContext).getWindow().getDecorView().getHeight() -
                 (getResources().getDimensionPixelSize(R.dimen.img_detail_height))) / 2;
@@ -594,10 +619,6 @@ public class ImageDetailView extends FrameLayout {
 
         int itemY = (int) rectF.top;
 
-        if (mClickedImage.hasDownloaded()) {
-            mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK);
-        }
-
         mAssociatedDownloadItem = DownloadUtil.getDownloadItemById(unsplashImage.getId());
         if (mAssociatedDownloadItem != null) {
             Log.d(TAG, "found down item,status:" + mAssociatedDownloadItem.getStatus());
@@ -619,13 +640,15 @@ public class ImageDetailView extends FrameLayout {
 
         int targetPositionY = getTargetY();
 
+        checkDownloadStatus();
+
         toggleMaskAnimation(true);
         toggleHeroViewAnimation(itemY, targetPositionY, true);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void receivedDownloadStarted(DownloadStartedEvent event) {
-        if (event.id.equals(mClickedImage.getId())) {
+        if (mClickedImage != null && event.id.equals(mClickedImage.getId())) {
             mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING);
             associateWithDownloadItem(null);
         }
