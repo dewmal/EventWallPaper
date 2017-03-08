@@ -32,6 +32,9 @@ public class DownloadRetryView extends FrameLayout implements SetThemeColor {
     @BindView(R.id.delete_btn)
     ImageView deleteView;
 
+    @BindView(R.id.delete_btn_root)
+    View mDeleteRoot;
+
     public DownloadRetryView(Context context, AttributeSet attrs) {
         super(context, attrs);
         LayoutInflater.from(context).inflate(R.layout.widget_download_retry_view, this);
@@ -39,7 +42,7 @@ public class DownloadRetryView extends FrameLayout implements SetThemeColor {
     }
 
     public void setOnClickDeleteListener(View.OnClickListener listener) {
-        deleteView.setOnClickListener(listener);
+        mDeleteRoot.setOnClickListener(listener);
     }
 
     public void setOnClickRetryListener(View.OnClickListener listener){

@@ -6,11 +6,13 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.juniperphoton.myersplash.R;
+import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.cloudservice.CloudService;
 import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.NotificationUtil;
 import com.juniperphoton.myersplash.utils.Params;
+import com.juniperphoton.myersplash.utils.SingleMediaScanner;
 import com.juniperphoton.myersplash.utils.ToastService;
 
 import java.io.File;
@@ -70,28 +72,36 @@ public class BackgroundDownloadService extends IntentService {
             public void onCompleted() {
                 if (outputFile == null) {
                     NotificationUtil.showErrorNotification(Uri.parse(url), fileName, url);
-                    Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            DownloadItem downloadItem = realm.where(DownloadItem.class)
-                                    .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst();
-                            if (downloadItem != null) {
-                                downloadItem.setStatus(DownloadItem.DOWNLOAD_STATUS_FAILED);
-                            }
-                        }
-                    });
+
+                    Realm realm = Realm.getDefaultInstance();
+                    realm.beginTransaction();
+
+                    DownloadItem downloadItem = realm.where(DownloadItem.class)
+                            .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst();
+                    if (downloadItem != null) {
+                        downloadItem.setStatus(DownloadItem.DOWNLOAD_STATUS_FAILED);
+                    }
+
+                    realm.commitTransaction();
                 } else {
-                    Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            DownloadItem downloadItem = realm.where(DownloadItem.class)
-                                    .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst();
-                            if (downloadItem != null) {
-                                downloadItem.setStatus(DownloadItem.DOWNLOAD_STATUS_OK);
-                                downloadItem.setFilePath(outputFile.getPath());
-                            }
-                        }
-                    });
+                    Realm realm = Realm.getDefaultInstance();
+                    realm.beginTransaction();
+
+                    DownloadItem downloadItem = realm.where(DownloadItem.class)
+                            .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst();
+                    if (downloadItem != null) {
+                        downloadItem.setStatus(DownloadItem.DOWNLOAD_STATUS_OK);
+                        Log.d(TAG, "output file:" + outputFile.getAbsolutePath());
+                        File newFile = new File(outputFile.getPath() + ".jpg");
+                        outputFile.renameTo(newFile);
+                        Log.d(TAG, "renamed file:" + newFile.getAbsolutePath());
+                        downloadItem.setFilePath(newFile.getPath());
+
+                        SingleMediaScanner.sendScanFileBroadcast(App.getInstance(), newFile);
+                    }
+
+                    realm.commitTransaction();
+
                     NotificationUtil.showCompleteNotification(Uri.parse(url), Uri.fromFile(outputFile));
                 }
                 Log.d(TAG, getString(R.string.completed));
@@ -102,16 +112,17 @@ public class BackgroundDownloadService extends IntentService {
                 e.printStackTrace();
                 Log.d(TAG, "on handle intent error " + e.getMessage() + ",url:" + url);
                 NotificationUtil.showErrorNotification(Uri.parse(url), fileName, url);
-                Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        DownloadItem downloadItem = realm.where(DownloadItem.class)
-                                .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst();
-                        if (downloadItem != null) {
-                            downloadItem.setStatus(DownloadItem.DOWNLOAD_STATUS_FAILED);
-                        }
-                    }
-                });
+
+                Realm realm = Realm.getDefaultInstance();
+                realm.beginTransaction();
+
+                DownloadItem downloadItem = realm.where(DownloadItem.class)
+                        .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst();
+                if (downloadItem != null) {
+                    downloadItem.setStatus(DownloadItem.DOWNLOAD_STATUS_FAILED);
+                }
+
+                realm.commitTransaction();
             }
 
             @Override

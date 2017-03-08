@@ -100,4 +100,12 @@ public class AboutActivity extends BaseActivity {
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }
+
+    @SuppressWarnings("UnusedDeclaration")
+    @OnClick(R.id.twitter_layout)
+    void onClickTwitter() {
+        Uri uri = Uri.parse("https://twitter.com/juniperphoton");
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+    }
 }
