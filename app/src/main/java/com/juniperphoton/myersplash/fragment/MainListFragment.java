@@ -251,6 +251,9 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
             }
         };
 
+        if (mCategory == null) {
+            return;
+        }
         switch (mCategory.getId()) {
             case UnsplashCategory.FEATURED_CATEGORY_ID:
                 CloudService.getInstance().getFeaturedPhotos(subscriber, mCategory.getRequestUrl(), mNext);
