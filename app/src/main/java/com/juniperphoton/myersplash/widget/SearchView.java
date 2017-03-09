@@ -231,7 +231,7 @@ public class SearchView extends FrameLayout implements ViewTreeObserver.OnGlobal
         hideKeyboard();
         Log.d(TAG, "onClickSearch");
         if (mEditText.getText().toString().equals("")) {
-            ToastService.sendShortToast("Input the keyword to search.");
+            ToastService.INSTANCE.sendShortToast("Input the keyword to search.");
             return;
         }
         mTagView.setText("# " + mEditText.getText().toString().toUpperCase());

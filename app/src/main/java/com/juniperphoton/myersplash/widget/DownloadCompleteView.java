@@ -13,8 +13,8 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.juniperphoton.myersplash.App;
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.interfaces.SetThemeColor;
 import com.juniperphoton.myersplash.utils.ColorUtil;
 
@@ -51,16 +51,16 @@ public class DownloadCompleteView extends FrameLayout implements SetThemeColor {
     void setAs() {
         if (mFileUrl != null) {
             File file = new File(mFileUrl);
-            Uri uri = FileProvider.getUriForFile(App.getInstance(), App.getInstance().getString(R.string.authorities), file);
-            Intent intent = WallpaperManager.getInstance(App.getInstance()).getCropAndSetWallpaperIntent(uri);
+            Uri uri = FileProvider.getUriForFile(App.Companion.getInstance(), App.Companion.getInstance().getString(R.string.authorities), file);
+            Intent intent = WallpaperManager.getInstance(App.Companion.getInstance()).getCropAndSetWallpaperIntent(uri);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            App.getInstance().startActivity(intent);
+            App.Companion.getInstance().startActivity(intent);
         }
     }
 
     @Override
     public void setThemeBackColor(int color) {
         setAsRL.setBackground(new ColorDrawable(color));
-        setAsTextView.setTextColor(ColorUtil.isColorLight(color) ? Color.BLACK : Color.WHITE);
+        setAsTextView.setTextColor(ColorUtil.Companion.isColorLight(color) ? Color.BLACK : Color.WHITE);
     }
 }

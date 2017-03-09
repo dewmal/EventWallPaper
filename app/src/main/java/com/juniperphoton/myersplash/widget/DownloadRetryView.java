@@ -52,8 +52,8 @@ public class DownloadRetryView extends FrameLayout implements SetThemeColor {
     @Override
     public void setThemeBackColor(int color) {
         retryRL.setBackground(new ColorDrawable(color));
-        retryTextView.setTextColor(ColorUtil.isColorLight(color) ? Color.BLACK : Color.WHITE);
-        if (ColorUtil.isColorLight(color)) {
+        retryTextView.setTextColor(ColorUtil.Companion.isColorLight(color) ? Color.BLACK : Color.WHITE);
+        if (ColorUtil.Companion.isColorLight(color)) {
             deleteView.setImageResource(R.drawable.vector_ic_delete_black);
         }
     }

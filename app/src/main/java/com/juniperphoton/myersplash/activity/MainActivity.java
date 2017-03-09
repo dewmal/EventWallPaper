@@ -23,8 +23,9 @@ import com.juniperphoton.myersplash.model.UnsplashCategory;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.utils.AnimatorListenerImpl;
 import com.juniperphoton.myersplash.utils.DeviceUtil;
+import com.juniperphoton.myersplash.utils.DisplayUtil;
 import com.juniperphoton.myersplash.utils.LocalSettingHelper;
-import com.juniperphoton.myersplash.utils.RequestUtil;
+import com.juniperphoton.myersplash.utils.PermissionUtil;
 import com.juniperphoton.myersplash.widget.ImageDetailView;
 import com.juniperphoton.myersplash.widget.PivotTitleBar;
 
@@ -33,8 +34,6 @@ import org.greenrobot.eventbus.EventBus;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-
-import static com.juniperphoton.myersplash.utils.DisplayUtil.getDimenInPixel;
 
 @SuppressWarnings("UnusedDeclaration")
 public class MainActivity extends BaseActivity implements ImageDetailView.StateListener,
@@ -107,7 +106,7 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
     @Override
     protected void onResume() {
         super.onResume();
-        boolean scrollBar = LocalSettingHelper.getBoolean(this, Constant.SCROLL_TOOLBAR, true);
+        boolean scrollBar = LocalSettingHelper.INSTANCE.getBoolean(this, Constant.SCROLL_TOOLBAR, true);
         AppBarLayout.LayoutParams params =
                 (AppBarLayout.LayoutParams) mPivotTitleBar.getLayoutParams();
         if (scrollBar) {
@@ -122,7 +121,7 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
 
         mPivotTitleBar.setLayoutParams(params);
 
-        RequestUtil.checkAndRequest(MainActivity.this);
+        PermissionUtil.INSTANCE.checkAndRequest(MainActivity.this);
     }
 
     @Override
@@ -240,9 +239,11 @@ public class MainActivity extends BaseActivity implements ImageDetailView.StateL
             }
         });
 
-        if (!DeviceUtil.hasNavigationBar(this)) {
+        if (!DeviceUtil.Companion.hasNavigationBar(this)) {
             RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) mSearchFAB.getLayoutParams();
-            params.setMargins(0, 0, getDimenInPixel(24, this), getDimenInPixel(24, this));
+            params.setMargins(0, 0,
+                    DisplayUtil.Companion.getDimenInPixel(24, this),
+                    DisplayUtil.Companion.getDimenInPixel(24, this));
             mSearchFAB.setLayoutParams(params);
         }
 

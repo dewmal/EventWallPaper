@@ -56,7 +56,7 @@ public class DownloadingView extends FrameLayout implements SetThemeColor {
     public void setThemeBackColor(int color) {
         rootRL.setBackground(new ColorDrawable(color));
         this.progressView.setThemeColor(color);
-        if (ColorUtil.isColorLight(color)) {
+        if (ColorUtil.Companion.isColorLight(color)) {
             progressTV.setTextColor(Color.BLACK);
             cancelImageView.setImageResource(R.drawable.vector_ic_clear_black);
         } else {

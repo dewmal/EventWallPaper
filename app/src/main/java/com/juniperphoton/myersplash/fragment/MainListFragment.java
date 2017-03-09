@@ -179,7 +179,7 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
 
     @Override
     public void onClickQuickDownload(final UnsplashImage image) {
-        DownloadUtil.checkAndDownload(getActivity(), image);
+        DownloadUtil.INSTANCE.checkAndDownload(getActivity(), image);
     }
 
     public void setCategory(UnsplashCategory category, Callback callback) {
@@ -223,7 +223,7 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
             @Override
             public void onError(Throwable e) {
                 setSignalOfRequestEnd();
-                ToastService.sendShortToast("Fail to send request.");
+                ToastService.INSTANCE.sendShortToast("Fail to send request.");
                 if (mAdapter != null && mAdapter.getItemCount() > 0) {
                     updateNoItemVisibility(false);
                 } else {
@@ -246,7 +246,7 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
                     updateNoItemVisibility(false);
                 }
                 if (mNext == 1) {
-                    ToastService.sendShortToast("Loaded :D");
+                    ToastService.INSTANCE.sendShortToast("Loaded :D");
                 }
             }
         };

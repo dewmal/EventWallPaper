@@ -37,7 +37,7 @@ public class CommonTitleBar extends FrameLayout {
         backView.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                Activity activity = ContextUtil.getActivity(view);
+                Activity activity = ContextUtil.INSTANCE.getActivity(view);
                 if (activity != null) {
                     activity.finish();
                 }

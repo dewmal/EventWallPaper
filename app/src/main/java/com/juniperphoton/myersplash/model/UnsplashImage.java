@@ -3,7 +3,7 @@ package com.juniperphoton.myersplash.model;
 import android.graphics.Color;
 
 import com.google.gson.annotations.SerializedName;
-import com.juniperphoton.myersplash.base.App;
+import com.juniperphoton.myersplash.App;
 import com.juniperphoton.myersplash.common.Constant;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.LocalSettingHelper;
@@ -39,7 +39,7 @@ public class UnsplashImage implements Serializable {
     }
 
     public String getListUrl() {
-        final int choice = LocalSettingHelper.getInt(App.getInstance(), Constant.LOADING_QUALITY_CONFIG_NAME, 0);
+        final int choice = LocalSettingHelper.INSTANCE.getInt(App.Companion.getInstance(), Constant.LOADING_QUALITY_CONFIG_NAME, 0);
         String url = null;
         if (mUrls == null) {
             return null;
@@ -59,7 +59,8 @@ public class UnsplashImage implements Serializable {
     }
 
     public String getDownloadUrl() {
-        final int choice = LocalSettingHelper.getInt(App.getInstance(), Constant.SAVING_QUALITY_CONFIG_NAME, 1);
+        final int choice = LocalSettingHelper.INSTANCE.getInt(App.Companion.getInstance(),
+                Constant.SAVING_QUALITY_CONFIG_NAME, 1);
         String url = null;
         switch (choice) {
             case 0:
@@ -76,7 +77,7 @@ public class UnsplashImage implements Serializable {
     }
 
     private String getTagForDownloadUrl() {
-        final int choice = LocalSettingHelper.getInt(App.getInstance(), Constant.SAVING_QUALITY_CONFIG_NAME, 1);
+        final int choice = LocalSettingHelper.INSTANCE.getInt(App.Companion.getInstance(), Constant.SAVING_QUALITY_CONFIG_NAME, 1);
         String tag = "";
         switch (choice) {
             case 0:
@@ -93,7 +94,7 @@ public class UnsplashImage implements Serializable {
     }
 
     public String getPathForDownload() {
-        return DownloadUtil.getGalleryPath() + File.separator + getFileNameForDownload();
+        return DownloadUtil.INSTANCE.getGalleryPath() + File.separator + getFileNameForDownload();
     }
 
     public boolean hasDownloaded() {

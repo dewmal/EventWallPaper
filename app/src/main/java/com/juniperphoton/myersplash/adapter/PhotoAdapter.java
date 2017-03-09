@@ -286,9 +286,9 @@ public class PhotoAdapter extends RecyclerView.Adapter<PhotoAdapter.PhotoViewHol
             if (image == null) return;
             final String regularUrl = image.getListUrl();
 
-            int backColor = ColorUtil.getDarkerColor(image.getThemeColor(), 0.7f);
+            int backColor = ColorUtil.Companion.getDarkerColor(image.getThemeColor(), 0.7f);
 
-            if (LocalSettingHelper.getBoolean(mContext, Constant.QUICK_DOWNLOAD_CONFIG_NAME, false)) {
+            if (LocalSettingHelper.INSTANCE.getBoolean(mContext, Constant.QUICK_DOWNLOAD_CONFIG_NAME, false)) {
                 if (!image.hasDownloaded()) {
                     mDownloadRL.setVisibility(View.VISIBLE);
                     mDownloadRL.setOnClickListener(new View.OnClickListener() {

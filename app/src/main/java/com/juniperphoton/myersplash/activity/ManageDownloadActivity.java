@@ -17,6 +17,7 @@ import com.juniperphoton.myersplash.R;
 import com.juniperphoton.myersplash.adapter.DownloadsListAdapter;
 import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.utils.DeviceUtil;
+import com.juniperphoton.myersplash.utils.DisplayUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +28,6 @@ import butterknife.OnClick;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
-
-import static com.juniperphoton.myersplash.utils.DisplayUtil.getDimenInPixel;
 
 public class ManageDownloadActivity extends BaseActivity
         implements DownloadsListAdapter.DownloadStateChangedCallback {
@@ -169,9 +168,10 @@ public class ManageDownloadActivity extends BaseActivity
         mDownloadsRV.setAdapter(mAdapter);
         updateNoItemVisibility();
 
-        if (!DeviceUtil.hasNavigationBar(this)) {
+        if (!DeviceUtil.Companion.hasNavigationBar(this)) {
             ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) mMoreFAB.getLayoutParams();
-            params.setMargins(0, 0, getDimenInPixel(24, this), getDimenInPixel(24, this));
+            params.setMargins(0, 0, DisplayUtil.Companion.getDimenInPixel(24, this),
+                    DisplayUtil.Companion.getDimenInPixel(24, this));
             mMoreFAB.setLayoutParams(params);
         }
     }

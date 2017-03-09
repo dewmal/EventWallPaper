@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
+import com.juniperphoton.myersplash.App;
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.cloudservice.CloudService;
 import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
@@ -41,9 +41,9 @@ public class BackgroundDownloadService extends IntentService {
         String fileName = intent.getStringExtra(Params.NAME_KEY);
         boolean canceled = intent.getBooleanExtra(Params.CANCELED_KEY, false);
 
-        int nId = intent.getIntExtra(Params.CANCEL_NID_KEY, NotificationUtil.NOT_ALLOCATED_ID);
-        if (nId != NotificationUtil.NOT_ALLOCATED_ID) {
-            NotificationUtil.cancelNotificationById(nId);
+        int nId = intent.getIntExtra(Params.CANCEL_NID_KEY, NotificationUtil.Companion.getNOT_ALLOCATED_ID());
+        if (nId != NotificationUtil.Companion.getNOT_ALLOCATED_ID()) {
+            NotificationUtil.Companion.cancelNotificationById(nId);
         }
 
         if (canceled) {
@@ -51,27 +51,27 @@ public class BackgroundDownloadService extends IntentService {
             Subscriber subscriber = subscriptionMap.get(url);
             if (subscriber != null) {
                 subscriber.unsubscribe();
-                NotificationUtil.cancelNotification(Uri.parse(url));
-                ToastService.sendShortToast(getString(R.string.cancelled_download));
+                NotificationUtil.Companion.cancelNotification(Uri.parse(url));
+                ToastService.INSTANCE.sendShortToast(getString(R.string.cancelled_download));
             }
         } else {
             Log.d(TAG, "on handle intent progress");
             String filePath = downloadImage(url, fileName);
-            NotificationUtil.showProgressNotification(getString(R.string.app_name),
+            NotificationUtil.Companion.showProgressNotification(getString(R.string.app_name),
                     getString(R.string.downloading),
                     0, filePath, Uri.parse(url));
         }
     }
 
     protected String downloadImage(final String url, final String fileName) {
-        final File file = DownloadUtil.getFileToSave(fileName);
+        final File file = DownloadUtil.INSTANCE.getFileToSave(fileName);
         Subscriber<ResponseBody> subscriber = new Subscriber<ResponseBody>() {
             File outputFile = null;
 
             @Override
             public void onCompleted() {
                 if (outputFile == null) {
-                    NotificationUtil.showErrorNotification(Uri.parse(url), fileName, url);
+                    NotificationUtil.Companion.showErrorNotification(Uri.parse(url), fileName, url);
 
                     Realm realm = Realm.getDefaultInstance();
                     realm.beginTransaction();
@@ -97,12 +97,12 @@ public class BackgroundDownloadService extends IntentService {
                         Log.d(TAG, "renamed file:" + newFile.getAbsolutePath());
                         downloadItem.setFilePath(newFile.getPath());
 
-                        SingleMediaScanner.sendScanFileBroadcast(App.getInstance(), newFile);
+                        SingleMediaScanner.INSTANCE.sendScanFileBroadcast(App.Companion.getInstance(), newFile);
                     }
 
                     realm.commitTransaction();
 
-                    NotificationUtil.showCompleteNotification(Uri.parse(url), Uri.fromFile(outputFile));
+                    NotificationUtil.Companion.showCompleteNotification(Uri.parse(url), Uri.fromFile(outputFile));
                 }
                 Log.d(TAG, getString(R.string.completed));
             }
@@ -111,7 +111,7 @@ public class BackgroundDownloadService extends IntentService {
             public void onError(Throwable e) {
                 e.printStackTrace();
                 Log.d(TAG, "on handle intent error " + e.getMessage() + ",url:" + url);
-                NotificationUtil.showErrorNotification(Uri.parse(url), fileName, url);
+                NotificationUtil.Companion.showErrorNotification(Uri.parse(url), fileName, url);
 
                 Realm realm = Realm.getDefaultInstance();
                 realm.beginTransaction();
@@ -128,7 +128,7 @@ public class BackgroundDownloadService extends IntentService {
             @Override
             public void onNext(ResponseBody responseBody) {
                 Log.d(TAG, "outputFile download onNext,size" + responseBody.contentLength());
-                this.outputFile = DownloadUtil.writeResponseBodyToDisk(responseBody, file.getPath(), url);
+                this.outputFile = DownloadUtil.INSTANCE.writeResponseBodyToDisk(responseBody, file.getPath(), url);
             }
         };
         CloudService.getInstance().downloadPhoto(subscriber, url);

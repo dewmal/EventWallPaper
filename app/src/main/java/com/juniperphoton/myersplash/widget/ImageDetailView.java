@@ -36,14 +36,14 @@ import com.facebook.imagepipeline.cache.DefaultCacheKeyFactory;
 import com.facebook.imagepipeline.core.ImagePipelineFactory;
 import com.facebook.imagepipeline.request.ImageRequest;
 import com.juniperphoton.flipperviewlib.FlipperView;
+import com.juniperphoton.myersplash.App;
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.event.DownloadStartedEvent;
 import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.model.UnsplashImage;
 import com.juniperphoton.myersplash.utils.AnimatorListenerImpl;
 import com.juniperphoton.myersplash.utils.ColorUtil;
-import com.juniperphoton.myersplash.utils.DownloadItemTransactionHelper;
+import com.juniperphoton.myersplash.utils.DownloadItemTransactionUtil;
 import com.juniperphoton.myersplash.utils.DownloadUtil;
 import com.juniperphoton.myersplash.utils.ToastService;
 
@@ -236,12 +236,12 @@ public class ImageDetailView extends FrameLayout {
 
         boolean copied = false;
         if (localFile != null && localFile.exists()) {
-            mCopyFileForSharing = new File(DownloadUtil.getGalleryPath(), "Share-" + localFile.getName());
-            copied = DownloadUtil.copyFile(localFile, mCopyFileForSharing);
+            mCopyFileForSharing = new File(DownloadUtil.INSTANCE.getGalleryPath(), "Share-" + localFile.getName());
+            copied = DownloadUtil.INSTANCE.copyFile(localFile, mCopyFileForSharing);
         }
 
         if (mCopyFileForSharing == null || !mCopyFileForSharing.exists() || !copied) {
-            ToastService.sendShortToast(mContext.getString(R.string.something_wrong));
+            ToastService.INSTANCE.sendShortToast(mContext.getString(R.string.something_wrong));
             return;
         }
 
@@ -312,7 +312,7 @@ public class ImageDetailView extends FrameLayout {
         if (mClickedImage == null) {
             return;
         }
-        DownloadUtil.checkAndDownload((Activity) mContext, mClickedImage);
+        DownloadUtil.INSTANCE.checkAndDownload((Activity) mContext, mClickedImage);
     }
 
     @OnClick(R.id.detail_cancel_download_fab)
@@ -323,8 +323,8 @@ public class ImageDetailView extends FrameLayout {
         }
         mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD);
 
-        DownloadItemTransactionHelper.updateStatus(mAssociatedDownloadItem, DownloadItem.DOWNLOAD_STATUS_FAILED);
-        DownloadUtil.cancelDownload(mContext, mClickedImage);
+        DownloadItemTransactionUtil.INSTANCE.updateStatus(mAssociatedDownloadItem, DownloadItem.DOWNLOAD_STATUS_FAILED);
+        DownloadUtil.INSTANCE.cancelDownload(mContext, mClickedImage);
     }
 
     @OnClick(R.id.detail_set_as_fab)
@@ -332,10 +332,11 @@ public class ImageDetailView extends FrameLayout {
         String url = mClickedImage.getPathForDownload() + ".jpg";
         if (url != null) {
             File file = new File(url);
-            Uri uri = FileProvider.getUriForFile(App.getInstance(), App.getInstance().getString(R.string.authorities), file);
-            Intent intent = WallpaperManager.getInstance(App.getInstance()).getCropAndSetWallpaperIntent(uri);
+            Uri uri = FileProvider.getUriForFile(App.Companion.getInstance(),
+                    App.Companion.getInstance().getString(R.string.authorities), file);
+            Intent intent = WallpaperManager.getInstance(App.Companion.getInstance()).getCropAndSetWallpaperIntent(uri);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            App.getInstance().startActivity(intent);
+            App.Companion.getInstance().startActivity(intent);
         }
     }
 
@@ -585,7 +586,7 @@ public class ImageDetailView extends FrameLayout {
         int alpha = Color.alpha(themeColor);
 
         //Dark
-        if (!ColorUtil.isColorLight(themeColor)) {
+        if (!ColorUtil.Companion.isColorLight(themeColor)) {
             mCopyUrlTextView.setTextColor(Color.BLACK);
             int backColor = Color.argb(200, Color.red(Color.WHITE),
                     Color.green(Color.WHITE), Color.blue(Color.WHITE));
@@ -601,7 +602,7 @@ public class ImageDetailView extends FrameLayout {
         mProgressView.setProgress(5);
 
         int backColor = unsplashImage.getThemeColor();
-        if (!ColorUtil.isColorLight(backColor)) {
+        if (!ColorUtil.Companion.isColorLight(backColor)) {
             mNameTextView.setTextColor(Color.WHITE);
             mLineView.setBackground(new ColorDrawable(Color.WHITE));
             mPhotoByTextView.setTextColor(Color.WHITE);
@@ -619,7 +620,7 @@ public class ImageDetailView extends FrameLayout {
 
         int itemY = (int) rectF.top;
 
-        mAssociatedDownloadItem = DownloadUtil.getDownloadItemById(unsplashImage.getId());
+        mAssociatedDownloadItem = DownloadUtil.INSTANCE.getDownloadItemById(unsplashImage.getId());
         if (mAssociatedDownloadItem != null) {
             Log.d(TAG, "found down item,status:" + mAssociatedDownloadItem.getStatus());
             switch (mAssociatedDownloadItem.getStatus()) {

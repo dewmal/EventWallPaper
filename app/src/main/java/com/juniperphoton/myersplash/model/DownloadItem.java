@@ -76,7 +76,6 @@ public class DownloadItem extends RealmObject {
         mStatus = status;
     }
 
-    @DownloadStatus
     public int getStatus() {
         return mStatus;
     }

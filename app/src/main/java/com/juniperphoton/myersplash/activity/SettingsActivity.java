@@ -52,21 +52,21 @@ public class SettingsActivity extends BaseActivity {
         setContentView(R.layout.activity_settings);
         ButterKnife.bind(this);
 
-        boolean quickDownload = LocalSettingHelper.getBoolean(this, Constant.QUICK_DOWNLOAD_CONFIG_NAME, false);
+        boolean quickDownload = LocalSettingHelper.INSTANCE.getBoolean(this, Constant.QUICK_DOWNLOAD_CONFIG_NAME, false);
         mQuickDownloadItem.setChecked(quickDownload);
         mQuickDownloadItem.setOnCheckedListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                LocalSettingHelper.putBoolean(SettingsActivity.this, Constant.QUICK_DOWNLOAD_CONFIG_NAME, isChecked);
+                LocalSettingHelper.INSTANCE.putBoolean(SettingsActivity.this, Constant.QUICK_DOWNLOAD_CONFIG_NAME, isChecked);
             }
         });
 
-        boolean scrollBar = LocalSettingHelper.getBoolean(this, Constant.SCROLL_TOOLBAR, true);
+        boolean scrollBar = LocalSettingHelper.INSTANCE.getBoolean(this, Constant.SCROLL_TOOLBAR, true);
         mScrollBarItem.setChecked(scrollBar);
         mScrollBarItem.setOnCheckedListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                LocalSettingHelper.putBoolean(SettingsActivity.this, Constant.SCROLL_TOOLBAR, isChecked);
+                LocalSettingHelper.INSTANCE.putBoolean(SettingsActivity.this, Constant.SCROLL_TOOLBAR, isChecked);
             }
         });
 
@@ -76,10 +76,10 @@ public class SettingsActivity extends BaseActivity {
         mLoadingStrings = new String[]{getString(R.string.LoadingLarge),
                 getString(R.string.LoadingSmall), getString(R.string.LoadingThumbnail)};
 
-        final int savingChoice = LocalSettingHelper.getInt(this, Constant.SAVING_QUALITY_CONFIG_NAME, 1);
+        final int savingChoice = LocalSettingHelper.INSTANCE.getInt(this, Constant.SAVING_QUALITY_CONFIG_NAME, 1);
         mSavingQualityItem.setContent(mSavingStrings[savingChoice]);
 
-        final int loadingChoice = LocalSettingHelper.getInt(this, Constant.LOADING_QUALITY_CONFIG_NAME, 0);
+        final int loadingChoice = LocalSettingHelper.INSTANCE.getInt(this, Constant.LOADING_QUALITY_CONFIG_NAME, 0);
         mLoadingQualityItem.setContent(mLoadingStrings[loadingChoice]);
     }
 
@@ -97,14 +97,14 @@ public class SettingsActivity extends BaseActivity {
     @OnClick(R.id.setting_clear_cache)
     public void clearUp(View view) {
         Fresco.getImagePipeline().clearCaches();
-        ToastService.sendShortToast("All clear :D");
+        ToastService.INSTANCE.sendShortToast("All clear :D");
         mClearCacheItem.setContent("0 MB");
         EventBus.getDefault().post(new RefreshAllEvent());
     }
 
     @OnClick(R.id.setting_clear_database)
     public void clearDatabase(View view) {
-        ToastService.sendShortToast("All clear :D");
+        ToastService.INSTANCE.sendShortToast("All clear :D");
         Realm.getDefaultInstance().executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -115,7 +115,7 @@ public class SettingsActivity extends BaseActivity {
 
     @OnClick(R.id.setting_save_quality)
     void setSavingQuality(View view) {
-        final int choice = LocalSettingHelper.getInt(this, Constant.SAVING_QUALITY_CONFIG_NAME, 1);
+        final int choice = LocalSettingHelper.INSTANCE.getInt(this, Constant.SAVING_QUALITY_CONFIG_NAME, 1);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
         builder.setTitle(getString(R.string.SavingQuality));
@@ -123,7 +123,7 @@ public class SettingsActivity extends BaseActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        LocalSettingHelper.putInt(SettingsActivity.this, Constant.SAVING_QUALITY_CONFIG_NAME, which);
+                        LocalSettingHelper.INSTANCE.putInt(SettingsActivity.this, Constant.SAVING_QUALITY_CONFIG_NAME, which);
                         dialog.dismiss();
                         mSavingQualityItem.setContent(mSavingStrings[which]);
                     }
@@ -133,7 +133,7 @@ public class SettingsActivity extends BaseActivity {
 
     @OnClick(R.id.setting_load_quality)
     void setLoadingQuality(View view) {
-        final int choice = LocalSettingHelper.getInt(this, Constant.LOADING_QUALITY_CONFIG_NAME, 0);
+        final int choice = LocalSettingHelper.INSTANCE.getInt(this, Constant.LOADING_QUALITY_CONFIG_NAME, 0);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
         builder.setTitle(getString(R.string.LoadingQuality));
@@ -141,7 +141,7 @@ public class SettingsActivity extends BaseActivity {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        LocalSettingHelper.putInt(SettingsActivity.this, Constant.LOADING_QUALITY_CONFIG_NAME, which);
+                        LocalSettingHelper.INSTANCE.putInt(SettingsActivity.this, Constant.LOADING_QUALITY_CONFIG_NAME, which);
                         dialog.dismiss();
                         mLoadingQualityItem.setContent(mLoadingStrings[which]);
                     }

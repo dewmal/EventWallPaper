@@ -11,11 +11,11 @@ import android.view.ViewGroup;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.juniperphoton.flipperviewlib.FlipperView;
+import com.juniperphoton.myersplash.App;
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.base.App;
 import com.juniperphoton.myersplash.model.DownloadItem;
 import com.juniperphoton.myersplash.service.BackgroundDownloadService;
-import com.juniperphoton.myersplash.utils.DownloadItemTransactionHelper;
+import com.juniperphoton.myersplash.utils.DownloadItemTransactionUtil;
 import com.juniperphoton.myersplash.utils.Params;
 import com.juniperphoton.myersplash.widget.DownloadCompleteView;
 import com.juniperphoton.myersplash.widget.DownloadRetryView;
@@ -79,12 +79,12 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
                     mData.remove(holder.getAdapterPosition());
                     notifyItemRemoved(holder.getAdapterPosition());
 
-                    Intent intent = new Intent(App.getInstance(), BackgroundDownloadService.class);
-                    intent.putExtra(Params.CANCELED_KEY, true);
+                    Intent intent = new Intent(App.Companion.getInstance(), BackgroundDownloadService.class);
+                    intent.putExtra(Params.INSTANCE.CANCELED_KEY, true);
                     intent.putExtra(Params.URL_KEY, item.getDownloadUrl());
                     mContext.startService(intent);
 
-                    DownloadItemTransactionHelper.delete(item);
+                    DownloadItemTransactionUtil.INSTANCE.delete(item);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -93,7 +93,7 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
         holder.downloadRetryView.setOnClickRetryListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DownloadItemTransactionHelper.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_DOWNLOADING);
+                DownloadItemTransactionUtil.INSTANCE.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_DOWNLOADING);
                 holder.flipperView.next(item.getStatus());
 
                 Intent intent = new Intent(mContext, BackgroundDownloadService.class);
@@ -108,10 +108,10 @@ public class DownloadsListAdapter extends RecyclerView.Adapter<DownloadsListAdap
         holder.downloadingView.setClickCancelListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DownloadItemTransactionHelper.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_FAILED);
+                DownloadItemTransactionUtil.INSTANCE.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_FAILED);
                 holder.flipperView.next(item.getStatus());
 
-                Intent intent = new Intent(App.getInstance(), BackgroundDownloadService.class);
+                Intent intent = new Intent(App.Companion.getInstance(), BackgroundDownloadService.class);
                 intent.putExtra(Params.CANCELED_KEY, true);
                 intent.putExtra(Params.URL_KEY, item.getDownloadUrl());
                 mContext.startService(intent);

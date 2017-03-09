@@ -43,7 +43,7 @@ public class AboutActivity extends BaseActivity {
         updateVersion();
         initThanks();
 
-        if (!DeviceUtil.hasNavigationBar(this)) {
+        if (!DeviceUtil.Companion.hasNavigationBar(this)) {
             mBlank.setVisibility(View.GONE);
         }
     }
@@ -61,7 +61,7 @@ public class AboutActivity extends BaseActivity {
     }
 
     private void updateVersion() {
-        mVersionTextView.setText(PackageUtil.getVersionName(this));
+        mVersionTextView.setText(PackageUtil.INSTANCE.getVersionName(this));
     }
 
     @SuppressWarnings("UnusedDeclaration")
@@ -72,7 +72,8 @@ public class AboutActivity extends BaseActivity {
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"dengweichao@hotmail.com"}); // recipients
 
         String SHARE_SUBJECT = "MyerSplash for Android %s feedback";
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, String.format(SHARE_SUBJECT, PackageUtil.getVersionName(this)));
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, String.format(SHARE_SUBJECT,
+                PackageUtil.INSTANCE.getVersionName(this)));
         emailIntent.putExtra(Intent.EXTRA_TEXT, "");
         startActivity(emailIntent);
     }
