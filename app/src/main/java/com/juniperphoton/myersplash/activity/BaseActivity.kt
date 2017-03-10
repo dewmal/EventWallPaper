@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.WindowManager
-import moe.feng.material.statusbar.StatusBarCompat
+import com.juniperphoton.myersplash.utils.StatusBarCompat
 
 open class BaseActivity : AppCompatActivity() {
     @Override

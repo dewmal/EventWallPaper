@@ -8,6 +8,7 @@ import android.view.KeyCharacterMap
 import android.view.KeyEvent
 import android.view.WindowManager
 
+@Suppress("UNUSED")
 class DeviceUtil {
     companion object {
         fun hasNavigationBar(ctx: Context): Boolean {
