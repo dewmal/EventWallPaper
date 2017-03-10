@@ -200,7 +200,7 @@ object DownloadUtil {
         }
     }
 
-    fun getDownloadItemById(id: String): DownloadItem {
+    fun getDownloadItemById(id: String): DownloadItem? {
         val realm = Realm.getDefaultInstance()
         realm.beginTransaction()
         val item = realm.where(DownloadItem::class.java)

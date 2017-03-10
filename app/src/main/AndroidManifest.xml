@@ -34,11 +34,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".activity.AboutActivity"
-            android:label="ABOUT"
-            android:screenOrientation="portrait"
-            android:theme="@style/AboutTheme" />
-        <activity
             android:name=".activity.ManageDownloadActivity"
             android:label="DOWNLOADS"
             android:launchMode="singleInstance"

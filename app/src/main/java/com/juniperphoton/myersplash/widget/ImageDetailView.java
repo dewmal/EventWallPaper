@@ -649,7 +649,7 @@ public class ImageDetailView extends FrameLayout {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void receivedDownloadStarted(DownloadStartedEvent event) {
-        if (mClickedImage != null && event.id.equals(mClickedImage.getId())) {
+        if (mClickedImage != null && event.getId().equals(mClickedImage.getId())) {
             mDownloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING);
             associateWithDownloadItem(null);
         }

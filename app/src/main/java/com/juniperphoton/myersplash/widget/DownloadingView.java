@@ -11,14 +11,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.interfaces.SetThemeColor;
 import com.juniperphoton.myersplash.utils.ColorUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class DownloadingView extends FrameLayout implements SetThemeColor {
+public class DownloadingView extends FrameLayout {
     @BindView(R.id.downloading_progress_pv)
     ProgressView progressView;
 

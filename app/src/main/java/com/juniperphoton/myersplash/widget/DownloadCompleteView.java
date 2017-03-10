@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.juniperphoton.myersplash.App;
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.interfaces.SetThemeColor;
 import com.juniperphoton.myersplash.utils.ColorUtil;
 
 import java.io.File;
@@ -24,7 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class DownloadCompleteView extends FrameLayout implements SetThemeColor {
+public class DownloadCompleteView extends FrameLayout {
 
     @BindView(R.id.widget_set_as_rl)
     RelativeLayout setAsBtn;
@@ -58,7 +57,6 @@ public class DownloadCompleteView extends FrameLayout implements SetThemeColor {
         }
     }
 
-    @Override
     public void setThemeBackColor(int color) {
         setAsRL.setBackground(new ColorDrawable(color));
         setAsTextView.setTextColor(ColorUtil.Companion.isColorLight(color) ? Color.BLACK : Color.WHITE);

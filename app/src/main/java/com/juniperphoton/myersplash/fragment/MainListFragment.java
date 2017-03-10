@@ -273,9 +273,9 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
     @SuppressWarnings("unused")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(ScrollToTopEvent event) {
-        if (event.categoryId == mCategory.getId()) {
+        if (event.getId() == mCategory.getId()) {
             mContentRecyclerView.smoothScrollToPosition(0);
-            if (event.requestRefresh) {
+            if (event.getRefresh()) {
                 requestRefresh();
             }
         }
@@ -295,8 +295,8 @@ public class MainListFragment extends Fragment implements OnLoadMoreListener, On
         if (mCategory.getId() != UnsplashCategory.SEARCH_ID) {
             return;
         }
-        Log.d(TAG, "RequestSearchEvent received:" + event.query);
-        mQuery = event.query;
+        Log.d(TAG, "RequestSearchEvent received:" + event.getQuery());
+        mQuery = event.getQuery();
         requestRefresh();
     }
 

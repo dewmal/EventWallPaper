@@ -12,13 +12,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.juniperphoton.myersplash.R;
-import com.juniperphoton.myersplash.interfaces.SetThemeColor;
 import com.juniperphoton.myersplash.utils.ColorUtil;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DownloadRetryView extends FrameLayout implements SetThemeColor {
+public class DownloadRetryView extends FrameLayout {
 
     @BindView(R.id.widget_retry_rl)
     RelativeLayout retryRL;
@@ -45,11 +44,10 @@ public class DownloadRetryView extends FrameLayout implements SetThemeColor {
         mDeleteRoot.setOnClickListener(listener);
     }
 
-    public void setOnClickRetryListener(View.OnClickListener listener){
+    public void setOnClickRetryListener(View.OnClickListener listener) {
         retryBtn.setOnClickListener(listener);
     }
 
-    @Override
     public void setThemeBackColor(int color) {
         retryRL.setBackground(new ColorDrawable(color));
         retryTextView.setTextColor(ColorUtil.Companion.isColorLight(color) ? Color.BLACK : Color.WHITE);
