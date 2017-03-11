@@ -19,6 +19,7 @@ import org.greenrobot.eventbus.EventBus
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.juniperphoton.myersplash.RealmCache
 import io.realm.Realm
 
 class SettingsActivity : BaseActivity() {
@@ -94,7 +95,7 @@ class SettingsActivity : BaseActivity() {
     @OnClick(R.id.setting_clear_database)
     fun clearDatabase(view: View) {
         ToastService.sendShortToast("All clear :D")
-        Realm.getDefaultInstance().executeTransaction { realm -> realm.deleteAll() }
+        RealmCache.getInstance().executeTransaction { realm -> realm.deleteAll() }
     }
 
     @OnClick(R.id.setting_save_quality)

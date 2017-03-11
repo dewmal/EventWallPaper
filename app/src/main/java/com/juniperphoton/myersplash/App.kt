@@ -14,6 +14,6 @@ class App : Application() {
         super.onCreate()
         instance = this
         Fresco.initialize(this)
-        Realm.init(this)
+        RealmCache.init(this)
     }
 }

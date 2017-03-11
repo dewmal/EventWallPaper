@@ -56,6 +56,7 @@ import java.io.File
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.juniperphoton.myersplash.RealmCache
 import io.realm.Realm
 import io.realm.RealmChangeListener
 import rx.Observable
@@ -262,7 +263,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
 
     private fun associateWithDownloadItem(item: DownloadItem?) {
         if (item == null) {
-            val realm = Realm.getDefaultInstance()
+            val realm = RealmCache.getInstance()
             realm.beginTransaction()
             associatedDownloadItem = realm.where(DownloadItem::class.java)
                     .equalTo(DownloadItem.ID_KEY, clickedImage!!.id).findFirst()

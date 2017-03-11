@@ -1,6 +1,7 @@
 package com.juniperphoton.myersplash.model
 
 import android.support.annotation.IntDef
+import com.google.gson.annotations.SerializedName
 
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy

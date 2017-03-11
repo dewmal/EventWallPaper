@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog
 import android.util.Log
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.event.DownloadStartedEvent
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
@@ -53,7 +54,7 @@ object DownloadUtil {
                         progressToReport = progress
                         NotificationUtil.showProgressNotification("MyerSplash", "Downloading...",
                                 progressToReport, fileUri, Uri.parse(downloadUrl))
-                        Realm.getDefaultInstance().executeTransaction { realm ->
+                        RealmCache.getInstance().executeTransaction { realm ->
                             val downloadItem = realm.where(DownloadItem::class.java)
                                     .equalTo(DownloadItem.DOWNLOAD_URL, downloadUrl).findFirst()
                             if (downloadItem != null) {
@@ -201,7 +202,7 @@ object DownloadUtil {
     }
 
     fun getDownloadItemById(id: String): DownloadItem? {
-        val realm = Realm.getDefaultInstance()
+        val realm = RealmCache.getInstance()
         realm.beginTransaction()
         val item = realm.where(DownloadItem::class.java)
                 .equalTo(DownloadItem.ID_KEY, id)
@@ -218,9 +219,11 @@ object DownloadUtil {
 
         ToastService.sendShortToast(context.getString(R.string.downloading_in_background))
 
-        val item = DownloadItem(image!!.id!!, image!!.listUrl!!, image!!.downloadUrl!!,
-                image.fileNameForDownload)
-        item.color = image.themeColor
-        Realm.getDefaultInstance().executeTransaction { realm -> realm.copyToRealmOrUpdate(item) }
+        RealmCache.getInstance().executeTransaction { realm ->
+            val item = DownloadItem(image!!.id!!, image!!.listUrl!!, image!!.downloadUrl!!,
+                    image.fileNameForDownload)
+            item.color = image.themeColor
+            realm.copyToRealmOrUpdate(item)
+        }
     }
 }

@@ -1,11 +1,11 @@
 package com.juniperphoton.myersplash.utils
 
+import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.model.DownloadItem
-import io.realm.Realm
 
 object DownloadItemTransactionUtil {
     fun delete(item: DownloadItem) {
-        Realm.getDefaultInstance().executeTransaction { realm ->
+        RealmCache.getInstance().executeTransaction { realm ->
             var item = realm.where(DownloadItem::class.java).equalTo(DownloadItem.ID_KEY,
                     item.id).findFirst()
             item?.deleteFromRealm()
@@ -13,7 +13,7 @@ object DownloadItemTransactionUtil {
     }
 
     fun updateStatus(item: DownloadItem, @DownloadItem.DownloadStatus status: Int) {
-        Realm.getDefaultInstance().executeTransaction { realm ->
+        RealmCache.getInstance().executeTransaction { realm ->
             var item = realm.where(DownloadItem::class.java).equalTo(DownloadItem.ID_KEY,
                     item.id).findFirst()
             if (item != null) {
@@ -26,7 +26,7 @@ object DownloadItemTransactionUtil {
     }
 
     fun updateStatus(id: String, @DownloadItem.DownloadStatus status: Int) {
-        Realm.getDefaultInstance().executeTransaction { realm ->
+        RealmCache.getInstance().executeTransaction { realm ->
             var item = realm.where(DownloadItem::class.java).equalTo(DownloadItem.ID_KEY,
                     id).findFirst()
             if (item != null) {

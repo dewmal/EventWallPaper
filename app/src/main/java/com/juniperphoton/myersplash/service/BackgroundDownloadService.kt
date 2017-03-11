@@ -7,6 +7,7 @@ import android.util.Log
 
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.cloudservice.CloudService
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.utils.DownloadUtil
@@ -18,7 +19,6 @@ import com.juniperphoton.myersplash.utils.ToastService
 import java.io.File
 import java.util.HashMap
 
-import io.realm.Realm
 import okhttp3.ResponseBody
 import rx.Subscriber
 
@@ -59,19 +59,15 @@ class BackgroundDownloadService : IntentService("BackgroundDownloadService") {
             override fun onCompleted() {
                 if (outputFile == null) {
                     NotificationUtil.showErrorNotification(Uri.parse(url), fileName, url)
-
-                    val realm = Realm.getDefaultInstance()
-                    realm.beginTransaction()
-
-                    val downloadItem = realm.where(DownloadItem::class.java)
-                            .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst()
-                    if (downloadItem != null) {
-                        downloadItem.status = DownloadItem.DOWNLOAD_STATUS_FAILED
+                    RealmCache.getInstance().executeTransaction { realm ->
+                        val downloadItem = realm.where(DownloadItem::class.java)
+                                .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst()
+                        if (downloadItem != null) {
+                            downloadItem.status = DownloadItem.DOWNLOAD_STATUS_FAILED
+                        }
                     }
-
-                    realm.commitTransaction()
                 } else {
-                    val realm = Realm.getDefaultInstance()
+                    val realm = RealmCache.getInstance()
                     realm.beginTransaction()
 
                     val downloadItem = realm.where(DownloadItem::class.java)
@@ -99,7 +95,7 @@ class BackgroundDownloadService : IntentService("BackgroundDownloadService") {
                 Log.d(TAG, "on handle intent error " + e.message + ",url:" + url)
                 NotificationUtil.showErrorNotification(Uri.parse(url), fileName, url)
 
-                val realm = Realm.getDefaultInstance()
+                val realm = RealmCache.getInstance()
                 realm.beginTransaction()
 
                 val downloadItem = realm.where(DownloadItem::class.java)

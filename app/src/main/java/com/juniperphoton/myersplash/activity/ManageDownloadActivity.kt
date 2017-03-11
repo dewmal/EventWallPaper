@@ -22,6 +22,7 @@ import java.util.ArrayList
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.juniperphoton.myersplash.RealmCache
 import io.realm.Realm
 import io.realm.RealmChangeListener
 import io.realm.RealmResults
@@ -56,8 +57,8 @@ class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.DownloadStat
 
     override fun onDestroy() {
         super.onDestroy()
-        Realm.getDefaultInstance().removeAllChangeListeners()
-        Realm.getDefaultInstance().close()
+        RealmCache.getInstance().removeAllChangeListeners()
+        RealmCache.getInstance().close()
     }
 
     @OnClick(R.id.activity_downloads_more_fab)
@@ -80,7 +81,7 @@ class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.DownloadStat
     }
 
     private fun deleteFromRealm(status: Int) {
-        var realm = Realm.getDefaultInstance()
+        var realm = RealmCache.getInstance()
         realm.beginTransaction()
         val items = realm.where(DownloadItem::class.java)
                 .equalTo(DownloadItem.STATUS_KEY, status).findAll()
@@ -103,7 +104,7 @@ class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.DownloadStat
     private fun initViews() {
         val downloadItems = ArrayList<DownloadItem>()
 
-        val realm = Realm.getDefaultInstance()
+        val realm = RealmCache.getInstance()
         realm.beginTransaction()
 
         val items = realm.where(DownloadItem::class.java).findAll()
