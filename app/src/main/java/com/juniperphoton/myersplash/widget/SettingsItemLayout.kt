@@ -17,16 +17,16 @@ import butterknife.ButterKnife
 
 class SettingsItemLayout(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     @BindView(R.id.settings_item_title)
-    internal var titleTextView: TextView? = null
+    @JvmField var titleTextView: TextView? = null
 
     @BindView(R.id.settings_item_content)
-    internal var contentTextView: TextView? = null
+    @JvmField var contentTextView: TextView? = null
 
     @BindView(R.id.settings_item_switch)
-    internal var compoundButton: CompoundButton? = null
+    @JvmField var compoundButton: CompoundButton? = null
 
     @BindView(R.id.divider_view)
-    internal var dividerView: View? = null
+    @JvmField var dividerView: View? = null
 
     init {
         LayoutInflater.from(context).inflate(R.layout.row_settings_item, this, true)

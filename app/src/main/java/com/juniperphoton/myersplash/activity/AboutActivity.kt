@@ -1,5 +1,6 @@
 package com.juniperphoton.myersplash.activity
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -19,13 +20,13 @@ import moe.feng.alipay.zerosdk.AlipayZeroSdk
 @Suppress("UNUSED")
 class AboutActivity : BaseActivity() {
     @BindView(R.id.version_tv)
-    var versionTextView: TextView? = null
+    @JvmField var versionTextView: TextView? = null
 
     @BindView(R.id.thanks_to_list)
-    var recyclerView: RecyclerView? = null
+    @JvmField var recyclerView: RecyclerView? = null
 
     @BindView(R.id.blank_footer)
-    var blank: View? = null
+    @JvmField var blank: View? = null
 
     private var adapter: ThanksToAdapter? = null
 
@@ -64,14 +65,23 @@ class AboutActivity : BaseActivity() {
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, String.format(SHARE_SUBJECT,
                 PackageUtil.getVersionName(this)))
         emailIntent.putExtra(Intent.EXTRA_TEXT, "")
-        startActivity(emailIntent)
+
+        try {
+            startActivity(emailIntent)
+        } catch (e: ActivityNotFoundException) {
+            e.printStackTrace()
+        }
     }
 
     @OnClick(R.id.activity_about_rate_rl)
     internal fun onClickRate() {
         val uri = Uri.parse("market://details?id=" + packageName)
         val intent = Intent(Intent.ACTION_VIEW, uri)
-        startActivity(intent)
+        try {
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            e.printStackTrace()
+        }
     }
 
     @OnClick(R.id.activity_about_donate_rl)
@@ -85,13 +95,21 @@ class AboutActivity : BaseActivity() {
     internal fun onClickGitHub() {
         val uri = Uri.parse("https://github.com/JuniperPhoton/MyerSplashAndroid")
         val intent = Intent(Intent.ACTION_VIEW, uri)
-        startActivity(intent)
+        try {
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            e.printStackTrace()
+        }
     }
 
     @OnClick(R.id.twitter_layout)
     internal fun onClickTwitter() {
         val uri = Uri.parse("https://twitter.com/juniperphoton")
         val intent = Intent(Intent.ACTION_VIEW, uri)
-        startActivity(intent)
+        try {
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            e.printStackTrace()
+        }
     }
 }

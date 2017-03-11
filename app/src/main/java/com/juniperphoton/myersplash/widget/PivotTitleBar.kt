@@ -25,19 +25,22 @@ import butterknife.OnClick
 @Suppress("UNUSED")
 class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     @BindView(R.id.more_btn)
-    internal var mMoreBtn: View? = null
+    @JvmField var mMoreBtn: View? = null
 
     @BindView(R.id.pivot_item_0)
-    internal var mItem0: View? = null
+    @JvmField var mItem0: View? = null
 
     @BindView(R.id.pivot_item_1)
-    internal var mItem1: View? = null
+    @JvmField var mItem1: View? = null
 
     @BindView(R.id.pivot_item_2)
-    internal var mItem2: View? = null
+    @JvmField var mItem2: View? = null
 
     var selectedItem = DEFAULT_SELECTED
-        private set(value) {}
+        set(value) {
+            toggleAnimation(selectedItem, value)
+            field = value
+        }
 
     private var mCallback: OnClickTitleListener? = null
 
@@ -87,28 +90,17 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
 
     @OnClick(R.id.pivot_item_0)
     internal fun onClickItem0() {
-        if (mCallback != null) {
-            mCallback!!.onSingleTap(0)
-        }
+        mCallback?.onSingleTap(0)
     }
 
     @OnClick(R.id.pivot_item_1)
     internal fun onClickItem1() {
-        if (mCallback != null) {
-            mCallback!!.onSingleTap(1)
-        }
+        mCallback?.onSingleTap(1)
     }
 
     @OnClick(R.id.pivot_item_2)
     internal fun onClickItem2() {
-        if (mCallback != null) {
-            mCallback!!.onSingleTap(2)
-        }
-    }
-
-    fun setSelected(index: Int) {
-        toggleAnimation(selectedItem, index)
-        selectedItem = index
+        mCallback?.onSingleTap(2)
     }
 
     val selectedString: String

@@ -190,13 +190,13 @@ object DownloadUtil {
             builder.setPositiveButton(R.string.download) { dialog, which ->
                 dialog.dismiss()
                 startDownloadService(context, image)
-                EventBus.getDefault().post(DownloadStartedEvent(image.id))
+                EventBus.getDefault().post(DownloadStartedEvent(image?.id))
             }
             builder.setNegativeButton(R.string.cancel) { dialog, which -> dialog.dismiss() }
             builder.create().show()
         } else {
             startDownloadService(context, image)
-            EventBus.getDefault().post(DownloadStartedEvent(image.id))
+            EventBus.getDefault().post(DownloadStartedEvent(image?.id))
         }
     }
 
@@ -218,7 +218,7 @@ object DownloadUtil {
 
         ToastService.sendShortToast(context.getString(R.string.downloading_in_background))
 
-        val item = DownloadItem(image.id, image.listUrl, image.downloadUrl,
+        val item = DownloadItem(image!!.id!!, image!!.listUrl!!, image!!.downloadUrl!!,
                 image.fileNameForDownload)
         item.color = image.themeColor
         Realm.getDefaultInstance().executeTransaction { realm -> realm.copyToRealmOrUpdate(item) }

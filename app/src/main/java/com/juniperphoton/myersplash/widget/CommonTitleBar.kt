@@ -15,10 +15,10 @@ import butterknife.ButterKnife
 
 class CommonTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     @BindView(R.id.back_iv)
-    internal var backView: View? = null
+    @JvmField var backView: View? = null
 
     @BindView(R.id.title_tv)
-    internal var textView: TextView? = null
+    @JvmField var textView: TextView? = null
 
     init {
         LayoutInflater.from(context).inflate(R.layout.common_title_bar, this, true)
