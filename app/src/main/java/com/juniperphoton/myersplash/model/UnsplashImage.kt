@@ -71,7 +71,7 @@ class UnsplashImage : Serializable {
         }
 
     val pathForDownload: String
-        get() = DownloadUtil.getGalleryPath() + File.separator + fileNameForDownload
+        get() = DownloadUtil.galleryPath + File.separator + fileNameForDownload
 
     fun hasDownloaded(): Boolean {
         val path = pathForDownload + ".jpg"

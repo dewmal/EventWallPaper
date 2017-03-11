@@ -14,108 +14,128 @@ import com.juniperphoton.myersplash.event.DownloadStartedEvent
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.service.BackgroundDownloadService
-import io.realm.Realm
 import okhttp3.ResponseBody
 import org.greenrobot.eventbus.EventBus
 import java.io.*
 import java.lang.Exception
 import java.util.*
 
+@Suppress("UNUSED_PARAMETER")
 object DownloadUtil {
-    private const val TAG = "DownloadUtil"
+    private val TAG = "DownloadUtil"
 
-    fun writeResponseBodyToDisk(body: ResponseBody,
-                                fileUri: String,
-                                downloadUrl: String): File? {
+    fun writeResponseBodyToDisk(body: ResponseBody, fileUri: String, downloadUrl: String): File? {
         try {
-            var fileToSave = File(fileUri)
+            val fileToSave = File(fileUri)
+
             var inputStream: InputStream? = null
             var outputStream: OutputStream? = null
+
             try {
-                var startTime = Date().time
+                val startTime = Date().time
+
                 inputStream = body.byteStream()
                 outputStream = FileOutputStream(fileToSave)
 
                 val buffer = ByteArray(4096)
-                var fileSize = body.contentLength()
-                var downloadedSize: Long = 0
+
+                val fileSize = body.contentLength()
+                var fileSizeDownloaded: Long = 0
+
                 var progressToReport = 0
 
                 while (true) {
-                    var read = inputStream.read(buffer)
+                    val read = inputStream!!.read(buffer)
+
                     if (read == -1) {
                         break
                     }
-                    outputStream.write(buffer, 0, read)
-                    downloadedSize += read
 
-                    var progress = (downloadedSize / fileSize.toDouble() * 100).toInt()
+                    outputStream.write(buffer, 0, read)
+
+                    fileSizeDownloaded += read.toLong()
+
+                    val progress = (fileSizeDownloaded / fileSize.toDouble() * 100).toInt()
                     if (progress - progressToReport >= 5) {
                         progressToReport = progress
+                        val progressToDisplay = progressToReport
                         NotificationUtil.showProgressNotification("MyerSplash", "Downloading...",
                                 progressToReport, fileUri, Uri.parse(downloadUrl))
                         RealmCache.getInstance().executeTransaction { realm ->
                             val downloadItem = realm.where(DownloadItem::class.java)
                                     .equalTo(DownloadItem.DOWNLOAD_URL, downloadUrl).findFirst()
                             if (downloadItem != null) {
-                                downloadItem.progress = progressToReport
+                                downloadItem.progress = progressToDisplay
                             }
                         }
                     }
-
-                    val endTime = Date().time
-
-                    Log.d(TAG, "time spend=" + (endTime - startTime).toString())
-
-                    outputStream.flush()
-
-                    return fileToSave
                 }
+                val endTime = Date().time
+
+                Log.d(TAG, "time spend=" + (endTime - startTime).toString())
+
+                outputStream.flush()
+
+                return fileToSave
+            } catch (e0: InterruptedIOException) {
+                return null
             } catch (e: Exception) {
+                e.printStackTrace()
                 return null
             } finally {
                 try {
-                    inputStream?.close()
-                    outputStream?.close()
+                    if (inputStream != null) {
+                        inputStream.close()
+                    }
+
+                    if (outputStream != null) {
+                        outputStream.close()
+                    }
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
-                return null
+
             }
         } catch (e: Exception) {
-            e.printStackTrace()
             ToastService.sendShortToast(e.message)
             return null
         }
+
     }
 
     fun getFileToSave(expectedName: String): File? {
-        val galleryPath = getGalleryPath() ?: return null
-        val folder = File(getGalleryPath()!!)
+        val galleryPath = galleryPath ?: return null
+        val folder = File(galleryPath)
         if (!folder.exists()) {
             folder.mkdirs()
         }
-        return File(folder.absolutePath + File.separator + expectedName)
+        return File(folder.toString() + File.separator + expectedName)
     }
 
-    fun getGalleryPath(): String? {
-        val mediaStorageDir: File
-        if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
-            val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) ?: return ""
-            mediaStorageDir = File(path, "MyerSplash")
-        } else {
-            val extStorageDirectory = App.instance.filesDir.absolutePath
-            mediaStorageDir = File(extStorageDirectory, "MyerSplash")
-        }
+    /**
+     * 获得媒体库的文件夹
 
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                return null
+     * @return 路径
+     */
+    val galleryPath: String?
+        get() {
+            val mediaStorageDir: File
+            if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
+                val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) ?: return ""
+                mediaStorageDir = File(path, "MyerSplash")
+            } else {
+                val extStorageDirectory = App.instance.getFilesDir().getAbsolutePath()
+                mediaStorageDir = File(extStorageDirectory, "MyerSplash")
             }
-        }
 
-        return mediaStorageDir.absolutePath
-    }
+            if (!mediaStorageDir.exists()) {
+                if (!mediaStorageDir.mkdirs()) {
+                    return null
+                }
+            }
+
+            return mediaStorageDir.absolutePath
+        }
 
     fun copyFile(srcF: File, destF: File): Boolean {
         if (!destF.exists()) {
@@ -169,6 +189,7 @@ object DownloadUtil {
             e.printStackTrace()
             return false
         }
+
         return true
     }
 
@@ -191,17 +212,17 @@ object DownloadUtil {
             builder.setPositiveButton(R.string.download) { dialog, which ->
                 dialog.dismiss()
                 startDownloadService(context, image)
-                EventBus.getDefault().post(DownloadStartedEvent(image?.id))
+                EventBus.getDefault().post(DownloadStartedEvent(image.id))
             }
             builder.setNegativeButton(R.string.cancel) { dialog, which -> dialog.dismiss() }
             builder.create().show()
         } else {
             startDownloadService(context, image)
-            EventBus.getDefault().post(DownloadStartedEvent(image?.id))
+            EventBus.getDefault().post(DownloadStartedEvent(image.id))
         }
     }
 
-    fun getDownloadItemById(id: String): DownloadItem? {
+    fun getDownloadItemById(id: String?): DownloadItem? {
         val realm = RealmCache.getInstance()
         realm.beginTransaction()
         val item = realm.where(DownloadItem::class.java)
@@ -219,11 +240,9 @@ object DownloadUtil {
 
         ToastService.sendShortToast(context.getString(R.string.downloading_in_background))
 
-        RealmCache.getInstance().executeTransaction { realm ->
-            val item = DownloadItem(image!!.id!!, image!!.listUrl!!, image!!.downloadUrl!!,
-                    image.fileNameForDownload)
-            item.color = image.themeColor
-            realm.copyToRealmOrUpdate(item)
-        }
+        val item = DownloadItem(image.id!!, image.listUrl!!, image.downloadUrl!!,
+                image.fileNameForDownload)
+        item.color = image.themeColor
+        RealmCache.getInstance().executeTransaction { realm -> realm.copyToRealmOrUpdate(item) }
     }
 }

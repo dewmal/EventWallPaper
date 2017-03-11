@@ -7,7 +7,7 @@ import io.realm.RealmConfiguration
 import io.realm.RealmMigration
 
 object RealmCache {
-    private val SCHEMA_VERSION = 1
+    val SCHEMA_VERSION = 2
     private var configuration: RealmConfiguration? = null
 
     fun init(context: Context) {
@@ -18,14 +18,14 @@ object RealmCache {
                 .build()
     }
 
-    fun getInstance() = Realm.getInstance(configuration)
+    fun getInstance() = Realm.getInstance(configuration)!!
 }
 
 class CacheMigration : RealmMigration {
     override fun migrate(realm: DynamicRealm?, oldVersion: Long, newVersion: Long) {
         val schema = realm!!.schema
 
-        if (oldVersion.toInt() == 1) {
+        if (oldVersion.toInt() < RealmCache.SCHEMA_VERSION) {
             schema.get("DownloadItem").renameField("mThumbUrl", "thumbUrl")
                     .renameField("mDownloadUrl", "downloadUrl")
                     .renameField("mId", "id")

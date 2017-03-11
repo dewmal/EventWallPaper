@@ -27,10 +27,10 @@ import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.TextView
-
-import com.facebook.binaryresource.BinaryResource
+import butterknife.BindView
+import butterknife.ButterKnife
+import butterknife.OnClick
 import com.facebook.binaryresource.FileBinaryResource
-import com.facebook.cache.common.CacheKey
 import com.facebook.drawee.view.SimpleDraweeView
 import com.facebook.imagepipeline.cache.DefaultCacheKeyFactory
 import com.facebook.imagepipeline.core.ImagePipelineFactory
@@ -38,32 +38,19 @@ import com.facebook.imagepipeline.request.ImageRequest
 import com.juniperphoton.flipperviewlib.FlipperView
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.event.DownloadStartedEvent
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
-import com.juniperphoton.myersplash.utils.AnimatorListenerImpl
-import com.juniperphoton.myersplash.utils.ColorUtil
-import com.juniperphoton.myersplash.utils.DownloadItemTransactionUtil
-import com.juniperphoton.myersplash.utils.DownloadUtil
-import com.juniperphoton.myersplash.utils.ToastService
-
+import com.juniperphoton.myersplash.utils.*
+import io.realm.RealmChangeListener
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-
-import java.io.File
-
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
-import com.juniperphoton.myersplash.RealmCache
-import io.realm.Realm
-import io.realm.RealmChangeListener
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
-import rx.functions.Action1
-import rx.functions.Func1
 import rx.schedulers.Schedulers
+import java.io.File
 
 @Suppress("UNUSED")
 class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : FrameLayout(mContext, attrs) {
@@ -214,7 +201,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
 
         var copied = false
         if (localFile != null && localFile.exists()) {
-            copyFileForSharing = File(DownloadUtil.getGalleryPath(), "Share-" + localFile.name)
+            copyFileForSharing = File(DownloadUtil.galleryPath, "Share-" + localFile.name)
             copied = DownloadUtil.copyFile(localFile, copyFileForSharing!!)
         }
 
@@ -270,7 +257,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
             realm.commitTransaction()
         }
 
-        associatedDownloadItem?.removeChangeListeners()
+        associatedDownloadItem?.removeAllChangeListeners()
         associatedDownloadItem?.addChangeListener(realmChangeListener)
     }
 
@@ -297,15 +284,13 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
 
     @OnClick(R.id.detail_set_as_fab)
     internal fun onClickSetAsFAB() {
-        val url = clickedImage!!.pathForDownload + ".jpg"
-        if (url != null) {
-            val file = File(url)
-            val uri = FileProvider.getUriForFile(App.instance,
-                    App.instance.getString(R.string.authorities), file)
-            val intent = WallpaperManager.getInstance(App.instance).getCropAndSetWallpaperIntent(uri)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            App.instance.startActivity(intent)
-        }
+        val url = "${clickedImage!!.pathForDownload}.jpg"
+        val file = File(url)
+        val uri = FileProvider.getUriForFile(App.instance,
+                App.instance.getString(R.string.authorities), file)
+        val intent = WallpaperManager.getInstance(App.instance).getCropAndSetWallpaperIntent(uri)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        App.instance.startActivity(intent)
     }
 
     private fun toggleHeroViewAnimation(startY: Int, endY: Int, show: Boolean) {
@@ -538,7 +523,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
 
         val itemY = rectF.top.toInt()
 
-        associatedDownloadItem = DownloadUtil.getDownloadItemById(unsplashImage?.id!!)
+        associatedDownloadItem = DownloadUtil.getDownloadItemById(unsplashImage.id)
         if (associatedDownloadItem != null) {
             Log.d(TAG, "found down item,status:" + associatedDownloadItem!!.status)
             when (associatedDownloadItem?.status) {
