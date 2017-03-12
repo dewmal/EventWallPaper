@@ -4,7 +4,7 @@ An Android app that allows you to browse and download high-quality wallpaper fro
 
 ![](https://github.com/JuniperPhoton/MyerSplashAndroid/blob/dev/design/Screenshot/promotion-small.png)
 
-The project is built under **Retrofit** + **RxJava** + **ButterKnife** + **Realm** and so on. Feel free to communicate.
+The project is built under **Kotlin** + **Retrofit** + **RxJava** + **Realm** and so on. Feel free to communicate and PR.
 
 ##License 
 The project is released under MIT License.
