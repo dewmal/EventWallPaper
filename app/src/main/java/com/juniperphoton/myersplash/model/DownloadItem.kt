@@ -11,7 +11,6 @@ import io.realm.annotations.Ignore
 import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 
-@RealmClass
 open class DownloadItem() : RealmObject() {
     @IntDef(DOWNLOAD_STATUS_DOWNLOADING.toLong(), DOWNLOAD_STATUS_OK.toLong(), DOWNLOAD_STATUS_FAILED.toLong())
     @Retention(RetentionPolicy.SOURCE)

@@ -33,6 +33,7 @@ import org.greenrobot.eventbus.EventBus
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.juniperphoton.myersplash.widget.SearchView
 
 class MainActivity : BaseActivity(), ImageDetailView.StateListener, MainListFragment.Callback {
 
@@ -52,7 +53,7 @@ class MainActivity : BaseActivity(), ImageDetailView.StateListener, MainListFrag
     @JvmField var mDetailView: ImageDetailView? = null
 
     @BindView(R.id.activity_main_search_view)
-    @JvmField var mSearchView: com.juniperphoton.myersplash.widget.SearchView? = null
+    @JvmField var mSearchView: SearchView? = null
 
     @BindView(R.id.view_pager)
     @JvmField var mViewPager: ViewPager? = null
@@ -201,7 +202,7 @@ class MainActivity : BaseActivity(), ImageDetailView.StateListener, MainListFrag
 
             override fun onPageSelected(position: Int) {
                 mPivotTitleBar!!.selectedItem = position
-                mTagView!!.text = "# " + mPivotTitleBar!!.selectedString
+                mTagView!!.text = "# ${mPivotTitleBar!!.selectedString}"
             }
 
             override fun onPageScrollStateChanged(state: Int) {
