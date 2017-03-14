@@ -86,7 +86,7 @@ class NotificationUtil {
             val builder = NotificationCompat.Builder(App.instance)
                     .setContentTitle(App.instance.getString(R.string.saved))
                     .setContentText(App.instance.getString(R.string.tap_to_open_manage))
-                    .setSmallIcon(R.drawable.small_icon)
+                    .setSmallIcon(R.drawable.small_download_ok)
 
             //File file = new File(fileUri.getPath());
             //Uri uri = FileProvider.getUriForFile(App.instance, App.instance.getString(R.string.authorities), file);
