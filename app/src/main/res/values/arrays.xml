@@ -6,6 +6,7 @@
         <item>Delete failed items</item>
     </string-array>
     <string-array name="thanks_array">
+        <item>Kotlin</item>
         <item>Fresco</item>
         <item>Realm</item>
         <item>EventBus</item>
