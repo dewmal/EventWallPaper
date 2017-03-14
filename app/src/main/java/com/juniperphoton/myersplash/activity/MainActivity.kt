@@ -92,18 +92,8 @@ class MainActivity : BaseActivity(), ImageDetailView.StateListener, MainListFrag
 
     override fun onResume() {
         super.onResume()
-        val scrollBar = LocalSettingHelper.getBoolean(this, Constant.SCROLL_TOOLBAR, true)
-        val params = mPivotTitleBar!!.layoutParams as AppBarLayout.LayoutParams
-        if (scrollBar) {
-            params.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
-        } else {
-            params.scrollFlags = 0
-        }
-
         mDetailView!!.registerEventBus()
         mSearchView!!.registerEventBus()
-
-        mPivotTitleBar!!.layoutParams = params
 
         PermissionUtil.checkAndRequest(this@MainActivity)
     }

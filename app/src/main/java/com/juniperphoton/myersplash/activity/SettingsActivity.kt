@@ -40,9 +40,6 @@ class SettingsActivity : BaseActivity() {
     @BindView(R.id.setting_quick_download)
     @JvmField var mQuickDownloadItem: SettingsItemLayout? = null
 
-    @BindView(R.id.setting_scroll_appbar)
-    @JvmField var mScrollBarItem: SettingsItemLayout? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
@@ -52,12 +49,6 @@ class SettingsActivity : BaseActivity() {
         mQuickDownloadItem!!.checked = quickDownload
         mQuickDownloadItem!!.setOnCheckedListener(CompoundButton.OnCheckedChangeListener { v, isChecked ->
             LocalSettingHelper.putBoolean(this@SettingsActivity, Constant.QUICK_DOWNLOAD_CONFIG_NAME, isChecked)
-        })
-
-        val scrollBar = LocalSettingHelper.getBoolean(this, Constant.SCROLL_TOOLBAR, true)
-        mScrollBarItem!!.checked = scrollBar
-        mScrollBarItem!!.setOnCheckedListener(CompoundButton.OnCheckedChangeListener { c, isChecked ->
-            LocalSettingHelper.putBoolean(this@SettingsActivity, Constant.SCROLL_TOOLBAR, isChecked)
         })
 
         mSavingStrings = arrayOf(getString(R.string.SavingHighest), getString(R.string.SavingHigh),
@@ -77,11 +68,6 @@ class SettingsActivity : BaseActivity() {
     fun toggleQuickDownload(view: View) {
         mQuickDownloadItem!!.checked = !mQuickDownloadItem!!.checked
         EventBus.getDefault().post(RefreshAllEvent())
-    }
-
-    @OnClick(R.id.setting_scroll_appbar)
-    fun toggleToolbarScrolling(view: View) {
-        mScrollBarItem!!.checked = !mScrollBarItem!!.checked
     }
 
     @OnClick(R.id.setting_clear_cache)
