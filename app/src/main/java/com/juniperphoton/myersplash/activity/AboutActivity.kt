@@ -62,7 +62,7 @@ class AboutActivity : BaseActivity() {
                 var pos = parent?.getChildAdapterPosition(view)
                 if (pos == 0) {
                     outRect?.left = marginLeft
-                } else if (pos == (parent?.childCount?.minus(1))) {
+                } else if (pos == (parent?.adapter?.itemCount?.minus(1))) {
                     outRect?.right = marginLeft
                 }
             }
@@ -77,9 +77,7 @@ class AboutActivity : BaseActivity() {
         emailIntent.type = "message/rfc822"
         emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("dengweichao@hotmail.com"))
 
-        val SHARE_SUBJECT = "MyerSplash for Android %s feedback"
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, String.format(SHARE_SUBJECT,
-                PackageUtil.getVersionName(this)))
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "MyerSplash for Android ${PackageUtil.getVersionName(this)} feedback")
         emailIntent.putExtra(Intent.EXTRA_TEXT, "")
 
         try {
