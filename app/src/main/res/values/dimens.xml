@@ -35,4 +35,5 @@
 
     <dimen name="about_item_margin_left">12dp</dimen>
     <dimen name="about_banner_height">210dp</dimen>
+    <dimen name="pivot_bar_element_width">50dp</dimen>
 </resources>

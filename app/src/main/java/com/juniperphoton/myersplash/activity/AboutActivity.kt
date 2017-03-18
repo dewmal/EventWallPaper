@@ -2,6 +2,7 @@ package com.juniperphoton.myersplash.activity
 
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -14,6 +15,7 @@ import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.ThanksToAdapter
 import com.juniperphoton.myersplash.utils.DeviceUtil
+import com.juniperphoton.myersplash.utils.DisplayUtil
 import com.juniperphoton.myersplash.utils.PackageUtil
 import moe.feng.alipay.zerosdk.AlipayZeroSdk
 
@@ -29,6 +31,9 @@ class AboutActivity : BaseActivity() {
     @JvmField var blank: View? = null
 
     private var adapter: ThanksToAdapter? = null
+    private val marginLeft by lazy {
+        resources.getDimensionPixelSize(R.dimen.about_item_margin_left)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +56,17 @@ class AboutActivity : BaseActivity() {
         var strs = resources.getStringArray(R.array.thanks_array)
         var list = strs.toList()
         adapter?.refresh(list)
+        recyclerView?.addItemDecoration(object : RecyclerView.ItemDecoration() {
+            override fun getItemOffsets(outRect: Rect?, view: View?, parent: RecyclerView?, state: RecyclerView.State?) {
+                super.getItemOffsets(outRect, view, parent, state)
+                var pos = parent?.getChildAdapterPosition(view)
+                if (pos == 0) {
+                    outRect?.left = marginLeft
+                } else if (pos == (parent?.childCount?.minus(1))) {
+                    outRect?.right = marginLeft
+                }
+            }
+        })
         recyclerView?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         recyclerView?.adapter = adapter
     }
