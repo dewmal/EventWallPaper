@@ -5,38 +5,30 @@ import android.content.Context
 import android.graphics.RectF
 import android.support.design.widget.AppBarLayout
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.Log
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
-import android.view.ViewTreeObserver
+import android.view.*
 import android.view.inputmethod.InputMethodManager
+import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.TextView
-
+import butterknife.BindView
+import butterknife.ButterKnife
+import butterknife.OnClick
 import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.adapter.CategoryAdapter
 import com.juniperphoton.myersplash.event.RequestSearchEvent
 import com.juniperphoton.myersplash.fragment.MainListFragment
 import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.AnimatorListenerImpl
 import com.juniperphoton.myersplash.utils.ToastService
-
 import org.greenrobot.eventbus.EventBus
-
-import java.util.ArrayList
-
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
-
-import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 
 @Suppress("UNUSED")
 class SearchView(private val mContext: Context, attrs: AttributeSet) :
@@ -68,6 +60,11 @@ class SearchView(private val mContext: Context, attrs: AttributeSet) :
 
     @BindView(R.id.search_box)
     @JvmField var mSearchBox: View? = null
+
+    @BindView(R.id.category_list)
+    @JvmField var categoryList: RecyclerView? = null
+
+    private var categoryAdapter: CategoryAdapter? = null
 
     private val mFragment: MainListFragment
     private var mAnimating: Boolean = false
@@ -125,6 +122,24 @@ class SearchView(private val mContext: Context, attrs: AttributeSet) :
         }
 
         mTagView!!.setOnTouchListener { v, event -> true }
+
+        initCategoryList()
+    }
+
+    private fun initCategoryList() {
+        categoryAdapter = CategoryAdapter(mContext, arrayListOf(CategoryAdapter.BUILDINGS,
+                CategoryAdapter.FOOD,
+                CategoryAdapter.NATURE,
+                CategoryAdapter.PEOPLE,
+                CategoryAdapter.TECHNOLOGY,
+                CategoryAdapter.TRAVEL))
+        categoryAdapter!!.onClickItem = { name ->
+            mEditText?.setText(name, TextView.BufferType.EDITABLE)
+            mEditText?.setSelection(name.length, name.length)
+            onClickSearch()
+        }
+        categoryList?.layoutManager = GridLayoutManager(mContext, 3)
+        categoryList?.adapter = categoryAdapter
     }
 
     private fun toggleSearchButtons(show: Boolean, animation: Boolean) {
@@ -173,11 +188,16 @@ class SearchView(private val mContext: Context, attrs: AttributeSet) :
         mSearchBox!!.layoutParams = layoutParams
         mFragment.scrollToTop()
         mFragment.clear()
-        mEditText!!.setText("")
+        mEditText?.setText("")
+        categoryList?.animate()?.alpha(1f)?.setListener(object : AnimatorListenerImpl() {
+            override fun onAnimationEnd(animation: Animator?) {
+                categoryList?.visibility = View.VISIBLE
+            }
+        })?.start()
     }
 
     fun showKeyboard() {
-        mEditText!!.viewTreeObserver.addOnGlobalLayoutListener(this)
+        mEditText?.viewTreeObserver?.addOnGlobalLayoutListener(this)
     }
 
     fun hideKeyboard() {
@@ -195,6 +215,11 @@ class SearchView(private val mContext: Context, attrs: AttributeSet) :
         }
         mTagView!!.text = "# " + mEditText!!.text.toString().toUpperCase()
         EventBus.getDefault().post(RequestSearchEvent(mEditText!!.text.toString()))
+        categoryList?.animate()?.alpha(0f)?.setListener(object : AnimatorListenerImpl() {
+            override fun onAnimationEnd(animation: Animator?) {
+                categoryList?.visibility = View.GONE
+            }
+        })?.start()
     }
 
     @OnClick(R.id.detail_clear_btn)
