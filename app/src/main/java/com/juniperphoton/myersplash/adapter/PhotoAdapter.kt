@@ -12,29 +12,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
-
+import butterknife.BindView
+import butterknife.ButterKnife
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.view.SimpleDraweeView
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.callback.OnClickQuickDownloadCallback
-import com.juniperphoton.myersplash.callback.OnLoadMoreListener
 import com.juniperphoton.myersplash.common.Constant
 import com.juniperphoton.myersplash.fragment.MainListFragment
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.ColorUtil
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 
-import butterknife.BindView
-import butterknife.ButterKnife
-
 class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val mContext: Context) :
         RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
     private val FOOTER_FLAG_NOT_SHOW = 0
     private val FOOTER_FLAG_SHOW = 1
     private val FOOTER_FLAG_SHOW_END = 1 shl 1 or FOOTER_FLAG_SHOW
-    private var mOnLoadMoreListener: OnLoadMoreListener? = null
     private var mOnClickPhotoCallback: MainListFragment.Callback? = null
-    private var mOnClickDownloadCallback: OnClickQuickDownloadCallback? = null
 
     private var isAutoLoadMore = true
     private var footerFlag = FOOTER_FLAG_SHOW
@@ -42,6 +36,9 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
     private var mRecyclerView: RecyclerView? = null
     private var mLayoutManager: RecyclerView.LayoutManager? = null
     private var mLastPosition = -1
+
+    var onClickQuickDownload: ((image: UnsplashImage) -> Unit)? = null
+    var onLoadMore: (() -> Unit)? = null
 
     init {
         mLastPosition = -1
@@ -144,7 +141,7 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
     }
 
     private fun startLoadMore(recyclerView: RecyclerView?, layoutManager: RecyclerView.LayoutManager?) {
-        if (mOnLoadMoreListener == null) {
+        if (onLoadMore == null) {
             return
         }
 
@@ -200,16 +197,8 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
         return -1
     }
 
-    fun setOnLoadMoreListener(loadMoreListener: OnLoadMoreListener) {
-        mOnLoadMoreListener = loadMoreListener
-    }
-
     fun setOnClickItemListener(callback: MainListFragment.Callback?) {
         mOnClickPhotoCallback = callback
-    }
-
-    fun setOnClickDownloadCallback(callback: OnClickQuickDownloadCallback) {
-        mOnClickDownloadCallback = callback
     }
 
     val firstImage: UnsplashImage?
@@ -221,7 +210,7 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
         }
 
     private fun scrollLoadMore() {
-        mOnLoadMoreListener!!.OnLoadMore()
+        onLoadMore?.invoke()
     }
 
     companion object {
@@ -266,9 +255,7 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
                 if (!image.hasDownloaded()) {
                     mDownloadRL!!.visibility = View.VISIBLE
                     mDownloadRL!!.setOnClickListener {
-                        if (mOnClickDownloadCallback != null) {
-                            mOnClickDownloadCallback!!.onClickQuickDownload(image)
-                        }
+                        onClickQuickDownload?.invoke(image)
                     }
                 } else {
                     mDownloadRL!!.visibility = View.GONE

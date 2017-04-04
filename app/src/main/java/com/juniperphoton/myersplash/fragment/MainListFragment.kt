@@ -11,11 +11,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-
+import butterknife.BindView
+import butterknife.ButterKnife
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.PhotoAdapter
-import com.juniperphoton.myersplash.callback.OnClickQuickDownloadCallback
-import com.juniperphoton.myersplash.callback.OnLoadMoreListener
 import com.juniperphoton.myersplash.cloudservice.CloudService
 import com.juniperphoton.myersplash.event.RefreshAllEvent
 import com.juniperphoton.myersplash.event.RequestSearchEvent
@@ -24,16 +23,12 @@ import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.DownloadUtil
 import com.juniperphoton.myersplash.utils.ToastService
-
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-
-import butterknife.BindView
-import butterknife.ButterKnife
 import rx.Subscriber
 
-class MainListFragment : Fragment(), OnLoadMoreListener, OnClickQuickDownloadCallback {
+class MainListFragment : Fragment() {
     private var mAdapter: PhotoAdapter? = null
 
     @BindView(R.id.content_activity_rv)
@@ -150,15 +145,6 @@ class MainListFragment : Fragment(), OnLoadMoreListener, OnClickQuickDownloadCal
         }
     }
 
-    override fun OnLoadMore() {
-        mNext++
-        loadPhotoList()
-    }
-
-    override fun onClickQuickDownload(image: UnsplashImage) {
-        DownloadUtil.checkAndDownload(activity, image)
-    }
-
     fun setCategory(category: UnsplashCategory, callback: Callback) {
         mCategory = category
         mCallback = callback
@@ -171,8 +157,13 @@ class MainListFragment : Fragment(), OnLoadMoreListener, OnClickQuickDownloadCal
             }
         }
         mAdapter = PhotoAdapter(unsplashImages, activity)
-        mAdapter?.setOnLoadMoreListener(this)
-        mAdapter?.setOnClickDownloadCallback(this)
+        mAdapter?.onLoadMore = {
+            mNext++
+            loadPhotoList()
+        }
+        mAdapter?.onClickQuickDownload = { image ->
+            DownloadUtil.checkAndDownload(activity, image)
+        }
         mAdapter?.setOnClickItemListener(mCallback)
         mContentRecyclerView!!.adapter = mAdapter
     }
