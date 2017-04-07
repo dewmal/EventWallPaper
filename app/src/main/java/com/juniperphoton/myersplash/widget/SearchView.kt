@@ -20,6 +20,8 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.google.android.flexbox.FlexboxLayout
+import com.google.android.flexbox.FlexboxLayoutManager
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.CategoryAdapter
 import com.juniperphoton.myersplash.event.RequestSearchEvent
@@ -70,7 +72,6 @@ class SearchView(private val mContext: Context, attrs: AttributeSet) :
     private var mAnimating: Boolean = false
 
     init {
-
         LayoutInflater.from(mContext).inflate(R.layout.search_layout, this)
 
         ButterKnife.bind(this)
@@ -132,13 +133,16 @@ class SearchView(private val mContext: Context, attrs: AttributeSet) :
                 CategoryAdapter.NATURE,
                 CategoryAdapter.PEOPLE,
                 CategoryAdapter.TECHNOLOGY,
-                CategoryAdapter.TRAVEL))
+                CategoryAdapter.TRAVEL,
+                CategoryAdapter.SEA,
+                CategoryAdapter.SKY,
+                CategoryAdapter.SPRING))
         categoryAdapter!!.onClickItem = { name ->
             mEditText?.setText(name, TextView.BufferType.EDITABLE)
             mEditText?.setSelection(name.length, name.length)
             onClickSearch()
         }
-        categoryList?.layoutManager = GridLayoutManager(mContext, 3)
+        categoryList?.layoutManager = FlexboxLayoutManager()
         categoryList?.adapter = categoryAdapter
     }
 

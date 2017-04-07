@@ -19,25 +19,9 @@ class CategoryAdapter(val context: Context, val list: MutableList<String>) : Rec
         const val TECHNOLOGY = "technology"
         const val TRAVEL = "travel"
         const val PEOPLE = "people"
-
-        private val map: HashMap <String, Int> = HashMap()
-
-        init {
-            map.put(BUILDINGS, R.drawable.ic_building)
-            map.put(FOOD, R.drawable.ic_food)
-            map.put(NATURE, R.drawable.ic_nature)
-            map.put(TECHNOLOGY, R.drawable.ic_tech)
-            map.put(TRAVEL, R.drawable.ic_travel)
-            map.put(PEOPLE, R.drawable.ic_people)
-        }
-
-        fun getDrawable(key: String?): Int? {
-            if (key == null) return null
-            if (map.containsKey(key)) {
-                return map[key]
-            }
-            return null
-        }
+        const val SEA = "sea"
+        const val SKY = "sky"
+        const val SPRING = "spring"
     }
 
     var onClickItem: ((string: String) -> Unit)? = null
@@ -51,13 +35,10 @@ class CategoryAdapter(val context: Context, val list: MutableList<String>) : Rec
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): CategoryViewHolder {
-        return CategoryViewHolder(LayoutInflater.from(context).inflate(R.layout.item_search_category, parent, false))
+        return CategoryViewHolder(LayoutInflater.from(context).inflate(R.layout.row_search_category, parent, false))
     }
 
     inner class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        @BindView(R.id.category_icon)
-        @JvmField var categoryIcon: ImageView? = null
-
         @BindView(R.id.category_text)
         @JvmField var categoryName: TextView? = null
 
@@ -74,10 +55,6 @@ class CategoryAdapter(val context: Context, val list: MutableList<String>) : Rec
 
         fun bind(cate: String) {
             category = cate
-            val drawable: Int? = ResMap.getDrawable(cate)
-            if (drawable != null) {
-                categoryIcon?.setImageResource(drawable)
-            }
             categoryName?.text = cate
         }
     }
