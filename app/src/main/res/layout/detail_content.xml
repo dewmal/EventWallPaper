@@ -142,7 +142,7 @@
         </android.support.constraint.ConstraintLayout>
 
         <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/detail_hero_dv"
+            android:id="@+id/detail_hero_view"
             android:layout_width="0dp"
             android:layout_height="270dp"
             android:clickable="true"

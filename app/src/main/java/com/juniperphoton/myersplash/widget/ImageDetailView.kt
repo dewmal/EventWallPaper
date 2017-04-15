@@ -51,8 +51,22 @@ import java.io.File
 
 @Suppress("UNUSED")
 class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : FrameLayout(mContext, attrs) {
-    private var heroStartY = 0
-    private var heroEndY = 0
+    companion object {
+        private val TAG = "ImageDetailView"
+        private val RESULT_CODE = 10000
+        private val SHARE_TEXT = "Share %s's amazing photo from MyerSplash app. Download this photo: %s"
+
+        private val DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD = 0
+        private val DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING = 1
+        private val DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK = 2
+
+        private val RESET_THRESHOLD = 150
+        private val ANIMATION_DURATION_FAST_MILLIS = 300L
+        private val ANIMATION_DURATION_SLOW_MILLIS = 500L
+        private val ANIMATION_DURATION_VERY_SLOW_MILLIS = 700L
+    }
+
+    private var listPositionY = 0f
 
     private var clickedView: View? = null
     private var clickedImage: UnsplashImage? = null
@@ -62,8 +76,8 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
     @BindView(R.id.detail_root_sv)
     @JvmField var detailRootScrollView: ViewGroup? = null
 
-    @BindView(R.id.detail_hero_dv)
-    @JvmField var heroDV: SimpleDraweeView? = null
+    @BindView(R.id.detail_hero_view)
+    @JvmField var heroView: SimpleDraweeView? = null
 
     @BindView(R.id.detail_backgrd_rl)
     @JvmField var detailInfoRootLayout: ViewGroup? = null
@@ -232,6 +246,62 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
         valueAnimator.repeatMode = ValueAnimator.RESTART
         valueAnimator.repeatCount = ValueAnimator.INFINITE
         valueAnimator.start()
+
+        heroView?.setOnTouchListener { _, e ->
+            when (e.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    downX = e.rawX
+                    downY = e.rawY
+
+                    sX = detailImgRL!!.translationX
+                    sY = detailImgRL!!.translationY
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    var dx = e.rawX - downX
+                    var dy = e.rawY - downY
+
+                    if (dx > 10 || dy > 10) {
+                        toggleFadeAnimation(false)
+                    }
+
+                    detailImgRL!!.translationX = sX + dx
+                    detailImgRL!!.translationY = sY + dy
+                }
+                MotionEvent.ACTION_UP -> {
+                    if (Math.abs(e.rawY - downY) >= RESET_THRESHOLD || Math.abs(e.rawX - downX) >= RESET_THRESHOLD) {
+                        tryHide()
+                    } else {
+                        detailImgRL!!.animate().translationX(sX).translationY(sY).setDuration(ANIMATION_DURATION_FAST_MILLIS).start()
+                        toggleFadeAnimation(true)
+                    }
+                }
+            }
+            true
+        }
+    }
+
+    private var downX: Float = 0f
+    private var downY: Float = 0f
+
+    private var sX: Float = 0f
+    private var sY: Float = 0f
+
+    private fun toggleFadeAnimation(show: Boolean) {
+        if (show) {
+            if (detailInfoRootLayout!!.alpha == 1f) {
+                return
+            }
+        } else if (detailInfoRootLayout!!.alpha == 0f) {
+            return
+        }
+
+        val valueAnimator = ValueAnimator.ofFloat(if (show) 1f else 0f)
+        valueAnimator.addUpdateListener {
+            detailInfoRootLayout!!.alpha = it.animatedValue as Float
+            shareFAB!!.alpha = it.animatedValue as Float
+            downloadFlipperView!!.alpha = it.animatedValue as Float
+        }
+        valueAnimator.setDuration(ANIMATION_DURATION_FAST_MILLIS).start()
     }
 
     private fun associateWithDownloadItem(item: DownloadItem?) {
@@ -279,20 +349,23 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
         App.instance.startActivity(intent)
     }
 
-    private fun toggleHeroViewAnimation(startY: Int, endY: Int, show: Boolean) {
-        if (show) {
-            heroStartY = startY
-            heroEndY = endY
-        } else {
+    private fun toggleHeroViewAnimation(startY: Float, endY: Float, show: Boolean) {
+        if (!show) {
             downloadFlipperView!!.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD)
+        } else {
+            detailImgRL!!.translationX = 0f
         }
 
-        val valueAnimator = ValueAnimator()
-        valueAnimator.setIntValues(startY, endY)
-        valueAnimator.duration = 300
-        valueAnimator.interpolator = FastOutSlowInInterpolator()
-        valueAnimator.addUpdateListener { animation -> detailImgRL!!.translationY = (animation.animatedValue as Int).toFloat() }
-        valueAnimator.addListener(object : AnimatorListenerImpl() {
+        var startX = detailImgRL!!.translationX
+
+        var animator = ValueAnimator.ofFloat(startY, endY)
+        animator.duration = ANIMATION_DURATION_FAST_MILLIS
+        animator.interpolator = FastOutSlowInInterpolator()
+        animator.addUpdateListener {
+            detailImgRL!!.translationX = startX * (1 - it.animatedFraction)
+            detailImgRL!!.translationY = it.animatedValue as Float
+        }
+        animator.addListener(object : AnimatorListenerImpl() {
             override fun onAnimationEnd(animation: Animator) {
                 if (!show && clickedView != null) {
                     clickedView!!.visibility = View.VISIBLE
@@ -301,13 +374,13 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
                     clickedImage = null
                     animating = false
                 } else {
-                    toggleDetailRLAnimation(true)
-                    toggleDownloadFlipperViewAnimation(true)
-                    toggleShareBtnAnimation(true)
+                    toggleDetailRLAnimation(true, false)
+                    toggleDownloadFlipperViewAnimation(true, false)
+                    toggleShareBtnAnimation(true, false)
                 }
             }
         })
-        valueAnimator.start()
+        animator.start()
     }
 
     private fun checkDownloadStatus() {
@@ -322,77 +395,71 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
                 }
     }
 
-    private val targetY: Int
+    private val targetY: Float
         get() = ((mContext as Activity).window.decorView.height
-                - resources.getDimensionPixelSize(R.dimen.img_detail_height)) / 2
+                - resources.getDimensionPixelSize(R.dimen.img_detail_height)) / 2f
 
-    private fun toggleDetailRLAnimation(show: Boolean) {
+    private fun toggleDetailRLAnimation(show: Boolean, oneshot: Boolean) {
         val startY = if (show) -resources.getDimensionPixelOffset(R.dimen.img_detail_info_height) else 0
         val endY = if (show) 0 else -resources.getDimensionPixelOffset(R.dimen.img_detail_info_height)
 
         val valueAnimator = ValueAnimator()
-        valueAnimator.setIntValues(startY, endY)
-        valueAnimator.duration = 500
+        valueAnimator.setFloatValues(startY.toFloat(), endY.toFloat())
+        valueAnimator.duration = if (oneshot) 0 else ANIMATION_DURATION_SLOW_MILLIS
         valueAnimator.interpolator = FastOutSlowInInterpolator()
         valueAnimator.addUpdateListener { animation ->
-            detailInfoRootLayout?.translationY = (animation.animatedValue as Int).toFloat()
+            detailInfoRootLayout?.translationY = animation.animatedValue as Float
         }
-        valueAnimator.addListener(object : Animator.AnimatorListener {
+        valueAnimator.addListener(object : AnimatorListenerImpl() {
             override fun onAnimationStart(animation: Animator) {
                 animating = true
             }
 
             override fun onAnimationEnd(animation: Animator) {
                 if (!show) {
-                    toggleHeroViewAnimation(heroEndY, heroStartY, false)
+                    toggleHeroViewAnimation(detailImgRL!!.translationY, listPositionY, false)
                 } else {
                     animating = false
                 }
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-
             }
         })
         valueAnimator.start()
     }
 
-    private fun toggleDownloadFlipperViewAnimation(show: Boolean) {
-        val normalX = resources.getDimensionPixelOffset(R.dimen.download_btn_margin_right)
-
+    private fun toggleDownloadFlipperViewAnimation(show: Boolean, oneshot: Boolean) {
         val hideX = resources.getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide)
 
+        var start = if (show) hideX else 0
+        var end = if (show) 0 else hideX
+
         val valueAnimator = ValueAnimator()
-        valueAnimator.setIntValues(if (show) hideX else 0, if (show) 0 else hideX)
-        valueAnimator.duration = 700
+        valueAnimator.setFloatValues(start.toFloat(), end.toFloat())
+        valueAnimator.duration = if (oneshot) 0 else ANIMATION_DURATION_VERY_SLOW_MILLIS
         valueAnimator.interpolator = FastOutSlowInInterpolator()
-        valueAnimator.addUpdateListener { animation -> downloadFlipperView!!.translationX = (animation.animatedValue as Int).toFloat() }
+        valueAnimator.addUpdateListener { animation -> downloadFlipperView!!.translationX = animation.animatedValue as Float }
         valueAnimator.start()
     }
 
-    private fun toggleShareBtnAnimation(show: Boolean) {
-        val normalX = resources.getDimensionPixelOffset(R.dimen.share_btn_margin_right)
-
+    private fun toggleShareBtnAnimation(show: Boolean, oneshot: Boolean) {
         val hideX = resources.getDimensionPixelOffset(R.dimen.share_btn_margin_right_hide)
 
+        var start = if (show) hideX else 0
+        var end = if (show) 0 else hideX
+
         val valueAnimator = ValueAnimator()
-        valueAnimator.setIntValues(if (show) hideX else 0, if (show) 0 else hideX)
-        valueAnimator.duration = 700
+        valueAnimator.setFloatValues(start.toFloat(), end.toFloat())
+        valueAnimator.duration = if (oneshot) 0 else ANIMATION_DURATION_VERY_SLOW_MILLIS
         valueAnimator.interpolator = FastOutSlowInInterpolator()
-        valueAnimator.addUpdateListener { animation -> shareFAB!!.translationX = (animation.animatedValue as Int).toFloat() }
+        valueAnimator.addUpdateListener { animation -> shareFAB!!.translationX = animation.animatedValue as Float }
         valueAnimator.start()
     }
 
     private fun toggleMaskAnimation(show: Boolean) {
         val animator = ValueAnimator.ofArgb(if (show) Color.TRANSPARENT else ContextCompat.getColor(mContext, R.color.MaskColor),
                 if (show) ContextCompat.getColor(mContext, R.color.MaskColor) else Color.TRANSPARENT)
-        animator.duration = 300
+        animator.duration = ANIMATION_DURATION_FAST_MILLIS
         animator.addUpdateListener { animation -> detailRootScrollView!!.background = ColorDrawable(animation.animatedValue as Int) }
-        animator.addListener(object : Animator.AnimatorListener {
+        animator.addListener(object : AnimatorListenerImpl() {
             override fun onAnimationStart(animation: Animator) {
                 if (show) {
                     navigationCallback?.onShowing()
@@ -405,17 +472,12 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
                 if (show) {
                     navigationCallback?.onShown()
                 } else {
+                    shareFAB!!.alpha = 1f
+                    detailInfoRootLayout!!.alpha = 1f
+                    downloadFlipperView!!.alpha = 1f
                     detailRootScrollView?.visibility = View.INVISIBLE
                     navigationCallback?.onHidden()
                 }
-            }
-
-            override fun onAnimationCancel(animation: Animator) {
-
-            }
-
-            override fun onAnimationRepeat(animation: Animator) {
-
             }
         })
         animator.start()
@@ -423,9 +485,11 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
 
     private fun hideDetailPanel() {
         if (animating) return
-        toggleDetailRLAnimation(false)
-        toggleDownloadFlipperViewAnimation(false)
-        toggleShareBtnAnimation(false)
+
+        var oneshot = detailInfoRootLayout!!.alpha == 0f
+        toggleDetailRLAnimation(false, oneshot)
+        toggleDownloadFlipperViewAnimation(false, oneshot)
+        toggleShareBtnAnimation(false, oneshot)
     }
 
     fun setNavigationCallback(callback: StateListener) {
@@ -491,13 +555,13 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
             photoByTextView?.setTextColor(Color.BLACK)
         }
 
-        heroDV?.setImageURI(unsplashImage.listUrl)
+        heroView?.setImageURI(unsplashImage.listUrl)
         detailRootScrollView!!.visibility = View.VISIBLE
 
         val heroImagePosition = IntArray(2)
         detailImgRL?.getLocationOnScreen(heroImagePosition)
 
-        val itemY = rectF.top.toInt()
+        listPositionY = rectF.top
 
         associatedDownloadItem = DownloadUtil.getDownloadItemById(unsplashImage.id)
         if (associatedDownloadItem != null) {
@@ -516,12 +580,10 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
             associateWithDownloadItem(associatedDownloadItem)
         }
 
-        val targetPositionY = targetY
-
         checkDownloadStatus()
 
         toggleMaskAnimation(true)
-        toggleHeroViewAnimation(itemY, targetPositionY, true)
+        toggleHeroViewAnimation(listPositionY, targetY, true)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -540,15 +602,5 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
         fun onShown()
 
         fun onHidden()
-    }
-
-    companion object {
-        private val TAG = "ImageDetailView"
-        private val RESULT_CODE = 10000
-        private val SHARE_TEXT = "Share %s's amazing photo from MyerSplash app. Download this photo: %s"
-
-        private val DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD = 0
-        private val DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING = 1
-        private val DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK = 2
     }
 }
