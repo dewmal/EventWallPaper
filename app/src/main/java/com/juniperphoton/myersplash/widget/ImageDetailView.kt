@@ -272,7 +272,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
                     var dx = e.rawX - downX
                     var dy = e.rawY - downY
 
-                    if (dx >= MOVE_THRESHOLD || dy >= MOVE_THRESHOLD) {
+                    if (Math.abs(dx) >= MOVE_THRESHOLD || Math.abs(dy) >= MOVE_THRESHOLD) {
                         toggleFadeAnimation(false)
                     }
 
