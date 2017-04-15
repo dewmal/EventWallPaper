@@ -12,7 +12,6 @@ import android.graphics.Color
 import android.graphics.RectF
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
-import android.os.Handler
 import android.support.customtabs.CustomTabsIntent
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.ContextCompat
@@ -30,11 +29,7 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.facebook.binaryresource.FileBinaryResource
 import com.facebook.drawee.view.SimpleDraweeView
-import com.facebook.imagepipeline.cache.DefaultCacheKeyFactory
-import com.facebook.imagepipeline.core.ImagePipelineFactory
-import com.facebook.imagepipeline.request.ImageRequest
 import com.juniperphoton.flipperviewlib.FlipperView
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
@@ -54,9 +49,6 @@ import java.io.File
 
 @Suppress("UNUSED")
 class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : FrameLayout(mContext, attrs) {
-
-    private var copyFileForSharing: File? = null
-
     private var heroStartY = 0
     private var heroEndY = 0
 
@@ -187,40 +179,32 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
 
     @OnClick(R.id.detail_share_fab)
     internal fun onClickShare() {
-        val cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(
-                ImageRequest.fromUri(Uri.parse(clickedImage!!.listUrl)), null)
+        var file = FileUtil.getCachedFile(clickedImage!!.listUrl!!)
+        var copiedFile: File? = null
 
-        var localFile: File? = null
-
-        if (cacheKey != null) {
-            if (ImagePipelineFactory.getInstance().mainFileCache.hasKey(cacheKey)) {
-                val resource = ImagePipelineFactory.getInstance().mainFileCache.getResource(cacheKey)
-                localFile = (resource as FileBinaryResource).file
-            }
+        if (file != null || file!!.exists()) {
+            copiedFile = File(FileUtil.sharePath, "share_${clickedImage!!.listUrl!!.hashCode()}.jpg")
+            FileUtil.copyFile(file, copiedFile)
         }
 
-        var copied = false
-        if (localFile != null && localFile.exists()) {
-            copyFileForSharing = File(DownloadUtil.galleryPath, "Share-" + localFile.name)
-            copied = DownloadUtil.copyFile(localFile, copyFileForSharing!!)
-        }
-
-        if (copyFileForSharing == null || !copyFileForSharing!!.exists() || !copied) {
+        if (copiedFile == null || !copiedFile!!.exists()) {
             ToastService.sendShortToast(mContext.getString(R.string.something_wrong))
             return
         }
+
+        Log.d(TAG, "copied file:$copiedFile")
 
         val shareText = String.format(SHARE_TEXT, clickedImage!!.userName, clickedImage!!.downloadUrl)
 
         val intent = Intent(Intent.ACTION_SEND)
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         intent.action = Intent.ACTION_SEND
-        intent.type = "image/jpg"
-        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(copyFileForSharing))
+        intent.type = "image/*"
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(copiedFile))
         intent.putExtra(Intent.EXTRA_SUBJECT, "Share")
         intent.putExtra(Intent.EXTRA_TEXT, shareText)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        (mContext as Activity).startActivityForResult(Intent.createChooser(intent, "Share"), RESULT_CODE, null)
+        (mContext as Activity).startActivity(Intent.createChooser(intent, "Share"))
     }
 
     private fun initDetailViews() {
@@ -446,15 +430,6 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
         navigationCallback = callback
     }
 
-    fun deleteShareFileInDelay() {
-        //TODO: Should has a better way to do this.
-        Handler().postDelayed({
-            if (copyFileForSharing != null && copyFileForSharing!!.exists()) {
-                val ok = copyFileForSharing!!.delete()
-            }
-        }, 30000)
-    }
-
     fun tryHide(): Boolean {
         if (associatedDownloadItem != null && associatedDownloadItem!!.isValid) {
             associatedDownloadItem!!.removeChangeListener(realmChangeListener)
@@ -486,7 +461,6 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
 
         detailInfoRootLayout?.background = ColorDrawable(unsplashImage.themeColor)
         val themeColor = unsplashImage.themeColor
-        val alpha = Color.alpha(themeColor)
 
         //Dark
         if (!ColorUtil.isColorLight(themeColor)) {
@@ -525,7 +499,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
 
         associatedDownloadItem = DownloadUtil.getDownloadItemById(unsplashImage.id)
         if (associatedDownloadItem != null) {
-            Log.d(TAG, "found down item,status:" + associatedDownloadItem!!.status)
+            Log.d(TAG, "found download item,status:" + associatedDownloadItem!!.status)
             when (associatedDownloadItem?.status) {
                 DownloadItem.DOWNLOAD_STATUS_DOWNLOADING -> {
                     downloadFlipperView?.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING)

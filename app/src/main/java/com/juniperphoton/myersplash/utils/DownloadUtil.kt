@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Environment
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import com.juniperphoton.myersplash.App
@@ -100,97 +99,15 @@ object DownloadUtil {
             ToastService.sendShortToast(e.message)
             return null
         }
-
     }
 
     fun getFileToSave(expectedName: String): File? {
-        val galleryPath = galleryPath ?: return null
+        val galleryPath = FileUtil.galleryPath ?: return null
         val folder = File(galleryPath)
         if (!folder.exists()) {
             folder.mkdirs()
         }
         return File(folder.toString() + File.separator + expectedName)
-    }
-
-    /**
-     * 获得媒体库的文件夹
-
-     * @return 路径
-     */
-    val galleryPath: String?
-        get() {
-            val mediaStorageDir: File
-            if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
-                val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) ?: return ""
-                mediaStorageDir = File(path, "MyerSplash")
-            } else {
-                val extStorageDirectory = App.instance.getFilesDir().getAbsolutePath()
-                mediaStorageDir = File(extStorageDirectory, "MyerSplash")
-            }
-
-            if (!mediaStorageDir.exists()) {
-                if (!mediaStorageDir.mkdirs()) {
-                    return null
-                }
-            }
-
-            return mediaStorageDir.absolutePath
-        }
-
-    fun copyFile(srcF: File, destF: File): Boolean {
-        if (!destF.exists()) {
-            try {
-                if (!destF.createNewFile()) {
-                    return false
-                }
-            } catch (e: Exception) {
-                return false
-            }
-
-        }
-
-        var inputStream: InputStream? = null
-        var outputStream: OutputStream? = null
-
-        try {
-            try {
-                inputStream = FileInputStream(srcF)
-                outputStream = FileOutputStream(destF)
-
-                val fileReader = ByteArray(4096)
-                while (true) {
-                    val read = inputStream.read(fileReader)
-
-                    if (read == -1) {
-                        break
-                    }
-
-                    outputStream.write(fileReader, 0, read)
-                }
-                outputStream.flush()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                return false
-            } finally {
-                try {
-                    if (inputStream != null) {
-                        inputStream.close()
-                    }
-
-                    if (outputStream != null) {
-                        outputStream.close()
-                    }
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
-
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return false
-        }
-
-        return true
     }
 
     fun cancelDownload(context: Context, image: UnsplashImage) {

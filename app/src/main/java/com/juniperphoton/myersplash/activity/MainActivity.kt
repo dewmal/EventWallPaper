@@ -12,28 +12,22 @@ import android.view.View
 import android.view.ViewAnimationUtils
 import android.widget.RelativeLayout
 import android.widget.TextView
-
+import butterknife.BindView
+import butterknife.ButterKnife
+import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter
-import com.juniperphoton.myersplash.common.Constant
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.fragment.MainListFragment
 import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.model.UnsplashImage
-import com.juniperphoton.myersplash.utils.AnimatorListenerImpl
-import com.juniperphoton.myersplash.utils.DeviceUtil
-import com.juniperphoton.myersplash.utils.DisplayUtil
-import com.juniperphoton.myersplash.utils.LocalSettingHelper
-import com.juniperphoton.myersplash.utils.PermissionUtil
+import com.juniperphoton.myersplash.utils.*
 import com.juniperphoton.myersplash.widget.ImageDetailView
 import com.juniperphoton.myersplash.widget.PivotTitleBar
-
-import org.greenrobot.eventbus.EventBus
-
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
 import com.juniperphoton.myersplash.widget.SearchView
+import org.greenrobot.eventbus.EventBus
+import rx.Observable
+import rx.schedulers.Schedulers
 
 class MainActivity : BaseActivity(), ImageDetailView.StateListener, MainListFragment.Callback {
 
@@ -74,7 +68,7 @@ class MainActivity : BaseActivity(), ImageDetailView.StateListener, MainListFrag
         ButterKnife.bind(this)
 
         handleShortcutsAction()
-
+        clearSharedFiles()
         initMainViews()
     }
 
@@ -150,11 +144,6 @@ class MainActivity : BaseActivity(), ImageDetailView.StateListener, MainListFrag
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        mDetailView!!.deleteShareFileInDelay()
-    }
-
     private fun getIdByIndex(index: Int): Int {
         when (index) {
             0 -> return UnsplashCategory.FEATURED_CATEGORY_ID
@@ -162,6 +151,15 @@ class MainActivity : BaseActivity(), ImageDetailView.StateListener, MainListFrag
             2 -> return UnsplashCategory.RANDOM_CATEGORY_ID
             else -> return UnsplashCategory.NEW_CATEGORY_ID
         }
+    }
+
+    private fun clearSharedFiles() {
+        Observable.just(FileUtil.sharePath)
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe {
+                    FileUtil.clearFilesToShared()
+                }
     }
 
     private fun initMainViews() {
