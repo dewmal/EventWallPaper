@@ -1,7 +1,9 @@
 package com.juniperphoton.myersplash.widget
 
 import android.animation.Animator
+import android.app.Activity
 import android.content.Context
+import android.graphics.Rect
 import android.graphics.RectF
 import android.support.design.widget.AppBarLayout
 import android.support.v7.app.AppCompatActivity
@@ -33,51 +35,50 @@ import com.juniperphoton.myersplash.utils.ToastService
 import org.greenrobot.eventbus.EventBus
 
 @Suppress("UNUSED")
-class SearchView(private val mContext: Context, attrs: AttributeSet) :
-        FrameLayout(mContext, attrs), ViewTreeObserver.OnGlobalLayoutListener {
+class SearchView(ctx: Context, attrs: AttributeSet) : FrameLayout(ctx, attrs) {
 
     @BindView(R.id.detail_search_et)
-    @JvmField var mEditText: EditText? = null
+    @JvmField var editText: EditText? = null
 
     @BindView(R.id.detail_search_root_rl)
-    @JvmField var mRootRL: ViewGroup? = null
+    @JvmField var rootRL: ViewGroup? = null
 
     @BindView(R.id.search_result_root)
-    @JvmField var mResultRoot: FrameLayout? = null
+    @JvmField var resultRoot: FrameLayout? = null
 
     @BindView(R.id.search_detail_view)
-    @JvmField var mDetailView: ImageDetailView? = null
+    @JvmField var detailView: ImageDetailView? = null
 
     @BindView(R.id.detail_search_btn)
-    @JvmField var mSearchBtn: View? = null
+    @JvmField var searchBtn: View? = null
 
     @BindView(R.id.detail_clear_btn)
-    @JvmField var mClearBtn: View? = null
+    @JvmField var clearBtn: View? = null
 
     @BindView(R.id.search_tag)
-    @JvmField var mTagView: TextView? = null
+    @JvmField var tagView: TextView? = null
 
     @BindView(R.id.search_toolbar_layout)
-    @JvmField var mAppBarLayout: AppBarLayout? = null
+    @JvmField var appBarLayout: AppBarLayout? = null
 
     @BindView(R.id.search_box)
-    @JvmField var mSearchBox: View? = null
+    @JvmField var searchBox: View? = null
 
     @BindView(R.id.category_list)
     @JvmField var categoryList: RecyclerView? = null
 
     private var categoryAdapter: CategoryAdapter? = null
 
-    private val mFragment: MainListFragment
-    private var mAnimating: Boolean = false
+    private val mainListFragment: MainListFragment
+    private var animating: Boolean = false
 
     init {
-        LayoutInflater.from(mContext).inflate(R.layout.search_layout, this)
+        LayoutInflater.from(context).inflate(R.layout.search_layout, this)
 
         ButterKnife.bind(this)
 
-        mRootRL!!.setOnTouchListener { v, event -> true }
-        mEditText!!.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
+        rootRL!!.setOnTouchListener { _, _ -> true }
+        editText!!.setOnKeyListener({ _, keyCode, event ->
             if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                 onClickSearch()
                 true
@@ -85,61 +86,60 @@ class SearchView(private val mContext: Context, attrs: AttributeSet) :
             false
         })
 
-        mEditText!!.addTextChangedListener(object : TextWatcher {
+        editText!!.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable) {
-                if (mEditText!!.text != null && mEditText!!.text.toString() != "") {
-                    if (mSearchBtn!!.scaleX != 1f) {
+                if (editText!!.text != null && editText!!.text.toString() != "") {
+                    if (searchBtn!!.scaleX != 1f) {
                         toggleSearchButtons(true, true)
                     }
                 } else {
-                    if (mSearchBtn!!.scaleX != 0f) {
+                    if (searchBtn!!.scaleX != 0f) {
                         // Ignore
                     }
                 }
             }
         })
 
-        val activity = mContext as AppCompatActivity
-        mFragment = MainListFragment()
-        mFragment.setCategory(sSearchCategory, object : MainListFragment.Callback {
+        val activity = context as AppCompatActivity
+        mainListFragment = MainListFragment()
+        mainListFragment.setCategory(sSearchCategory, object : MainListFragment.Callback {
             override fun onScrollHide() {}
 
             override fun onScrollShow() {}
 
             override fun clickPhotoItem(rectF: RectF, unsplashImage: UnsplashImage, itemView: View) {
-                mDetailView!!.showDetailedImage(rectF, unsplashImage, itemView)
+                detailView!!.showDetailedImage(rectF, unsplashImage, itemView)
             }
         })
-        activity.supportFragmentManager.beginTransaction().replace(R.id.search_result_root, mFragment)
+        activity.supportFragmentManager.beginTransaction().replace(R.id.search_result_root, mainListFragment)
                 .commit()
 
-        mAppBarLayout!!.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+        appBarLayout!!.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
             val fraction = Math.abs(verticalOffset) * 1.0f / appBarLayout.height
-            mTagView!!.alpha = fraction
+            tagView!!.alpha = fraction
         }
 
-        mTagView!!.setOnTouchListener { v, event -> true }
+        tagView!!.setOnTouchListener { _, _ -> true }
 
         initCategoryList()
     }
 
     private fun initCategoryList() {
-        categoryAdapter = CategoryAdapter(mContext, arrayListOf(CategoryAdapter.BUILDINGS,
+        categoryAdapter = CategoryAdapter(context, arrayListOf(CategoryAdapter.BUILDINGS,
                 CategoryAdapter.FOOD,
                 CategoryAdapter.NATURE,
                 CategoryAdapter.PEOPLE,
                 CategoryAdapter.TECHNOLOGY,
                 CategoryAdapter.TRAVEL,
                 CategoryAdapter.SEA,
-                CategoryAdapter.SKY,
-                CategoryAdapter.SPRING))
+                CategoryAdapter.SKY))
         categoryAdapter!!.onClickItem = { name ->
-            mEditText?.setText(name, TextView.BufferType.EDITABLE)
-            mEditText?.setSelection(name.length, name.length)
+            editText?.setText(name, TextView.BufferType.EDITABLE)
+            editText?.setSelection(name.length, name.length)
             onClickSearch()
         }
         categoryList?.layoutManager = FlexboxLayoutManager()
@@ -148,77 +148,83 @@ class SearchView(private val mContext: Context, attrs: AttributeSet) :
 
     private fun toggleSearchButtons(show: Boolean, animation: Boolean) {
         if (!animation) {
-            mSearchBtn!!.scaleX = if (show) 1f else 0f
-            mSearchBtn!!.scaleY = if (show) 1f else 0f
-            mClearBtn!!.scaleX = if (show) 1f else 0f
-            mClearBtn!!.scaleY = if (show) 1f else 0f
+            searchBtn!!.scaleX = if (show) 1f else 0f
+            searchBtn!!.scaleY = if (show) 1f else 0f
+            clearBtn!!.scaleX = if (show) 1f else 0f
+            clearBtn!!.scaleY = if (show) 1f else 0f
         } else {
-            if (mAnimating) return
-            mAnimating = true
-            mSearchBtn!!.animate().scaleX(if (show) 1f else 0f).scaleY(if (show) 1f else 0f).setDuration(200)
+            if (animating) return
+            animating = true
+            searchBtn!!.animate().scaleX(if (show) 1f else 0f).scaleY(if (show) 1f else 0f).setDuration(200)
                     .setStartDelay(100)
                     .setListener(object : AnimatorListenerImpl() {
                         override fun onAnimationEnd(animation: Animator) {
-                            mAnimating = false
+                            animating = false
                         }
                     })
                     .start()
-            mClearBtn!!.animate().scaleX(if (show) 1f else 0f).scaleY(if (show) 1f else 0f).setDuration(200)
+            clearBtn!!.animate().scaleX(if (show) 1f else 0f).scaleY(if (show) 1f else 0f).setDuration(200)
                     .start()
         }
     }
 
     fun onShowing() {
-        mFragment.register()
+        mainListFragment.register()
         toggleSearchButtons(false, false)
     }
 
     fun onHiding() {
-        mFragment.unregister()
+        mainListFragment.unregister()
         hideKeyboard()
         toggleSearchButtons(false, false)
-        mTagView!!.animate().alpha(0f).setDuration(100).start()
+        tagView!!.animate().alpha(0f).setDuration(100).start()
     }
 
     fun onShown() {
-        val layoutParams = mSearchBox!!.layoutParams as AppBarLayout.LayoutParams
+        val layoutParams = searchBox!!.layoutParams as AppBarLayout.LayoutParams
         layoutParams.scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
-        mSearchBox!!.layoutParams = layoutParams
+        searchBox!!.layoutParams = layoutParams
     }
 
     fun reset() {
-        val layoutParams = mSearchBox!!.layoutParams as AppBarLayout.LayoutParams
+        val layoutParams = searchBox!!.layoutParams as AppBarLayout.LayoutParams
         layoutParams.scrollFlags = 0
-        mSearchBox!!.layoutParams = layoutParams
-        mFragment.scrollToTop()
-        mFragment.clear()
-        mEditText?.setText("")
+        searchBox!!.layoutParams = layoutParams
+        mainListFragment.scrollToTop()
+        mainListFragment.clear()
+        editText?.setText("")
         categoryList?.animate()?.alpha(1f)?.setListener(object : AnimatorListenerImpl() {
             override fun onAnimationEnd(animation: Animator?) {
                 categoryList?.visibility = View.VISIBLE
             }
         })?.start()
+        resultRoot?.visibility = View.GONE
     }
 
-    fun showKeyboard() {
-        mEditText?.viewTreeObserver?.addOnGlobalLayoutListener(this)
+    fun tryShowKeyboard() {
+        editText?.post {
+            editText!!.requestFocus()
+            val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(editText, SHOW_IMPLICIT)
+        }
     }
 
     fun hideKeyboard() {
-        val imm = mContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(mEditText!!.windowToken, 0)
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(editText!!.windowToken, 0)
     }
 
     @OnClick(R.id.detail_search_btn)
     internal fun onClickSearch() {
         hideKeyboard()
         Log.d(TAG, "onClickSearch")
-        if (mEditText!!.text.toString() == "") {
+        if (editText!!.text.toString() == "") {
             ToastService.sendShortToast("Input the keyword to search.")
             return
         }
-        mTagView!!.text = "# " + mEditText!!.text.toString().toUpperCase()
-        EventBus.getDefault().post(RequestSearchEvent(mEditText!!.text.toString()))
+        resultRoot?.visibility = View.VISIBLE
+        tagView!!.text = "# " + editText!!.text.toString().toUpperCase()
+        EventBus.getDefault().post(RequestSearchEvent(editText!!.text.toString().toLowerCase()))
         categoryList?.animate()?.alpha(0f)?.setListener(object : AnimatorListenerImpl() {
             override fun onAnimationEnd(animation: Animator?) {
                 categoryList?.visibility = View.GONE
@@ -228,27 +234,20 @@ class SearchView(private val mContext: Context, attrs: AttributeSet) :
 
     @OnClick(R.id.detail_clear_btn)
     internal fun onClickClear() {
-        mEditText!!.setText("")
+        editText!!.setText("")
         toggleSearchButtons(false, true)
     }
 
     fun tryHide(): Boolean {
-        return mDetailView!!.tryHide()
-    }
-
-    override fun onGlobalLayout() {
-        mEditText!!.requestFocus()
-        val imm = mContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.showSoftInput(mEditText, SHOW_IMPLICIT)
-        mEditText!!.viewTreeObserver.removeOnGlobalLayoutListener(this)
+        return detailView!!.tryHide()
     }
 
     fun registerEventBus() {
-        mDetailView!!.registerEventBus()
+        detailView!!.registerEventBus()
     }
 
     fun unregisterEventBus() {
-        mDetailView!!.unregisterEventBus()
+        detailView!!.unregisterEventBus()
     }
 
     companion object {

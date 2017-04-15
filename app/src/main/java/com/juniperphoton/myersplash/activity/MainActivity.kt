@@ -140,7 +140,7 @@ class MainActivity : BaseActivity(), ImageDetailView.StateListener, MainListFrag
         })
         mSearchView!!.visibility = View.VISIBLE
         if (show) {
-            mSearchView!!.showKeyboard()
+            mSearchView!!.tryShowKeyboard()
             mSearchView!!.onShowing()
         } else {
             mSearchView!!.onHiding()

@@ -13,15 +13,14 @@ import com.juniperphoton.myersplash.R
 
 class CategoryAdapter(val context: Context, val list: MutableList<String>) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
     companion object ResMap {
-        const val BUILDINGS = "buildings"
-        const val FOOD = "food"
-        const val NATURE = "nature"
-        const val TECHNOLOGY = "technology"
-        const val TRAVEL = "travel"
-        const val PEOPLE = "people"
-        const val SEA = "sea"
-        const val SKY = "sky"
-        const val SPRING = "spring"
+        const val BUILDINGS = "Buildings"
+        const val FOOD = "Food"
+        const val NATURE = "Nature"
+        const val TECHNOLOGY = "Technology"
+        const val TRAVEL = "Travel"
+        const val PEOPLE = "People"
+        const val SEA = "Sea"
+        const val SKY = "Sky"
     }
 
     var onClickItem: ((string: String) -> Unit)? = null
