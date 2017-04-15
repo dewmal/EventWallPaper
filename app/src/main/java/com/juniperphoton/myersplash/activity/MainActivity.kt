@@ -18,10 +18,14 @@ import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
+import com.juniperphoton.myersplash.extension.getDimenInPixel
+import com.juniperphoton.myersplash.extension.hasNavigationBar
 import com.juniperphoton.myersplash.fragment.MainListFragment
 import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.model.UnsplashImage
-import com.juniperphoton.myersplash.utils.*
+import com.juniperphoton.myersplash.utils.AnimatorListenerImpl
+import com.juniperphoton.myersplash.utils.FileUtil
+import com.juniperphoton.myersplash.utils.PermissionUtil
 import com.juniperphoton.myersplash.widget.ImageDetailView
 import com.juniperphoton.myersplash.widget.PivotTitleBar
 import com.juniperphoton.myersplash.widget.SearchView
@@ -30,7 +34,6 @@ import rx.Observable
 import rx.schedulers.Schedulers
 
 class MainActivity : BaseActivity(), ImageDetailView.StateListener, MainListFragment.Callback {
-
     @BindView(R.id.pivot_title_bar)
     @JvmField var mPivotTitleBar: PivotTitleBar? = null
 
@@ -198,11 +201,9 @@ class MainActivity : BaseActivity(), ImageDetailView.StateListener, MainListFrag
             }
         })
 
-        if (!DeviceUtil.hasNavigationBar(this)) {
+        if (!hasNavigationBar()) {
             val params = mSearchFAB!!.layoutParams as RelativeLayout.LayoutParams
-            params.setMargins(0, 0,
-                    DisplayUtil.getDimenInPixel(24, this),
-                    DisplayUtil.getDimenInPixel(24, this))
+            params.setMargins(0, 0, getDimenInPixel(24), getDimenInPixel(24))
             mSearchFAB!!.layoutParams = params
         }
 

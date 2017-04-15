@@ -10,23 +10,20 @@ import android.support.v7.widget.SimpleItemAnimator
 import android.util.Log
 import android.view.View
 import android.widget.TextView
-
-import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.adapter.DownloadsListAdapter
-import com.juniperphoton.myersplash.model.DownloadItem
-import com.juniperphoton.myersplash.utils.DeviceUtil
-import com.juniperphoton.myersplash.utils.DisplayUtil
-
-import java.util.ArrayList
-
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
-import io.realm.Realm
+import com.juniperphoton.myersplash.adapter.DownloadsListAdapter
+import com.juniperphoton.myersplash.extension.getDimenInPixel
+import com.juniperphoton.myersplash.extension.hasNavigationBar
+import com.juniperphoton.myersplash.model.DownloadItem
 import io.realm.RealmChangeListener
 import io.realm.RealmResults
+import java.util.*
 
+@Suppress("UNUSED")
 class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.DownloadStateChangedCallback {
     @BindView(R.id.activity_manage_download_rv)
     @JvmField var mDownloadsRV: RecyclerView? = null
@@ -40,7 +37,7 @@ class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.DownloadStat
     private var mAdapter: DownloadsListAdapter? = null
     private var mItemStatusListener: RealmChangeListener<DownloadItem>? = RealmChangeListener { item ->
         Log.d("manage", "onChange")
-        if(item.isValid){
+        if (item.isValid) {
             mAdapter?.updateItem(item)
         }
     }
@@ -64,7 +61,7 @@ class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.DownloadStat
     @OnClick(R.id.activity_downloads_more_fab)
     internal fun onClickMore() {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.clear_options_title).setItems(R.array.delete_options) { dialogInterface, i ->
+        builder.setTitle(R.string.clear_options_title).setItems(R.array.delete_options) { _, i ->
             when (i) {
                 0 -> {
                     deleteFromRealm(DownloadItem.DOWNLOAD_STATUS_DOWNLOADING)
@@ -76,12 +73,12 @@ class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.DownloadStat
                     deleteFromRealm(DownloadItem.DOWNLOAD_STATUS_FAILED)
                 }
             }
-        }.setPositiveButton(R.string.cancel) { dialogInterface, i -> dialogInterface.dismiss() }
+        }.setPositiveButton(R.string.cancel) { dialogInterface, _ -> dialogInterface.dismiss() }
         builder.create().show()
     }
 
     private fun deleteFromRealm(status: Int) {
-        var realm = RealmCache.getInstance()
+        val realm = RealmCache.getInstance()
         realm.beginTransaction()
         val items = realm.where(DownloadItem::class.java)
                 .equalTo(DownloadItem.STATUS_KEY, status).findAll()
@@ -138,10 +135,9 @@ class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.DownloadStat
         mDownloadsRV!!.adapter = mAdapter
         updateNoItemVisibility()
 
-        if (!DeviceUtil.hasNavigationBar(this)) {
+        if (!hasNavigationBar()) {
             val params = mMoreFAB!!.layoutParams as ConstraintLayout.LayoutParams
-            params.setMargins(0, 0, DisplayUtil.getDimenInPixel(24, this),
-                    DisplayUtil.getDimenInPixel(24, this))
+            params.setMargins(0, 0, getDimenInPixel(24), getDimenInPixel(24))
             mMoreFAB!!.layoutParams = params
         }
     }

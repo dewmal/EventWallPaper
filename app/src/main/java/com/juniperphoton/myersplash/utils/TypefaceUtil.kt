@@ -5,6 +5,8 @@ import android.graphics.Typeface
 import android.widget.TextView
 
 object TypefaceUtil {
+    const val SEGUIBI_NAME = "fonts/seguibl.ttf"
+
     private var typefaces: HashMap<String, Typeface> = HashMap()
 
     fun setTypeface(textView: TextView, path: String, ctx: Context) {

@@ -18,9 +18,9 @@ import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.view.SimpleDraweeView
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.common.Constant
+import com.juniperphoton.myersplash.extension.getDarker
 import com.juniperphoton.myersplash.fragment.MainListFragment
 import com.juniperphoton.myersplash.model.UnsplashImage
-import com.juniperphoton.myersplash.utils.ColorUtil
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 
 class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val mContext: Context) :
@@ -42,7 +42,7 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
 
     init {
         mLastPosition = -1
-        var size = mData?.size ?: 0
+        val size = mData?.size ?: 0
         if (size >= 10) {
             isAutoLoadMore = true
             footerFlag = FOOTER_FLAG_SHOW
@@ -249,7 +249,7 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
             if (image == null) return
             val regularUrl = image.listUrl
 
-            val backColor = ColorUtil.getDarkerColor(image.themeColor, 0.7f)
+            val backColor = image.themeColor.getDarker(0.7f)
 
             if (LocalSettingHelper.getBoolean(mContext, Constant.QUICK_DOWNLOAD_CONFIG_NAME, false)) {
                 if (!image.hasDownloaded()) {

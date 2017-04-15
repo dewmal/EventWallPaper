@@ -4,26 +4,23 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.View
 import android.widget.CompoundButton
-
+import butterknife.BindView
+import butterknife.ButterKnife
+import butterknife.OnClick
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.core.ImagePipelineFactory
 import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.common.Constant
 import com.juniperphoton.myersplash.event.RefreshAllEvent
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 import com.juniperphoton.myersplash.utils.ToastService
 import com.juniperphoton.myersplash.widget.SettingsItemLayout
-
+import io.realm.Realm
 import org.greenrobot.eventbus.EventBus
 
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
-import com.juniperphoton.myersplash.RealmCache
-import io.realm.Realm
-
+@Suppress("UNUSED")
 class SettingsActivity : BaseActivity() {
-
     private var mSavingStrings: Array<String>? = null
 
     private var mLoadingStrings: Array<String>? = null
@@ -81,7 +78,7 @@ class SettingsActivity : BaseActivity() {
     @OnClick(R.id.setting_clear_database)
     fun clearDatabase(view: View) {
         ToastService.sendShortToast("All clear :D")
-        RealmCache.getInstance().executeTransaction { realm -> realm.deleteAll() }
+        RealmCache.getInstance().executeTransaction(Realm::deleteAll)
     }
 
     @OnClick(R.id.setting_save_quality)

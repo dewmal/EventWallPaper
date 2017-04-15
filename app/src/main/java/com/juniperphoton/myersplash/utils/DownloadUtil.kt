@@ -10,6 +10,7 @@ import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.event.DownloadStartedEvent
+import com.juniperphoton.myersplash.extension.usingWifi
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.service.BackgroundDownloadService
@@ -122,7 +123,7 @@ object DownloadUtil {
             ToastService.sendShortToast(context.getString(R.string.no_permission))
             return
         }
-        if (!NetworkUtil.usingWifi(context)) {
+        if (!context.usingWifi()) {
             val builder = AlertDialog.Builder(context)
             builder.setTitle(R.string.attention)
             builder.setMessage(R.string.wifi_attention_content)

@@ -4,23 +4,20 @@ import android.app.IntentService
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
-
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.cloudservice.CloudService
+import com.juniperphoton.myersplash.extension.sendScanBroadcast
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.utils.DownloadUtil
 import com.juniperphoton.myersplash.utils.NotificationUtil
 import com.juniperphoton.myersplash.utils.Params
-import com.juniperphoton.myersplash.utils.SingleMediaScanner
 import com.juniperphoton.myersplash.utils.ToastService
-
-import java.io.File
-import java.util.HashMap
-
 import okhttp3.ResponseBody
 import rx.Subscriber
+import java.io.File
+import java.util.*
 
 class BackgroundDownloadService : IntentService("BackgroundDownloadService") {
 
@@ -80,7 +77,7 @@ class BackgroundDownloadService : IntentService("BackgroundDownloadService") {
                         Log.d(TAG, "renamed file:" + newFile.absolutePath)
                         downloadItem.filePath = newFile.path
 
-                        SingleMediaScanner.sendScanFileBroadcast(App.instance, newFile)
+                        newFile.sendScanBroadcast(App.instance)
                     }
 
                     realm.commitTransaction()

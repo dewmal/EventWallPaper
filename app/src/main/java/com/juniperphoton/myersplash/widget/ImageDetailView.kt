@@ -35,6 +35,8 @@ import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.event.DownloadStartedEvent
+import com.juniperphoton.myersplash.extension.copyFile
+import com.juniperphoton.myersplash.extension.isLightColor
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.*
@@ -179,12 +181,12 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
 
     @OnClick(R.id.detail_share_fab)
     internal fun onClickShare() {
-        var file = FileUtil.getCachedFile(clickedImage!!.listUrl!!)
+        val file = FileUtil.getCachedFile(clickedImage!!.listUrl!!)
         var copiedFile: File? = null
 
-        if (file != null || file!!.exists()) {
+        if (file != null && file.exists()) {
             copiedFile = File(FileUtil.sharePath, "share_${clickedImage!!.listUrl!!.hashCode()}.jpg")
-            FileUtil.copyFile(file, copiedFile)
+            file.copyFile(copiedFile)
         }
 
         if (copiedFile == null || !copiedFile!!.exists()) {
@@ -208,7 +210,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
     }
 
     private fun initDetailViews() {
-        detailRootScrollView?.setOnTouchListener { v, event ->
+        detailRootScrollView?.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_UP -> {
                     tryHide()
@@ -463,7 +465,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
         val themeColor = unsplashImage.themeColor
 
         //Dark
-        if (!ColorUtil.isColorLight(themeColor)) {
+        if (!themeColor.isLightColor()) {
             copyUrlTextView!!.setTextColor(Color.BLACK)
             val backColor = Color.argb(200, Color.red(Color.WHITE),
                     Color.green(Color.WHITE), Color.blue(Color.WHITE))
@@ -479,7 +481,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
         progressView!!.setProgress(5)
 
         val backColor = unsplashImage.themeColor
-        if (!ColorUtil.isColorLight(backColor)) {
+        if (!backColor.isLightColor()) {
             nameTextView?.setTextColor(Color.WHITE)
             lineView?.background = ColorDrawable(Color.WHITE)
             photoByTextView?.setTextColor(Color.WHITE)

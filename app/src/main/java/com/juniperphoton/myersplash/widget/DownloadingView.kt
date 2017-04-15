@@ -10,13 +10,11 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-
-import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.utils.ColorUtil
-
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.extension.isLightColor
 
 @Suppress("UNUSED")
 class DownloadingView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
@@ -54,7 +52,7 @@ class DownloadingView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     fun setThemeBackColor(color: Int) {
         rootRL?.background = ColorDrawable(color)
         progressView?.setThemeColor(color)
-        if (ColorUtil.isColorLight(color)) {
+        if (color.isLightColor()) {
             progressTV?.setTextColor(Color.BLACK)
             cancelImageView?.setImageResource(R.drawable.vector_ic_clear_black)
         } else {

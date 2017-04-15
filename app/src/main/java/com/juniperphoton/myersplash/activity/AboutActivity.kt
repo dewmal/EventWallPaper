@@ -14,9 +14,8 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.ThanksToAdapter
-import com.juniperphoton.myersplash.utils.DeviceUtil
-import com.juniperphoton.myersplash.utils.DisplayUtil
-import com.juniperphoton.myersplash.utils.PackageUtil
+import com.juniperphoton.myersplash.extension.getVersionName
+import com.juniperphoton.myersplash.extension.hasNavigationBar
 import moe.feng.alipay.zerosdk.AlipayZeroSdk
 
 @Suppress("UNUSED")
@@ -42,24 +41,24 @@ class AboutActivity : BaseActivity() {
 
         updateVersion()
         initThanks()
-        if (!DeviceUtil.hasNavigationBar(this)) {
+        if (!hasNavigationBar()) {
             blank?.visibility = View.GONE
         }
     }
 
     private fun updateVersion() {
-        versionTextView?.text = PackageUtil.getVersionName(this)
+        versionTextView?.text = getVersionName()
     }
 
     private fun initThanks() {
         adapter = ThanksToAdapter(this)
-        var strs = resources.getStringArray(R.array.thanks_array)
-        var list = strs.toList()
+        val strs = resources.getStringArray(R.array.thanks_array)
+        val list = strs.toList()
         adapter?.refresh(list)
         recyclerView?.addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(outRect: Rect?, view: View?, parent: RecyclerView?, state: RecyclerView.State?) {
                 super.getItemOffsets(outRect, view, parent, state)
-                var pos = parent?.getChildAdapterPosition(view)
+                val pos = parent?.getChildAdapterPosition(view)
                 if (pos == 0) {
                     outRect?.left = marginLeft
                 } else if (pos == (parent?.adapter?.itemCount?.minus(1))) {
@@ -75,9 +74,9 @@ class AboutActivity : BaseActivity() {
     internal fun onClickEmail() {
         val emailIntent = Intent(Intent.ACTION_SEND)
         emailIntent.type = "message/rfc822"
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf("dengweichao@hotmail.com"))
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.email_url)))
 
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "MyerSplash for Android ${PackageUtil.getVersionName(this)} feedback")
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "MyerSplash for Android ${getVersionName()} feedback")
         emailIntent.putExtra(Intent.EXTRA_TEXT, "")
 
         try {
@@ -101,13 +100,13 @@ class AboutActivity : BaseActivity() {
     @OnClick(R.id.activity_about_donate_rl)
     internal fun onClickDonate() {
         if (AlipayZeroSdk.hasInstalledAlipayClient(this)) {
-            AlipayZeroSdk.startAlipayClient(this, "aex09127b4dbo4o7fbvcyb0")
+            AlipayZeroSdk.startAlipayClient(this, getString(R.string.alipay_url_code))
         }
     }
 
     @OnClick(R.id.github_layout)
     internal fun onClickGitHub() {
-        val uri = Uri.parse("https://github.com/JuniperPhoton/MyerSplashAndroid")
+        val uri = Uri.parse(getString(R.string.github_url))
         val intent = Intent(Intent.ACTION_VIEW, uri)
         try {
             startActivity(intent)
@@ -118,7 +117,7 @@ class AboutActivity : BaseActivity() {
 
     @OnClick(R.id.twitter_layout)
     internal fun onClickTwitter() {
-        val uri = Uri.parse("https://twitter.com/juniperphoton")
+        val uri = Uri.parse(getString(R.string.twitter_url))
         val intent = Intent(Intent.ACTION_VIEW, uri)
         try {
             startActivity(intent)

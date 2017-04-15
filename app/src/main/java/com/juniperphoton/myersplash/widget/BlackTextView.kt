@@ -13,6 +13,6 @@ class BlackTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(
     }
 
     private fun setTypeface() {
-        TypefaceUtil.setTypeface(this, "fonts/seguibl.ttf", App.instance)
+        TypefaceUtil.setTypeface(this, TypefaceUtil.SEGUIBI_NAME, App.instance)
     }
 }
