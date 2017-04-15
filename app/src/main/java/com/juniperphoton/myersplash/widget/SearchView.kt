@@ -1,19 +1,19 @@
 package com.juniperphoton.myersplash.widget
 
 import android.animation.Animator
-import android.app.Activity
 import android.content.Context
-import android.graphics.Rect
 import android.graphics.RectF
 import android.support.design.widget.AppBarLayout
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.Log
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT
 import android.widget.EditText
@@ -22,7 +22,6 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.google.android.flexbox.FlexboxLayout
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.CategoryAdapter
@@ -136,7 +135,9 @@ class SearchView(ctx: Context, attrs: AttributeSet) : FrameLayout(ctx, attrs) {
                 CategoryAdapter.TECHNOLOGY,
                 CategoryAdapter.TRAVEL,
                 CategoryAdapter.SEA,
-                CategoryAdapter.SKY))
+                CategoryAdapter.DUSK,
+                CategoryAdapter.MOUNTAIN,
+                CategoryAdapter.GALAXY))
         categoryAdapter!!.onClickItem = { name ->
             editText?.setText(name, TextView.BufferType.EDITABLE)
             editText?.setSelection(name.length, name.length)

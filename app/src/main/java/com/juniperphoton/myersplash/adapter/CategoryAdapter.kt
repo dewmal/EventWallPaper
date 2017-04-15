@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
@@ -20,7 +19,9 @@ class CategoryAdapter(val context: Context, val list: MutableList<String>) : Rec
         const val TRAVEL = "Travel"
         const val PEOPLE = "People"
         const val SEA = "Sea"
-        const val SKY = "Sky"
+        const val DUSK = "Dusk"
+        const val MOUNTAIN = "Mountain"
+        const val GALAXY = "Galaxy"
     }
 
     var onClickItem: ((string: String) -> Unit)? = null
