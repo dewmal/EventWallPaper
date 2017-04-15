@@ -61,6 +61,8 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
         private val DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK = 2
 
         private val RESET_THRESHOLD = 150
+        private val MOVE_THRESHOLD = 10
+
         private val ANIMATION_DURATION_FAST_MILLIS = 300L
         private val ANIMATION_DURATION_SLOW_MILLIS = 500L
         private val ANIMATION_DURATION_VERY_SLOW_MILLIS = 700L
@@ -136,6 +138,16 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
             DownloadItem.DOWNLOAD_STATUS_OK -> downloadFlipperView?.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK)
         }
     }
+
+    private val shareButtonHideOffset: Int
+        get() {
+            return resources.getDimensionPixelOffset(R.dimen.share_btn_margin_right_hide)
+        }
+
+    private val downloadFlipperViewHideOffset: Int
+        get() {
+            return resources.getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide)
+        }
 
     private var animating: Boolean = false
     private var copied: Boolean = false
@@ -260,7 +272,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
                     var dx = e.rawX - downX
                     var dy = e.rawY - downY
 
-                    if (dx > 10 || dy > 10) {
+                    if (dx >= MOVE_THRESHOLD || dy >= MOVE_THRESHOLD) {
                         toggleFadeAnimation(false)
                     }
 
@@ -302,6 +314,15 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
             downloadFlipperView!!.alpha = it.animatedValue as Float
         }
         valueAnimator.setDuration(ANIMATION_DURATION_FAST_MILLIS).start()
+    }
+
+    private fun resetStatus() {
+        shareFAB!!.alpha = 1f
+        detailInfoRootLayout!!.alpha = 1f
+        downloadFlipperView!!.alpha = 1f
+
+        shareFAB!!.translationX = shareButtonHideOffset.toFloat()
+        downloadFlipperView!!.translationX = downloadFlipperViewHideOffset.toFloat()
     }
 
     private fun associateWithDownloadItem(item: DownloadItem?) {
@@ -427,7 +448,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
     }
 
     private fun toggleDownloadFlipperViewAnimation(show: Boolean, oneshot: Boolean) {
-        val hideX = resources.getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide)
+        var hideX = downloadFlipperViewHideOffset
 
         var start = if (show) hideX else 0
         var end = if (show) 0 else hideX
@@ -441,7 +462,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
     }
 
     private fun toggleShareBtnAnimation(show: Boolean, oneshot: Boolean) {
-        val hideX = resources.getDimensionPixelOffset(R.dimen.share_btn_margin_right_hide)
+        val hideX = shareButtonHideOffset
 
         var start = if (show) hideX else 0
         var end = if (show) 0 else hideX
@@ -472,9 +493,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
                 if (show) {
                     navigationCallback?.onShown()
                 } else {
-                    shareFAB!!.alpha = 1f
-                    detailInfoRootLayout!!.alpha = 1f
-                    downloadFlipperView!!.alpha = 1f
+                    resetStatus()
                     detailRootScrollView?.visibility = View.INVISIBLE
                     navigationCallback?.onHidden()
                 }
