@@ -31,6 +31,7 @@ import com.juniperphoton.myersplash.widget.PivotTitleBar
 import com.juniperphoton.myersplash.widget.SearchView
 import org.greenrobot.eventbus.EventBus
 import rx.Observable
+import rx.Subscriber
 import rx.schedulers.Schedulers
 
 class MainActivity : BaseActivity(), ImageDetailView.StateListener, MainListFragment.Callback {
@@ -160,9 +161,18 @@ class MainActivity : BaseActivity(), ImageDetailView.StateListener, MainListFrag
         Observable.just(FileUtil.sharePath)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe {
-                    FileUtil.clearFilesToShared()
-                }
+                .subscribe(object : Subscriber<String>() {
+                    override fun onCompleted() {
+                    }
+
+                    override fun onNext(t: String?) {
+                        FileUtil.clearFilesToShared()
+                    }
+
+                    override fun onError(e: Throwable?) {
+                        e?.printStackTrace()
+                    }
+                })
     }
 
     private fun initMainViews() {
