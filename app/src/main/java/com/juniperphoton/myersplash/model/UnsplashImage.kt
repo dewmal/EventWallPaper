@@ -1,16 +1,15 @@
 package com.juniperphoton.myersplash.model
 
 import android.graphics.Color
-
 import com.google.gson.annotations.SerializedName
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.common.Constant
-import com.juniperphoton.myersplash.utils.DownloadUtil
+import com.juniperphoton.myersplash.utils.FileUtil
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
-
 import java.io.File
 import java.io.Serializable
 
+@Suppress("UNUSED")
 class UnsplashImage : Serializable {
     @SerializedName("id")
     val id: String? = null
@@ -71,7 +70,7 @@ class UnsplashImage : Serializable {
         }
 
     val pathForDownload: String
-        get() = DownloadUtil.galleryPath + File.separator + fileNameForDownload
+        get() = FileUtil.galleryPath + File.separator + fileNameForDownload
 
     fun hasDownloaded(): Boolean {
         val path = pathForDownload + ".jpg"

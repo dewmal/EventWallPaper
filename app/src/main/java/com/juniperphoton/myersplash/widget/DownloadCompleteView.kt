@@ -5,23 +5,19 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.support.v4.content.FileProvider
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
-
-import com.juniperphoton.myersplash.App
-import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.utils.ColorUtil
-
-import java.io.File
-
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.juniperphoton.myersplash.App
+import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.extension.isLightColor
+import java.io.File
 
 @Suppress("UNUSED")
 class DownloadCompleteView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
@@ -61,6 +57,6 @@ class DownloadCompleteView(context: Context, attrs: AttributeSet) : FrameLayout(
 
     fun setThemeBackColor(color: Int) {
         setAsRL!!.background = ColorDrawable(color)
-        setAsTextView!!.setTextColor(if (ColorUtil.isColorLight(color)) Color.BLACK else Color.WHITE)
+        setAsTextView!!.setTextColor(if (color.isLightColor()) Color.BLACK else Color.WHITE)
     }
 }

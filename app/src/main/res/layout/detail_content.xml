@@ -114,7 +114,7 @@
 
                     <FrameLayout
                         android:id="@+id/copied_url_fl"
-                        android:layout_width="@dimen/copy_url_width"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@android:color/white"
                         android:foreground="@drawable/ripple_rect">
@@ -129,6 +129,8 @@
                             android:layout_marginRight="12dp"
                             android:layout_marginTop="8dp"
                             android:text="COPIED :D"
+                            android:maxLines="1"
+                            android:ellipsize="end"
                             android:textColor="@android:color/black"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -140,7 +142,7 @@
         </android.support.constraint.ConstraintLayout>
 
         <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/detail_hero_dv"
+            android:id="@+id/detail_hero_view"
             android:layout_width="0dp"
             android:layout_height="270dp"
             android:clickable="true"

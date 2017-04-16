@@ -10,12 +10,10 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
-
-import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.utils.ColorUtil
-
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.extension.isLightColor
 
 class DownloadRetryView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     @BindView(R.id.widget_retry_rl)
@@ -48,8 +46,8 @@ class DownloadRetryView(context: Context, attrs: AttributeSet) : FrameLayout(con
 
     fun setThemeBackColor(color: Int) {
         retryRL?.background = ColorDrawable(color)
-        retryTextView?.setTextColor(if (ColorUtil.isColorLight(color)) Color.BLACK else Color.WHITE)
-        if (ColorUtil.isColorLight(color)) {
+        retryTextView?.setTextColor(if (color.isLightColor()) Color.BLACK else Color.WHITE)
+        if (color.isLightColor()) {
             deleteView?.setImageResource(R.drawable.vector_ic_delete_black)
         }
     }

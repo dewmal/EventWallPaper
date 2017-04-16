@@ -37,7 +37,7 @@
             android:name=".activity.AboutActivity"
             android:label="ABOUT"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AboutTheme" />
         <activity
             android:name=".activity.ManageDownloadActivity"
             android:label="DOWNLOADS"
