@@ -47,16 +47,16 @@ class DownloadsListAdapter(private var mData: MutableList<DownloadItem>?, privat
         if (getItemViewType(position) == FOOTER) {
             return
         }
-        val item = mData!![holder?.adapterPosition]
+        val item = mData!![holder.adapterPosition]
 
-        holder?.downloadCompleteView?.setFilePath(item.filePath?:"")
-        holder?.downloadCompleteView?.setThemeBackColor(item.color)
+        holder.downloadCompleteView?.setFilePath(item.filePath?:"")
+        holder.downloadCompleteView?.setThemeBackColor(item.color)
 
-        holder?.draweeView?.setImageURI(item.thumbUrl)
-        holder?.downloadingView?.setProgress(item.progress)
+        holder.draweeView?.setImageURI(item.thumbUrl)
+        holder.downloadingView?.setProgress(item.progress)
 
-        holder?.downloadRetryView?.setThemeBackColor(item.color)
-        holder?.downloadRetryView?.setOnClickDeleteListener(View.OnClickListener {
+        holder.downloadRetryView?.setThemeBackColor(item.color)
+        holder.downloadRetryView?.setOnClickDeleteListener(View.OnClickListener {
             try {
                 mData!!.removeAt(holder.adapterPosition)
                 notifyItemRemoved(holder.adapterPosition)
