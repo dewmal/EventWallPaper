@@ -44,7 +44,7 @@ class SettingsActivity : BaseActivity() {
 
         val quickDownload = LocalSettingHelper.getBoolean(this, Constant.QUICK_DOWNLOAD_CONFIG_NAME, false)
         mQuickDownloadItem!!.checked = quickDownload
-        mQuickDownloadItem!!.setOnCheckedListener(CompoundButton.OnCheckedChangeListener { v, isChecked ->
+        mQuickDownloadItem!!.setOnCheckedListener(CompoundButton.OnCheckedChangeListener { _, isChecked ->
             LocalSettingHelper.putBoolean(this@SettingsActivity, Constant.QUICK_DOWNLOAD_CONFIG_NAME, isChecked)
         })
 

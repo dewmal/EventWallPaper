@@ -215,7 +215,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
             file.copyFile(copiedFile)
         }
 
-        if (copiedFile == null || !copiedFile!!.exists()) {
+        if (copiedFile == null || !copiedFile.exists()) {
             ToastService.sendShortToast(mContext.getString(R.string.something_wrong))
             return
         }

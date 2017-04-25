@@ -73,7 +73,7 @@ object CloudService {
             val contentImages: ArrayList<UnsplashImage?> = ArrayList()
             if (images != null) {
                 for (img in images) {
-                    contentImages?.add(img?.image)
+                    contentImages.add(img?.image)
                 }
             }
             contentImages
