@@ -13,6 +13,10 @@ android {
         versionCode 233
         versionName "2.3.2"
     }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
 }
 
 dependencies {
