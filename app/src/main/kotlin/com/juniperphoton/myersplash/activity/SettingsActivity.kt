@@ -42,7 +42,7 @@ class SettingsActivity : BaseActivity() {
         setContentView(R.layout.activity_settings)
         ButterKnife.bind(this)
 
-        val quickDownload = LocalSettingHelper.getBoolean(this, Constant.QUICK_DOWNLOAD_CONFIG_NAME, false)
+        val quickDownload = LocalSettingHelper.getBoolean(this, Constant.QUICK_DOWNLOAD_CONFIG_NAME, true)
         quickDownloadItem!!.checked = quickDownload
         quickDownloadItem!!.setOnCheckedListener(CompoundButton.OnCheckedChangeListener { _, isChecked ->
             LocalSettingHelper.putBoolean(this@SettingsActivity, Constant.QUICK_DOWNLOAD_CONFIG_NAME, isChecked)

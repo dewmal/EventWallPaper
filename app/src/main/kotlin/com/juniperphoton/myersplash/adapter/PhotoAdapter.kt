@@ -251,7 +251,7 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
 
             val backColor = image.themeColor.getDarker(0.7f)
 
-            if (LocalSettingHelper.getBoolean(mContext, Constant.QUICK_DOWNLOAD_CONFIG_NAME, false)) {
+            if (LocalSettingHelper.getBoolean(mContext, Constant.QUICK_DOWNLOAD_CONFIG_NAME, true)) {
                 if (!image.hasDownloaded()) {
                     mDownloadRL!!.visibility = View.VISIBLE
                     mDownloadRL!!.setOnClickListener {
