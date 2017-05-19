@@ -73,7 +73,10 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
     private var clickedView: View? = null
     private var clickedImage: UnsplashImage? = null
 
-    private var navigationCallback: StateListener? = null
+    var onShowing: (() -> Unit)? = null
+    var onShown: (() -> Unit)? = null
+    var onHiding: (() -> Unit)? = null
+    var onHidden: (() -> Unit)? = null
 
     @BindView(R.id.detail_root_sv)
     @JvmField var detailRootScrollView: ViewGroup? = null
@@ -483,19 +486,19 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
         animator.addListener(object : AnimatorListenerImpl() {
             override fun onAnimationStart(animator: Animator) {
                 if (show) {
-                    navigationCallback?.onShowing()
+                    onShowing?.invoke()
                 } else {
-                    navigationCallback?.onHiding()
+                    onHiding?.invoke()
                 }
             }
 
             override fun onAnimationEnd(animation: Animator) {
                 if (show) {
-                    navigationCallback?.onShown()
+                    onShown?.invoke()
                 } else {
                     resetStatus()
                     detailRootScrollView?.visibility = View.INVISIBLE
-                    navigationCallback?.onHidden()
+                    onHidden?.invoke()
                 }
             }
         })
@@ -509,10 +512,6 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
         toggleDetailRLAnimation(false, oneshot)
         toggleDownloadFlipperViewAnimation(false, oneshot)
         toggleShareBtnAnimation(false, oneshot)
-    }
-
-    fun setNavigationCallback(callback: StateListener) {
-        navigationCallback = callback
     }
 
     fun tryHide(): Boolean {
@@ -611,15 +610,5 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
             downloadFlipperView?.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING)
             associateWithDownloadItem(null)
         }
-    }
-
-    interface StateListener {
-        fun onShowing()
-
-        fun onHiding()
-
-        fun onShown()
-
-        fun onHidden()
     }
 }

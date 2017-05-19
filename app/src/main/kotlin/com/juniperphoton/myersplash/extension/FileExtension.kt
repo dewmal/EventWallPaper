@@ -28,7 +28,6 @@ fun File.copyFile(destF: File): Boolean {
         } catch (e: Exception) {
             return false
         }
-
     }
 
     var inputStream: InputStream? = null
