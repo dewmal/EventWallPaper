@@ -120,10 +120,6 @@ object DownloadUtil {
     }
 
     fun checkAndDownload(context: Activity, image: UnsplashImage) {
-        if (!PermissionUtil.check(context)) {
-            ToastService.sendShortToast(context.getString(R.string.no_permission))
-            return
-        }
         if (!context.usingWifi()) {
             val builder = AlertDialog.Builder(context)
             builder.setTitle(R.string.attention)
