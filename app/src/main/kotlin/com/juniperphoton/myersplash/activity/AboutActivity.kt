@@ -8,27 +8,17 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.widget.TextView
-import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.ThanksToAdapter
 import com.juniperphoton.myersplash.extension.getVersionName
 import com.juniperphoton.myersplash.extension.hasNavigationBar
+import kotlinx.android.synthetic.main.activity_about.*
 import moe.feng.alipay.zerosdk.AlipayZeroSdk
 
 @Suppress("UNUSED")
 class AboutActivity : BaseActivity() {
-    @BindView(R.id.version_tv)
-    @JvmField var versionTextView: TextView? = null
-
-    @BindView(R.id.thanks_to_list)
-    @JvmField var recyclerView: RecyclerView? = null
-
-    @BindView(R.id.blank_footer)
-    @JvmField var blank: View? = null
-
     private var adapter: ThanksToAdapter? = null
     private val marginLeft by lazy {
         resources.getDimensionPixelSize(R.dimen.about_item_margin_left)
@@ -42,20 +32,20 @@ class AboutActivity : BaseActivity() {
         updateVersion()
         initThanks()
         if (!hasNavigationBar()) {
-            blank?.visibility = View.GONE
+            blank.visibility = View.GONE
         }
     }
 
     private fun updateVersion() {
-        versionTextView?.text = getVersionName()
+        versionTextView.text = getVersionName()
     }
 
     private fun initThanks() {
         adapter = ThanksToAdapter(this)
         val strs = resources.getStringArray(R.array.thanks_array)
         val list = strs.toList()
-        adapter?.refresh(list)
-        recyclerView?.addItemDecoration(object : RecyclerView.ItemDecoration() {
+        adapter!!.refresh(list)
+        thanksList.addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(outRect: Rect?, view: View?, parent: RecyclerView?, state: RecyclerView.State?) {
                 super.getItemOffsets(outRect, view, parent, state)
                 val pos = parent?.getChildAdapterPosition(view)
@@ -66,8 +56,8 @@ class AboutActivity : BaseActivity() {
                 }
             }
         })
-        recyclerView?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        recyclerView?.adapter = adapter
+        thanksList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        thanksList.adapter = adapter
     }
 
     @OnClick(R.id.email_rl)
