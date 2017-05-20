@@ -16,6 +16,7 @@ import com.juniperphoton.myersplash.extension.pow
 import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.utils.AnimatorListenerImpl
 import com.juniperphoton.myersplash.utils.FileUtil
+import com.juniperphoton.myersplash.utils.PermissionUtil
 import com.juniperphoton.myersplash.widget.PivotTitleBar
 import org.greenrobot.eventbus.EventBus
 import rx.Observable
@@ -49,6 +50,8 @@ class MainActivity : BaseActivity() {
         super.onResume()
         detailView.registerEventBus()
         searchView.registerEventBus()
+
+        PermissionUtil.checkAndRequest(this@MainActivity)
     }
 
     override fun onPause() {

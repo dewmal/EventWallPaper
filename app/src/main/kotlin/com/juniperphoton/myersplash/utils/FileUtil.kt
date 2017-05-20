@@ -14,8 +14,21 @@ import java.io.File
 object FileUtil {
     val galleryPath: String?
         get() {
-            val dir = App.instance.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-            var mediaStorageDir = File(dir, "MyerSplash")
+            val mediaStorageDir: File
+            if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
+                val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) ?: return ""
+                mediaStorageDir = File(path, "MyerSplash")
+            } else {
+                val extStorageDirectory = App.instance.filesDir.absolutePath
+                mediaStorageDir = File(extStorageDirectory, "MyerSplash")
+            }
+
+            if (!mediaStorageDir.exists()) {
+                if (!mediaStorageDir.mkdirs()) {
+                    return null
+                }
+            }
+
             return mediaStorageDir.absolutePath
         }
 
