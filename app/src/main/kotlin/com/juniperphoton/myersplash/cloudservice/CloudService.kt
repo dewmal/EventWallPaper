@@ -2,10 +2,6 @@ package com.juniperphoton.myersplash.cloudservice
 
 import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.model.UnsplashImage
-
-import java.util.ArrayList
-import java.util.concurrent.TimeUnit
-
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import retrofit2.Retrofit
@@ -16,6 +12,8 @@ import rx.Subscriber
 import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 object CloudService {
     private val AppKey = "403d9934ce4bb8dbef44765692144e8c6fac6d2698950cb40b07397d6c6635fe"
@@ -89,7 +87,8 @@ object CloudService {
 
     fun downloadPhoto(subscriber: Subscriber<ResponseBody>, url: String): Subscription {
         val observable = downloadService.downloadFileWithDynamicUrlSync(url)
-        return observable.subscribeOn(Schedulers.io())
+        return observable.timeout(30, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.io())
                 .unsubscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(subscriber)

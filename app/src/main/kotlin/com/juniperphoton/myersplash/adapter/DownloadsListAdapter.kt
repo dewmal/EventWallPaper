@@ -7,7 +7,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
+import butterknife.BindView
+import butterknife.ButterKnife
 import com.facebook.drawee.view.SimpleDraweeView
 import com.juniperphoton.flipperviewlib.FlipperView
 import com.juniperphoton.myersplash.App
@@ -20,24 +21,14 @@ import com.juniperphoton.myersplash.widget.DownloadCompleteView
 import com.juniperphoton.myersplash.widget.DownloadRetryView
 import com.juniperphoton.myersplash.widget.DownloadingView
 
-import butterknife.BindView
-import butterknife.ButterKnife
-
 class DownloadsListAdapter(private val context: Context) :
         RecyclerView.Adapter<DownloadsListAdapter.DownloadItemViewHolder>() {
-    interface DownloadStateChangedCallback {
-        fun onDataChanged()
-
-        fun onRetryDownload(id: String)
-    }
-
     companion object {
         private val ITEM = 1
         private val FOOTER = 1 shl 1
         private val ASPECT_RATIO = 1.7f
     }
 
-    private var callback: DownloadStateChangedCallback? = null
     var data: MutableList<DownloadItem>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DownloadItemViewHolder? {
@@ -115,10 +106,6 @@ class DownloadsListAdapter(private val context: Context) :
         }
     }
 
-    fun setCallback(callback: DownloadStateChangedCallback) {
-        this.callback = callback
-    }
-
     override fun getItemCount(): Int {
         if (data == null)
             return 0
@@ -164,11 +151,6 @@ class DownloadsListAdapter(private val context: Context) :
 
     fun refreshItems(items: MutableList<DownloadItem>) {
         data = items
-        notifyDataSetChanged()
-    }
-
-    fun clear() {
-        data!!.clear()
         notifyDataSetChanged()
     }
 }

@@ -59,7 +59,6 @@ class BackgroundDownloadService : IntentService("BackgroundDownloadService") {
                 } else {
                     val realm = RealmCache.getInstance()
 
-
                     val downloadItem = realm.where(DownloadItem::class.java)
                             .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst()
                     if (downloadItem != null) {

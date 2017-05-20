@@ -3,14 +3,10 @@ package com.juniperphoton.myersplash.activity
 import android.app.AlertDialog
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
-import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SimpleItemAnimator
 import android.util.Log
 import android.view.View
-import android.widget.TextView
-import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myersplash.R
@@ -20,21 +16,12 @@ import com.juniperphoton.myersplash.extension.getDimenInPixel
 import com.juniperphoton.myersplash.extension.hasNavigationBar
 import com.juniperphoton.myersplash.model.DownloadItem
 import io.realm.RealmChangeListener
-import io.realm.RealmResults
 import io.realm.Sort
+import kotlinx.android.synthetic.main.activity_managedownload.*
 import java.util.*
 
 @Suppress("UNUSED")
-class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.DownloadStateChangedCallback {
-    @BindView(R.id.activity_manage_download_rv)
-    @JvmField var recyclerView: RecyclerView? = null
-
-    @BindView(R.id.activity_downloads_no_item_tv)
-    @JvmField var noItemView: TextView? = null
-
-    @BindView(R.id.activity_downloads_more_fab)
-    @JvmField var moreFAB: FloatingActionButton? = null
-
+class ManageDownloadActivity : BaseActivity() {
     private var adapter: DownloadsListAdapter? = null
 
     private var itemStatusChangedListener: RealmChangeListener<DownloadItem>? = RealmChangeListener { item ->
@@ -43,8 +30,6 @@ class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.DownloadStat
             adapter?.updateItem(item)
         }
     }
-
-    private val mListener = RealmChangeListener<RealmResults<DownloadItem>> { updateNoItemVisibility() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +45,7 @@ class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.DownloadStat
         RealmCache.getInstance().close()
     }
 
-    @OnClick(R.id.activity_downloads_more_fab)
+    @OnClick(R.id.downloadsMoreFab)
     internal fun onClickMore() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.clear_options_title).setItems(R.array.delete_options) { _, i ->
@@ -74,16 +59,16 @@ class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.DownloadStat
     }
 
     private fun deleteFromRealm(status: Int) {
-        val realm = RealmCache.getInstance()
-        realm.beginTransaction()
-        val items = realm.where(DownloadItem::class.java)
-                .equalTo(DownloadItem.STATUS_KEY, status).findAll()
-        items.map {
-            it.removeChangeListener(itemStatusChangedListener!!)
-            it.deleteFromRealm()
+        RealmCache.getInstance().executeTransaction {
+            val result = it.where(DownloadItem::class.java)
+                    .equalTo(DownloadItem.STATUS_KEY, status).findAll()
+            result.toList().forEach {
+                it.removeAllChangeListeners()
+                it.deleteFromRealm()
+            }
+            it.commitTransaction()
+            initViews()
         }
-        realm.commitTransaction()
-        initViews()
     }
 
     fun updateNoItemVisibility() {
@@ -98,16 +83,13 @@ class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.DownloadStat
         val downloadItems = ArrayList<DownloadItem>()
 
         val items = RealmCache.getInstance().where(DownloadItem::class.java).findAllSorted(DownloadItem.POSITION_KEY, Sort.DESCENDING)
-        for (item in items) {
-            downloadItems.add(item)
-            item.addChangeListener(itemStatusChangedListener!!)
+        items.forEach {
+            downloadItems.add(it)
+            it.addChangeListener(itemStatusChangedListener!!)
         }
-
-        items.addChangeListener(mListener)
 
         if (adapter == null) {
             adapter = DownloadsListAdapter(this)
-            adapter!!.setCallback(this)
         }
         adapter!!.refreshItems(downloadItems)
 
@@ -121,22 +103,15 @@ class ManageDownloadActivity : BaseActivity(), DownloadsListAdapter.DownloadStat
                 }
             }
         }
-        recyclerView!!.layoutManager = layoutManager
-        (recyclerView!!.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-        recyclerView!!.adapter = adapter
+        downloadsList.layoutManager = layoutManager
+        (downloadsList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+        downloadsList.adapter = adapter
         updateNoItemVisibility()
 
         if (!hasNavigationBar()) {
-            val params = moreFAB!!.layoutParams as ConstraintLayout.LayoutParams
+            val params = downloadsMoreFab.layoutParams as ConstraintLayout.LayoutParams
             params.setMargins(0, 0, getDimenInPixel(24), getDimenInPixel(24))
-            moreFAB!!.layoutParams = params
+            downloadsMoreFab.layoutParams = params
         }
-    }
-
-    override fun onDataChanged() {
-        updateNoItemVisibility()
-    }
-
-    override fun onRetryDownload(id: String) {
     }
 }

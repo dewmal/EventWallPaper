@@ -28,8 +28,6 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
     private val FOOTER_FLAG_SHOW = 1
     private val FOOTER_FLAG_SHOW_END = 1 shl 1 or FOOTER_FLAG_SHOW
 
-    private var onClickPhoto: ((rectF: RectF, unsplashImage: UnsplashImage, itemView: View) -> Unit)? = null
-
     private var isAutoLoadMore = true
     private var footerFlag = FOOTER_FLAG_SHOW
 
@@ -37,6 +35,7 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
     private var layoutManager: RecyclerView.LayoutManager? = null
     private var lastPosition = -1
 
+    var onClickPhoto: ((rectF: RectF, unsplashImage: UnsplashImage, itemView: View) -> Unit)? = null
     var onClickQuickDownload: ((image: UnsplashImage) -> Unit)? = null
     var onLoadMore: (() -> Unit)? = null
 
@@ -195,10 +194,6 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
             return layoutManager.findLastVisibleItemPosition()
         }
         return -1
-    }
-
-    fun setOnClickItemListener(callback: ((rectF: RectF, unsplashImage: UnsplashImage, itemView: View) -> Unit)?) {
-        onClickPhoto = callback
     }
 
     val firstImage: UnsplashImage?

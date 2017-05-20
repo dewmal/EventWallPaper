@@ -62,7 +62,7 @@ class MainListFragment : Fragment() {
     private var query: String? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = LayoutInflater.from(activity).inflate(R.layout.fragment_list, null, false)
+        val view = LayoutInflater.from(activity!!).inflate(R.layout.fragment_list, null, false)
         ButterKnife.bind(this, view)
         loadView = true
         init()
@@ -167,7 +167,7 @@ class MainListFragment : Fragment() {
         adapter?.onClickQuickDownload = { image ->
             DownloadUtil.checkAndDownload(activity, image)
         }
-        adapter?.setOnClickItemListener(onClickPhotoItem)
+        adapter?.onClickPhoto = onClickPhotoItem
         contentRecyclerView!!.adapter = adapter
     }
 
