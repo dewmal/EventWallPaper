@@ -54,7 +54,7 @@
         </activity>
 
         <service
-            android:name=".service.BackgroundDownloadService"
+            android:name=".service.DownloadService"
             android:exported="false" />
 
         <provider
@@ -66,5 +66,14 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/paths" />
         </provider>
+
+        <receiver android:name=".provider.WallpaperWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_provider" />
+        </receiver>
     </application>
 </manifest>

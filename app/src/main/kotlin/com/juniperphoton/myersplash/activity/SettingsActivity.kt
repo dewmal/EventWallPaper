@@ -3,7 +3,6 @@ package com.juniperphoton.myersplash.activity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.View
-import android.widget.CompoundButton
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.facebook.drawee.backends.pipeline.Fresco
@@ -34,9 +33,9 @@ class SettingsActivity : BaseActivity() {
 
         val quickDownload = LocalSettingHelper.getBoolean(this, Constant.QUICK_DOWNLOAD_CONFIG_NAME, true)
         quickDownloadItem.checked = quickDownload
-        quickDownloadItem.setOnCheckedListener(CompoundButton.OnCheckedChangeListener { _, isChecked ->
-            LocalSettingHelper.putBoolean(this@SettingsActivity, Constant.QUICK_DOWNLOAD_CONFIG_NAME, isChecked)
-        })
+        quickDownloadItem.onCheckedChanged = {
+            LocalSettingHelper.putBoolean(this@SettingsActivity, Constant.QUICK_DOWNLOAD_CONFIG_NAME, it)
+        }
 
         savingStrings = arrayOf(getString(R.string.SavingHighest), getString(R.string.SavingHigh),
                 getString(R.string.SavingMedium))
@@ -45,10 +44,10 @@ class SettingsActivity : BaseActivity() {
                 getString(R.string.LoadingThumbnail))
 
         val savingChoice = LocalSettingHelper.getInt(this, Constant.SAVING_QUALITY_CONFIG_NAME, 1)
-        savingQualityItem.setContent(savingStrings!![savingChoice])
+        savingQualityItem.content = savingStrings!![savingChoice]
 
         val loadingChoice = LocalSettingHelper.getInt(this, Constant.LOADING_QUALITY_CONFIG_NAME, 0)
-        loadingQualityItem.setContent(loadingStrings!![loadingChoice])
+        loadingQualityItem.content = loadingStrings!![loadingChoice]
     }
 
     @OnClick(R.id.quickDownloadItem)
@@ -61,7 +60,7 @@ class SettingsActivity : BaseActivity() {
     fun clearUp(view: View) {
         Fresco.getImagePipeline().clearCaches()
         ToastService.sendShortToast("All clear :D")
-        clearCacheItem.setContent("0 MB")
+        clearCacheItem.content = "0 MB"
         EventBus.getDefault().post(RefreshAllEvent())
     }
 
@@ -77,11 +76,10 @@ class SettingsActivity : BaseActivity() {
 
         val builder = AlertDialog.Builder(this@SettingsActivity)
         builder.setTitle(getString(R.string.SavingQuality))
-        builder.setSingleChoiceItems(savingStrings, choice
-        ) { dialog, which ->
+        builder.setSingleChoiceItems(savingStrings, choice) { dialog, which ->
             LocalSettingHelper.putInt(this@SettingsActivity, Constant.SAVING_QUALITY_CONFIG_NAME, which)
             dialog.dismiss()
-            savingQualityItem.setContent(savingStrings!![which])
+            savingQualityItem.content = savingStrings!![which]
         }
         builder.show()
     }
@@ -96,13 +94,13 @@ class SettingsActivity : BaseActivity() {
         ) { dialog, which ->
             LocalSettingHelper.putInt(this@SettingsActivity, Constant.LOADING_QUALITY_CONFIG_NAME, which)
             dialog.dismiss()
-            loadingQualityItem.setContent(loadingStrings!![which])
+            loadingQualityItem.content = loadingStrings!![which]
         }
         builder.show()
     }
 
     override fun onResume() {
         super.onResume()
-        clearCacheItem.setContent("${ImagePipelineFactory.getInstance().mainFileCache.size / 1024 / 1024} MB")
+        clearCacheItem.content = "${ImagePipelineFactory.getInstance().mainFileCache.size / 1024 / 1024} MB"
     }
 }

@@ -12,9 +12,11 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
+import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.isLightColor
 
+@Suppress("UNUSED")
 class DownloadRetryView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     @BindView(R.id.widget_retry_rl)
     @JvmField var retryRL: RelativeLayout? = null
@@ -31,24 +33,30 @@ class DownloadRetryView(context: Context, attrs: AttributeSet) : FrameLayout(con
     @BindView(R.id.delete_btn_root)
     @JvmField var deleteRoot: View? = null
 
+    var onClickDelete: (() -> Unit)? = null
+    var onClickRetry: (() -> Unit)? = null
+
+    var themeColor: Int = Color.TRANSPARENT
+        set(color) {
+            retryRL?.background = ColorDrawable(color)
+            retryTextView?.setTextColor(if (color.isLightColor()) Color.BLACK else Color.WHITE)
+            if (color.isLightColor()) {
+                deleteView?.setImageResource(R.drawable.vector_ic_delete_black)
+            }
+        }
+
     init {
         LayoutInflater.from(context).inflate(R.layout.widget_download_retry_view, this)
         ButterKnife.bind(this)
     }
 
-    fun setOnClickDeleteListener(listener: View.OnClickListener) {
-        deleteRoot?.setOnClickListener(listener)
+    @OnClick(R.id.delete_btn_root)
+    internal fun onClickDelete() {
+        onClickDelete?.invoke()
     }
 
-    fun setOnClickRetryListener(listener: View.OnClickListener) {
-        retryBtn?.setOnClickListener(listener)
-    }
-
-    fun setThemeBackColor(color: Int) {
-        retryRL?.background = ColorDrawable(color)
-        retryTextView?.setTextColor(if (color.isLightColor()) Color.BLACK else Color.WHITE)
-        if (color.isLightColor()) {
-            deleteView?.setImageResource(R.drawable.vector_ic_delete_black)
-        }
+    @OnClick(R.id.widget_retry_btn)
+    internal fun onClickRetry() {
+        onClickRetry?.invoke()
     }
 }

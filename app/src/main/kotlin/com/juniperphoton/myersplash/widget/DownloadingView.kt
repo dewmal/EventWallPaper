@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -33,7 +32,25 @@ class DownloadingView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     @BindView(R.id.cancel_ic)
     @JvmField var cancelImageView: ImageView? = null
 
-    private var mListener: View.OnClickListener? = null
+    var onClickCancel: (() -> Unit)? = null
+
+    var themeColor: Int = Color.TRANSPARENT
+        set(value) {
+            rootRL?.background = ColorDrawable(value)
+            progressView?.color = value
+            if (value.isLightColor()) {
+                progressTV?.setTextColor(Color.BLACK)
+                cancelImageView?.setImageResource(R.drawable.vector_ic_clear_black)
+            } else {
+                progressTV?.setTextColor(Color.WHITE)
+            }
+        }
+
+    var progress: Int = 0
+        set(value) {
+            progressView?.progress = value
+            progressTV?.text = "$value%"
+        }
 
     init {
         LayoutInflater.from(context).inflate(R.layout.widget_downloading_view, this)
@@ -42,26 +59,6 @@ class DownloadingView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
     @OnClick(R.id.downloading_cancel_rl)
     internal fun onCancel() {
-        mListener?.onClick(cancelRL)
-    }
-
-    fun setClickCancelListener(listener: View.OnClickListener) {
-        mListener = listener
-    }
-
-    fun setThemeBackColor(color: Int) {
-        rootRL?.background = ColorDrawable(color)
-        progressView?.setThemeColor(color)
-        if (color.isLightColor()) {
-            progressTV?.setTextColor(Color.BLACK)
-            cancelImageView?.setImageResource(R.drawable.vector_ic_clear_black)
-        } else {
-            progressTV?.setTextColor(Color.WHITE)
-        }
-    }
-
-    fun setProgress(progress: Int) {
-        progressView?.setProgress(progress)
-        progressTV?.text = "$progress%"
+        onClickCancel?.invoke()
     }
 }

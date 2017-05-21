@@ -19,36 +19,50 @@ import rx.Subscriber
 import java.io.File
 import java.util.*
 
-class BackgroundDownloadService : IntentService("BackgroundDownloadService") {
+class DownloadService : IntentService(TAG) {
+    companion object {
+        private val TAG = "DownloadService"
+        private val subscriptionMap = HashMap<String, Subscriber<*>>()
+    }
+
+    private var isUnsplash: Boolean = true
+    private var previewUri: Uri? = null
+
     override fun onHandleIntent(intent: Intent?) {
-        val url = intent!!.getStringExtra(Params.URL_KEY)
+        val downloadUrl = intent!!.getStringExtra(Params.URL_KEY)
         val fileName = intent.getStringExtra(Params.NAME_KEY)
         val canceled = intent.getBooleanExtra(Params.CANCELED_KEY, false)
+        val previewUrl = intent.getStringExtra(Params.PREVIEW_URI)
+        isUnsplash = intent.getBooleanExtra(Params.IS_UNSPLASH_WALLPAPER, true)
+
+        previewUrl?.let {
+            previewUri = Uri.parse(previewUrl)
+        }
 
         if (canceled) {
             Log.d(TAG, "on handle intent cancelled")
-            val subscriber = subscriptionMap[url]
+            val subscriber = subscriptionMap[downloadUrl]
             if (subscriber != null) {
                 subscriber.unsubscribe()
-                NotificationUtil.cancelNotification(Uri.parse(url))
+                NotificationUtil.cancelNotification(Uri.parse(downloadUrl))
                 ToastService.sendShortToast(getString(R.string.cancelled_download))
             }
         } else {
             Log.d(TAG, "on handle intent progress")
-            downloadImage(url, fileName)
+            downloadImage(downloadUrl, fileName)
             NotificationUtil.showProgressNotification(getString(R.string.app_name),
-                    getString(R.string.downloading), 0, Uri.parse(url))
+                    getString(R.string.downloading), 0, Uri.parse(downloadUrl), previewUri)
         }
     }
 
-    fun downloadImage(url: String, fileName: String): String {
+    private fun downloadImage(url: String, fileName: String): String {
         val file = DownloadUtil.getFileToSave(fileName)
         val subscriber = object : Subscriber<ResponseBody>() {
             internal var outputFile: File? = null
 
             override fun onCompleted() {
                 if (outputFile == null) {
-                    NotificationUtil.showErrorNotification(Uri.parse(url), fileName, url)
+                    NotificationUtil.showErrorNotification(Uri.parse(url), fileName, url, previewUri)
                     RealmCache.getInstance().executeTransaction { realm ->
                         val downloadItem = realm.where(DownloadItem::class.java)
                                 .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst()
@@ -57,30 +71,27 @@ class BackgroundDownloadService : IntentService("BackgroundDownloadService") {
                         }
                     }
                 } else {
+                    Log.d(TAG, "output file:" + outputFile!!.absolutePath)
+
+                    val newFile = File(outputFile!!.path)
+                    outputFile!!.renameTo(newFile)
+
+                    Log.d(TAG, "renamed file:" + newFile.absolutePath)
+                    newFile.sendScanBroadcast(App.instance)
+
                     val realm = RealmCache.getInstance()
 
                     val downloadItem = realm.where(DownloadItem::class.java)
                             .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst()
                     if (downloadItem != null) {
                         realm.beginTransaction()
-
                         downloadItem.status = DownloadItem.DOWNLOAD_STATUS_OK
-
-                        Log.d(TAG, "output file:" + outputFile!!.absolutePath)
-
-                        val newFile = File(outputFile!!.path + ".jpg")
-                        outputFile!!.renameTo(newFile)
-
-                        Log.d(TAG, "renamed file:" + newFile.absolutePath)
-
                         downloadItem.filePath = newFile.path
-
                         realm.commitTransaction()
 
-                        newFile.sendScanBroadcast(App.instance)
                     }
-
-                    NotificationUtil.showCompleteNotification(Uri.parse(url))
+                    NotificationUtil.showCompleteNotification(Uri.parse(url), previewUri,
+                            if (isUnsplash) null else newFile.absolutePath)
                 }
                 Log.d(TAG, getString(R.string.completed))
             }
@@ -88,7 +99,7 @@ class BackgroundDownloadService : IntentService("BackgroundDownloadService") {
             override fun onError(e: Throwable) {
                 e.printStackTrace()
                 Log.d(TAG, "on handle intent error " + e.message + ",url:" + url)
-                NotificationUtil.showErrorNotification(Uri.parse(url), fileName, url)
+                NotificationUtil.showErrorNotification(Uri.parse(url), fileName, url, null)
 
                 val realm = RealmCache.getInstance()
                 realm.beginTransaction()
@@ -104,17 +115,22 @@ class BackgroundDownloadService : IntentService("BackgroundDownloadService") {
 
             override fun onNext(responseBody: ResponseBody) {
                 Log.d(TAG, "outputFile download onNext,size" + responseBody.contentLength())
-                this.outputFile = DownloadUtil.writeResponseBodyToDisk(responseBody, file!!.path, url)
+                this.outputFile = DownloadUtil.writeResponseBodyToDisk(responseBody, file!!.path, url) {
+                    NotificationUtil.showProgressNotification("MyerSplash", "Downloading...",
+                            it, Uri.parse(url), previewUri)
+                    RealmCache.getInstance().executeTransaction { realm ->
+                        val downloadItem = realm.where(DownloadItem::class.java)
+                                .equalTo(DownloadItem.DOWNLOAD_URL, url).findFirst()
+                        if (downloadItem != null) {
+                            downloadItem.progress = it
+                        }
+                    }
+                }
             }
         }
         CloudService.downloadPhoto(subscriber, url)
         subscriptionMap.put(url, subscriber)
 
         return file!!.path
-    }
-
-    companion object {
-        private val TAG = BackgroundDownloadService::class.java.name
-        private val subscriptionMap = HashMap<String, Subscriber<*>>()
     }
 }

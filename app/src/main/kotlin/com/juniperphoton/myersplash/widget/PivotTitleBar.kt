@@ -4,25 +4,23 @@ import android.content.Context
 import android.content.Intent
 import android.support.v7.widget.PopupMenu
 import android.util.AttributeSet
-import android.view.GestureDetector
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.widget.FrameLayout
-
+import butterknife.BindView
+import butterknife.ButterKnife
+import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.AboutActivity
 import com.juniperphoton.myersplash.activity.ManageDownloadActivity
 import com.juniperphoton.myersplash.activity.SettingsActivity
 import com.juniperphoton.myersplash.model.UnsplashCategory
 
-import butterknife.BindView
-import butterknife.ButterKnife
-import butterknife.OnClick
-
 @Suppress("UNUSED")
 class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
+    companion object {
+        private val DEFAULT_SELECTED = 1
+    }
+
     @BindView(R.id.more_btn)
     @JvmField var moreBtn: View? = null
 
@@ -35,72 +33,14 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
     @BindView(R.id.pivot_item_2)
     @JvmField var item2: View? = null
 
+    var onSingleTap: ((Int) -> Unit)? = null
+    var onDoubleTap: ((Int) -> Unit)? = null
+
     var selectedItem = DEFAULT_SELECTED
         set(value) {
             toggleAnimation(selectedItem, value)
             field = value
         }
-
-    private var mCallback: OnClickTitleListener? = null
-
-    private var mTouchingViewIndex: Int = 0
-
-    private lateinit var mGestureDetector: GestureDetector
-
-    private val mListener = object : GestureDetector.SimpleOnGestureListener() {
-        override fun onSingleTapUp(e: MotionEvent): Boolean {
-            if (mCallback == null) return true
-            mCallback?.onSingleTap(mTouchingViewIndex)
-            return super.onSingleTapUp(e)
-        }
-
-        override fun onDoubleTap(e: MotionEvent): Boolean {
-            if (mCallback == null) return true
-            mCallback?.onDoubleTap(mTouchingViewIndex)
-            return super.onDoubleTap(e)
-        }
-    }
-
-    private val mOnTouchListener = View.OnTouchListener { v, event ->
-        if (v === item0) {
-            mTouchingViewIndex = 0
-        } else if (v === item1) {
-            mTouchingViewIndex = 1
-        } else if (v === item2) {
-            mTouchingViewIndex = 2
-        }
-        mGestureDetector.onTouchEvent(event)
-        true
-    }
-
-    init {
-        LayoutInflater.from(context).inflate(R.layout.pivot_layout, this, true)
-        ButterKnife.bind(this)
-
-        mGestureDetector = GestureDetector(context, mListener)
-        item0?.setOnTouchListener(mOnTouchListener)
-        item1?.setOnTouchListener(mOnTouchListener)
-        item2?.setOnTouchListener(mOnTouchListener)
-    }
-
-    fun setOnClickTitleListener(listener: OnClickTitleListener) {
-        mCallback = listener
-    }
-
-    @OnClick(R.id.pivot_item_0)
-    internal fun onClickItem0() {
-        mCallback?.onSingleTap(0)
-    }
-
-    @OnClick(R.id.pivot_item_1)
-    internal fun onClickItem1() {
-        mCallback?.onSingleTap(1)
-    }
-
-    @OnClick(R.id.pivot_item_2)
-    internal fun onClickItem2() {
-        mCallback?.onSingleTap(2)
-    }
 
     val selectedString: String
         get() {
@@ -111,6 +51,65 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
                 else -> return UnsplashCategory.NEW_S.toUpperCase()
             }
         }
+
+    private var touchingViewIndex: Int = 0
+
+    private lateinit var gestureDetector: GestureDetector
+
+    private val gestureListener = object : GestureDetector.SimpleOnGestureListener() {
+        override fun onSingleTapUp(e: MotionEvent): Boolean {
+            onSingleTap?.invoke(touchingViewIndex)
+            return super.onSingleTapUp(e)
+        }
+
+        override fun onDoubleTap(e: MotionEvent): Boolean {
+            onDoubleTap?.invoke(touchingViewIndex)
+            return super.onDoubleTap(e)
+        }
+    }
+
+    private val onTouchListener = View.OnTouchListener { v, event ->
+        if (v === item0) {
+            touchingViewIndex = 0
+        } else if (v === item1) {
+            touchingViewIndex = 1
+        } else if (v === item2) {
+            touchingViewIndex = 2
+        }
+        gestureDetector.onTouchEvent(event)
+        true
+    }
+
+    private val menuMap: HashMap<Int, Class<out Any>> = HashMap()
+
+    init {
+        LayoutInflater.from(context).inflate(R.layout.pivot_layout, this, true)
+        ButterKnife.bind(this)
+
+        gestureDetector = GestureDetector(context, gestureListener)
+        item0?.setOnTouchListener(onTouchListener)
+        item1?.setOnTouchListener(onTouchListener)
+        item2?.setOnTouchListener(onTouchListener)
+
+        menuMap.put(R.id.menu_settings, SettingsActivity::class.java)
+        menuMap.put(R.id.menu_downloads, ManageDownloadActivity::class.java)
+        menuMap.put(R.id.menu_about, AboutActivity::class.java)
+    }
+
+    @OnClick(R.id.pivot_item_0)
+    internal fun onClickItem0() {
+        onSingleTap?.invoke(0)
+    }
+
+    @OnClick(R.id.pivot_item_1)
+    internal fun onClickItem1() {
+        onSingleTap?.invoke(1)
+    }
+
+    @OnClick(R.id.pivot_item_2)
+    internal fun onClickItem2() {
+        onSingleTap?.invoke(2)
+    }
 
     private fun toggleAnimation(prevIndex: Int, newIndex: Int) {
         val preView = getViewByIndex(prevIndex)
@@ -136,32 +135,10 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
         popupMenu.gravity = Gravity.END
         popupMenu.setOnMenuItemClickListener { item ->
             val intent: Intent?
-            when (item.itemId) {
-                R.id.menu_settings -> {
-                    intent = Intent(context, SettingsActivity::class.java)
-                    context.startActivity(intent)
-                }
-                R.id.menu_downloads -> {
-                    intent = Intent(context, ManageDownloadActivity::class.java)
-                    context.startActivity(intent)
-                }
-                R.id.menu_about -> {
-                    intent = Intent(context, AboutActivity::class.java)
-                    context.startActivity(intent)
-                }
-            }
+            intent = Intent(context, menuMap[item.itemId])
+            context.startActivity(intent)
             true
         }
         popupMenu.show()
-    }
-
-    interface OnClickTitleListener {
-        fun onSingleTap(index: Int)
-
-        fun onDoubleTap(index: Int)
-    }
-
-    companion object {
-        private val DEFAULT_SELECTED = 1
     }
 }

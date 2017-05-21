@@ -23,6 +23,8 @@ object CloudService {
     var FEATURED_PHOTO_URL = "https://api.unsplash.com/collections/featured?"
     var RANDOM_PHOTOS_URL = "https://api.unsplash.com/photos/random?"
     var SEARCH_URL = "https://api.unsplash.com/search/photos?"
+    var AUTO_CHANGE_WALLPAPER = "http://juniperphoton.net/myersplash/wallpapers/"
+    var AUTO_CHANGE_WALLPAPER_THUMB = "http://juniperphoton.net/myersplash/wallpapers/thumbs/"
 
     private val DEFAULT_TIMEOUT = 10
 

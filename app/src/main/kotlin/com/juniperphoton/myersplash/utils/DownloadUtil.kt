@@ -3,7 +3,6 @@ package com.juniperphoton.myersplash.utils
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import com.juniperphoton.myersplash.App
@@ -13,7 +12,7 @@ import com.juniperphoton.myersplash.event.DownloadStartedEvent
 import com.juniperphoton.myersplash.extension.usingWifi
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
-import com.juniperphoton.myersplash.service.BackgroundDownloadService
+import com.juniperphoton.myersplash.service.DownloadService
 import io.realm.Sort
 import okhttp3.ResponseBody
 import org.greenrobot.eventbus.EventBus
@@ -25,7 +24,8 @@ import java.util.*
 object DownloadUtil {
     private val TAG = "DownloadUtil"
 
-    fun writeResponseBodyToDisk(body: ResponseBody, fileUri: String, downloadUrl: String): File? {
+    fun writeResponseBodyToDisk(body: ResponseBody, fileUri: String,
+                                downloadUrl: String, onProgress: ((Int) -> Unit)?): File? {
         try {
             val fileToSave = File(fileUri)
 
@@ -59,16 +59,7 @@ object DownloadUtil {
                     val progress = (fileSizeDownloaded / fileSize.toDouble() * 100).toInt()
                     if (progress - progressToReport >= 5) {
                         progressToReport = progress
-                        val progressToDisplay = progressToReport
-                        NotificationUtil.showProgressNotification("MyerSplash", "Downloading...",
-                                progressToReport, Uri.parse(downloadUrl))
-                        RealmCache.getInstance().executeTransaction { realm ->
-                            val downloadItem = realm.where(DownloadItem::class.java)
-                                    .equalTo(DownloadItem.DOWNLOAD_URL, downloadUrl).findFirst()
-                            if (downloadItem != null) {
-                                downloadItem.progress = progressToDisplay
-                            }
-                        }
+                        onProgress?.invoke(progressToReport)
                     }
                 }
                 val endTime = Date().time
@@ -113,7 +104,7 @@ object DownloadUtil {
     }
 
     fun cancelDownload(context: Context, image: UnsplashImage) {
-        val intent = Intent(App.instance, BackgroundDownloadService::class.java)
+        val intent = Intent(App.instance, DownloadService::class.java)
         intent.putExtra(Params.CANCELED_KEY, true)
         intent.putExtra(Params.URL_KEY, image.downloadUrl)
         context.startService(intent)
@@ -130,13 +121,15 @@ object DownloadUtil {
             builder.setMessage(R.string.wifi_attention_content)
             builder.setPositiveButton(R.string.download) { dialog, _ ->
                 dialog.dismiss()
-                startDownloadService(context, image)
+                startDownloadService(context, image.fileNameForDownload, image.downloadUrl!!)
+                saveDownloadItem(context, image)
                 EventBus.getDefault().post(DownloadStartedEvent(image.id))
             }
             builder.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
             builder.create().show()
         } else {
-            startDownloadService(context, image)
+            startDownloadService(context, image.fileNameForDownload, image.downloadUrl!!)
+            saveDownloadItem(context, image)
             EventBus.getDefault().post(DownloadStartedEvent(image.id))
         }
     }
@@ -151,12 +144,7 @@ object DownloadUtil {
         return item
     }
 
-    private fun startDownloadService(context: Activity, image: UnsplashImage) {
-        val intent = Intent(context, BackgroundDownloadService::class.java)
-        intent.putExtra(Params.NAME_KEY, image.fileNameForDownload)
-        intent.putExtra(Params.URL_KEY, image.downloadUrl)
-        context.startService(intent)
-
+    private fun saveDownloadItem(context: Context, image: UnsplashImage) {
         val downloadItems = RealmCache.getInstance().where(DownloadItem::class.java)
                 .findAllSorted(DownloadItem.POSITION_KEY, Sort.DESCENDING)
         var position = 0
@@ -171,5 +159,12 @@ object DownloadUtil {
         item.position = position
         item.color = image.themeColor
         RealmCache.getInstance().executeTransaction { realm -> realm.copyToRealmOrUpdate(item) }
+    }
+
+    fun startDownloadService(context: Context, name: String, url: String) {
+        val intent = Intent(context, DownloadService::class.java)
+        intent.putExtra(Params.NAME_KEY, name)
+        intent.putExtra(Params.URL_KEY, url)
+        context.startService(intent)
     }
 }

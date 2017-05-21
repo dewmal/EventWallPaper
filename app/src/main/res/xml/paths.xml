@@ -5,5 +5,5 @@
         path="" />
     <external-path
         name="downloaded"
-        path="" />
+        path="Pictures/MyerSplash/" />
 </Paths>

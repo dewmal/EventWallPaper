@@ -11,8 +11,12 @@ import android.view.View
 import com.juniperphoton.myersplash.R
 
 class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs) {
-    private var color: Int = 0
-    private var progress: Int = 0
+    var color: Int = 0
+    var progress: Int = 0
+        set(value) {
+            field = value
+            invalidate()
+        }
 
     init {
         val array = context.obtainStyledAttributes(attrs, R.styleable.ProgressView, 0, 0)
@@ -21,19 +25,10 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
         array.recycle()
     }
 
-    fun setProgress(progress: Int) {
-        this.progress = progress
-        invalidate()
-    }
-
-    fun setThemeColor(color: Int) {
-        this.color = color
-    }
-
     fun animateProgressTo(progress: Int) {
         val animator = ValueAnimator.ofInt(this.progress, progress)
         animator.duration = 300
-        animator.addUpdateListener { valueAnimator -> setProgress(valueAnimator.animatedValue as Int) }
+        animator.addUpdateListener { valueAnimator -> this.progress = (valueAnimator.animatedValue as Int) }
         animator.start()
     }
 

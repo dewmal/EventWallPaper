@@ -1,19 +1,15 @@
 package com.juniperphoton.myersplash.widget
 
 import android.content.Context
-import android.content.res.TypedArray
-import android.support.v7.widget.AppCompatCheckBox
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.CompoundButton
 import android.widget.FrameLayout
 import android.widget.TextView
-
-import com.juniperphoton.myersplash.R
-
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.juniperphoton.myersplash.R
 
 class SettingsItemLayout(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     @BindView(R.id.settings_item_title)
@@ -27,6 +23,24 @@ class SettingsItemLayout(context: Context, attrs: AttributeSet) : FrameLayout(co
 
     @BindView(R.id.divider_view)
     @JvmField var dividerView: View? = null
+
+    var onCheckedChanged: ((Boolean) -> Unit)? = null
+
+    var checked: Boolean
+        get() = compoundButton!!.isChecked
+        set(checked) {
+            compoundButton!!.isChecked = checked
+        }
+
+    var title: String = ""
+        set(value) {
+            titleTextView?.text = value
+        }
+
+    var content: String = ""
+        set(value) {
+            contentTextView?.text = value
+        }
 
     init {
         LayoutInflater.from(context).inflate(R.layout.row_settings_item, this, true)
@@ -55,23 +69,9 @@ class SettingsItemLayout(context: Context, attrs: AttributeSet) : FrameLayout(co
         if (!showDivider) {
             dividerView?.visibility = View.GONE
         }
-    }
 
-    fun setOnCheckedListener(onCheckedListener: CompoundButton.OnCheckedChangeListener) {
-        compoundButton?.setOnCheckedChangeListener(onCheckedListener)
-    }
-
-    var checked: Boolean
-        get() = compoundButton!!.isChecked
-        set(checked) {
-            compoundButton!!.isChecked = checked
+        compoundButton?.setOnCheckedChangeListener { _, isChecked ->
+            onCheckedChanged?.invoke(isChecked)
         }
-
-    fun setTitle(title: String) {
-        titleTextView?.text = title
-    }
-
-    fun setContent(content: String) {
-        contentTextView?.text = content
     }
 }

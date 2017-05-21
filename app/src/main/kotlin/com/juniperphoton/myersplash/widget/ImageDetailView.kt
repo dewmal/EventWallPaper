@@ -136,7 +136,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
 
     private val realmChangeListener = RealmChangeListener<DownloadItem> { element ->
         when (element.status) {
-            DownloadItem.DOWNLOAD_STATUS_DOWNLOADING -> progressView?.setProgress(element.progress)
+            DownloadItem.DOWNLOAD_STATUS_DOWNLOADING -> progressView?.progress = element.progress
             DownloadItem.DOWNLOAD_STATUS_FAILED -> downloadFlipperView?.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD)
             DownloadItem.DOWNLOAD_STATUS_OK -> downloadFlipperView?.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK)
         }
@@ -272,8 +272,8 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
                     sY = detailImgRL!!.translationY
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    var dx = e.rawX - downX
-                    var dy = e.rawY - downY
+                    val dx = e.rawX - downX
+                    val dy = e.rawY - downY
 
                     if (Math.abs(dx) >= MOVE_THRESHOLD || Math.abs(dy) >= MOVE_THRESHOLD) {
                         toggleFadeAnimation(false)
@@ -380,9 +380,9 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
             detailImgRL!!.translationX = 0f
         }
 
-        var startX = detailImgRL!!.translationX
+        val startX = detailImgRL!!.translationX
 
-        var animator = ValueAnimator.ofFloat(startY, endY)
+        val animator = ValueAnimator.ofFloat(startY, endY)
         animator.duration = ANIMATION_DURATION_FAST_MILLIS
         animator.interpolator = FastOutSlowInInterpolator()
         animator.addUpdateListener {
@@ -451,10 +451,10 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
     }
 
     private fun toggleDownloadFlipperViewAnimation(show: Boolean, oneshot: Boolean) {
-        var hideX = downloadFlipperViewHideOffset
+        val hideX = downloadFlipperViewHideOffset
 
-        var start = if (show) hideX else 0
-        var end = if (show) 0 else hideX
+        val start = if (show) hideX else 0
+        val end = if (show) 0 else hideX
 
         val valueAnimator = ValueAnimator()
         valueAnimator.setFloatValues(start.toFloat(), end.toFloat())
@@ -467,8 +467,8 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
     private fun toggleShareBtnAnimation(show: Boolean, oneshot: Boolean) {
         val hideX = shareButtonHideOffset
 
-        var start = if (show) hideX else 0
-        var end = if (show) 0 else hideX
+        val start = if (show) hideX else 0
+        val end = if (show) 0 else hideX
 
         val valueAnimator = ValueAnimator()
         valueAnimator.setFloatValues(start.toFloat(), end.toFloat())
@@ -508,7 +508,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
     private fun hideDetailPanel() {
         if (animating) return
 
-        var oneshot = detailInfoRootLayout!!.alpha == 0f
+        val oneshot = detailInfoRootLayout!!.alpha == 0f
         toggleDetailRLAnimation(false, oneshot)
         toggleDownloadFlipperViewAnimation(false, oneshot)
         toggleShareBtnAnimation(false, oneshot)
@@ -560,7 +560,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
         }
 
         nameTextView!!.text = unsplashImage.userName
-        progressView!!.setProgress(5)
+        progressView!!.progress = 5
 
         val backColor = unsplashImage.themeColor
         if (!backColor.isLightColor()) {
@@ -587,7 +587,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
             when (associatedDownloadItem?.status) {
                 DownloadItem.DOWNLOAD_STATUS_DOWNLOADING -> {
                     downloadFlipperView?.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING)
-                    progressView?.setProgress(associatedDownloadItem!!.progress)
+                    progressView?.progress = associatedDownloadItem!!.progress
                 }
                 DownloadItem.DOWNLOAD_STATUS_FAILED -> {
                 }

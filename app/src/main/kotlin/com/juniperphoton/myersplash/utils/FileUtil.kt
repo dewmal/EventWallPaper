@@ -44,6 +44,11 @@ object FileUtil {
             return folder.absolutePath
         }
 
+    val cachedPath: String?
+        get() {
+            return App.instance.cacheDir.absolutePath
+        }
+
     fun getCachedFile(url: String): File? {
         val cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(
                 ImageRequest.fromUri(Uri.parse(url)), null)

@@ -17,12 +17,11 @@ import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.utils.AnimatorListenerImpl
 import com.juniperphoton.myersplash.utils.FileUtil
 import com.juniperphoton.myersplash.utils.PermissionUtil
-import com.juniperphoton.myersplash.widget.PivotTitleBar
+import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import rx.Observable
 import rx.Subscriber
 import rx.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
     private var mainListFragmentAdapter: MainListFragmentAdapter? = null
@@ -135,21 +134,21 @@ class MainActivity : BaseActivity() {
         searchFab.setOnClickListener {
             toggleSearchView(true, true)
         }
-        pivotTitleBar.setOnClickTitleListener(object : PivotTitleBar.OnClickTitleListener {
-            override fun onSingleTap(index: Int) {
-                if (viewPager != null) {
-                    viewPager.currentItem = index
-                    EventBus.getDefault().post(ScrollToTopEvent(idMaps[index]!!, false))
-                }
-            }
 
-            override fun onDoubleTap(index: Int) {
-                if (viewPager != null) {
-                    viewPager.currentItem = index
-                    EventBus.getDefault().post(ScrollToTopEvent(idMaps[index]!!, true))
-                }
+        pivotTitleBar.onSingleTap = {
+            if (viewPager != null) {
+                viewPager.currentItem = it
+                EventBus.getDefault().post(ScrollToTopEvent(idMaps[it]!!, false))
             }
-        })
+        }
+
+        pivotTitleBar.onDoubleTap = {
+            if (viewPager != null) {
+                viewPager.currentItem = it
+                EventBus.getDefault().post(ScrollToTopEvent(idMaps[it]!!, true))
+            }
+        }
+
         pivotTitleBar.selectedItem = initNavigationIndex
 
         mainListFragmentAdapter = MainListFragmentAdapter({ rectF, unsplashImage, itemView ->

@@ -30,8 +30,7 @@ class DownloadCompleteView(context: Context, attrs: AttributeSet) : FrameLayout(
     @BindView(R.id.set_as_tv)
     @JvmField var setAsTextView: TextView? = null
 
-    private var mFileUrl: String? = null
-
+    var filePath: String? = null
     private var ctx: Context? = null
 
     init {
@@ -40,14 +39,10 @@ class DownloadCompleteView(context: Context, attrs: AttributeSet) : FrameLayout(
         ButterKnife.bind(this)
     }
 
-    fun setFilePath(filePath: String) {
-        mFileUrl = filePath
-    }
-
     @OnClick(R.id.widget_set_as_rl)
     internal fun setAs() {
-        if (mFileUrl != null) {
-            val file = File(mFileUrl)
+        if (filePath != null) {
+            val file = File(filePath)
             val uri = FileProvider.getUriForFile(ctx, ctx?.getString(R.string.authorities), file)
             val intent = WallpaperManager.getInstance(ctx).getCropAndSetWallpaperIntent(uri)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

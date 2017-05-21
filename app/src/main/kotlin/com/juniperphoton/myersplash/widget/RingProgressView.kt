@@ -5,14 +5,31 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
-import android.support.annotation.ColorInt
 import android.util.AttributeSet
 import android.view.View
 
 class RingProgressView(context: Context, attrs: AttributeSet) : View(context, attrs) {
+    companion object {
+        private val STROKE_WIDTH = 5
+    }
+
     private val paint: Paint = Paint()
-    private var progress = 10
-    private var color = Color.WHITE
+
+    var progress = 10
+        set(value) {
+            field = value
+            if (progress < 5) {
+                progress = 5
+            }
+            invalidate()
+        }
+
+    var color = Color.WHITE
+        set(value) {
+            field = value
+            invalidate()
+        }
+
     private val rect: RectF = RectF()
 
     init {
@@ -21,19 +38,6 @@ class RingProgressView(context: Context, attrs: AttributeSet) : View(context, at
         paint.isAntiAlias = true
         paint.style = Paint.Style.STROKE
         paint.strokeCap = Paint.Cap.ROUND
-    }
-
-    fun setProgress(value: Int) {
-        progress = value
-        if (progress < 5) {
-            progress = 5
-        }
-        invalidate()
-    }
-
-    fun setColor(@ColorInt color: Int) {
-        this.color = color
-        invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -47,10 +51,6 @@ class RingProgressView(context: Context, attrs: AttributeSet) : View(context, at
                 (center + radius).toFloat(), (center + radius).toFloat())
         val angle = (360 * progress / 100f).toInt()
         canvas.drawArc(rect, -90f, angle.toFloat(), false, paint)
-    }
-
-    companion object {
-        private val STROKE_WIDTH = 5
     }
 }
 

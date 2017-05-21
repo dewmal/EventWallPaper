@@ -14,7 +14,7 @@ import com.juniperphoton.flipperviewlib.FlipperView
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.model.DownloadItem
-import com.juniperphoton.myersplash.service.BackgroundDownloadService
+import com.juniperphoton.myersplash.service.DownloadService
 import com.juniperphoton.myersplash.utils.DownloadItemTransactionUtil
 import com.juniperphoton.myersplash.utils.Params
 import com.juniperphoton.myersplash.widget.DownloadCompleteView
@@ -52,49 +52,55 @@ class DownloadsListAdapter(private val context: Context) :
         }
         val item = data!![holder.adapterPosition]
 
-        holder.downloadCompleteView?.setFilePath(item.filePath ?: "")
-        holder.downloadCompleteView?.setThemeBackColor(item.color)
-
         holder.draweeView?.setImageURI(item.thumbUrl)
-        holder.downloadingView?.setProgress(item.progress)
+        holder.downloadingView?.progress = item.progress
 
-        holder.downloadRetryView?.setThemeBackColor(item.color)
-        holder.downloadRetryView?.setOnClickDeleteListener(View.OnClickListener {
-            try {
-                data!!.removeAt(holder.adapterPosition)
-                notifyItemRemoved(holder.adapterPosition)
+        holder.downloadCompleteView?.let {
+            it.filePath = item.filePath
+            it.setThemeBackColor(item.color)
+        }
 
-                val intent = Intent(App.instance, BackgroundDownloadService::class.java)
+        holder.downloadRetryView?.let {
+            it.themeColor = item.color
+            it.onClickDelete = {
+                try {
+                    data!!.removeAt(holder.adapterPosition)
+                    notifyItemRemoved(holder.adapterPosition)
+
+                    val intent = Intent(App.instance, DownloadService::class.java)
+                    intent.putExtra(Params.CANCELED_KEY, true)
+                    intent.putExtra(Params.URL_KEY, item.downloadUrl)
+                    context.startService(intent)
+
+                    DownloadItemTransactionUtil.delete(item)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+            it.onClickRetry = {
+                DownloadItemTransactionUtil.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_DOWNLOADING)
+                holder.flipperView?.next(item.status)
+
+                val intent = Intent(context, DownloadService::class.java)
+                intent.putExtra(Params.NAME_KEY, item.fileName)
+                intent.putExtra(Params.URL_KEY, item.downloadUrl)
+                context.startService(intent)
+            }
+        }
+
+        holder.downloadingView?.let {
+            it.progress = item.progress
+            it.themeColor = item.color
+            it.onClickCancel = {
+                DownloadItemTransactionUtil.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_FAILED)
+                holder.flipperView?.next(item.status)
+
+                val intent = Intent(App.instance, DownloadService::class.java)
                 intent.putExtra(Params.CANCELED_KEY, true)
                 intent.putExtra(Params.URL_KEY, item.downloadUrl)
                 context.startService(intent)
-
-                DownloadItemTransactionUtil.delete(item)
-            } catch (e: Exception) {
-                e.printStackTrace()
             }
-        })
-        holder.downloadRetryView?.setOnClickRetryListener(View.OnClickListener {
-            DownloadItemTransactionUtil.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_DOWNLOADING)
-            holder.flipperView?.next(item.status)
-
-            val intent = Intent(context, BackgroundDownloadService::class.java)
-            intent.putExtra(Params.NAME_KEY, item.fileName)
-            intent.putExtra(Params.URL_KEY, item.downloadUrl)
-            context.startService(intent)
-        })
-
-        holder.downloadingView?.setProgress(item.progress)
-        holder.downloadingView?.setThemeBackColor(item.color)
-        holder.downloadingView?.setClickCancelListener(View.OnClickListener {
-            DownloadItemTransactionUtil.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_FAILED)
-            holder.flipperView?.next(item.status)
-
-            val intent = Intent(App.instance, BackgroundDownloadService::class.java)
-            intent.putExtra(Params.CANCELED_KEY, true)
-            intent.putExtra(Params.URL_KEY, item.downloadUrl)
-            context.startService(intent)
-        })
+        }
 
         val last = item.lastStatus
         if (last != item.status && last != DownloadItem.DISPLAY_STATUS_NOT_SPECIFIED) {
