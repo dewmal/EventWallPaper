@@ -66,7 +66,6 @@ class ManageDownloadActivity : BaseActivity() {
                 it.removeAllChangeListeners()
                 it.deleteFromRealm()
             }
-            it.commitTransaction()
             initViews()
         }
     }
@@ -85,6 +84,9 @@ class ManageDownloadActivity : BaseActivity() {
         val items = RealmCache.getInstance().where(DownloadItem::class.java).findAllSorted(DownloadItem.POSITION_KEY, Sort.DESCENDING)
         items.forEach {
             downloadItems.add(it)
+        }
+
+        downloadItems.forEach {
             it.addChangeListener(itemStatusChangedListener!!)
         }
 
