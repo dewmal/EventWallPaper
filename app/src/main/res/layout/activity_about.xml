@@ -11,24 +11,14 @@
         android:layout_height="wrap_content"
         android:background="#000000"
         android:fitsSystemWindows="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark"
-        tools:context="activity.AboutActivity">
+        android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
         <ImageView
             android:id="@+id/about_background"
             android:layout_width="0dp"
             android:layout_height="@dimen/about_banner_height"
             android:scaleType="centerCrop"
-            android:src="@drawable/banner"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <View
-            android:id="@+id/view"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/about_banner_height"
-            android:background="#b8000000"
+            android:background="@color/MyerSplashThemeColor"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -38,7 +28,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
-            android:layout_marginLeft="20dp"
             android:layout_marginStart="20dp"
             android:gravity="center_horizontal"
             android:orientation="horizontal"
@@ -55,7 +44,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
+                android:layout_marginStart="4dp"
                 android:fontFamily="sans-serif-light"
                 android:gravity="center"
                 android:text="@string/myer"
@@ -74,14 +63,13 @@
         </LinearLayout>
 
         <com.juniperphoton.myersplash.widget.BlackTextView
-            android:id="@+id/version_tv"
+            android:id="@+id/versionTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="@id/about_title_layout"
             android:layout_marginStart="10dp"
             android:background="@drawable/theme_round_background"
             android:padding="4dp"
-            android:text="2.0.0"
             android:textColor="@android:color/black"
             android:textSize="15sp"
             android:textStyle="bold"
@@ -95,16 +83,15 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@id/about_title_layout"
             android:layout_gravity="center_horizontal"
-            android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
             android:alpha="0.5"
             android:fontFamily="sans-serif-light"
-            android:text="@string/for_windows_amp_android"
             android:textColor="@android:color/white"
             android:textSize="15sp"
             android:textStyle="normal"
             app:layout_constraintLeft_toLeftOf="@+id/about_title_layout"
-            app:layout_constraintTop_toBottomOf="@+id/about_title_layout" />
+            app:layout_constraintTop_toBottomOf="@+id/about_title_layout"
+            tools:text="@string/for_windows_amp_android" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -118,31 +105,18 @@
                 style="@style/AboutSubTitleTextView"
                 android:text="@string/credit" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/about_item_margin_left"
-                android:orientation="horizontal"
-                android:padding="10dp">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_photo" />
-
-                <TextView
-                    style="@style/AboutSubContentTextView"
-                    android:text="@string/CreditStr" />
-
-            </LinearLayout>
+            <TextView
+                style="@style/AboutSubContentTextView"
+                android:drawableStart="@drawable/ic_photo"
+                android:drawablePadding="10dp"
+                android:text="@string/CreditStr" />
 
             <com.juniperphoton.myersplash.widget.BlackTextView
                 style="@style/AboutSubTitleTextView"
                 android:text="@string/thanks_to" />
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/thanks_to_list"
+                android:id="@+id/thanksList"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_marginTop="12dp"
@@ -178,7 +152,6 @@
                         android:id="@+id/textView"
                         style="@style/AboutSubContentTextView"
                         android:text="@string/feedback_str" />
-
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
@@ -294,16 +267,17 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_star" />
+
                     <TextView
                         style="@style/AboutSubContentTextView"
                         android:text="@string/give_me_a_rate" />
                 </LinearLayout>
             </android.support.v7.widget.CardView>
+
             <View
-                android:id="@+id/blank_footer"
+                android:id="@+id/blank"
                 android:layout_width="match_parent"
                 android:layout_height="50dp" />
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>
-
 </ScrollView>

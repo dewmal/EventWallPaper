@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'realm-android'
 
@@ -10,8 +11,12 @@ android {
         applicationId "com.juniperphoton.myersplash"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 233
-        versionName "2.3.2"
+        versionCode 240
+        versionName "2.4.0"
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
     }
 }
 

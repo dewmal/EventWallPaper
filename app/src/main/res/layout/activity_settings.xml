@@ -37,7 +37,7 @@
                     android:text="@string/personalization" />
 
                 <com.juniperphoton.myersplash.widget.SettingsItemLayout
-                    android:id="@+id/setting_quick_download"
+                    android:id="@+id/quickDownloadItem"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:has_checkbox="true"
@@ -51,14 +51,14 @@
                     android:text="@string/quality" />
 
                 <com.juniperphoton.myersplash.widget.SettingsItemLayout
-                    android:id="@+id/setting_save_quality"
+                    android:id="@+id/savingQualityItem"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:setting_content="@string/SavingHigh"
                     app:setting_title="@string/SavingQuality" />
 
                 <com.juniperphoton.myersplash.widget.SettingsItemLayout
-                    android:id="@+id/setting_load_quality"
+                    android:id="@+id/loadingQualityItem"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:setting_content="@string/LoadingLarge"
@@ -79,7 +79,7 @@
                     app:setting_title="@string/cleanup_downloads_list" />
 
                 <com.juniperphoton.myersplash.widget.SettingsItemLayout
-                    android:id="@+id/setting_clear_cache"
+                    android:id="@+id/clearCacheItem"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:setting_content="@string/_0_mb"

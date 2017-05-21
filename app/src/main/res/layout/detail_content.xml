@@ -65,7 +65,6 @@
                     tools:layout_editor_absoluteY="0dp" />
             </LinearLayout>
 
-
             <com.juniperphoton.flipperviewlib.FlipperView
                 android:id="@+id/copy_url_flipper_view"
                 android:layout_width="wrap_content"
@@ -87,7 +86,7 @@
 
                     <FrameLayout
                         android:id="@+id/copy_url_fl"
-                        android:layout_width="@dimen/copy_url_width"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:foreground="@drawable/ripple_rect">
 
@@ -100,6 +99,7 @@
                             android:layout_marginLeft="12dp"
                             android:layout_marginRight="12dp"
                             android:layout_marginTop="8dp"
+                            android:maxLines="1"
                             android:text="@string/copy_url"
                             android:textColor="@android:color/white"
                             android:textSize="16sp"
@@ -128,9 +128,9 @@
                             android:layout_marginLeft="12dp"
                             android:layout_marginRight="12dp"
                             android:layout_marginTop="8dp"
-                            android:text="COPIED :D"
-                            android:maxLines="1"
                             android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="COPIED :D"
                             android:textColor="@android:color/black"
                             android:textSize="16sp"
                             android:textStyle="bold" />
