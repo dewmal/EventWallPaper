@@ -1,11 +1,8 @@
 package com.juniperphoton.myersplash.widget
 
-import android.app.WallpaperManager
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.support.v4.content.FileProvider
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -17,6 +14,7 @@ import butterknife.OnClick
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.isLightColor
+import com.juniperphoton.myersplash.utils.IntentUtil
 import java.io.File
 
 @Suppress("UNUSED")
@@ -41,11 +39,8 @@ class DownloadCompleteView(context: Context, attrs: AttributeSet) : FrameLayout(
 
     @OnClick(R.id.widget_set_as_rl)
     internal fun setAs() {
-        if (filePath != null) {
-            val file = File(filePath)
-            val uri = FileProvider.getUriForFile(ctx, ctx?.getString(R.string.authorities), file)
-            val intent = WallpaperManager.getInstance(ctx).getCropAndSetWallpaperIntent(uri)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        filePath?.let {
+            val intent = IntentUtil.getSetAsWallpaperIntent(File(it))
             App.instance.startActivity(intent)
         }
     }

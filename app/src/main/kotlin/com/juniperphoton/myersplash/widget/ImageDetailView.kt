@@ -3,7 +3,6 @@ package com.juniperphoton.myersplash.widget
 import android.animation.Animator
 import android.animation.ValueAnimator
 import android.app.Activity
-import android.app.WallpaperManager
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -15,7 +14,6 @@ import android.net.Uri
 import android.support.customtabs.CustomTabsIntent
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.FileProvider
 import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.util.AttributeSet
 import android.util.Log
@@ -365,11 +363,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
     @OnClick(R.id.detail_set_as_fab)
     internal fun onClickSetAsFAB() {
         val url = "${clickedImage!!.pathForDownload}.jpg"
-        val file = File(url)
-        val uri = FileProvider.getUriForFile(App.instance,
-                App.instance.getString(R.string.authorities), file)
-        val intent = WallpaperManager.getInstance(App.instance).getCropAndSetWallpaperIntent(uri)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        val intent = IntentUtil.getSetAsWallpaperIntent(File(url))
         App.instance.startActivity(intent)
     }
 

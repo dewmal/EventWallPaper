@@ -25,7 +25,7 @@ class DownloadService : IntentService(TAG) {
         private val subscriptionMap = HashMap<String, Subscriber<*>>()
     }
 
-    private var isUnsplash: Boolean = true
+    private var isUnsplash = true
     private var previewUri: Uri? = null
 
     override fun onHandleIntent(intent: Intent?) {
@@ -34,6 +34,10 @@ class DownloadService : IntentService(TAG) {
         val canceled = intent.getBooleanExtra(Params.CANCELED_KEY, false)
         val previewUrl = intent.getStringExtra(Params.PREVIEW_URI)
         isUnsplash = intent.getBooleanExtra(Params.IS_UNSPLASH_WALLPAPER, true)
+
+        if (!isUnsplash) {
+            ToastService.sendShortToast("Downloading...")
+        }
 
         previewUrl?.let {
             previewUri = Uri.parse(previewUrl)
@@ -73,7 +77,7 @@ class DownloadService : IntentService(TAG) {
                 } else {
                     Log.d(TAG, "output file:" + outputFile!!.absolutePath)
 
-                    val newFile = File(outputFile!!.path)
+                    val newFile = File("${outputFile!!.path}.jpg")
                     outputFile!!.renameTo(newFile)
 
                     Log.d(TAG, "renamed file:" + newFile.absolutePath)

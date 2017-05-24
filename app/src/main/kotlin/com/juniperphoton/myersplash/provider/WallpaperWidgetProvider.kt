@@ -41,13 +41,13 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
     private var dateString: String? = null
         get() {
             val date = Calendar.getInstance(TimeZone.getDefault())
-            return SimpleDateFormat("yyyyMMdd").format(date.time)
+            return SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(date.time)
         }
 
     private var dateStringDisplay: String? = null
         get() {
             val date = Calendar.getInstance(TimeZone.getDefault())
-            return SimpleDateFormat("yyyy-MM-dd").format(date.time)
+            return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(date.time)
         }
 
     override fun onUpdate(context: Context?, appWidgetManager: AppWidgetManager?, appWidgetIds: IntArray?) {
@@ -91,7 +91,7 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
 
         val intent = Intent(context, DownloadService::class.java)
         intent.putExtra(Params.URL_KEY, downloadUrl)
-        intent.putExtra(Params.NAME_KEY, "$dateString.jpg")
+        intent.putExtra(Params.NAME_KEY, "$dateString")
         intent.putExtra(Params.PREVIEW_URI, filePath)
         intent.putExtra(Params.IS_UNSPLASH_WALLPAPER, false)
         val pendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
