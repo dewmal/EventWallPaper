@@ -62,7 +62,7 @@
     <style name="AboutSubTitleTextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginLeft">@dimen/about_item_margin_left</item>
+        <item name="android:layout_marginLeft">12dp</item>
         <item name="android:layout_marginTop">12dp</item>
         <item name="android:textColor">@color/MyerSplashThemeColor</item>
         <item name="android:textSize">20sp</item>
@@ -71,20 +71,32 @@
     <style name="AboutSubContentView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginLeft">@dimen/about_item_margin_left</item>
+        <item name="android:layout_marginLeft">@dimen/about_thanks_item_margin</item>
         <item name="android:elevation">0dp</item>
         <item name="android:layout_marginTop">4dp</item>
     </style>
 
     <style name="AboutSubContentTextView">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">@dimen/about_row_height</item>
         <item name="android:layout_marginLeft">12dp</item>
+        <item name="android:background">@drawable/ripple_rect</item>
         <item name="android:textColor">#ffffff</item>
         <item name="android:textSize">14sp</item>
-        <item name="android:layout_gravity">center</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_gravity">center_vertical</item>
         <item name="android:paddingRight">10dp</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingLeft">12dp</item>
+    </style>
+
+    <style name="AboutContactItem">
+        <item name="android:layout_width">@dimen/about_contact_item_size</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:background">@drawable/ripple_rect</item>
     </style>
 </resources>

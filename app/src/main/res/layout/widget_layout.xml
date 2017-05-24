@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
     <ImageView
         android:id="@+id/widget_center_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@drawable/widget_preview_default"
-    tools:src="@drawable/widget_preview_default" />
+        android:src="@color/SettingBackground"/>
 
     <TextView
         android:id="@+id/widget_update_time_text"
@@ -21,14 +20,14 @@
         android:layout_alignTop="@+id/widget_download_btn"
         android:layout_gravity="center"
         android:gravity="center_vertical"
-        android:paddingLeft="12dp"
-        android:paddingRight="8dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="8dp"
         android:shadowColor="#86000000"
         android:shadowRadius="10"
         android:textColor="@android:color/white"
         android:textSize="12sp"
         android:textStyle="bold"
-        tools:text="2017-05-20 UPDATED" />
+        tools:text="2017-05-20 UPDATED"/>
 
     <ImageView
         android:id="@+id/widget_download_btn"
@@ -39,5 +38,5 @@
         android:padding="15dp"
         android:shadowColor="@android:color/black"
         android:shadowRadius="10"
-        android:src="@drawable/vector_ic_file_download" />
+        android:src="@drawable/vector_ic_file_download"/>
 </RelativeLayout>

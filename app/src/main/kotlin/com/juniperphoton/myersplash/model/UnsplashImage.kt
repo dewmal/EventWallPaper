@@ -33,7 +33,7 @@ class UnsplashImage : Serializable {
         get() = FileUtil.galleryPath + File.separator + fileNameForDownload
 
     val fileNameForDownload: String
-        get() = user!!.name + "-" + id + "-" + tagForDownloadUrl
+        get() = "${user!!.name} - $id - $tagForDownloadUrl"
 
     val themeColor: Int
         get() {
