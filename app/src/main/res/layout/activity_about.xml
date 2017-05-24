@@ -127,6 +127,7 @@
                 <ImageView
                     android:id="@+id/email_item"
                     style="@style/AboutContactItem"
+                    android:layout_marginRight="0dp"
                     android:src="@drawable/ic_email"/>
 
                 <ImageView

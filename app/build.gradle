@@ -11,7 +11,7 @@ android {
         applicationId "com.juniperphoton.myersplash"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 241
+        versionCode 242
         versionName "2.4.1"
     }
 
