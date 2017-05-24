@@ -20,4 +20,16 @@ object StatusBarCompat {
     fun isChrome(): Boolean {
         return Build.BRAND === "chromium" || Build.BRAND === "chrome"
     }
+
+    fun setDarkText(activity: Activity, darkText: Boolean) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            var systemUiVisibility = activity.window.decorView.systemUiVisibility
+            if (darkText) {
+                systemUiVisibility = systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+            } else {
+                systemUiVisibility = systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+            }
+            activity.window.decorView.systemUiVisibility = systemUiVisibility
+        }
+    }
 }

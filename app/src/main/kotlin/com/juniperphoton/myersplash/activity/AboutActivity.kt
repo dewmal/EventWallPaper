@@ -5,15 +5,16 @@ import android.content.Intent
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import butterknife.ButterKnife
 import butterknife.OnClick
+import com.google.android.flexbox.FlexboxLayoutManager
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.ThanksToAdapter
 import com.juniperphoton.myersplash.extension.getVersionName
 import com.juniperphoton.myersplash.extension.hasNavigationBar
+import com.juniperphoton.myersplash.utils.StatusBarCompat
 import kotlinx.android.synthetic.main.activity_about.*
 import moe.feng.alipay.zerosdk.AlipayZeroSdk
 
@@ -21,7 +22,7 @@ import moe.feng.alipay.zerosdk.AlipayZeroSdk
 class AboutActivity : BaseActivity() {
     private var adapter: ThanksToAdapter? = null
     private val marginLeft by lazy {
-        resources.getDimensionPixelSize(R.dimen.about_item_margin_left)
+        resources.getDimensionPixelSize(R.dimen.about_thanks_item_margin)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,6 +37,16 @@ class AboutActivity : BaseActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        StatusBarCompat.setDarkText(this, true)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        StatusBarCompat.setDarkText(this, false)
+    }
+
     private fun updateVersion() {
         versionTextView.text = getVersionName()
     }
@@ -48,19 +59,14 @@ class AboutActivity : BaseActivity() {
         thanksList.addItemDecoration(object : RecyclerView.ItemDecoration() {
             override fun getItemOffsets(outRect: Rect?, view: View?, parent: RecyclerView?, state: RecyclerView.State?) {
                 super.getItemOffsets(outRect, view, parent, state)
-                val pos = parent?.getChildAdapterPosition(view)
-                if (pos == 0) {
-                    outRect?.left = marginLeft
-                } else if (pos == (parent?.adapter?.itemCount?.minus(1))) {
-                    outRect?.right = marginLeft
-                }
+                outRect?.set(0, marginLeft, marginLeft, marginLeft)
             }
         })
-        thanksList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        thanksList.layoutManager = FlexboxLayoutManager()
         thanksList.adapter = adapter
     }
 
-    @OnClick(R.id.email_rl)
+    @OnClick(R.id.email_item)
     internal fun onClickEmail() {
         val emailIntent = Intent(Intent.ACTION_SEND)
         emailIntent.type = "message/rfc822"
@@ -76,7 +82,7 @@ class AboutActivity : BaseActivity() {
         }
     }
 
-    @OnClick(R.id.activity_about_rate_rl)
+    @OnClick(R.id.rate_item)
     internal fun onClickRate() {
         val uri = Uri.parse("market://details?id=" + packageName)
         val intent = Intent(Intent.ACTION_VIEW, uri)
@@ -87,14 +93,14 @@ class AboutActivity : BaseActivity() {
         }
     }
 
-    @OnClick(R.id.activity_about_donate_rl)
+    @OnClick(R.id.donate_item)
     internal fun onClickDonate() {
         if (AlipayZeroSdk.hasInstalledAlipayClient(this)) {
             AlipayZeroSdk.startAlipayClient(this, getString(R.string.alipay_url_code))
         }
     }
 
-    @OnClick(R.id.github_layout)
+    @OnClick(R.id.github_item)
     internal fun onClickGitHub() {
         val uri = Uri.parse(getString(R.string.github_url))
         val intent = Intent(Intent.ACTION_VIEW, uri)
@@ -105,7 +111,7 @@ class AboutActivity : BaseActivity() {
         }
     }
 
-    @OnClick(R.id.twitter_layout)
+    @OnClick(R.id.twitter_item)
     internal fun onClickTwitter() {
         val uri = Uri.parse(getString(R.string.twitter_url))
         val intent = Intent(Intent.ACTION_VIEW, uri)
