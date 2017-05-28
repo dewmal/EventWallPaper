@@ -12,6 +12,7 @@ import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.MainActivity
 import com.juniperphoton.myersplash.cloudservice.CloudService
+import com.juniperphoton.myersplash.extension.getLengthInKb
 import com.juniperphoton.myersplash.service.DownloadService
 import com.juniperphoton.myersplash.utils.AppWidgetUtil
 import com.juniperphoton.myersplash.utils.DownloadUtil
@@ -55,9 +56,15 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
         if (appWidgetIds == null || context == null) {
             return
         }
-        Log.d(TAG, "WallpaperWidgetProvider")
+        Log.d(TAG, "onUpdate")
 
         val file = File(FileUtil.cachedPath, "${thumbUrl!!.hashCode()}.jpg")
+        if (file.exists() && file.getLengthInKb() > 100) {
+            AppWidgetUtil.doWithWidgetId {
+                updateWidget(App.instance, it, file.absolutePath)
+            }
+            return
+        }
 
         CloudService.downloadPhoto(object : Subscriber<ResponseBody>() {
             var outputFile: File? = null
