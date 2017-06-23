@@ -41,7 +41,7 @@
             style="@style/TagTextView"
             android:alpha="0"
             android:text="# NEW"
-            tools:alpha="1" />
+            tools:alpha="0" />
 
     </android.support.design.widget.CoordinatorLayout>
 

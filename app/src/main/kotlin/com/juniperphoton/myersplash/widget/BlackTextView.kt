@@ -9,9 +9,7 @@ import com.juniperphoton.myersplash.utils.TypefaceUtil
 
 class BlackTextView(context: Context, attrs: AttributeSet?) : AppCompatTextView(context, attrs) {
     init {
-        if (!isInEditMode) {
-            setTypeface()
-        }
+        setTypeface()
     }
 
     private fun setTypeface() {

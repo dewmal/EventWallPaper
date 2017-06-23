@@ -17,7 +17,7 @@ import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_settings.*
 import org.greenrobot.eventbus.EventBus
 
-@Suppress("unused", "unused_parameters")
+@Suppress("unused", "unused_parameter")
 class SettingsActivity : BaseActivity() {
     companion object {
         private val TAG = "SettingsActivity"

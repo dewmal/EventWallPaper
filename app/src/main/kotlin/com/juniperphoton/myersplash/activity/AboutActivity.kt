@@ -1,16 +1,12 @@
 package com.juniperphoton.myersplash.activity
 
 import android.content.Intent
-import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.google.android.flexbox.FlexboxLayoutManager
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.adapter.ThanksToAdapter
 import com.juniperphoton.myersplash.extension.getVersionName
 import com.juniperphoton.myersplash.extension.hasNavigationBar
 import com.juniperphoton.myersplash.extension.startActivitySafely
@@ -20,8 +16,6 @@ import moe.feng.alipay.zerosdk.AlipayZeroSdk
 
 @Suppress("UNUSED")
 class AboutActivity : BaseActivity() {
-    private var adapter: ThanksToAdapter? = null
-
     private val marginLeft by lazy {
         resources.getDimensionPixelSize(R.dimen.about_thanks_item_margin)
     }
@@ -30,20 +24,12 @@ class AboutActivity : BaseActivity() {
         version_text_view
     }
 
-    private val thanksList by lazy {
-        thanks_list
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
         ButterKnife.bind(this)
 
         updateVersion()
-        initThanks()
-        if (!hasNavigationBar()) {
-            blank.visibility = View.GONE
-        }
     }
 
     override fun onResume() {
@@ -58,21 +44,6 @@ class AboutActivity : BaseActivity() {
 
     private fun updateVersion() {
         versionTextView.text = getVersionName()
-    }
-
-    private fun initThanks() {
-        adapter = ThanksToAdapter(this)
-        val strs = resources.getStringArray(R.array.thanks_array)
-        val list = strs.toList()
-        adapter!!.refresh(list)
-        thanksList.addItemDecoration(object : RecyclerView.ItemDecoration() {
-            override fun getItemOffsets(outRect: Rect?, view: View?, parent: RecyclerView?, state: RecyclerView.State?) {
-                super.getItemOffsets(outRect, view, parent, state)
-                outRect?.set(0, marginLeft, marginLeft, marginLeft)
-            }
-        })
-        thanksList.layoutManager = FlexboxLayoutManager()
-        thanksList.adapter = adapter
     }
 
     @OnClick(R.id.email_item)

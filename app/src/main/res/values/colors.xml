@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#121212</color>
-    <color name="colorPrimaryDark">#331d1d1d</color>
-    <color name="colorAccent">#4e1d1d1d</color>
+    <color name="colorPrimaryDark">#FF151515</color>
+    <color name="colorAccent">#FF151515</color>
     <color name="MyerSplashThemeColor">#18c3d8</color>
     <color name="MyerSplashThemeDarkColor">#159c9c</color>
     <color name="MyerSplashLikedHeartColor">#FFD93A58</color>
