@@ -1,6 +1,5 @@
 package com.juniperphoton.myersplash.activity
 
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Rect
 import android.net.Uri
@@ -14,6 +13,7 @@ import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.ThanksToAdapter
 import com.juniperphoton.myersplash.extension.getVersionName
 import com.juniperphoton.myersplash.extension.hasNavigationBar
+import com.juniperphoton.myersplash.extension.startActivitySafely
 import com.juniperphoton.myersplash.utils.StatusBarCompat
 import kotlinx.android.synthetic.main.activity_about.*
 import moe.feng.alipay.zerosdk.AlipayZeroSdk
@@ -21,8 +21,17 @@ import moe.feng.alipay.zerosdk.AlipayZeroSdk
 @Suppress("UNUSED")
 class AboutActivity : BaseActivity() {
     private var adapter: ThanksToAdapter? = null
+
     private val marginLeft by lazy {
         resources.getDimensionPixelSize(R.dimen.about_thanks_item_margin)
+    }
+
+    private val versionTextView by lazy {
+        version_text_view
+    }
+
+    private val thanksList by lazy {
+        thanks_list
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,22 +84,14 @@ class AboutActivity : BaseActivity() {
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "MyerSplash for Android ${getVersionName()} feedback")
         emailIntent.putExtra(Intent.EXTRA_TEXT, "")
 
-        try {
-            startActivity(emailIntent)
-        } catch (e: ActivityNotFoundException) {
-            e.printStackTrace()
-        }
+        startActivitySafely(intent)
     }
 
     @OnClick(R.id.rate_item)
     internal fun onClickRate() {
         val uri = Uri.parse("market://details?id=" + packageName)
         val intent = Intent(Intent.ACTION_VIEW, uri)
-        try {
-            startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            e.printStackTrace()
-        }
+        startActivitySafely(intent)
     }
 
     @OnClick(R.id.donate_item)
@@ -104,21 +105,13 @@ class AboutActivity : BaseActivity() {
     internal fun onClickGitHub() {
         val uri = Uri.parse(getString(R.string.github_url))
         val intent = Intent(Intent.ACTION_VIEW, uri)
-        try {
-            startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            e.printStackTrace()
-        }
+        startActivitySafely(intent)
     }
 
     @OnClick(R.id.twitter_item)
     internal fun onClickTwitter() {
         val uri = Uri.parse(getString(R.string.twitter_url))
         val intent = Intent(Intent.ACTION_VIEW, uri)
-        try {
-            startActivity(intent)
-        } catch (e: ActivityNotFoundException) {
-            e.printStackTrace()
-        }
+        startActivitySafely(intent)
     }
 }

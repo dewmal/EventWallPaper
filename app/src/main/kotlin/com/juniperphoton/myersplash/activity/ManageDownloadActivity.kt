@@ -20,7 +20,7 @@ import io.realm.Sort
 import kotlinx.android.synthetic.main.activity_managedownload.*
 import java.util.*
 
-@Suppress("UNUSED")
+@Suppress("unused")
 class ManageDownloadActivity : BaseActivity() {
     private var adapter: DownloadsListAdapter? = null
 
@@ -29,6 +29,18 @@ class ManageDownloadActivity : BaseActivity() {
         if (item.isValid) {
             adapter?.updateItem(item)
         }
+    }
+
+    private val downloadsList by lazy {
+        downloads_list
+    }
+
+    private val noItemView by lazy {
+        no_item_view
+    }
+
+    private val moreFab by lazy {
+        downloads_more_fab
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +57,7 @@ class ManageDownloadActivity : BaseActivity() {
         RealmCache.getInstance().close()
     }
 
-    @OnClick(R.id.downloadsMoreFab)
+    @OnClick(R.id.downloads_more_fab)
     internal fun onClickMore() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.clear_options_title).setItems(R.array.delete_options) { _, i ->
@@ -81,10 +93,12 @@ class ManageDownloadActivity : BaseActivity() {
     private fun initViews() {
         val downloadItems = ArrayList<DownloadItem>()
 
-        val items = RealmCache.getInstance().where(DownloadItem::class.java).findAllSorted(DownloadItem.POSITION_KEY, Sort.DESCENDING)
-        items.forEach {
-            downloadItems.add(it)
-        }
+        RealmCache.getInstance()
+                .where(DownloadItem::class.java)
+                .findAllSorted(DownloadItem.POSITION_KEY, Sort.DESCENDING)
+                .forEach {
+                    downloadItems.add(it)
+                }
 
         downloadItems.forEach {
             it.addChangeListener(itemStatusChangedListener!!)
@@ -111,9 +125,9 @@ class ManageDownloadActivity : BaseActivity() {
         updateNoItemVisibility()
 
         if (!hasNavigationBar()) {
-            val params = downloadsMoreFab.layoutParams as ConstraintLayout.LayoutParams
+            val params = moreFab.layoutParams as ConstraintLayout.LayoutParams
             params.setMargins(0, 0, getDimenInPixel(24), getDimenInPixel(24))
-            downloadsMoreFab.layoutParams = params
+            moreFab.layoutParams = params
         }
     }
 }

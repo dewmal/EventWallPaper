@@ -36,6 +36,38 @@ class MainActivity : BaseActivity() {
             Pair(1, UnsplashCategory.NEW_CATEGORY_ID),
             Pair(2, UnsplashCategory.RANDOM_CATEGORY_ID))
 
+    private val coordinateLayout by lazy {
+        coordinator_layout
+    }
+
+    private val toolbarLayout by lazy {
+        toolbar_layout
+    }
+
+    private val pivotTitleBar by lazy {
+        pivot_title_bar
+    }
+
+    private val viewPager by lazy {
+        view_pager
+    }
+
+    private val tagView by lazy {
+        tag_view
+    }
+
+    private val imageDetailView by lazy {
+        detail_view
+    }
+
+    private val searchFab by lazy {
+        search_fab
+    }
+
+    private val searchView by lazy {
+        search_view
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -47,7 +79,7 @@ class MainActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        detailView.registerEventBus()
+        imageDetailView.registerEventBus()
         searchView.registerEventBus()
 
         PermissionUtil.checkAndRequest(this@MainActivity)
@@ -55,7 +87,7 @@ class MainActivity : BaseActivity() {
 
     override fun onPause() {
         super.onPause()
-        detailView.unregisterEventBus()
+        imageDetailView.unregisterEventBus()
         searchView.unregisterEventBus()
     }
 
@@ -78,7 +110,9 @@ class MainActivity : BaseActivity() {
         val height = window.decorView.height
 
         val radius = Math.sqrt(width.pow() + height.pow()).toInt()
-        val animator = ViewAnimationUtils.createCircularReveal(searchView, fabPositionX, fabPositionY, (if (show) 0 else radius).toFloat(), (if (show) radius else 0).toFloat())
+        val animator = ViewAnimationUtils.createCircularReveal(searchView,
+                fabPositionX, fabPositionY,
+                (if (show) 0 else radius).toFloat(), (if (show) radius else 0).toFloat())
         animator.addListener(object : AnimatorListenerImpl() {
             override fun onAnimationEnd(animation: Animator) {
                 if (!show) {
@@ -122,34 +156,37 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initMainViews() {
-        detailView.onShowing = {
-            searchFab.hide()
-        }
-        detailView.onHidden = {
-            searchFab.show()
-            if (toolbarLayout.height - Math.abs(toolbarLayout.top) < 0.01) {
-                tagView.animate().alpha(1f).setDuration(300).start()
+        imageDetailView.apply {
+            onShowing = {
+                searchFab.hide()
+            }
+            onHidden = {
+                searchFab.show()
+                if (toolbarLayout.height - Math.abs(toolbarLayout.top) < 0.01) {
+                    tagView.animate().alpha(1f).setDuration(300).start()
+                }
             }
         }
+
         searchFab.setOnClickListener {
             toggleSearchView(true, true)
         }
 
-        pivotTitleBar.onSingleTap = {
-            if (viewPager != null) {
-                viewPager.currentItem = it
-                EventBus.getDefault().post(ScrollToTopEvent(idMaps[it]!!, false))
+        pivotTitleBar.apply {
+            onSingleTap = {
+                if (viewPager != null) {
+                    viewPager.currentItem = it
+                    EventBus.getDefault().post(ScrollToTopEvent(idMaps[it]!!, false))
+                }
             }
-        }
-
-        pivotTitleBar.onDoubleTap = {
-            if (viewPager != null) {
-                viewPager.currentItem = it
-                EventBus.getDefault().post(ScrollToTopEvent(idMaps[it]!!, true))
+            onDoubleTap = {
+                if (viewPager != null) {
+                    viewPager.currentItem = it
+                    EventBus.getDefault().post(ScrollToTopEvent(idMaps[it]!!, true))
+                }
             }
+            selectedItem = initNavigationIndex
         }
-
-        pivotTitleBar.selectedItem = initNavigationIndex
 
         mainListFragmentAdapter = MainListFragmentAdapter({ rectF, unsplashImage, itemView ->
             val location = IntArray(2)
@@ -157,23 +194,25 @@ class MainActivity : BaseActivity() {
             if (rectF.top <= location[1] + tagView.height) {
                 tagView.animate().alpha(0f).setDuration(100).start()
             }
-            detailView.showDetailedImage(rectF, unsplashImage, itemView)
+            imageDetailView.showDetailedImage(rectF, unsplashImage, itemView)
         }, supportFragmentManager)
 
-        viewPager.adapter = mainListFragmentAdapter
-        viewPager.currentItem = initNavigationIndex
-        viewPager.offscreenPageLimit = 2
-        viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+        viewPager.apply {
+            adapter = mainListFragmentAdapter
+            currentItem = initNavigationIndex
+            offscreenPageLimit = 2
+            addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
-            override fun onPageSelected(position: Int) {
-                pivotTitleBar.selectedItem = position
-                tagView.text = "# ${pivotTitleBar.selectedString}"
-            }
+                override fun onPageSelected(position: Int) {
+                    pivotTitleBar.selectedItem = position
+                    tagView.text = "# ${pivotTitleBar.selectedString}"
+                }
 
-            override fun onPageScrollStateChanged(state: Int) {
-            }
-        })
+                override fun onPageScrollStateChanged(state: Int) {
+                }
+            })
+        }
 
         if (!hasNavigationBar()) {
             val params = searchFab.layoutParams as RelativeLayout.LayoutParams
@@ -225,7 +264,7 @@ class MainActivity : BaseActivity() {
             toggleSearchView(false, true)
             return
         }
-        if (detailView.tryHide()) {
+        if (imageDetailView.tryHide()) {
             return
         }
         super.onBackPressed()

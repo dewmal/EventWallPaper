@@ -56,7 +56,7 @@
         </LinearLayout>
 
         <com.juniperphoton.myersplash.widget.BlackTextView
-            android:id="@+id/versionTextView"
+            android:id="@+id/version_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="@id/about_title_layout"
@@ -109,7 +109,7 @@
                 android:text="@string/thanks_to"/>
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/thanksList"
+                android:id="@+id/thanks_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="12dp"
@@ -160,7 +160,7 @@
             <android.support.v4.widget.Space
                 android:id="@+id/blank"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"/>
+                android:layout_height="@dimen/default_navigation_bar_height"/>
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

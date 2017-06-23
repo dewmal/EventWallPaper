@@ -1,6 +1,8 @@
 package com.juniperphoton.myersplash.extension
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.graphics.Point
 import android.net.ConnectivityManager
 import android.os.Build
@@ -93,5 +95,13 @@ fun Context.getVersionName(): String? {
         return info.versionName
     } catch (e: Exception) {
         return null
+    }
+}
+
+fun Context.startActivitySafely(intent: Intent) {
+    try {
+        startActivity(intent)
+    } catch (e: ActivityNotFoundException) {
+        e.printStackTrace()
     }
 }

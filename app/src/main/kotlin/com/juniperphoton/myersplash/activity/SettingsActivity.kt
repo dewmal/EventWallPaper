@@ -17,7 +17,7 @@ import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_settings.*
 import org.greenrobot.eventbus.EventBus
 
-@Suppress("UNUSED", "UNUSED_PARAMETER")
+@Suppress("unused", "unused_parameters")
 class SettingsActivity : BaseActivity() {
     companion object {
         private val TAG = "SettingsActivity"
@@ -26,14 +26,30 @@ class SettingsActivity : BaseActivity() {
     private var savingStrings: Array<String>? = null
     private var loadingStrings: Array<String>? = null
 
+    private val quickDownloadSettings by lazy {
+        quick_download_settings
+    }
+
+    private val savingQualitySettings by lazy {
+        saving_quality_settings
+    }
+
+    private val loadingQualitySettings by lazy {
+        loading_quality_settings
+    }
+
+    private val clearCacheSettings by lazy {
+        clear_cache_settings
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         ButterKnife.bind(this)
 
         val quickDownload = LocalSettingHelper.getBoolean(this, Constant.QUICK_DOWNLOAD_CONFIG_NAME, true)
-        quickDownloadItem.checked = quickDownload
-        quickDownloadItem.onCheckedChanged = {
+        quickDownloadSettings.checked = quickDownload
+        quickDownloadSettings.onCheckedChanged = {
             LocalSettingHelper.putBoolean(this@SettingsActivity, Constant.QUICK_DOWNLOAD_CONFIG_NAME, it)
         }
 
@@ -44,23 +60,23 @@ class SettingsActivity : BaseActivity() {
                 getString(R.string.LoadingThumbnail))
 
         val savingChoice = LocalSettingHelper.getInt(this, Constant.SAVING_QUALITY_CONFIG_NAME, 1)
-        savingQualityItem.content = savingStrings!![savingChoice]
+        savingQualitySettings.content = savingStrings!![savingChoice]
 
         val loadingChoice = LocalSettingHelper.getInt(this, Constant.LOADING_QUALITY_CONFIG_NAME, 0)
-        loadingQualityItem.content = loadingStrings!![loadingChoice]
+        loadingQualitySettings.content = loadingStrings!![loadingChoice]
     }
 
-    @OnClick(R.id.quickDownloadItem)
+    @OnClick(R.id.quick_download_settings)
     fun toggleQuickDownload(view: View) {
-        quickDownloadItem.checked = !quickDownloadItem!!.checked
+        quickDownloadSettings.checked = !quickDownloadSettings!!.checked
         EventBus.getDefault().post(RefreshAllEvent())
     }
 
-    @OnClick(R.id.clearCacheItem)
+    @OnClick(R.id.clear_cache_settings)
     fun clearUp(view: View) {
         Fresco.getImagePipeline().clearCaches()
         ToastService.sendShortToast("All clear :D")
-        clearCacheItem.content = "0 MB"
+        clearCacheSettings.content = "0 MB"
         EventBus.getDefault().post(RefreshAllEvent())
     }
 
@@ -70,7 +86,7 @@ class SettingsActivity : BaseActivity() {
         RealmCache.getInstance().executeTransaction(Realm::deleteAll)
     }
 
-    @OnClick(R.id.savingQualityItem)
+    @OnClick(R.id.saving_quality_settings)
     internal fun setSavingQuality(view: View) {
         val choice = LocalSettingHelper.getInt(this, Constant.SAVING_QUALITY_CONFIG_NAME, 1)
 
@@ -79,12 +95,12 @@ class SettingsActivity : BaseActivity() {
         builder.setSingleChoiceItems(savingStrings, choice) { dialog, which ->
             LocalSettingHelper.putInt(this@SettingsActivity, Constant.SAVING_QUALITY_CONFIG_NAME, which)
             dialog.dismiss()
-            savingQualityItem.content = savingStrings!![which]
+            savingQualitySettings.content = savingStrings!![which]
         }
         builder.show()
     }
 
-    @OnClick(R.id.loadingQualityItem)
+    @OnClick(R.id.loading_quality_settings)
     internal fun setLoadingQuality(view: View) {
         val choice = LocalSettingHelper.getInt(this, Constant.LOADING_QUALITY_CONFIG_NAME, 0)
 
@@ -94,13 +110,13 @@ class SettingsActivity : BaseActivity() {
         ) { dialog, which ->
             LocalSettingHelper.putInt(this@SettingsActivity, Constant.LOADING_QUALITY_CONFIG_NAME, which)
             dialog.dismiss()
-            loadingQualityItem.content = loadingStrings!![which]
+            loadingQualitySettings.content = loadingStrings!![which]
         }
         builder.show()
     }
 
     override fun onResume() {
         super.onResume()
-        clearCacheItem.content = "${ImagePipelineFactory.getInstance().mainFileCache.size / 1024 / 1024} MB"
+        clear_cache_settings.content = "${ImagePipelineFactory.getInstance().mainFileCache.size / 1024 / 1024} MB"
     }
 }
