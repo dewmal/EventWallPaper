@@ -50,20 +50,20 @@ import java.io.File
 @Suppress("UNUSED")
 class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : FrameLayout(mContext, attrs) {
     companion object {
-        private val TAG = "ImageDetailView"
-        private val RESULT_CODE = 10000
-        private val SHARE_TEXT = "Share %s's amazing photo from MyerSplash app. Download this photo: %s"
+        private const val TAG = "ImageDetailView"
+        private const val RESULT_CODE = 10000
+        private const val SHARE_TEXT = "Share %s's amazing photo from MyerSplash app. Download this photo: %s"
 
-        private val DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD = 0
-        private val DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING = 1
-        private val DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK = 2
+        private const val DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD = 0
+        private const val DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING = 1
+        private const val DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK = 2
 
-        private val RESET_THRESHOLD = 150
-        private val MOVE_THRESHOLD = 10
+        private const val RESET_THRESHOLD = 150
+        private const val MOVE_THRESHOLD = 10
 
-        private val ANIMATION_DURATION_FAST_MILLIS = 300L
-        private val ANIMATION_DURATION_SLOW_MILLIS = 500L
-        private val ANIMATION_DURATION_VERY_SLOW_MILLIS = 700L
+        private const val ANIMATION_DURATION_FAST_MILLIS = 300L
+        private const val ANIMATION_DURATION_SLOW_MILLIS = 500L
+        private const val ANIMATION_DURATION_VERY_SLOW_MILLIS = 700L
     }
 
     private var listPositionY = 0f
@@ -261,6 +261,9 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
         valueAnimator.start()
 
         heroView?.setOnTouchListener { _, e ->
+            if (animating) {
+                return@setOnTouchListener false
+            }
             when (e.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
                     downX = e.rawX
