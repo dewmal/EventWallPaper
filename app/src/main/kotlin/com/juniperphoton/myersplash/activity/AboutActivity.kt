@@ -3,14 +3,11 @@ package com.juniperphoton.myersplash.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.getVersionName
-import com.juniperphoton.myersplash.extension.hasNavigationBar
 import com.juniperphoton.myersplash.extension.startActivitySafely
-import com.juniperphoton.myersplash.utils.StatusBarCompat
 import kotlinx.android.synthetic.main.activity_about.*
 import moe.feng.alipay.zerosdk.AlipayZeroSdk
 
@@ -30,16 +27,6 @@ class AboutActivity : BaseActivity() {
         ButterKnife.bind(this)
 
         updateVersion()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        StatusBarCompat.setDarkText(this, true)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        StatusBarCompat.setDarkText(this, false)
     }
 
     private fun updateVersion() {
