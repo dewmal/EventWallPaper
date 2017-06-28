@@ -21,6 +21,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -62,8 +63,8 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
         private const val MOVE_THRESHOLD = 10
 
         private const val ANIMATION_DURATION_FAST_MILLIS = 300L
-        private const val ANIMATION_DURATION_SLOW_MILLIS = 500L
-        private const val ANIMATION_DURATION_VERY_SLOW_MILLIS = 700L
+        private const val ANIMATION_DURATION_SLOW_MILLIS = 400L
+        private const val ANIMATION_DURATION_VERY_SLOW_MILLIS = 500L
     }
 
     private var listPositionY = 0f
@@ -271,8 +272,21 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
 
                     sX = detailImgRL!!.translationX
                     sY = detailImgRL!!.translationY
+
+                    pointerDown = true
                 }
                 MotionEvent.ACTION_MOVE -> {
+                    if(!pointerDown){
+                        return@setOnTouchListener false
+                    }
+                    if (downX == 0f || downY == 0f) {
+                        downX = e.rawX
+                        downY = e.rawY
+
+                        sX = detailImgRL!!.translationX
+                        sY = detailImgRL!!.translationY
+                    }
+
                     val dx = e.rawX - downX
                     val dy = e.rawY - downY
 
@@ -284,12 +298,18 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
                     detailImgRL!!.translationY = sY + dy
                 }
                 MotionEvent.ACTION_UP -> {
+                    if(!pointerDown){
+                        return@setOnTouchListener false
+                    }
+
                     if (Math.abs(e.rawY - downY) >= RESET_THRESHOLD || Math.abs(e.rawX - downX) >= RESET_THRESHOLD) {
                         tryHide()
                     } else {
                         detailImgRL!!.animate().translationX(sX).translationY(sY).setDuration(ANIMATION_DURATION_FAST_MILLIS).start()
                         toggleFadeAnimation(true)
                     }
+
+                    pointerDown = false
                 }
             }
             true
@@ -301,6 +321,8 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
 
     private var sX: Float = 0f
     private var sY: Float = 0f
+
+    private var pointerDown: Boolean = false
 
     private fun toggleFadeAnimation(show: Boolean) {
         if (show) {
@@ -456,7 +478,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
         val valueAnimator = ValueAnimator()
         valueAnimator.setFloatValues(start.toFloat(), end.toFloat())
         valueAnimator.duration = if (oneshot) 0 else ANIMATION_DURATION_VERY_SLOW_MILLIS
-        valueAnimator.interpolator = FastOutSlowInInterpolator()
+        valueAnimator.interpolator = DecelerateInterpolator()
         valueAnimator.addUpdateListener { animation -> downloadFlipperView!!.translationX = animation.animatedValue as Float }
         valueAnimator.start()
     }
@@ -470,7 +492,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
         val valueAnimator = ValueAnimator()
         valueAnimator.setFloatValues(start.toFloat(), end.toFloat())
         valueAnimator.duration = if (oneshot) 0 else ANIMATION_DURATION_VERY_SLOW_MILLIS
-        valueAnimator.interpolator = FastOutSlowInInterpolator()
+        valueAnimator.interpolator = DecelerateInterpolator()
         valueAnimator.addUpdateListener { animation -> shareFAB!!.translationX = animation.animatedValue as Float }
         valueAnimator.start()
     }
