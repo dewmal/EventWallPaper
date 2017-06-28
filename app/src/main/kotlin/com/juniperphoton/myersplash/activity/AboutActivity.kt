@@ -3,6 +3,7 @@ package com.juniperphoton.myersplash.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.WindowManager
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myersplash.R
@@ -23,6 +24,10 @@ class AboutActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN)
+
         setContentView(R.layout.activity_about)
         ButterKnife.bind(this)
 
@@ -69,6 +74,13 @@ class AboutActivity : BaseActivity() {
     @OnClick(R.id.twitter_item)
     internal fun onClickTwitter() {
         val uri = Uri.parse(getString(R.string.twitter_url))
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        startActivitySafely(intent)
+    }
+
+    @OnClick(R.id.weibo_item)
+    internal fun onClickWeibo() {
+        val uri = Uri.parse(getString(R.string.weibo_url))
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivitySafely(intent)
     }

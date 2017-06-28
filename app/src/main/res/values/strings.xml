@@ -87,4 +87,7 @@
     <string name="email_url">dengweichao@hotmail.com</string>
     <string name="github_url">https://github.com/JuniperPhoton/MyerSplashAndroid</string>
     <string name="twitter_url">https://twitter.com/juniperphoton</string>
+    <string name="weibo_url">
+        https://m.weibo.cn/p/1005051624312593?from=qrcode&amp;frwbqr=53&amp;jumpfrom=weibocom
+    </string>
 </resources>

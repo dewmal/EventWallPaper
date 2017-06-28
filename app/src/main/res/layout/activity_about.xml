@@ -39,7 +39,7 @@
                 android:gravity="center"
                 android:text="@string/myer"
                 android:textColor="@android:color/white"
-                android:textSize="30sp"/>
+                android:textSize="40sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -48,11 +48,11 @@
                 android:gravity="center"
                 android:text="@string/splash"
                 android:textColor="@android:color/white"
-                android:textSize="30sp"
+                android:textSize="40sp"
                 android:textStyle="bold"/>
         </LinearLayout>
 
-        <com.juniperphoton.myersplash.widget.BlackTextView
+        <TextView
             android:id="@+id/version_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -94,8 +94,9 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/about_sub_title">
 
-            <com.juniperphoton.myersplash.widget.BlackTextView
+            <TextView
                 style="@style/AboutSubTitleTextView"
+                android:layout_marginTop="20dp"
                 android:text="@string/credit"/>
 
             <TextView
@@ -106,7 +107,7 @@
                 android:gravity="center"
                 android:text="@string/CreditStr"/>
 
-            <com.juniperphoton.myersplash.widget.BlackTextView
+            <TextView
                 style="@style/AboutSubTitleTextView"
                 android:text="@string/feedback"/>
 
@@ -134,9 +135,14 @@
                     style="@style/AboutContactItem"
                     android:layout_marginStart="0dp"
                     android:src="@drawable/ic_twitter"/>
+                <ImageView
+                    android:id="@+id/weibo_item"
+                    style="@style/AboutContactItem"
+                    android:layout_marginStart="0dp"
+                    android:src="@drawable/ic_weibo_social_logo"/>
             </LinearLayout>
 
-            <com.juniperphoton.myersplash.widget.BlackTextView
+            <TextView
                 style="@style/AboutSubTitleTextView"
                 android:text="@string/like_this_app"/>
 
