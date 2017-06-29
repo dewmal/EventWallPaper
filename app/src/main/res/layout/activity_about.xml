@@ -10,39 +10,36 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:background="#000000"
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark">
-
-        <ImageView
-            android:id="@+id/about_background"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/about_banner_height"
-            android:background="@color/MyerSplashThemeColor"
-            android:scaleType="centerCrop"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
 
         <LinearLayout
             android:id="@+id/about_title_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="30dp"
-            android:layout_marginStart="12dp"
-            android:gravity="center_horizontal"
+            android:gravity="center"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="@+id/about_background"
-            app:layout_constraintLeft_toLeftOf="parent">
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/icon_launcher"/>
 
             <TextView
                 android:layout_width="wrap_content"
+                android:layout_marginLeft="12dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-light"
                 android:gravity="center"
                 android:text="@string/myer"
-                android:textColor="@android:color/black"
-                android:textSize="30sp"/>
+                android:textColor="@android:color/white"
+                android:textSize="40sp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -50,78 +47,75 @@
                 android:fontFamily="sans-serif-bold"
                 android:gravity="center"
                 android:text="@string/splash"
-                android:textColor="@android:color/black"
-                android:textSize="30sp"
+                android:textColor="@android:color/white"
+                android:textSize="40sp"
                 android:textStyle="bold"/>
         </LinearLayout>
 
-        <com.juniperphoton.myersplash.widget.BlackTextView
-            android:id="@+id/versionTextView"
+        <TextView
+            android:id="@+id/version_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="@id/about_title_layout"
-            android:layout_marginStart="10dp"
+            android:layout_marginTop="12dp"
             android:background="@drawable/version_round_bg"
             android:paddingBottom="4dp"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:paddingTop="4dp"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             android:textSize="15sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/about_title_layout"
-            app:layout_constraintLeft_toRightOf="@+id/about_title_layout"
-            app:layout_constraintTop_toTopOf="@+id/about_title_layout"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/about_title_layout"
             tools:text="2.0.0"/>
 
         <TextView
+            android:id="@+id/about_sub_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/about_title_layout"
             android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
             android:fontFamily="sans-serif-light"
             android:text="@string/for_windows_amp_android"
-            android:textColor="@android:color/black"
-            android:textSize="15sp"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
             android:textStyle="normal"
-            app:layout_constraintLeft_toLeftOf="@+id/about_title_layout"
-            app:layout_constraintTop_toBottomOf="@+id/about_title_layout"/>
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/version_text_view"/>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="vertical"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/about_background">
+            app:layout_constraintTop_toBottomOf="@+id/about_sub_title">
 
-            <com.juniperphoton.myersplash.widget.BlackTextView
+            <TextView
                 style="@style/AboutSubTitleTextView"
+                android:layout_marginTop="20dp"
                 android:text="@string/credit"/>
 
             <TextView
                 style="@style/AboutSubContentTextView"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:gravity="center"
                 android:text="@string/CreditStr"/>
 
-            <com.juniperphoton.myersplash.widget.BlackTextView
-                style="@style/AboutSubTitleTextView"
-                android:text="@string/thanks_to"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/thanksList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="12dp"
-                android:overScrollMode="never"/>
-
-            <com.juniperphoton.myersplash.widget.BlackTextView
+            <TextView
                 style="@style/AboutSubTitleTextView"
                 android:text="@string/feedback"/>
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="@dimen/about_row_height"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -141,26 +135,29 @@
                     style="@style/AboutContactItem"
                     android:layout_marginStart="0dp"
                     android:src="@drawable/ic_twitter"/>
+                <ImageView
+                    android:id="@+id/weibo_item"
+                    style="@style/AboutContactItem"
+                    android:layout_marginStart="0dp"
+                    android:src="@drawable/ic_weibo_social_logo"/>
             </LinearLayout>
 
-            <com.juniperphoton.myersplash.widget.BlackTextView
+            <TextView
                 style="@style/AboutSubTitleTextView"
                 android:text="@string/like_this_app"/>
 
             <TextView
                 android:id="@+id/donate_item"
                 style="@style/AboutSubContentTextView"
+                android:layout_gravity="center"
+                android:layout_marginTop="12dp"
                 android:text="@string/buy_me_a_drink"/>
 
             <TextView
                 android:id="@+id/rate_item"
                 style="@style/AboutSubContentTextView"
+                android:layout_gravity="center"
                 android:text="@string/give_me_a_rate"/>
-
-            <android.support.v4.widget.Space
-                android:id="@+id/blank"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"/>
         </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

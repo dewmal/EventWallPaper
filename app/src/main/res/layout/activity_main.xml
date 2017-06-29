@@ -9,20 +9,20 @@
     <include layout="@layout/status_placeholder" />
 
     <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/coordinatorLayout"
+        android:id="@+id/coordinator_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="false">
 
         <android.support.design.widget.AppBarLayout
-            android:id="@+id/toolbarLayout"
+            android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/SettingBackground"
             android:theme="@style/AppTheme.AppBarOverlay">
 
             <com.juniperphoton.myersplash.widget.PivotTitleBar
-                android:id="@+id/pivotTitleBar"
+                android:id="@+id/pivot_title_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/status_bar_height"
@@ -31,27 +31,27 @@
         </android.support.design.widget.AppBarLayout>
 
         <android.support.v4.view.ViewPager
-            android:id="@+id/viewPager"
+            android:id="@+id/view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <TextView
-            android:id="@+id/tagView"
+            android:id="@+id/tag_view"
             style="@style/TagTextView"
             android:alpha="0"
             android:text="# NEW"
-            tools:alpha="1" />
+            tools:alpha="0" />
 
     </android.support.design.widget.CoordinatorLayout>
 
     <com.juniperphoton.myersplash.widget.ImageDetailView
-        android:id="@+id/detailView"
+        android:id="@+id/detail_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/searchFab"
+        android:id="@+id/search_fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -64,7 +64,7 @@
         app:backgroundTint="@color/MyerSplashThemeColor" />
 
     <com.juniperphoton.myersplash.widget.SearchView
-        android:id="@+id/searchView"
+        android:id="@+id/search_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />

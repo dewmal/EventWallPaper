@@ -13,6 +13,8 @@ fun File.getFolderLengthInMb(): Long {
             .sum() / 1024 / 1024
 }
 
+fun File.getLengthInKb(): Long = length() / 1024 / 1024
+
 fun File.sendScanBroadcast(ctx: Context) {
     val intent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
     intent.data = Uri.fromFile(this)

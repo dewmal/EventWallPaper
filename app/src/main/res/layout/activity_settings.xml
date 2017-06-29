@@ -37,7 +37,7 @@
                     android:text="@string/personalization" />
 
                 <com.juniperphoton.myersplash.widget.SettingsItemLayout
-                    android:id="@+id/quickDownloadItem"
+                    android:id="@+id/quick_download_settings"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:has_checkbox="true"
@@ -51,14 +51,14 @@
                     android:text="@string/quality" />
 
                 <com.juniperphoton.myersplash.widget.SettingsItemLayout
-                    android:id="@+id/savingQualityItem"
+                    android:id="@+id/saving_quality_settings"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:setting_content="@string/SavingHigh"
                     app:setting_title="@string/SavingQuality" />
 
                 <com.juniperphoton.myersplash.widget.SettingsItemLayout
-                    android:id="@+id/loadingQualityItem"
+                    android:id="@+id/loading_quality_settings"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:setting_content="@string/LoadingLarge"
@@ -79,7 +79,7 @@
                     app:setting_title="@string/cleanup_downloads_list" />
 
                 <com.juniperphoton.myersplash.widget.SettingsItemLayout
-                    android:id="@+id/clearCacheItem"
+                    android:id="@+id/clear_cache_settings"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:setting_content="@string/_0_mb"
@@ -88,7 +88,7 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="50dp" />
+                    android:layout_height="@dimen/default_navigation_bar_height" />
             </LinearLayout>
         </ScrollView>
 

@@ -6,6 +6,7 @@ import android.support.v7.widget.PopupMenu
 import android.util.AttributeSet
 import android.view.*
 import android.widget.FrameLayout
+import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
@@ -18,20 +19,20 @@ import com.juniperphoton.myersplash.model.UnsplashCategory
 @Suppress("UNUSED")
 class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     companion object {
-        private val DEFAULT_SELECTED = 1
+        private const val DEFAULT_SELECTED = 1
     }
 
     @BindView(R.id.more_btn)
     @JvmField var moreBtn: View? = null
 
     @BindView(R.id.pivot_item_0)
-    @JvmField var item0: View? = null
+    @JvmField var item0: TextView? = null
 
     @BindView(R.id.pivot_item_1)
-    @JvmField var item1: View? = null
+    @JvmField var item1: TextView? = null
 
     @BindView(R.id.pivot_item_2)
-    @JvmField var item2: View? = null
+    @JvmField var item2: TextView? = null
 
     var onSingleTap: ((Int) -> Unit)? = null
     var onDoubleTap: ((Int) -> Unit)? = null
@@ -80,20 +81,28 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
         true
     }
 
-    private val menuMap: HashMap<Int, Class<out Any>> = HashMap()
+    private val menuMap: Map<Int, Class<out Any>> = mapOf(
+            R.id.menu_settings to SettingsActivity::class.java,
+            R.id.menu_downloads to ManageDownloadActivity::class.java,
+            R.id.menu_about to AboutActivity::class.java
+    )
+
+    private var itemsMap: Map<Int, View?>? = null
 
     init {
         LayoutInflater.from(context).inflate(R.layout.pivot_layout, this, true)
         ButterKnife.bind(this)
 
+        itemsMap = mapOf(
+                0 to item0,
+                1 to item1,
+                2 to item2
+        )
+
         gestureDetector = GestureDetector(context, gestureListener)
         item0?.setOnTouchListener(onTouchListener)
         item1?.setOnTouchListener(onTouchListener)
         item2?.setOnTouchListener(onTouchListener)
-
-        menuMap.put(R.id.menu_settings, SettingsActivity::class.java)
-        menuMap.put(R.id.menu_downloads, ManageDownloadActivity::class.java)
-        menuMap.put(R.id.menu_about, AboutActivity::class.java)
     }
 
     @OnClick(R.id.pivot_item_0)
@@ -112,20 +121,11 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
     }
 
     private fun toggleAnimation(prevIndex: Int, newIndex: Int) {
-        val preView = getViewByIndex(prevIndex)
-        val nextView = getViewByIndex(newIndex)
+        val prevView = itemsMap!![prevIndex]
+        val nextView = itemsMap!![newIndex]
 
-        preView?.animate()?.alpha(0.3f)?.setDuration(300)?.start()
+        prevView?.animate()?.alpha(0.3f)?.setDuration(300)?.start()
         nextView?.animate()?.alpha(1f)?.setDuration(300)?.start()
-    }
-
-    private fun getViewByIndex(index: Int): View? {
-        return when (index) {
-            0 -> item0
-            1 -> item1
-            2 -> item2
-            else -> null
-        }
     }
 
     @OnClick(R.id.more_btn)
