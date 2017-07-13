@@ -88,7 +88,7 @@ class SearchView(ctx: Context, attrs: AttributeSet) : FrameLayout(ctx, attrs) {
         editText!!.setOnKeyListener({ _, keyCode, event ->
             if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                 onClickSearch()
-                true
+                return@setOnKeyListener true
             }
             false
         })
@@ -162,7 +162,7 @@ class SearchView(ctx: Context, attrs: AttributeSet) : FrameLayout(ctx, attrs) {
             searchBtn!!.animate().scaleX(if (show) 1f else 0f).scaleY(if (show) 1f else 0f).setDuration(200)
                     .setStartDelay(100)
                     .setListener(object : AnimatorListenerImpl() {
-                        override fun onAnimationEnd(animation: Animator) {
+                        override fun onAnimationEnd(a: Animator) {
                             animating = false
                         }
                     })
@@ -198,7 +198,7 @@ class SearchView(ctx: Context, attrs: AttributeSet) : FrameLayout(ctx, attrs) {
         mainListFragment.clear()
         editText?.setText("")
         categoryList?.animate()?.alpha(1f)?.setListener(object : AnimatorListenerImpl() {
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(a: Animator?) {
                 categoryList?.visibility = View.VISIBLE
             }
         })?.start()
@@ -230,7 +230,7 @@ class SearchView(ctx: Context, attrs: AttributeSet) : FrameLayout(ctx, attrs) {
         tagView!!.text = "# ${editText!!.text.toString().toUpperCase()}"
         EventBus.getDefault().post(RequestSearchEvent(editText!!.text.toString().toLowerCase()))
         categoryList?.animate()?.alpha(0f)?.setListener(object : AnimatorListenerImpl() {
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(a: Animator?) {
                 categoryList?.visibility = View.GONE
             }
         })?.start()

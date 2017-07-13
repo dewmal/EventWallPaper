@@ -129,12 +129,12 @@ class MainListFragment : Fragment() {
         contentRecyclerView!!.layoutManager = LinearLayoutManager(activity,
                 LinearLayoutManager.VERTICAL, false)
         contentRecyclerView!!.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
+            override fun onScrollStateChanged(list: RecyclerView?, newState: Int) {
+                super.onScrollStateChanged(list, newState)
             }
 
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
+            override fun onScrolled(list: RecyclerView?, dx: Int, dy: Int) {
+                super.onScrolled(list, dx, dy)
                 if (dy > 20) {
                     onScrollHide?.invoke()
                 } else if (dy < -20) {

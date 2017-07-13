@@ -6,20 +6,20 @@ import com.juniperphoton.myersplash.model.DownloadItem
 object DownloadItemTransactionUtil {
     fun delete(item: DownloadItem) {
         RealmCache.getInstance().executeTransaction { realm ->
-            var item = realm.where(DownloadItem::class.java).equalTo(DownloadItem.ID_KEY,
+            var managedItem = realm.where(DownloadItem::class.java).equalTo(DownloadItem.ID_KEY,
                     item.id).findFirst()
-            item?.deleteFromRealm()
+            managedItem?.deleteFromRealm()
         }
     }
 
     fun updateStatus(item: DownloadItem, @DownloadItem.DownloadStatus status: Int) {
         RealmCache.getInstance().executeTransaction { realm ->
-            var item = realm.where(DownloadItem::class.java).equalTo(DownloadItem.ID_KEY,
+            var managedItem = realm.where(DownloadItem::class.java).equalTo(DownloadItem.ID_KEY,
                     item.id).findFirst()
-            if (item != null) {
-                item.status = status
+            if (managedItem != null) {
+                managedItem.status = status
                 if (status == DownloadItem.DOWNLOAD_STATUS_FAILED) {
-                    item.progress = 0
+                    managedItem.progress = 0
                 }
             }
         }
@@ -27,12 +27,12 @@ object DownloadItemTransactionUtil {
 
     fun updateStatus(id: String, @DownloadItem.DownloadStatus status: Int) {
         RealmCache.getInstance().executeTransaction { realm ->
-            var item = realm.where(DownloadItem::class.java).equalTo(DownloadItem.ID_KEY,
+            var managedItem = realm.where(DownloadItem::class.java).equalTo(DownloadItem.ID_KEY,
                     id).findFirst()
-            if (item != null) {
-                item.status = status
+            if (managedItem != null) {
+                managedItem.status = status
                 if (status == DownloadItem.DOWNLOAD_STATUS_FAILED) {
-                    item.progress = 0
+                    managedItem.progress = 0
                 }
             }
         }

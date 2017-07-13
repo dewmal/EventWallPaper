@@ -409,7 +409,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
             detailImgRL!!.translationY = it.animatedValue as Float
         }
         animator.addListener(object : AnimatorListenerImpl() {
-            override fun onAnimationEnd(animation: Animator) {
+            override fun onAnimationEnd(a: Animator) {
                 if (!show && clickedView != null) {
                     clickedView!!.visibility = View.VISIBLE
                     toggleMaskAnimation(false)
@@ -454,11 +454,11 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
             detailInfoRootLayout?.translationY = animation.animatedValue as Float
         }
         valueAnimator.addListener(object : AnimatorListenerImpl() {
-            override fun onAnimationStart(animator: Animator) {
+            override fun onAnimationStart(a: Animator) {
                 animating = true
             }
 
-            override fun onAnimationEnd(animator: Animator) {
+            override fun onAnimationEnd(a: Animator) {
                 if (!show) {
                     toggleHeroViewAnimation(detailImgRL!!.translationY, listPositionY, false)
                 } else {
@@ -503,7 +503,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
         animator.duration = ANIMATION_DURATION_FAST_MILLIS
         animator.addUpdateListener { animation -> detailRootScrollView!!.background = ColorDrawable(animation.animatedValue as Int) }
         animator.addListener(object : AnimatorListenerImpl() {
-            override fun onAnimationStart(animator: Animator) {
+            override fun onAnimationStart(a: Animator) {
                 if (show) {
                     onShowing?.invoke()
                 } else {
@@ -511,7 +511,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
                 }
             }
 
-            override fun onAnimationEnd(animation: Animator) {
+            override fun onAnimationEnd(a: Animator) {
                 if (show) {
                     onShown?.invoke()
                 } else {
