@@ -9,9 +9,9 @@ import android.net.Uri
 import android.support.v4.app.NotificationCompat
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.activity.EditActivity
 import com.juniperphoton.myersplash.activity.ManageDownloadActivity
 import com.juniperphoton.myersplash.service.DownloadService
-import java.io.File
 
 object NotificationUtil {
     private val TAG = "NotificationUtil"
@@ -87,8 +87,9 @@ object NotificationUtil {
     }
 
     private fun injectViewIntent(builder: NotificationCompat.Builder, filePath: String) {
-        val resultPendingIntent = PendingIntent.getActivity(App.instance, 0,
-                IntentUtil.getSetAsWallpaperIntent(File(filePath)), PendingIntent.FLAG_UPDATE_CURRENT)
+        val intent = Intent(App.instance, EditActivity::class.java)
+        intent.putExtra(EditActivity.IMAGE_FILE_PATH, filePath)
+        val resultPendingIntent = PendingIntent.getActivity(App.instance, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(resultPendingIntent)
     }
 }
