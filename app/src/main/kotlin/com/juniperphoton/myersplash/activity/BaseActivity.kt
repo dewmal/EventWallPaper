@@ -7,7 +7,6 @@ import android.view.WindowManager
 import com.juniperphoton.myersplash.utils.StatusBarCompat
 
 open class BaseActivity : AppCompatActivity() {
-    @Override
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
