@@ -21,5 +21,6 @@
             android:layout_marginLeft="20dp"
             android:text="@string/set_as_wallpaper"
             android:textStyle="bold"/>
+
     </RelativeLayout>
 </RelativeLayout>

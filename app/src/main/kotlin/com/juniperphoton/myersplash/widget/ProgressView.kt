@@ -19,9 +19,9 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
         }
 
     init {
-        val array = context.obtainStyledAttributes(attrs, R.styleable.ProgressView, 0, 0)
-        color = array.getInt(R.styleable.ProgressView_BackgroundColor, Color.WHITE)
-        progress = array.getInt(R.styleable.ProgressView_Progress, 0)
+        val array = context.obtainStyledAttributes(attrs, R.styleable.CustomProgressView, 0, 0)
+        color = array.getInt(R.styleable.CustomProgressView_background_color, Color.WHITE)
+        progress = array.getInt(R.styleable.CustomProgressView_custom_progress, 0)
         array.recycle()
     }
 

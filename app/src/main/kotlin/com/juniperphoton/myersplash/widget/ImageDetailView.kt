@@ -30,9 +30,9 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.facebook.drawee.view.SimpleDraweeView
 import com.juniperphoton.flipperviewlib.FlipperView
-import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
+import com.juniperphoton.myersplash.activity.EditActivity
 import com.juniperphoton.myersplash.event.DownloadStartedEvent
 import com.juniperphoton.myersplash.extension.copyFile
 import com.juniperphoton.myersplash.extension.isLightColor
@@ -388,8 +388,9 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
     @OnClick(R.id.detail_set_as_fab)
     internal fun onClickSetAsFAB() {
         val url = "${clickedImage!!.pathForDownload}.jpg"
-        val intent = IntentUtil.getSetAsWallpaperIntent(File(url))
-        App.instance.startActivity(intent)
+        val intent = Intent(context, EditActivity::class.java)
+        intent.putExtra(EditActivity.IMAGE_FILE_PATH, url)
+        context.startActivity(intent)
     }
 
     private fun toggleHeroViewAnimation(startY: Float, endY: Float, show: Boolean) {

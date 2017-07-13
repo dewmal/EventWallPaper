@@ -16,32 +16,32 @@ import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.isLightColor
 
-@Suppress("UNUSED")
+@Suppress("unused")
 class DownloadRetryView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     @BindView(R.id.widget_retry_rl)
-    @JvmField var retryRL: RelativeLayout? = null
+    lateinit var retryRL: RelativeLayout
 
     @BindView(R.id.retry_tv)
-    @JvmField var retryTextView: TextView? = null
+    lateinit var retryTextView: TextView
 
     @BindView(R.id.widget_retry_btn)
-    @JvmField var retryBtn: View? = null
+    lateinit var retryBtn: View
 
     @BindView(R.id.delete_btn)
-    @JvmField var deleteView: ImageView? = null
+    lateinit var deleteView: ImageView
 
     @BindView(R.id.delete_btn_root)
-    @JvmField var deleteRoot: View? = null
+    lateinit var deleteRoot: View
 
     var onClickDelete: (() -> Unit)? = null
     var onClickRetry: (() -> Unit)? = null
 
     var themeColor: Int = Color.TRANSPARENT
         set(color) {
-            retryRL?.background = ColorDrawable(color)
-            retryTextView?.setTextColor(if (color.isLightColor()) Color.BLACK else Color.WHITE)
+            retryRL.background = ColorDrawable(color)
+            retryTextView.setTextColor(if (color.isLightColor()) Color.BLACK else Color.WHITE)
             if (color.isLightColor()) {
-                deleteView?.setImageResource(R.drawable.vector_ic_delete_black)
+                deleteView.setImageResource(R.drawable.vector_ic_delete_black)
             }
         }
 

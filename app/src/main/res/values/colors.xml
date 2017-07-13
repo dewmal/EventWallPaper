@@ -10,7 +10,9 @@
     <color name="BackColor1">#FF2E2E2E</color>
     <color name="BackColor2">#FF383838</color>
     <color name="MyerSplashDark">#1d1d1d</color>
+    <color name="HalfBlack">#97000000</color>
     <color name="SettingBackground">#FF151515</color>
     <color name="MaskColor">#cc000000</color>
     <color name="HintColor">#afafaf</color>
+    <color name="LightGray">#e2e2e2</color>
 </resources>
