@@ -1,6 +1,5 @@
 package com.juniperphoton.myersplash.activity
 
-import android.animation.Animator
 import android.animation.ValueAnimator
 import android.graphics.*
 import android.net.Uri
@@ -27,7 +26,10 @@ import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.getScreenHeight
 import com.juniperphoton.myersplash.extension.hasNavigationBar
-import com.juniperphoton.myersplash.utils.*
+import com.juniperphoton.myersplash.utils.FileUtil
+import com.juniperphoton.myersplash.utils.IntentUtil
+import com.juniperphoton.myersplash.utils.SimpleObserver
+import com.juniperphoton.myersplash.utils.ToastService
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -73,15 +75,10 @@ class EditActivity : BaseActivity() {
 
     private var filePath: String? = null
 
-    private var animating: Boolean = false
-
     private var showingPreview: Boolean = false
         set(value) {
-            if (animating) {
-                return
-            }
             field = value
-            toggleHomePreviewFadeAnimation(value)
+            homePreview.alpha = if (value) 1f else 0f
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -146,18 +143,6 @@ class EditActivity : BaseActivity() {
                 .build() as PipelineDraweeController
 
         previewImageView.controller = controller
-    }
-
-    private fun toggleHomePreviewFadeAnimation(show: Boolean) {
-        animating = true
-        homePreview.animate().alpha(if (show) 1f else 0f)
-                .setDuration(200)
-                .setListener(object : SimpleAnimatorListener() {
-                    override fun onAnimationEnd(animation: Animator?) {
-                        animating = false
-                    }
-                })
-                .start()
     }
 
     @OnClick(R.id.edit_confirm_fab)
