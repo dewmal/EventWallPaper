@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:clipChildren="false"
+             android:clipToPadding="false">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/edit_image_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <View
+        android:id="@+id/edit_mask"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:background="@android:color/black"/>
+
+    <ImageView
+        android:id="@+id/edit_home_preview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="0"
+        android:src="@drawable/preview"
+        tools:alpha="1"/>
+
+    <LinearLayout
+        android:id="@+id/edit_bottom_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/HalfBlack"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/default_navigation_bar_height">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_brightness_6_black_24dp"
+            android:drawablePadding="12dp"
+            android:gravity="center_vertical"
+            android:padding="12dp"
+            android:text="@string/dim_the_brightness"
+            android:textStyle="bold"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp">
+
+            <TextView
+                android:id="@+id/edit_progress_text"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:text="0"
+                android:textColor="@color/MyerSplashThemeColor"
+                android:textSize="20sp"
+                android:textStyle="bold"/>
+
+            <SeekBar
+                android:id="@+id/edit_seek_bar_brightness"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:max="70"
+                android:progress="0"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/edit_fabs_root"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right|bottom"
+        android:layout_marginBottom="127dp"
+        android:layout_marginRight="12dp"
+        android:orientation="horizontal">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/edit_preview_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginRight="12dp"
+            android:src="@drawable/ic_apps_black_24dp"
+            app:backgroundTint="@color/LightGray"
+            app:fabSize="mini"/>
+
+        <com.juniperphoton.flipperviewlib.FlipperView
+            android:id="@+id/edit_flipper_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:defaultIndex="0"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tapToFlip="false">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/edit_confirm_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/small_download_ok"
+                app:backgroundTint="@color/MyerSplashThemeColor"
+                app:fabSize="normal"/>
+
+            <FrameLayout
+                android:layout_width="56dp"
+                android:layout_height="56dp">
+
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/edit_cancel_fab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_clear"
+                    app:backgroundTint="@color/MyerSplashLikedHeartColor"
+                    app:fabSize="normal"/>
+
+                <com.juniperphoton.myersplash.widget.RingProgressView
+                    android:id="@+id/edit_progress_ring"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_gravity="center"
+                    android:elevation="50dp"
+                    app:custom_progress="30"/>
+
+            </FrameLayout>
+
+        </com.juniperphoton.flipperviewlib.FlipperView>
+
+    </LinearLayout>
+
+</FrameLayout>

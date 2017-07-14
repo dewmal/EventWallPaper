@@ -30,9 +30,9 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.facebook.drawee.view.SimpleDraweeView
 import com.juniperphoton.flipperviewlib.FlipperView
-import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
+import com.juniperphoton.myersplash.activity.EditActivity
 import com.juniperphoton.myersplash.event.DownloadStartedEvent
 import com.juniperphoton.myersplash.extension.copyFile
 import com.juniperphoton.myersplash.extension.isLightColor
@@ -388,8 +388,9 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
     @OnClick(R.id.detail_set_as_fab)
     internal fun onClickSetAsFAB() {
         val url = "${clickedImage!!.pathForDownload}.jpg"
-        val intent = IntentUtil.getSetAsWallpaperIntent(File(url))
-        App.instance.startActivity(intent)
+        val intent = Intent(context, EditActivity::class.java)
+        intent.putExtra(EditActivity.IMAGE_FILE_PATH, url)
+        context.startActivity(intent)
     }
 
     private fun toggleHeroViewAnimation(startY: Float, endY: Float, show: Boolean) {
@@ -409,7 +410,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
             detailImgRL!!.translationY = it.animatedValue as Float
         }
         animator.addListener(object : AnimatorListenerImpl() {
-            override fun onAnimationEnd(animation: Animator) {
+            override fun onAnimationEnd(a: Animator) {
                 if (!show && clickedView != null) {
                     clickedView!!.visibility = View.VISIBLE
                     toggleMaskAnimation(false)
@@ -454,11 +455,11 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
             detailInfoRootLayout?.translationY = animation.animatedValue as Float
         }
         valueAnimator.addListener(object : AnimatorListenerImpl() {
-            override fun onAnimationStart(animator: Animator) {
+            override fun onAnimationStart(a: Animator) {
                 animating = true
             }
 
-            override fun onAnimationEnd(animator: Animator) {
+            override fun onAnimationEnd(a: Animator) {
                 if (!show) {
                     toggleHeroViewAnimation(detailImgRL!!.translationY, listPositionY, false)
                 } else {
@@ -503,7 +504,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
         animator.duration = ANIMATION_DURATION_FAST_MILLIS
         animator.addUpdateListener { animation -> detailRootScrollView!!.background = ColorDrawable(animation.animatedValue as Int) }
         animator.addListener(object : AnimatorListenerImpl() {
-            override fun onAnimationStart(animator: Animator) {
+            override fun onAnimationStart(a: Animator) {
                 if (show) {
                     onShowing?.invoke()
                 } else {
@@ -511,7 +512,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
                 }
             }
 
-            override fun onAnimationEnd(animation: Animator) {
+            override fun onAnimationEnd(a: Animator) {
                 if (show) {
                     onShown?.invoke()
                 } else {

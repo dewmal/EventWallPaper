@@ -1,6 +1,7 @@
 package com.juniperphoton.myersplash.widget
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.util.AttributeSet
@@ -11,22 +12,20 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
-import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.activity.EditActivity
 import com.juniperphoton.myersplash.extension.isLightColor
-import com.juniperphoton.myersplash.utils.IntentUtil
-import java.io.File
 
-@Suppress("UNUSED")
+@Suppress("unused")
 class DownloadCompleteView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     @BindView(R.id.widget_set_as_rl)
-    @JvmField var setAsBtn: RelativeLayout? = null
+    lateinit var setAsBtn: RelativeLayout
 
     @BindView(R.id.widget_set_as_root_rl)
-    @JvmField var setAsRL: RelativeLayout? = null
+    lateinit var setAsRL: RelativeLayout
 
     @BindView(R.id.set_as_tv)
-    @JvmField var setAsTextView: TextView? = null
+    lateinit var setAsTextView: TextView
 
     var filePath: String? = null
     private var ctx: Context? = null
@@ -40,13 +39,14 @@ class DownloadCompleteView(context: Context, attrs: AttributeSet) : FrameLayout(
     @OnClick(R.id.widget_set_as_rl)
     internal fun setAs() {
         filePath?.let {
-            val intent = IntentUtil.getSetAsWallpaperIntent(File(it))
-            App.instance.startActivity(intent)
+            val intent = Intent(context, EditActivity::class.java)
+            intent.putExtra(EditActivity.IMAGE_FILE_PATH, it)
+            context.startActivity(intent)
         }
     }
 
     fun setThemeBackColor(color: Int) {
-        setAsRL!!.background = ColorDrawable(color)
-        setAsTextView!!.setTextColor(if (color.isLightColor()) Color.BLACK else Color.WHITE)
+        setAsRL.background = ColorDrawable(color)
+        setAsTextView.setTextColor(if (color.isLightColor()) Color.BLACK else Color.WHITE)
     }
 }

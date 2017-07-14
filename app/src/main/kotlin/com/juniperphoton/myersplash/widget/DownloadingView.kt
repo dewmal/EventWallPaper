@@ -15,41 +15,41 @@ import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.isLightColor
 
-@Suppress("UNUSED")
+@Suppress("unused")
 class DownloadingView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     @BindView(R.id.downloading_progress_pv)
-    @JvmField var progressView: ProgressView? = null
+    lateinit var progressView: ProgressView
 
     @BindView(R.id.downloading_progress_tv)
-    @JvmField var progressTV: TextView? = null
+    lateinit var progressTV: TextView
 
     @BindView(R.id.downloading_root_rl)
-    @JvmField var rootRL: RelativeLayout? = null
+    lateinit var rootRL: RelativeLayout
 
     @BindView(R.id.downloading_cancel_rl)
-    @JvmField var cancelRL: RelativeLayout? = null
+    lateinit var cancelRL: RelativeLayout
 
     @BindView(R.id.cancel_ic)
-    @JvmField var cancelImageView: ImageView? = null
+    lateinit var cancelImageView: ImageView
 
     var onClickCancel: (() -> Unit)? = null
 
     var themeColor: Int = Color.TRANSPARENT
         set(value) {
-            rootRL?.background = ColorDrawable(value)
-            progressView?.color = value
+            rootRL.background = ColorDrawable(value)
+            progressView.color = value
             if (value.isLightColor()) {
-                progressTV?.setTextColor(Color.BLACK)
-                cancelImageView?.setImageResource(R.drawable.vector_ic_clear_black)
+                progressTV.setTextColor(Color.BLACK)
+                cancelImageView.setImageResource(R.drawable.vector_ic_clear_black)
             } else {
-                progressTV?.setTextColor(Color.WHITE)
+                progressTV.setTextColor(Color.WHITE)
             }
         }
 
     var progress: Int = 0
         set(value) {
-            progressView?.progress = value
-            progressTV?.text = "$value%"
+            progressView.progress = value
+            progressTV.text = "$value%"
         }
 
     init {

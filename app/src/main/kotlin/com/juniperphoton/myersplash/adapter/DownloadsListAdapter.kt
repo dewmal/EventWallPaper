@@ -51,65 +51,7 @@ class DownloadsListAdapter(private val context: Context) :
             return
         }
         val item = data!![holder.adapterPosition]
-
-        holder.draweeView?.setImageURI(item.thumbUrl)
-        holder.downloadingView?.progress = item.progress
-
-        holder.downloadCompleteView?.let {
-            it.filePath = item.filePath
-            it.setThemeBackColor(item.color)
-        }
-
-        holder.downloadRetryView?.let {
-            it.themeColor = item.color
-            it.onClickDelete = {
-                try {
-                    data!!.removeAt(holder.adapterPosition)
-                    notifyItemRemoved(holder.adapterPosition)
-
-                    val intent = Intent(App.instance, DownloadService::class.java)
-                    intent.putExtra(Params.CANCELED_KEY, true)
-                    intent.putExtra(Params.URL_KEY, item.downloadUrl)
-                    context.startService(intent)
-
-                    DownloadItemTransactionUtil.delete(item)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-            it.onClickRetry = {
-                DownloadItemTransactionUtil.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_DOWNLOADING)
-                holder.flipperView?.next(item.status)
-
-                val intent = Intent(context, DownloadService::class.java)
-                intent.putExtra(Params.NAME_KEY, item.fileName)
-                intent.putExtra(Params.URL_KEY, item.downloadUrl)
-                context.startService(intent)
-            }
-        }
-
-        holder.downloadingView?.let {
-            it.progress = item.progress
-            it.themeColor = item.color
-            it.onClickCancel = {
-                DownloadItemTransactionUtil.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_FAILED)
-                holder.flipperView?.next(item.status)
-
-                val intent = Intent(App.instance, DownloadService::class.java)
-                intent.putExtra(Params.CANCELED_KEY, true)
-                intent.putExtra(Params.URL_KEY, item.downloadUrl)
-                context.startService(intent)
-            }
-        }
-
-        val last = item.lastStatus
-        if (last != item.status && last != DownloadItem.DISPLAY_STATUS_NOT_SPECIFIED) {
-            holder.flipperView?.next(item.status)
-            item.syncStatus()
-        } else {
-            holder.flipperView?.next(item.status, false)
-            item.syncStatus()
-        }
+        holder.bind(item)
     }
 
     override fun getItemCount(): Int {
@@ -144,6 +86,67 @@ class DownloadsListAdapter(private val context: Context) :
 
         init {
             ButterKnife.bind(this, itemView)
+        }
+
+        internal fun bind(item: DownloadItem) {
+            draweeView?.setImageURI(item.thumbUrl)
+            downloadingView?.progress = item.progress
+
+            downloadCompleteView?.let {
+                it.filePath = item.filePath
+                it.setThemeBackColor(item.color)
+            }
+
+            downloadRetryView?.let {
+                it.themeColor = item.color
+                it.onClickDelete = {
+                    try {
+                        data!!.removeAt(adapterPosition)
+                        notifyItemRemoved(adapterPosition)
+
+                        val intent = Intent(App.instance, DownloadService::class.java)
+                        intent.putExtra(Params.CANCELED_KEY, true)
+                        intent.putExtra(Params.URL_KEY, item.downloadUrl)
+                        context.startService(intent)
+
+                        DownloadItemTransactionUtil.delete(item)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+                it.onClickRetry = {
+                    DownloadItemTransactionUtil.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_DOWNLOADING)
+                    flipperView?.next(item.status)
+
+                    val intent = Intent(context, DownloadService::class.java)
+                    intent.putExtra(Params.NAME_KEY, item.fileName)
+                    intent.putExtra(Params.URL_KEY, item.downloadUrl)
+                    context.startService(intent)
+                }
+            }
+
+            downloadingView?.let {
+                it.progress = item.progress
+                it.themeColor = item.color
+                it.onClickCancel = {
+                    DownloadItemTransactionUtil.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_FAILED)
+                    flipperView?.next(item.status)
+
+                    val intent = Intent(App.instance, DownloadService::class.java)
+                    intent.putExtra(Params.CANCELED_KEY, true)
+                    intent.putExtra(Params.URL_KEY, item.downloadUrl)
+                    context.startService(intent)
+                }
+            }
+
+            val last = item.lastStatus
+            if (last != item.status && last != DownloadItem.DISPLAY_STATUS_NOT_SPECIFIED) {
+                flipperView?.next(item.status)
+                item.syncStatus()
+            } else {
+                flipperView?.next(item.status, false)
+                item.syncStatus()
+            }
         }
     }
 

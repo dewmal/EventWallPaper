@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
+import com.juniperphoton.myersplash.R
 
 class RingProgressView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     companion object {
@@ -17,10 +18,11 @@ class RingProgressView(context: Context, attrs: AttributeSet) : View(context, at
 
     var progress = 10
         set(value) {
-            field = value
-            if (progress < 5) {
-                progress = 5
+            var finalValue = value
+            if (finalValue < 5) {
+                finalValue = 5
             }
+            field = finalValue
             invalidate()
         }
 
@@ -38,6 +40,12 @@ class RingProgressView(context: Context, attrs: AttributeSet) : View(context, at
         paint.isAntiAlias = true
         paint.style = Paint.Style.STROKE
         paint.strokeCap = Paint.Cap.ROUND
+
+        val typeArray = context.obtainStyledAttributes(attrs, R.styleable.CustomProgressView)
+        val progress = typeArray.getInt(R.styleable.CustomProgressView_custom_progress, 0)
+        typeArray.recycle()
+
+        this.progress = progress
     }
 
     override fun onDraw(canvas: Canvas) {

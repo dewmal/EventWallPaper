@@ -114,7 +114,7 @@ class MainActivity : BaseActivity() {
                 fabPositionX, fabPositionY,
                 (if (show) 0 else radius).toFloat(), (if (show) radius else 0).toFloat())
         animator.addListener(object : AnimatorListenerImpl() {
-            override fun onAnimationEnd(animation: Animator) {
+            override fun onAnimationEnd(a: Animator) {
                 if (!show) {
                     searchView.reset()
                     searchView.visibility = View.GONE

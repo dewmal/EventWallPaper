@@ -7,8 +7,6 @@ import android.graphics.Point
 import android.net.ConnectivityManager
 import android.os.Build
 import android.view.Display
-import android.view.KeyCharacterMap
-import android.view.KeyEvent
 import android.view.WindowManager
 
 fun Context.getDpi(): Float {
@@ -19,12 +17,15 @@ fun Context.getDimenInPixel(valueInDP: Int): Int {
     return (valueInDP * getDpi()).toInt()
 }
 
-fun Context.hasNavigationBar(): Boolean {
-    var hasBackKey = try {
-        KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK)
-    } catch (e: Exception) {
+fun Context.getScreenWidth(): Int {
+    return resources.displayMetrics.widthPixels
+}
 
-    }
+fun Context.getScreenHeight(): Int {
+    return resources.displayMetrics.heightPixels
+}
+
+fun Context.hasNavigationBar(): Boolean {
     val size = getNavigationBarSize()
     return size.y > 0
 }
@@ -77,24 +78,26 @@ fun Context.usingWifi(): Boolean {
     return info?.type == ConnectivityManager.TYPE_WIFI
 }
 
+@Suppress("unused")
 fun Context.getVersionCode(): Int {
     return try {
         val manager = packageManager
         val info = manager.getPackageInfo(packageName, 0)
-        return info.versionCode
+        info.versionCode
     } catch (e: Exception) {
         e.printStackTrace()
-        return -1
+        -1
     }
 }
 
+@Suppress("unused")
 fun Context.getVersionName(): String? {
     return try {
         val manager = packageManager
         val info = manager.getPackageInfo(packageName, 0)
-        return info.versionName
+        info.versionName
     } catch (e: Exception) {
-        return null
+        null
     }
 }
 

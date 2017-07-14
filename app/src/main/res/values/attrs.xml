@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <declare-styleable name="ProgressView">
-        <attr name="Progress" format="integer"/>
-        <attr name="BackgroundColor" format="color"/>
+    <declare-styleable name="CustomProgressView">
+        <attr name="custom_progress" format="integer"/>
+        <attr name="background_color" format="color"/>
     </declare-styleable>
 
     <declare-styleable name="CommonTitleBar">

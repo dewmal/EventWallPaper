@@ -42,7 +42,7 @@
     <string name="no_item">NO ITEMS</string>
     <string name="search_by_other_keywords">SEARCH BY OTHER KEYWORDS</string>
     <string name="return_to_content">RETURN TO %s</string>
-    <string name="set_as_wallpaper">SET AS</string>
+    <string name="set_as_wallpaper">EDIT AND SET AS</string>
     <string name="end">END</string>
     <string name="search_action">android.myersplash.action.search</string>
     <string name="random_action">android.myersplash.action.search</string>
@@ -64,7 +64,7 @@
     <string name="clear_options_title">CLEAR OPTIONS</string>
     <string name="cancel">CANCEL</string>
     <string name="cancelled_download">Download has been cancelled</string>
-    <string name="downloading">Downloading...</string>
+    <string name="downloading">Downloading…</string>
     <string name="completed">Completed</string>
     <string name="no_permission">No permission to write file into external storage.</string>
     <string name="attention">ATTENTION</string>
@@ -90,4 +90,5 @@
     <string name="weibo_url">
         https://m.weibo.cn/p/1005051624312593?from=qrcode&amp;frwbqr=53&amp;jumpfrom=weibocom
     </string>
+    <string name="dim_the_brightness">DIM THE BRIGHTNESS</string>
 </resources>

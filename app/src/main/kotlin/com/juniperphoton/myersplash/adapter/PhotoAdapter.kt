@@ -145,8 +145,8 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
         }
 
         recyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
+            override fun onScrollStateChanged(list: RecyclerView?, newState: Int) {
+                super.onScrollStateChanged(list, newState)
                 if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                     if (!isAutoLoadMore && findLastVisibleItemPosition(layoutManager) + 1 == itemCount) {
                         scrollLoadMore()
@@ -154,8 +154,8 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
                 }
             }
 
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
+            override fun onScrolled(list: RecyclerView?, dx: Int, dy: Int) {
+                super.onScrolled(list, dx, dy)
                 if (isAutoLoadMore && findLastVisibleItemPosition(layoutManager) + 1 == itemCount) {
                     scrollLoadMore()
                 } else if (isAutoLoadMore) {
