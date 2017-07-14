@@ -205,44 +205,47 @@ class EditActivity : BaseActivity() {
 
     @WorkerThread
     private fun composeMaskInternal(): File {
-        val bm = BitmapFactory.decodeFile(filePath)
+        val opt = BitmapFactory.Options()
+        opt.inJustDecodeBounds = true
 
-        val ratio = bm.width * 1f / bm.height
+        // First decode bounds to get width and height
+        BitmapFactory.decodeFile(filePath, opt)
 
-        val targetHeight = this@EditActivity.getScreenHeight()
-        val targetWidth = targetHeight * ratio
+        val originalHeight = opt.outHeight
 
-        Log.d(TAG, "target width:$targetWidth, targetHeight:$targetHeight")
+        val screenHeight = getScreenHeight()
+        opt.inSampleSize = originalHeight / screenHeight
+        opt.inJustDecodeBounds = false
+        opt.inMutable = true
 
-        val scaleBm = Bitmap.createScaledBitmap(bm, targetWidth.toInt(), targetHeight, true)
+        // Decode file with specified sample size
+        val bm = BitmapFactory.decodeFile(filePath, opt)
 
-        bm.recycle()
+        Log.d(TAG, "file decoded, sample size:${opt.inSampleSize}, originalHeight=$originalHeight, screenH=$screenHeight")
 
-        Log.d(TAG, "scaled bitmap created")
+        Log.d(TAG, "decoded size: ${bm.width} x ${bm.height}")
 
-        val w = scaleBm.width.toFloat()
-        val h = scaleBm.height.toFloat()
+        val c = Canvas(bm)
 
-        val finalBm = Bitmap.createBitmap(w.toInt(), h.toInt(), Bitmap.Config.ARGB_8888)
-        val c = Canvas(finalBm)
         val paint = Paint()
         paint.isDither = true
-        c.drawBitmap(scaleBm, 0f, 0f, paint)
 
         val alpha = maskView.alpha
         paint.color = Color.argb((255 * alpha).toInt(), 0, 0, 0)
         paint.style = Paint.Style.FILL
-        c.drawRect(0f, 0f, w, h, paint)
+
+        // Draw the mask
+        c.drawRect(0f, 0f, bm.width.toFloat(), bm.height.toFloat(), paint)
 
         Log.d(TAG, "final bitmap drawn")
 
         val finalFile = File(FileUtil.galleryPath, "final_dim_image.jpg")
         val fos = FileOutputStream(finalFile)
         fos.use {
-            finalBm.compress(Bitmap.CompressFormat.JPEG, 90, it)
+            bm.compress(Bitmap.CompressFormat.JPEG, 100, it)
         }
-        scaleBm.recycle()
-        finalBm.recycle()
+
+        bm.recycle()
 
         return finalFile
     }
