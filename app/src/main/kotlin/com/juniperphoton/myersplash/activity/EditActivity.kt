@@ -1,6 +1,7 @@
 package com.juniperphoton.myersplash.activity
 
 import android.animation.ValueAnimator
+import android.content.Intent
 import android.graphics.*
 import android.net.Uri
 import android.os.Bundle
@@ -86,7 +87,12 @@ class EditActivity : BaseActivity() {
         setContentView(R.layout.activity_edit)
         ButterKnife.bind(this)
 
-        initView()
+        initView(intent)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        initView(intent!!)
     }
 
     override fun onResume() {
@@ -96,7 +102,7 @@ class EditActivity : BaseActivity() {
         flipperView.next(0)
     }
 
-    private fun initView() {
+    private fun initView(intent: Intent) {
         filePath = intent.getStringExtra(IMAGE_FILE_PATH)
                 ?: throw IllegalArgumentException("image url should not be null")
 
@@ -132,7 +138,7 @@ class EditActivity : BaseActivity() {
     private fun updatePreviewImage() {
         val screenHeight = previewImageView.height
 
-        Log.d(TAG, "scale height:$screenHeight")
+        Log.d(TAG, "pre scale: screen height:$screenHeight")
 
         val request = ImageRequestBuilder.newBuilderWithSource(Uri.fromFile(File(filePath)))
                 .setResizeOptions(ResizeOptions(screenHeight, screenHeight))
