@@ -29,12 +29,13 @@
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:contentDescription="@string/image_desc"
                 android:src="@drawable/icon_launcher"/>
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_marginLeft="12dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
                 android:fontFamily="sans-serif-light"
                 android:gravity="center"
                 android:text="@string/myer"
@@ -105,7 +106,7 @@
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
                 android:gravity="center"
-                android:text="@string/CreditStr"/>
+                android:text="@string/credit_content"/>
 
             <TextView
                 style="@style/AboutSubTitleTextView"
@@ -135,6 +136,7 @@
                     style="@style/AboutContactItem"
                     android:layout_marginStart="0dp"
                     android:src="@drawable/ic_twitter"/>
+
                 <ImageView
                     android:id="@+id/weibo_item"
                     style="@style/AboutContactItem"

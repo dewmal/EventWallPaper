@@ -71,11 +71,7 @@ object CloudService {
         val observableF = photoService.getFeaturedPhotos(url, page, 10, AppKey)
         val observable: Observable<MutableList<UnsplashImage?>?> = observableF.map { images ->
             val contentImages: ArrayList<UnsplashImage?> = ArrayList()
-            if (images != null) {
-                for (img in images) {
-                    contentImages.add(img?.image)
-                }
-            }
+            images?.mapTo(contentImages) { it?.image }
             contentImages
         }
         subscribe(observable, subscriber)

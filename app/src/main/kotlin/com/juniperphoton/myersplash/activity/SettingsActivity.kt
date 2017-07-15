@@ -53,11 +53,11 @@ class SettingsActivity : BaseActivity() {
             LocalSettingHelper.putBoolean(this@SettingsActivity, Constant.QUICK_DOWNLOAD_CONFIG_NAME, it)
         }
 
-        savingStrings = arrayOf(getString(R.string.SavingHighest), getString(R.string.SavingHigh),
-                getString(R.string.SavingMedium))
+        savingStrings = arrayOf(getString(R.string.saving_highest), getString(R.string.saving_high),
+                getString(R.string.saving_medium))
 
-        loadingStrings = arrayOf(getString(R.string.LoadingLarge), getString(R.string.LoadingSmall),
-                getString(R.string.LoadingThumbnail))
+        loadingStrings = arrayOf(getString(R.string.loading_large), getString(R.string.loading_small),
+                getString(R.string.loading_thumb))
 
         val savingChoice = LocalSettingHelper.getInt(this, Constant.SAVING_QUALITY_CONFIG_NAME, 1)
         savingQualitySettings.content = savingStrings!![savingChoice]
@@ -91,7 +91,7 @@ class SettingsActivity : BaseActivity() {
         val choice = LocalSettingHelper.getInt(this, Constant.SAVING_QUALITY_CONFIG_NAME, 1)
 
         val builder = AlertDialog.Builder(this@SettingsActivity)
-        builder.setTitle(getString(R.string.SavingQuality))
+        builder.setTitle(getString(R.string.saving_quality))
         builder.setSingleChoiceItems(savingStrings, choice) { dialog, which ->
             LocalSettingHelper.putInt(this@SettingsActivity, Constant.SAVING_QUALITY_CONFIG_NAME, which)
             dialog.dismiss()
@@ -105,7 +105,7 @@ class SettingsActivity : BaseActivity() {
         val choice = LocalSettingHelper.getInt(this, Constant.LOADING_QUALITY_CONFIG_NAME, 0)
 
         val builder = AlertDialog.Builder(this@SettingsActivity)
-        builder.setTitle(getString(R.string.LoadingQuality))
+        builder.setTitle(getString(R.string.loading_quality))
         builder.setSingleChoiceItems(loadingStrings, choice
         ) { dialog, which ->
             LocalSettingHelper.putInt(this@SettingsActivity, Constant.LOADING_QUALITY_CONFIG_NAME, which)

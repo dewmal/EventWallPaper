@@ -1,10 +1,10 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/detail_search_root_rl"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#d9000000">
+                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                 xmlns:tools="http://schemas.android.com/tools"
+                                                 android:id="@+id/detail_search_root_rl"
+                                                 android:layout_width="match_parent"
+                                                 android:layout_height="match_parent"
+                                                 android:background="#d9000000">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/search_toolbar_layout"
@@ -38,7 +38,7 @@
                 android:textColorHint="@color/HintColor"
                 android:textCursorDrawable="@drawable/cursor"
                 android:textSize="15sp"
-                tools:text="Lake" />
+                tools:text="Lake"/>
 
             <LinearLayout
                 android:layout_width="100dp"
@@ -57,7 +57,7 @@
                         android:layout_height="50dp"
                         android:layout_gravity="center_vertical"
                         android:padding="10dp"
-                        android:src="@drawable/ic_close" />
+                        android:src="@drawable/ic_close"/>
                 </FrameLayout>
 
                 <FrameLayout
@@ -70,8 +70,9 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_gravity="center_vertical"
+                        android:contentDescription="@string/image_desc"
                         android:padding="10dp"
-                        android:src="@drawable/vector_ic_search_white" />
+                        android:src="@drawable/vector_ic_search_white"/>
                 </FrameLayout>
 
             </LinearLayout>
@@ -83,7 +84,7 @@
         android:id="@+id/search_result_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/category_list"
@@ -92,17 +93,17 @@
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
         android:layout_marginTop="100dp"
-        android:overScrollMode="never" />
+        android:overScrollMode="never"/>
 
     <TextView
         android:id="@+id/search_tag"
         style="@style/TagTextView"
         android:alpha="0"
         tools:alpha="1"
-        tools:text="# LAKE" />
+        tools:text="# LAKE"/>
 
     <com.juniperphoton.myersplash.widget.ImageDetailView
         android:id="@+id/search_detail_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 </android.support.design.widget.CoordinatorLayout>

@@ -1,10 +1,6 @@
 package com.juniperphoton.myersplash.model
 
 import android.support.annotation.IntDef
-
-import kotlin.annotation.Retention
-import kotlin.annotation.AnnotationRetention
-
 import io.realm.RealmObject
 import io.realm.annotations.Ignore
 import io.realm.annotations.PrimaryKey
@@ -27,9 +23,9 @@ open class DownloadItem() : RealmObject() {
     @Retention(AnnotationRetention.SOURCE)
     annotation class DownloadStatus
 
-    open var thumbUrl: String? = null
+    var thumbUrl: String? = null
 
-    open var downloadUrl: String? = null
+    var downloadUrl: String? = null
 
     @PrimaryKey
     open var id: String? = null

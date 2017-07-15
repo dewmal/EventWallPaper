@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/widget_retry_rl"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+                android:id="@+id/widget_retry_rl"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <RelativeLayout
         android:id="@+id/widget_retry_btn"
@@ -19,7 +19,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:text="RETRY"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -34,7 +34,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:src="@drawable/vector_ic_delete_white" />
+            android:contentDescription="@string/image_desc"
+            android:src="@drawable/vector_ic_delete_white"/>
     </RelativeLayout>
 
 </RelativeLayout>
