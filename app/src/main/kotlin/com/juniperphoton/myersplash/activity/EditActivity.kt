@@ -11,7 +11,7 @@ import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
-import android.widget.FrameLayout
+import android.widget.RelativeLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import butterknife.BindView
@@ -110,7 +110,7 @@ class EditActivity : BaseActivity() {
             val height = resources.getDimensionPixelSize(R.dimen.default_navigation_bar_height)
             bottomBar.setPadding(0, 0, 0, 0)
 
-            val layoutParams = fabsRoot.layoutParams as FrameLayout.LayoutParams
+            val layoutParams = fabsRoot.layoutParams as RelativeLayout.LayoutParams
             layoutParams.bottomMargin -= height
             fabsRoot.layoutParams = layoutParams
         }
