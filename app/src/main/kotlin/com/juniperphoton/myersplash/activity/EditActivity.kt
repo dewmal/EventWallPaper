@@ -87,12 +87,13 @@ class EditActivity : BaseActivity() {
         setContentView(R.layout.activity_edit)
         ButterKnife.bind(this)
 
-        initView(intent)
+        loadImage()
+        initView()
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        initView(intent!!)
+        loadImage()
     }
 
     override fun onResume() {
@@ -102,10 +103,16 @@ class EditActivity : BaseActivity() {
         flipperView.next(0)
     }
 
-    private fun initView(intent: Intent) {
+    private fun loadImage() {
         filePath = intent.getStringExtra(IMAGE_FILE_PATH)
                 ?: throw IllegalArgumentException("image url should not be null")
 
+        previewImageView.post {
+            updatePreviewImage()
+        }
+    }
+
+    private fun initView() {
         if (!hasNavigationBar()) {
             val height = resources.getDimensionPixelSize(R.dimen.default_navigation_bar_height)
             bottomBar.setPadding(0, 0, 0, 0)
@@ -113,10 +120,6 @@ class EditActivity : BaseActivity() {
             val layoutParams = fabsRoot.layoutParams as RelativeLayout.LayoutParams
             layoutParams.bottomMargin -= height
             fabsRoot.layoutParams = layoutParams
-        }
-
-        previewImageView.post {
-            updatePreviewImage()
         }
 
         brightnessSeekBar.setOnSeekBarChangeListener(object : SimpleOnSeekBarChangeListener() {
