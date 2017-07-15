@@ -24,12 +24,12 @@ object ToastService {
     }
 
     private fun sendToastInternal(str: String?) {
-        var view = LayoutInflater.from(App.instance).inflate(R.layout.toast_layout, null)
+        val view = LayoutInflater.from(App.instance).inflate(R.layout.toast_layout, null)
 
-        var textView = view.findViewById(R.id.toast_textView) as TextView
+        val textView = view.findViewById(R.id.toast_textView) as TextView
         textView.text = str
 
-        var toast = Toast(App.instance)
+        val toast = Toast(App.instance)
         toast.duration = Toast.LENGTH_SHORT
         toast.view = view
         toast.setGravity(Gravity.BOTTOM, 0, 100)

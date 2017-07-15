@@ -1,9 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                xmlns:tools="http://schemas.android.com/tools"
-                tools:layout_height="60dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                tools:layout_height="60dp">
 
     <ImageView
         android:id="@+id/logo"
@@ -11,9 +11,10 @@
         android:layout_height="@dimen/pivot_title_bar_height"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
+        android:contentDescription="@string/image_desc"
         android:padding="12dp"
-        android:visibility="visible"
-        android:src="@drawable/logo_raw" />
+        android:src="@drawable/logo_raw"
+        android:visibility="visible"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -26,7 +27,7 @@
             android:id="@+id/pivot_item_0"
             style="@style/PivotItem"
             android:alpha="0.3"
-            android:text="FEATURED" />
+            android:text="FEATURED"/>
 
         <TextView
             android:id="@+id/pivot_item_1"
@@ -34,13 +35,13 @@
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             android:alpha="1"
-            android:text="NEW" />
+            android:text="NEW"/>
 
         <TextView
             android:id="@+id/pivot_item_2"
             style="@style/PivotItem"
             android:alpha="0.3"
-            android:text="RANDOM" />
+            android:text="RANDOM"/>
     </LinearLayout>
 
     <ImageView
@@ -49,8 +50,9 @@
         android:layout_height="@dimen/pivot_title_bar_height"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="12dp"
         android:alpha="0.3"
-        android:src="@drawable/ic_more" />
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/image_desc"
+        android:padding="12dp"
+        android:src="@drawable/ic_more"/>
 </RelativeLayout>

@@ -41,8 +41,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:has_checkbox="true"
-                    app:setting_content="@string/QuickDownload"
-                    app:setting_title="@string/QuickDownloadTitle" />
+                    app:setting_content="@string/quick_download"
+                    app:setting_title="@string/quick_download_title" />
 
                 <TextView
                     style="@style/SettingsSubTitle"
@@ -54,15 +54,15 @@
                     android:id="@+id/saving_quality_settings"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:setting_content="@string/SavingHigh"
-                    app:setting_title="@string/SavingQuality" />
+                    app:setting_content="@string/saving_high"
+                    app:setting_title="@string/saving_quality" />
 
                 <com.juniperphoton.myersplash.widget.SettingsItemLayout
                     android:id="@+id/loading_quality_settings"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:setting_content="@string/LoadingLarge"
-                    app:setting_title="@string/LoadingQuality"
+                    app:setting_content="@string/loading_large"
+                    app:setting_title="@string/loading_quality"
                     app:show_divider="false" />
 
                 <TextView
@@ -82,8 +82,8 @@
                     android:id="@+id/clear_cache_settings"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:setting_content="@string/_0_mb"
-                    app:setting_title="@string/CleanupCache"
+                    app:setting_content="@string/zero_size"
+                    app:setting_title="@string/cleanup_cache"
                     app:show_divider="false" />
 
                 <View

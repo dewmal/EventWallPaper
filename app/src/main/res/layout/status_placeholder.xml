@@ -6,6 +6,6 @@
     android:layout_alignParentTop="true"
     android:alpha="0.15"
     android:background="@android:color/black"
-    android:contentDescription="@string/ImageDescDefault"
+    android:contentDescription="@string/image_desc"
     android:elevation="4dp"
     android:scaleType="fitXY"/>

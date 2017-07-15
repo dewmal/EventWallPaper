@@ -17,6 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:contentDescription="@string/image_desc"
             android:src="@drawable/ic_arrow_back_black_24dp"/>
     </FrameLayout>
 
@@ -24,8 +25,7 @@
         android:id="@+id/title_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:text="@string/SettingsC"
+        android:text="@string/settings_title"
         android:textColor="@android:color/white"
         android:textSize="@dimen/page_title_text_size"
         android:textStyle="bold"/>

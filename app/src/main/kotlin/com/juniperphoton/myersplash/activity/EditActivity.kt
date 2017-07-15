@@ -40,7 +40,7 @@ import java.io.FileOutputStream
 class EditActivity : BaseActivity() {
     companion object {
         private const val TAG = "EditActivity"
-
+        private const val SAVED_FILE_NAME = "final_dim_image.jpg"
         const val IMAGE_FILE_PATH = "image_file_path"
     }
 
@@ -191,7 +191,7 @@ class EditActivity : BaseActivity() {
                         flipperView.next()
                         super.onError(e)
                         if (e is OutOfMemoryError) {
-                            ToastService.sendShortToast("Out of memory occurs. Please contact the develop to solve this. :(")
+                            ToastService.sendShortToast(resources.getString(R.string.oom_toast))
                         }
                     }
                 })
@@ -233,7 +233,7 @@ class EditActivity : BaseActivity() {
 
         Log.d(TAG, "final bitmap drawn")
 
-        val finalFile = File(FileUtil.galleryPath, "final_dim_image.jpg")
+        val finalFile = File(FileUtil.galleryPath, SAVED_FILE_NAME)
         val fos = FileOutputStream(finalFile)
         fos.use {
             bm.compress(Bitmap.CompressFormat.JPEG, 100, it)

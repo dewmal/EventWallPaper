@@ -215,19 +215,19 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
 
     inner class PhotoViewHolder(itemView: View, type: Int, footerFlag: Int) : RecyclerView.ViewHolder(itemView) {
         @BindView(R.id.row_photo_iv)
-        @JvmField var mSimpleDraweeView: SimpleDraweeView? = null
+        @JvmField var simpleDraweeView: SimpleDraweeView? = null
 
         @BindView(R.id.row_photo_cv)
-        @JvmField var mRootCardView: CardView? = null
+        @JvmField var rootCardView: CardView? = null
 
         @BindView(R.id.row_photo_download_rl)
-        @JvmField var mDownloadRL: ViewGroup? = null
+        @JvmField var downloadRL: ViewGroup? = null
 
         @BindView(R.id.row_photo_ripple_mask_rl)
-        @JvmField var mRippleMaskRL: ViewGroup? = null
+        @JvmField var rippleMaskRL: ViewGroup? = null
 
         @BindView(R.id.row_footer_rl)
-        @JvmField var mFooterRL: ViewGroup? = null
+        @JvmField var footerRL: ViewGroup? = null
 
         init {
             ButterKnife.bind(this, itemView)
@@ -235,7 +235,7 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
                 // Ignore
             } else {
                 if (footerFlag == FOOTER_FLAG_NOT_SHOW) {
-                    mFooterRL!!.visibility = View.INVISIBLE
+                    footerRL!!.visibility = View.INVISIBLE
                 }
             }
         }
@@ -248,20 +248,20 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
 
             if (LocalSettingHelper.getBoolean(mContext, Constant.QUICK_DOWNLOAD_CONFIG_NAME, true)) {
                 if (!image.hasDownloaded()) {
-                    mDownloadRL!!.visibility = View.VISIBLE
-                    mDownloadRL!!.setOnClickListener {
+                    downloadRL!!.visibility = View.VISIBLE
+                    downloadRL!!.setOnClickListener {
                         onClickQuickDownload?.invoke(image)
                     }
                 } else {
-                    mDownloadRL!!.visibility = View.GONE
+                    downloadRL!!.visibility = View.GONE
                 }
             } else {
-                mDownloadRL!!.visibility = View.GONE
+                downloadRL!!.visibility = View.GONE
             }
-            if (mSimpleDraweeView != null) {
-                mRootCardView!!.background = ColorDrawable(backColor)
-                mSimpleDraweeView!!.setImageURI(regularUrl)
-                mRippleMaskRL!!.setOnClickListener(View.OnClickListener {
+            if (simpleDraweeView != null) {
+                rootCardView!!.background = ColorDrawable(backColor)
+                simpleDraweeView!!.setImageURI(regularUrl)
+                rippleMaskRL!!.setOnClickListener(View.OnClickListener {
                     if (regularUrl == null) {
                         return@OnClickListener
                     }
@@ -269,15 +269,15 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
                         return@OnClickListener
                     }
                     val location = IntArray(2)
-                    mSimpleDraweeView!!.getLocationOnScreen(location)
+                    simpleDraweeView!!.getLocationOnScreen(location)
                     if (onClickPhoto != null) {
                         onClickPhoto?.invoke(RectF(
                                 location[0].toFloat(), location[1].toFloat(),
-                                mSimpleDraweeView!!.width.toFloat(), mSimpleDraweeView!!.height.toFloat()), image, mRootCardView!!)
+                                simpleDraweeView!!.width.toFloat(), simpleDraweeView!!.height.toFloat()), image, rootCardView!!)
                     }
                 })
             }
-            animateContainer(mRootCardView!!, pos)
+            animateContainer(rootCardView!!, pos)
         }
     }
 }

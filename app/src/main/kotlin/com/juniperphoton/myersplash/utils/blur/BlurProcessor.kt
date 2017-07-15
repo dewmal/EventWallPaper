@@ -4,10 +4,11 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import com.facebook.imagepipeline.request.BasePostprocessor
 
-class BlurProcessor(private val radius: Int = DEFALUT_RADIUS) : BasePostprocessor() {
+@Suppress("unused")
+class BlurProcessor(private val radius: Int = DEFAULT_RADIUS) : BasePostprocessor() {
     companion object {
         private const val DEFAULT_SCALE = 0.2f
-        private const val DEFALUT_RADIUS = 20
+        private const val DEFAULT_RADIUS = 20
     }
 
     override fun process(bitmap: Bitmap) {
