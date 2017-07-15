@@ -23,13 +23,14 @@
         android:id="@+id/edit_home_preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/edit_bottom_bar">
+        android:layout_above="@+id/edit_bottom_bar"
+        android:alpha="0"
+        tools:alpha="1">
 
         <include
             layout="@layout/widget_edit_home_time_h2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:alpha="0"
             tools:alpha="1"/>
 
         <ImageView
