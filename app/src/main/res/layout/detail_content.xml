@@ -1,4 +1,5 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/detail_root_sv"
@@ -46,7 +47,7 @@
                     android:layout_height="wrap_content"
                     android:text="photo by"
                     android:textColor="@android:color/black"
-                    android:textSize="12dp" />
+                    android:textSize="12dp"/>
 
                 <TextView
                     android:id="@+id/detail_name_tv"
@@ -55,14 +56,14 @@
                     android:text="Juniper Photon"
                     android:textColor="@android:color/black"
                     android:textSize="20dp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"/>
 
                 <View
                     android:id="@+id/detail_name_line"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
                     android:background="@android:color/black"
-                    tools:layout_editor_absoluteY="0dp" />
+                    tools:layout_editor_absoluteY="0dp"/>
             </LinearLayout>
 
             <com.juniperphoton.flipperviewlib.FlipperView
@@ -103,7 +104,7 @@
                             android:text="@string/copy_url"
                             android:textColor="@android:color/white"
                             android:textSize="16sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"/>
                     </FrameLayout>
                 </android.support.v7.widget.CardView>
 
@@ -133,7 +134,7 @@
                             android:text="COPIED :D"
                             android:textColor="@android:color/black"
                             android:textSize="16sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"/>
                     </FrameLayout>
                 </android.support.v7.widget.CardView>
             </com.juniperphoton.flipperviewlib.FlipperView>
@@ -149,7 +150,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@color/colorPrimary" />
+            tools:src="@color/colorPrimary"/>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/detail_share_fab"
@@ -163,7 +164,7 @@
             app:fabSize="mini"
             app:layout_constraintBottom_toBottomOf="@+id/download_flipper_view"
             app:layout_constraintRight_toLeftOf="@+id/download_flipper_view"
-            app:layout_constraintTop_toTopOf="@+id/download_flipper_view" />
+            app:layout_constraintTop_toTopOf="@+id/download_flipper_view"/>
 
         <com.juniperphoton.flipperviewlib.FlipperView
             android:id="@+id/download_flipper_view"
@@ -183,7 +184,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/vector_ic_file_download"
                 app:backgroundTint="@color/MyerSplashThemeColor"
-                app:fabSize="normal" />
+                app:fabSize="normal"/>
 
             <FrameLayout
                 android:layout_width="56dp"
@@ -195,14 +196,11 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_clear"
                     app:backgroundTint="@color/MyerSplashLikedHeartColor"
-                    app:fabSize="normal" />
+                    app:fabSize="normal"/>
 
                 <com.juniperphoton.myersplash.widget.RingProgressView
                     android:id="@+id/detail_progress_ring"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:layout_gravity="center"
-                    android:elevation="50dp" />
+                    style="@style/DefaultRingProgress"/>
 
             </FrameLayout>
 
@@ -212,7 +210,7 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_panorama_horizontal_white"
                 app:backgroundTint="@color/SettingBackground"
-                app:fabSize="normal" />
+                app:fabSize="normal"/>
 
         </com.juniperphoton.flipperviewlib.FlipperView>
 
