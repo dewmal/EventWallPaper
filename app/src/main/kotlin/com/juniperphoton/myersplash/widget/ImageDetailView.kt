@@ -389,7 +389,7 @@ class ImageDetailView(private val mContext: Context, attrs: AttributeSet) : Fram
     internal fun onClickSetAsFAB() {
         val url = "${clickedImage!!.pathForDownload}.jpg"
         val intent = Intent(context, EditActivity::class.java)
-        intent.putExtra(EditActivity.IMAGE_FILE_PATH, url)
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(url)))
         context.startActivity(intent)
     }
 

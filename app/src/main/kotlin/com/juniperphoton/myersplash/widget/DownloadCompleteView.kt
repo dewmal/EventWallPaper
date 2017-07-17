@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
@@ -15,6 +16,7 @@ import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.EditActivity
 import com.juniperphoton.myersplash.extension.isLightColor
+import java.io.File
 
 @Suppress("unused")
 class DownloadCompleteView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
@@ -40,7 +42,7 @@ class DownloadCompleteView(context: Context, attrs: AttributeSet) : FrameLayout(
     internal fun setAs() {
         filePath?.let {
             val intent = Intent(context, EditActivity::class.java)
-            intent.putExtra(EditActivity.IMAGE_FILE_PATH, it)
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(it)))
             context.startActivity(intent)
         }
     }
