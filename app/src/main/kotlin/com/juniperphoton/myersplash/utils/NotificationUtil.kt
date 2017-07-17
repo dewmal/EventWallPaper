@@ -12,6 +12,7 @@ import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.EditActivity
 import com.juniperphoton.myersplash.activity.ManageDownloadActivity
 import com.juniperphoton.myersplash.service.DownloadService
+import java.io.File
 
 object NotificationUtil {
     private val TAG = "NotificationUtil"
@@ -88,7 +89,7 @@ object NotificationUtil {
 
     private fun injectViewIntent(builder: NotificationCompat.Builder, filePath: String) {
         val intent = Intent(App.instance, EditActivity::class.java)
-        intent.putExtra(EditActivity.IMAGE_FILE_PATH, filePath)
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(filePath)))
         val resultPendingIntent = PendingIntent.getActivity(App.instance, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         builder.setContentIntent(resultPendingIntent)
     }

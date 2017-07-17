@@ -41,7 +41,6 @@ class EditActivity : BaseActivity() {
     companion object {
         private const val TAG = "EditActivity"
         private const val SAVED_FILE_NAME = "final_dim_image.jpg"
-        const val IMAGE_FILE_PATH = "image_file_path"
     }
 
     @BindView(R.id.edit_seek_bar_brightness)
@@ -74,7 +73,7 @@ class EditActivity : BaseActivity() {
     @BindView(R.id.edit_fabs_root)
     lateinit var fabsRoot: ViewGroup
 
-    private var filePath: String? = null
+    private var fileUri: Uri? = null
 
     private var showingPreview: Boolean = false
         set(value) {
@@ -104,7 +103,7 @@ class EditActivity : BaseActivity() {
     }
 
     private fun loadImage() {
-        filePath = intent.getStringExtra(IMAGE_FILE_PATH)
+        fileUri = intent.getParcelableExtra(Intent.EXTRA_STREAM)
                 ?: throw IllegalArgumentException("image url should not be null")
 
         previewImageView.post {
@@ -143,7 +142,7 @@ class EditActivity : BaseActivity() {
 
         Log.d(TAG, "pre scale: screen height:$screenHeight")
 
-        val request = ImageRequestBuilder.newBuilderWithSource(Uri.fromFile(File(filePath)))
+        val request = ImageRequestBuilder.newBuilderWithSource(fileUri)
                 .setResizeOptions(ResizeOptions(screenHeight, screenHeight))
                 .build()
         val controller = Fresco.newDraweeControllerBuilder()
@@ -158,8 +157,8 @@ class EditActivity : BaseActivity() {
     fun onClickConfirm() {
         if (maskView.alpha != 0f) {
             composeMask()
-        } else if (filePath != null) {
-            setAs(filePath!!)
+        } else if (fileUri != null) {
+            setAs(fileUri!!.toString())
         }
     }
 
@@ -176,7 +175,7 @@ class EditActivity : BaseActivity() {
 
     private fun composeMask() {
         flipperView.next()
-        Observable.just(filePath)
+        Observable.just(fileUri)
                 .subscribeOn(Schedulers.io())
                 .map {
                     composeMaskInternal()
@@ -203,7 +202,10 @@ class EditActivity : BaseActivity() {
         opt.inJustDecodeBounds = true
 
         // First decode bounds to get width and height
-        BitmapFactory.decodeFile(filePath, opt)
+        val inputStream = contentResolver.openInputStream(fileUri)
+        inputStream.use {
+            BitmapFactory.decodeStream(inputStream, null, opt)
+        }
 
         val originalHeight = opt.outHeight
 
@@ -213,7 +215,7 @@ class EditActivity : BaseActivity() {
         opt.inMutable = true
 
         // Decode file with specified sample size
-        val bm = BitmapFactory.decodeFile(filePath, opt)
+        val bm = decodeBitmapFromFile(fileUri, opt) ?: throw IllegalStateException("Can't decode file")
 
         Log.d(TAG, "file decoded, sample size:${opt.inSampleSize}, originalHeight=$originalHeight, screenH=$screenHeight")
 
@@ -240,8 +242,18 @@ class EditActivity : BaseActivity() {
         }
 
         bm.recycle()
+        inputStream?.close()
 
         return finalFile
+    }
+
+    private fun decodeBitmapFromFile(filePath: Uri?, opt: BitmapFactory.Options?): Bitmap? {
+        val inputStream = contentResolver.openInputStream(filePath)
+        var bm: Bitmap? = null
+        inputStream.use {
+            bm = BitmapFactory.decodeStream(inputStream, null, opt)
+        }
+        return bm
     }
 }
 
