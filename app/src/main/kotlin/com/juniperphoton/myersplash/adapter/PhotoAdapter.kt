@@ -22,8 +22,9 @@ import com.juniperphoton.myersplash.extension.getDarker
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 
-class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val mContext: Context) :
-        RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
+class PhotoAdapter(private val imageData: MutableList<UnsplashImage?>?,
+                   private val mContext: Context)
+    : RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
     private val FOOTER_FLAG_NOT_SHOW = 0
     private val FOOTER_FLAG_SHOW = 1
     private val FOOTER_FLAG_SHOW_END = 1 shl 1 or FOOTER_FLAG_SHOW
@@ -41,7 +42,7 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
 
     init {
         lastPosition = -1
-        val size = mData?.size ?: 0
+        val size = imageData?.size ?: 0
         if (size >= 10) {
             isAutoLoadMore = true
             footerFlag = FOOTER_FLAG_SHOW
@@ -75,7 +76,7 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
         if (holder.itemViewType == TYPE_COMMON_VIEW) {
-            holder.bind(mData!![holder.adapterPosition], position)
+            holder.bind(imageData!![holder.adapterPosition], position)
         }
     }
 
@@ -116,8 +117,8 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
         }
 
     override fun getItemCount(): Int {
-        if (mData == null) return 0
-        return if (footerFlag != FOOTER_FLAG_NOT_SHOW) mData.size + 1 else mData.size
+        if (imageData == null) return 0
+        return if (footerFlag != FOOTER_FLAG_NOT_SHOW) imageData.size + 1 else imageData.size
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -167,13 +168,13 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
 
     fun clear() {
         footerFlag = FOOTER_FLAG_NOT_SHOW
-        mData!!.clear()
+        imageData!!.clear()
         notifyDataSetChanged()
     }
 
     fun setLoadMoreData(data: MutableList<UnsplashImage?>?) {
-        val size = mData!!.size
-        mData.addAll(data!!)
+        val size = this.imageData!!.size
+        this.imageData.addAll(data!!)
         if (data.size >= 10) {
             isAutoLoadMore = true
             footerFlag = footerFlag or FOOTER_FLAG_SHOW
@@ -198,8 +199,8 @@ class PhotoAdapter(private val mData: MutableList<UnsplashImage?>?, private val 
 
     val firstImage: UnsplashImage?
         get() {
-            if (mData != null && mData.size > 0) {
-                return mData[0]
+            if (imageData != null && imageData.size > 0) {
+                return imageData[0]
             }
             return null
         }

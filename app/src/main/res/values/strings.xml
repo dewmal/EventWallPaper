@@ -93,4 +93,6 @@
     <string name="dim_the_brightness">DIM THE BRIGHTNESS</string>
 
     <string name="oom_toast">Out of memory occurs. Please contact the develop to solve this. :(</string>
+
+    <string name="failed_to_send_request">Failed to communicate with backend</string>
 </resources>

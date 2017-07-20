@@ -15,7 +15,7 @@ import com.juniperphoton.myersplash.service.DownloadService
 import java.io.File
 
 object NotificationUtil {
-    private val TAG = "NotificationUtil"
+    private const val TAG = "NotificationUtil"
 
     private val notificationManager: NotificationManager
         get() = App.instance.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

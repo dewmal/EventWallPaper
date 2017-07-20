@@ -4,23 +4,23 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.WindowManager
+import android.widget.TextView
+import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.getVersionName
 import com.juniperphoton.myersplash.extension.startActivitySafely
-import kotlinx.android.synthetic.main.activity_about.*
 import moe.feng.alipay.zerosdk.AlipayZeroSdk
 
-@Suppress("UNUSED")
+@Suppress("unused")
 class AboutActivity : BaseActivity() {
     private val marginLeft by lazy {
         resources.getDimensionPixelSize(R.dimen.about_thanks_item_margin)
     }
 
-    private val versionTextView by lazy {
-        version_text_view
-    }
+    @BindView(R.id.version_text_view)
+    lateinit var versionTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -3,6 +3,7 @@ package com.juniperphoton.myersplash.activity
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.view.View
+import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.facebook.drawee.backends.pipeline.Fresco
@@ -10,9 +11,10 @@ import com.facebook.imagepipeline.core.ImagePipelineFactory
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.common.Constant
-import com.juniperphoton.myersplash.event.RefreshAllEvent
+import com.juniperphoton.myersplash.event.RefreshUIEvent
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 import com.juniperphoton.myersplash.utils.ToastService
+import com.juniperphoton.myersplash.widget.SettingsItemLayout
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_settings.*
 import org.greenrobot.eventbus.EventBus
@@ -20,27 +22,23 @@ import org.greenrobot.eventbus.EventBus
 @Suppress("unused", "unused_parameter")
 class SettingsActivity : BaseActivity() {
     companion object {
-        private val TAG = "SettingsActivity"
+        private const val TAG = "SettingsActivity"
     }
 
-    private var savingStrings: Array<String>? = null
-    private var loadingStrings: Array<String>? = null
+    private lateinit var savingStrings: Array<String>
+    private lateinit var loadingStrings: Array<String>
 
-    private val quickDownloadSettings by lazy {
-        quick_download_settings
-    }
+    @BindView(R.id.quick_download_settings)
+    lateinit var quickDownloadSettings: SettingsItemLayout
 
-    private val savingQualitySettings by lazy {
-        saving_quality_settings
-    }
+    @BindView(R.id.saving_quality_settings)
+    lateinit var savingQualitySettings: SettingsItemLayout
 
-    private val loadingQualitySettings by lazy {
-        loading_quality_settings
-    }
+    @BindView(R.id.loading_quality_settings)
+    lateinit var loadingQualitySettings: SettingsItemLayout
 
-    private val clearCacheSettings by lazy {
-        clear_cache_settings
-    }
+    @BindView(R.id.clear_cache_settings)
+    lateinit var clearCacheSettings: SettingsItemLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,16 +58,16 @@ class SettingsActivity : BaseActivity() {
                 getString(R.string.loading_thumb))
 
         val savingChoice = LocalSettingHelper.getInt(this, Constant.SAVING_QUALITY_CONFIG_NAME, 1)
-        savingQualitySettings.content = savingStrings!![savingChoice]
+        savingQualitySettings.content = savingStrings[savingChoice]
 
         val loadingChoice = LocalSettingHelper.getInt(this, Constant.LOADING_QUALITY_CONFIG_NAME, 0)
-        loadingQualitySettings.content = loadingStrings!![loadingChoice]
+        loadingQualitySettings.content = loadingStrings[loadingChoice]
     }
 
     @OnClick(R.id.quick_download_settings)
     fun toggleQuickDownload(view: View) {
-        quickDownloadSettings.checked = !quickDownloadSettings!!.checked
-        EventBus.getDefault().post(RefreshAllEvent())
+        quickDownloadSettings.checked = !quickDownloadSettings.checked
+        EventBus.getDefault().post(RefreshUIEvent())
     }
 
     @OnClick(R.id.clear_cache_settings)
@@ -77,7 +75,7 @@ class SettingsActivity : BaseActivity() {
         Fresco.getImagePipeline().clearCaches()
         ToastService.sendShortToast("All clear :D")
         clearCacheSettings.content = "0 MB"
-        EventBus.getDefault().post(RefreshAllEvent())
+        EventBus.getDefault().post(RefreshUIEvent())
     }
 
     @OnClick(R.id.setting_clear_database)
@@ -95,7 +93,7 @@ class SettingsActivity : BaseActivity() {
         builder.setSingleChoiceItems(savingStrings, choice) { dialog, which ->
             LocalSettingHelper.putInt(this@SettingsActivity, Constant.SAVING_QUALITY_CONFIG_NAME, which)
             dialog.dismiss()
-            savingQualitySettings.content = savingStrings!![which]
+            savingQualitySettings.content = savingStrings[which]
         }
         builder.show()
     }
@@ -110,7 +108,7 @@ class SettingsActivity : BaseActivity() {
         ) { dialog, which ->
             LocalSettingHelper.putInt(this@SettingsActivity, Constant.LOADING_QUALITY_CONFIG_NAME, which)
             dialog.dismiss()
-            loadingQualitySettings.content = loadingStrings!![which]
+            loadingQualitySettings.content = loadingStrings[which]
         }
         builder.show()
     }

@@ -3,10 +3,15 @@ package com.juniperphoton.myersplash.activity
 import android.animation.Animator
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.AppBarLayout
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.view.ViewPager
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.widget.RelativeLayout
+import android.widget.TextView
+import butterknife.BindView
+import butterknife.ButterKnife
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
@@ -17,7 +22,9 @@ import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.utils.AnimatorListenerImpl
 import com.juniperphoton.myersplash.utils.FileUtil
 import com.juniperphoton.myersplash.utils.PermissionUtil
-import kotlinx.android.synthetic.main.activity_main.*
+import com.juniperphoton.myersplash.widget.ImageDetailView
+import com.juniperphoton.myersplash.widget.PivotTitleBar
+import com.juniperphoton.myersplash.widget.SearchView
 import org.greenrobot.eventbus.EventBus
 import rx.Observable
 import rx.Subscriber
@@ -31,46 +38,36 @@ class MainActivity : BaseActivity() {
     private var fabPositionX: Int = 0
     private var fabPositionY: Int = 0
 
-    private val idMaps = mutableMapOf(
-            Pair(0, UnsplashCategory.FEATURED_CATEGORY_ID),
-            Pair(1, UnsplashCategory.NEW_CATEGORY_ID),
-            Pair(2, UnsplashCategory.RANDOM_CATEGORY_ID))
+    var idMaps = mutableMapOf(
+            0 to UnsplashCategory.FEATURED_CATEGORY_ID,
+            1 to UnsplashCategory.NEW_CATEGORY_ID,
+            2 to UnsplashCategory.RANDOM_CATEGORY_ID)
 
-    private val coordinateLayout by lazy {
-        coordinator_layout
-    }
+    @BindView(R.id.toolbar_layout)
+    lateinit var toolbarLayout: AppBarLayout
 
-    private val toolbarLayout by lazy {
-        toolbar_layout
-    }
+    @BindView(R.id.pivot_title_bar)
+    lateinit var pivotTitleBar: PivotTitleBar
 
-    private val pivotTitleBar by lazy {
-        pivot_title_bar
-    }
+    @BindView(R.id.view_pager)
+    lateinit var viewPager: ViewPager
 
-    private val viewPager by lazy {
-        view_pager
-    }
+    @BindView(R.id.tag_view)
+    lateinit var tagView: TextView
 
-    private val tagView by lazy {
-        tag_view
-    }
+    @BindView(R.id.detail_view)
+    lateinit var imageDetailView: ImageDetailView
 
-    private val imageDetailView by lazy {
-        detail_view
-    }
+    @BindView(R.id.search_fab)
+    lateinit var searchFab: FloatingActionButton
 
-    private val searchFab by lazy {
-        search_fab
-    }
-
-    private val searchView by lazy {
-        search_view
-    }
+    @BindView(R.id.search_view)
+    lateinit var searchView: SearchView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        ButterKnife.bind(this)
 
         handleShortcutsAction()
         clearSharedFiles()
@@ -174,16 +171,12 @@ class MainActivity : BaseActivity() {
 
         pivotTitleBar.apply {
             onSingleTap = {
-                if (viewPager != null) {
-                    viewPager.currentItem = it
-                    EventBus.getDefault().post(ScrollToTopEvent(idMaps[it]!!, false))
-                }
+                viewPager.currentItem = it
+                EventBus.getDefault().post(ScrollToTopEvent(idMaps[it]!!, false))
             }
             onDoubleTap = {
-                if (viewPager != null) {
-                    viewPager.currentItem = it
-                    EventBus.getDefault().post(ScrollToTopEvent(idMaps[it]!!, true))
-                }
+                viewPager.currentItem = it
+                EventBus.getDefault().post(ScrollToTopEvent(idMaps[it]!!, true))
             }
             selectedItem = initNavigationIndex
         }

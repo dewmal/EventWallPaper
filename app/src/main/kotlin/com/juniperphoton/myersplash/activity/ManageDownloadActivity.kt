@@ -3,10 +3,13 @@ package com.juniperphoton.myersplash.activity
 import android.app.AlertDialog
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
+import android.support.design.widget.FloatingActionButton
 import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SimpleItemAnimator
-import android.util.Log
 import android.view.View
+import android.widget.TextView
+import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.juniperphoton.myersplash.R
@@ -15,33 +18,34 @@ import com.juniperphoton.myersplash.adapter.DownloadsListAdapter
 import com.juniperphoton.myersplash.extension.getDimenInPixel
 import com.juniperphoton.myersplash.extension.hasNavigationBar
 import com.juniperphoton.myersplash.model.DownloadItem
+import com.juniperphoton.myersplash.utils.Pasteur
 import io.realm.RealmChangeListener
 import io.realm.Sort
-import kotlinx.android.synthetic.main.activity_managedownload.*
 import java.util.*
 
 @Suppress("unused")
 class ManageDownloadActivity : BaseActivity() {
+    companion object {
+        private const val TAG = "ManageDownloadActivity"
+    }
+
     private var adapter: DownloadsListAdapter? = null
 
     private var itemStatusChangedListener: RealmChangeListener<DownloadItem>? = RealmChangeListener { item ->
-        Log.d("manage", "onChange")
+        Pasteur.d(TAG, "onChange")
         if (item.isValid) {
             adapter?.updateItem(item)
         }
     }
 
-    private val downloadsList by lazy {
-        downloads_list
-    }
+    @BindView(R.id.downloads_list)
+    lateinit var downloadsList: RecyclerView
 
-    private val noItemView by lazy {
-        no_item_view
-    }
+    @BindView(R.id.no_item_view)
+    lateinit var noItemView: TextView
 
-    private val moreFab by lazy {
-        downloads_more_fab
-    }
+    @BindView(R.id.downloads_more_fab)
+    lateinit var moreFab: FloatingActionButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,15 +63,19 @@ class ManageDownloadActivity : BaseActivity() {
 
     @OnClick(R.id.downloads_more_fab)
     internal fun onClickMore() {
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.clear_options_title).setItems(R.array.delete_options) { _, i ->
-            when (i) {
-                0 -> deleteFromRealm(DownloadItem.DOWNLOAD_STATUS_DOWNLOADING)
-                1 -> deleteFromRealm(DownloadItem.DOWNLOAD_STATUS_OK)
-                2 -> deleteFromRealm(DownloadItem.DOWNLOAD_STATUS_FAILED)
-            }
-        }.setPositiveButton(R.string.cancel) { dialogInterface, _ -> dialogInterface.dismiss() }
-        builder.create().show()
+        AlertDialog.Builder(this).setTitle(R.string.clear_options_title)
+                .setItems(R.array.delete_options) { _, i ->
+                    val deleteStatus = when (i) {
+                        0 -> DownloadItem.DOWNLOAD_STATUS_DOWNLOADING
+                        1 -> DownloadItem.DOWNLOAD_STATUS_OK
+                        2 -> DownloadItem.DOWNLOAD_STATUS_FAILED
+                        else -> DownloadItem.DOWNLOAD_STATUS_INVALID
+                    }
+                    deleteFromRealm(deleteStatus)
+                }
+                .setPositiveButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
+                .create()
+                .show()
     }
 
     private fun deleteFromRealm(status: Int) {
@@ -84,9 +92,9 @@ class ManageDownloadActivity : BaseActivity() {
 
     fun updateNoItemVisibility() {
         if ((adapter?.data?.size ?: 0) > 0) {
-            noItemView?.visibility = View.GONE
+            noItemView.visibility = View.GONE
         } else {
-            noItemView?.visibility = View.VISIBLE
+            noItemView.visibility = View.VISIBLE
         }
     }
 

@@ -20,9 +20,9 @@ import java.io.*
 import java.lang.Exception
 import java.util.*
 
-@Suppress("UNUSED_PARAMETER")
+@Suppress("unused_parameter")
 object DownloadUtil {
-    private val TAG = "DownloadUtil"
+    private const val TAG = "DownloadUtil"
 
     fun writeResponseBodyToDisk(body: ResponseBody, fileUri: String,
                                 downloadUrl: String, onProgress: ((Int) -> Unit)?): File? {

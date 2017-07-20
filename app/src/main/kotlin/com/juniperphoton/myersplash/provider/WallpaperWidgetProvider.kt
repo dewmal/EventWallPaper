@@ -26,7 +26,7 @@ import java.util.*
 
 class WallpaperWidgetProvider : AppWidgetProvider() {
     companion object {
-        private val TAG = "WallpaperWidgetProvider"
+        private const val TAG = "WallpaperWidgetProvider"
     }
 
     private var thumbUrl: String? = null

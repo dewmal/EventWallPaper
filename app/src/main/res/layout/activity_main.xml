@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="activity.MainActivity">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="activity.MainActivity">
 
-    <include layout="@layout/status_placeholder" />
+    <include layout="@layout/status_placeholder"/>
 
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/coordinator_layout"
@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/status_bar_height"
-                app:layout_scrollFlags="scroll|enterAlways" />
+                app:layout_scrollFlags="scroll|enterAlways"/>
 
         </android.support.design.widget.AppBarLayout>
 
@@ -34,21 +34,21 @@
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
         <TextView
             android:id="@+id/tag_view"
             style="@style/TagTextView"
             android:alpha="0"
             android:text="# NEW"
-            tools:alpha="0" />
+            tools:alpha="0"/>
 
     </android.support.design.widget.CoordinatorLayout>
 
     <com.juniperphoton.myersplash.widget.ImageDetailView
         android:id="@+id/detail_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/search_fab"
@@ -61,11 +61,11 @@
         android:layout_marginEnd="24dp"
         android:background="@drawable/ripple"
         android:src="@drawable/vector_ic_search_white"
-        app:backgroundTint="@color/MyerSplashThemeColor" />
+        app:backgroundTint="@color/MyerSplashThemeColor"/>
 
     <com.juniperphoton.myersplash.widget.SearchView
         android:id="@+id/search_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 </RelativeLayout>

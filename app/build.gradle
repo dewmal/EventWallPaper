@@ -14,6 +14,8 @@ android {
         targetSdkVersion 25
         versionCode 253
         versionName "2.5.2"
+
+        buildConfigField 'String', "UNSPLASH_APP_KEY", "\"403d9934ce4bb8dbef44765692144e8c6fac6d2698950cb40b07397d6c6635fe\""
     }
 
     sourceSets {
@@ -53,8 +55,4 @@ dependencies {
 
     kapt "io.realm:realm-annotations:3.0.0"
     kapt "io.realm:realm-annotations-processor:3.0.0"
-}
-
-repositories {
-    mavenCentral()
 }

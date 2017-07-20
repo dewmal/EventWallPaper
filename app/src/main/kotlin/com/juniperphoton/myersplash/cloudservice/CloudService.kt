@@ -1,6 +1,6 @@
 package com.juniperphoton.myersplash.cloudservice
 
-import com.juniperphoton.myersplash.model.UnsplashCategory
+import com.juniperphoton.myersplash.BuildConfig
 import com.juniperphoton.myersplash.model.UnsplashImage
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
@@ -16,15 +16,15 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 object CloudService {
-    private val AppKey = "403d9934ce4bb8dbef44765692144e8c6fac6d2698950cb40b07397d6c6635fe"
+    private const val AppKey = BuildConfig.UNSPLASH_APP_KEY
 
-    var BASE_URL = "https://api.unsplash.com/"
-    var PHOTO_URL = "https://api.unsplash.com/photos?"
-    var FEATURED_PHOTO_URL = "https://api.unsplash.com/collections/featured?"
-    var RANDOM_PHOTOS_URL = "https://api.unsplash.com/photos/random?"
-    var SEARCH_URL = "https://api.unsplash.com/search/photos?"
-    var AUTO_CHANGE_WALLPAPER = "http://juniperphoton.net/myersplash/wallpapers/"
-    var AUTO_CHANGE_WALLPAPER_THUMB = "http://juniperphoton.net/myersplash/wallpapers/thumbs/"
+    const val BASE_URL = "https://api.unsplash.com/"
+    const val PHOTO_URL = "https://api.unsplash.com/photos?"
+    const val FEATURED_PHOTO_URL = "https://api.unsplash.com/collections/featured?"
+    const val RANDOM_PHOTOS_URL = "https://api.unsplash.com/photos/random?"
+    const val SEARCH_URL = "https://api.unsplash.com/search/photos?"
+    const val AUTO_CHANGE_WALLPAPER = "http://juniperphoton.net/myersplash/wallpapers/"
+    const val AUTO_CHANGE_WALLPAPER_THUMB = "http://juniperphoton.net/myersplash/wallpapers/thumbs/"
 
     private val DEFAULT_TIMEOUT = 10
 
@@ -47,14 +47,6 @@ object CloudService {
         categoryService = retrofit.create(CategoryService::class.java)
         photoService = retrofit.create(PhotoService::class.java)
         downloadService = retrofit.create(DownloadService::class.java)
-    }
-
-    fun getCategories(subscriber: Subscriber<MutableList<UnsplashCategory?>?>) {
-        val observable = categoryService.getCategories(AppKey)
-        observable.subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber)
     }
 
     fun getPhotos(subscriber: Subscriber<MutableList<UnsplashImage?>?>, url: String, page: Int) {
