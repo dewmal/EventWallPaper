@@ -13,33 +13,33 @@ import com.juniperphoton.myersplash.R
 
 class SettingsItemLayout(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     @BindView(R.id.settings_item_title)
-    @JvmField var titleTextView: TextView? = null
+    lateinit var titleTextView: TextView
 
     @BindView(R.id.settings_item_content)
-    @JvmField var contentTextView: TextView? = null
+    lateinit var contentTextView: TextView
 
     @BindView(R.id.settings_item_switch)
-    @JvmField var compoundButton: CompoundButton? = null
+    lateinit var compoundButton: CompoundButton
 
     @BindView(R.id.divider_view)
-    @JvmField var dividerView: View? = null
+    lateinit var dividerView: View
 
     var onCheckedChanged: ((Boolean) -> Unit)? = null
 
     var checked: Boolean
-        get() = compoundButton!!.isChecked
+        get() = compoundButton.isChecked
         set(checked) {
-            compoundButton!!.isChecked = checked
+            compoundButton.isChecked = checked
         }
 
     var title: String = ""
         set(value) {
-            titleTextView?.text = value
+            titleTextView.text = value
         }
 
     var content: String = ""
         set(value) {
-            contentTextView?.text = value
+            contentTextView.text = value
         }
 
     init {
@@ -55,22 +55,22 @@ class SettingsItemLayout(context: Context, attrs: AttributeSet) : FrameLayout(co
         array.recycle()
 
         if (title != null) {
-            titleTextView?.text = title
+            titleTextView.text = title
         }
 
         if (content != null) {
-            contentTextView?.text = content
+            contentTextView.text = content
         }
 
         if (!hasCheckbox) {
-            compoundButton?.visibility = View.GONE
+            compoundButton.visibility = View.GONE
         }
 
         if (!showDivider) {
-            dividerView?.visibility = View.GONE
+            dividerView.visibility = View.GONE
         }
 
-        compoundButton?.setOnCheckedChangeListener { _, isChecked ->
+        compoundButton.setOnCheckedChangeListener { _, isChecked ->
             onCheckedChanged?.invoke(isChecked)
         }
     }

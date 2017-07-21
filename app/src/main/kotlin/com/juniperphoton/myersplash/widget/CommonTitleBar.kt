@@ -13,10 +13,10 @@ import com.juniperphoton.myersplash.extension.getActivity
 
 class CommonTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     @BindView(R.id.back_iv)
-    @JvmField var backView: View? = null
+    lateinit var backView: View
 
     @BindView(R.id.title_tv)
-    @JvmField var textView: TextView? = null
+    lateinit var textView: TextView
 
     init {
         LayoutInflater.from(context).inflate(R.layout.common_title_bar, this, true)
@@ -25,10 +25,10 @@ class CommonTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(contex
 
         val array = context.obtainStyledAttributes(attrs, R.styleable.CommonTitleBar)
         val title = array.getString(R.styleable.CommonTitleBar_title)
-        textView?.text = title
         array.recycle()
 
-        backView?.setOnClickListener { view ->
+        textView.text = title
+        backView.setOnClickListener { view ->
             val activity = view.getActivity()
             activity?.finish()
         }

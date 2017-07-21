@@ -19,7 +19,7 @@ import com.juniperphoton.myersplash.extension.isLightColor
 import java.io.File
 
 @Suppress("unused")
-class DownloadCompleteView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
+class DownloadCompleteView(ctx: Context, attrs: AttributeSet) : FrameLayout(ctx, attrs) {
     @BindView(R.id.widget_set_as_rl)
     lateinit var setAsBtn: RelativeLayout
 
@@ -30,10 +30,8 @@ class DownloadCompleteView(context: Context, attrs: AttributeSet) : FrameLayout(
     lateinit var setAsTextView: TextView
 
     var filePath: String? = null
-    private var ctx: Context? = null
 
     init {
-        ctx = context
         LayoutInflater.from(context).inflate(R.layout.widget_download_complete_view, this)
         ButterKnife.bind(this)
     }

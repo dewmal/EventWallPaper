@@ -1,4 +1,4 @@
-package com.juniperphoton.myersplash
+package com.juniperphoton.myersplash.data
 
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.model.UnsplashCategory
@@ -6,7 +6,7 @@ import com.juniperphoton.myersplash.model.UnsplashImage
 
 interface Contract {
     interface MainPresenter {
-        var category: UnsplashCategory?
+        var category: UnsplashCategory
         var query: String?
 
         fun start()

@@ -1,6 +1,5 @@
-package com.juniperphoton.myersplash.presenter
+package com.juniperphoton.myersplash.data
 
-import com.juniperphoton.myersplash.Contract
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.cloudservice.CloudService
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
@@ -8,8 +7,9 @@ import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.Pasteur
 import com.juniperphoton.myersplash.utils.ResponseObserver
+import javax.inject.Inject
 
-class MainListPresenter(private val mainView: Contract.MainView) : Contract.MainPresenter {
+open class MainListPresenter : Contract.MainPresenter {
     companion object {
         const val REFRESH_PAGING = 1
         private const val TAG = "MainListPresenter"
@@ -18,7 +18,12 @@ class MainListPresenter(private val mainView: Contract.MainView) : Contract.Main
     private var next: Int = REFRESH_PAGING
     private var refreshing: Boolean = false
 
-    override var category: UnsplashCategory? = null
+    @Inject
+    override lateinit var category: UnsplashCategory
+
+    @Inject
+    lateinit var mainView: Contract.MainView
+
     override var query: String? = null
 
     override fun stop() {
@@ -36,7 +41,7 @@ class MainListPresenter(private val mainView: Contract.MainView) : Contract.Main
     }
 
     override fun onReceivedScrollToTopEvent(event: ScrollToTopEvent) {
-        if (event.id == category?.id) {
+        if (event.id == category.id) {
             mainView.scrollToTop()
             if (event.refresh) {
                 refresh()
@@ -62,10 +67,6 @@ class MainListPresenter(private val mainView: Contract.MainView) : Contract.Main
     }
 
     private fun loadPhotoList(next: Int) {
-        if (category == null) {
-            return
-        }
-
         this.next = next
         refreshing = true
         if (next == REFRESH_PAGING) {
@@ -86,7 +87,7 @@ class MainListPresenter(private val mainView: Contract.MainView) : Contract.Main
             }
         }
 
-        category?.let {
+        category.let {
             when (it.id) {
                 UnsplashCategory.FEATURED_CATEGORY_ID ->
                     CloudService.getFeaturedPhotos(subscriber, it.requestUrl!!, next)

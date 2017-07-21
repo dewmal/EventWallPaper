@@ -45,14 +45,18 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
     compile 'com.google.code.gson:gson:2.7'
-    compile 'com.jakewharton:butterknife:8.4.0'
+    compile 'com.jakewharton:butterknife:8.7.0'
     compile 'moe.feng:AlipayZeroSdk:1.1'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.android:flexbox:0.3.0-alpha3'
 
-    kapt 'com.jakewharton:butterknife-compiler:8.4.0'
+    kapt 'io.realm:realm-annotations:3.0.0'
+    kapt 'io.realm:realm-annotations-processor:3.0.0'
 
-    kapt "io.realm:realm-annotations:3.0.0"
-    kapt "io.realm:realm-annotations-processor:3.0.0"
+    kapt 'com.jakewharton:butterknife-compiler:8.7.0'
+
+    //dagger
+    compile 'com.google.dagger:dagger:2.11'
+    kapt 'com.google.dagger:dagger-compiler:2.11'
 }

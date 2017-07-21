@@ -11,16 +11,18 @@ import com.juniperphoton.myersplash.R
 
 class RingProgressView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     companion object {
-        private val STROKE_WIDTH = 5
+        private const val STROKE_WIDTH = 5
+        private const val INIT_PROGRESS_VALUE = 10
+        private const val INTERVAL_PROGRESS_VALUE = 5
     }
 
     private val paint: Paint = Paint()
 
-    var progress = 10
+    var progress = INIT_PROGRESS_VALUE
         set(value) {
             var finalValue = value
-            if (finalValue < 5) {
-                finalValue = 5
+            if (finalValue < INTERVAL_PROGRESS_VALUE) {
+                finalValue = INTERVAL_PROGRESS_VALUE
             }
             field = finalValue
             invalidate()

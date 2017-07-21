@@ -22,24 +22,20 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.google.android.flexbox.FlexboxLayoutManager
-import com.juniperphoton.myersplash.Contract
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.CategoryAdapter
+import com.juniperphoton.myersplash.data.Contract
+import com.juniperphoton.myersplash.data.DaggerRepoComponent
+import com.juniperphoton.myersplash.data.MainListPresenter
+import com.juniperphoton.myersplash.data.RepoModule
 import com.juniperphoton.myersplash.fragment.MainListFragment
-import com.juniperphoton.myersplash.model.UnsplashCategory
-import com.juniperphoton.myersplash.presenter.MainListPresenter
 import com.juniperphoton.myersplash.utils.AnimatorListenerImpl
 import com.juniperphoton.myersplash.utils.ToastService
 
-@Suppress("UNUSED")
+@Suppress("unused")
 class SearchView(ctx: Context, attrs: AttributeSet) : FrameLayout(ctx, attrs) {
     companion object {
         private const val TAG = "SearchView"
-        private val sSearchCategory = UnsplashCategory()
-
-        init {
-            sSearchCategory.id = UnsplashCategory.SEARCH_ID
-        }
     }
 
     @BindView(R.id.detail_search_et)
@@ -109,11 +105,17 @@ class SearchView(ctx: Context, attrs: AttributeSet) : FrameLayout(ctx, attrs) {
         })
 
         val activity = context as AppCompatActivity
+
+        val presenter = MainListPresenter()
+
         mainListFragment = MainListFragment()
-        mainListFragment.setPresenter(MainListPresenter(mainListFragment))
-        mainListFragment.setCategory(sSearchCategory, { rectF, unsplashImage, itemView ->
+        mainListFragment.setPresenter(presenter)
+        mainListFragment.onClickPhotoItem = { rectF, unsplashImage, itemView ->
             detailView.showDetailedImage(rectF, unsplashImage, itemView)
-        })
+        }
+
+        val component = DaggerRepoComponent.builder().repoModule(RepoModule(-1, mainListFragment)).build()
+        component.inject(presenter)
 
         activity.supportFragmentManager.beginTransaction().replace(R.id.search_result_root, mainListFragment)
                 .commit()

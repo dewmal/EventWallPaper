@@ -12,12 +12,11 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import butterknife.BindView
 import butterknife.ButterKnife
-import com.juniperphoton.myersplash.Contract
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.PhotoAdapter
+import com.juniperphoton.myersplash.data.Contract
 import com.juniperphoton.myersplash.event.RefreshUIEvent
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
-import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.DownloadUtil
 import com.juniperphoton.myersplash.utils.Pasteur
@@ -146,11 +145,6 @@ class MainListFragment : Fragment(), Contract.MainView {
 
     override fun clearData() {
         adapter?.clear()
-    }
-
-    fun setCategory(category: UnsplashCategory, callback: ((rectF: RectF, unsplashImage: UnsplashImage, itemView: View) -> Unit)?) {
-        mainPresenter?.category = category
-        this.onClickPhotoItem = callback
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
