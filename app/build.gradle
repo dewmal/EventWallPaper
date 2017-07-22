@@ -12,8 +12,8 @@ android {
         applicationId "com.juniperphoton.myersplash"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 253
-        versionName "2.5.2"
+        versionCode 260
+        versionName "2.6.0"
 
         buildConfigField 'String', "UNSPLASH_APP_KEY", "\"403d9934ce4bb8dbef44765692144e8c6fac6d2698950cb40b07397d6c6635fe\""
     }
