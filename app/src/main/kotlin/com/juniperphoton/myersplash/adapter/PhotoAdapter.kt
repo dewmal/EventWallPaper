@@ -69,7 +69,7 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage?>?,
     }
 
     override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
-        if (holder.itemView is PhotoItemView) {
+        if (holder.itemView is PhotoItemView && !isFooterView(position)) {
             holder.itemView.onBind = { v, p ->
                 animateContainer(v, p)
             }
@@ -116,19 +116,20 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage?>?,
         }
 
     override fun getItemCount(): Int {
-        if (imageData == null) return 0
-        return if (footerFlag != FOOTER_FLAG_NOT_SHOW) imageData.size + 1 else imageData.size
+        if (imageData == null) return 1
+        return imageData.size + 1
     }
 
     override fun getItemViewType(position: Int): Int {
         if (isFooterView(position)) {
             return TYPE_FOOTER_VIEW
-        } else
+        } else {
             return TYPE_COMMON_VIEW
+        }
     }
 
     private fun isFooterView(position: Int): Boolean {
-        return footerFlag != FOOTER_FLAG_NOT_SHOW && position >= itemCount - 1
+        return position >= itemCount - 1
     }
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
