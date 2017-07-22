@@ -41,7 +41,7 @@ object NotificationUtil {
             val bm = BitmapFactory.decodeFile(it.toString())
             builder.setLargeIcon(bm)
         }
-        builder.addAction(R.drawable.ic_replay_white_48dp, App.instance.getString(R.string.retry_act),
+        builder.addAction(R.drawable.ic_replay_white, App.instance.getString(R.string.retry_act),
                 resultPendingIntent)
         notificationManager.notify(id, builder.build())
     }

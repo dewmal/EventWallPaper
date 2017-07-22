@@ -33,7 +33,7 @@ import com.juniperphoton.myersplash.utils.AnimatorListenerImpl
 import com.juniperphoton.myersplash.utils.ToastService
 
 @Suppress("unused")
-class SearchView(ctx: Context, attrs: AttributeSet) : FrameLayout(ctx, attrs) {
+class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     companion object {
         private const val TAG = "SearchView"
     }

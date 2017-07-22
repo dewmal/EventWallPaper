@@ -4,15 +4,37 @@ import android.graphics.Color
 import com.google.gson.annotations.SerializedName
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.common.Constant
+import com.juniperphoton.myersplash.provider.WallpaperWidgetProvider
 import com.juniperphoton.myersplash.utils.FileUtil
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 import java.io.File
 import java.io.Serializable
 
-@Suppress("UNUSED")
+@Suppress("unused")
 class UnsplashImage : Serializable {
+    companion object {
+        fun createRecommendedImage(): UnsplashImage {
+            return UnsplashImage().apply {
+                isUnsplash = false
+                id = WallpaperWidgetProvider.dateString
+                urls = ImageUrl().apply {
+                    raw = WallpaperWidgetProvider.downloadUrl
+                    full = WallpaperWidgetProvider.downloadUrl
+                    regular = WallpaperWidgetProvider.thumbUrl
+                    small = WallpaperWidgetProvider.thumbUrl
+                    thumb = WallpaperWidgetProvider.thumbUrl
+                }
+                user = UnsplashUser().apply {
+                    userName = "JuniperPhoton"
+                    name = "JuniperPhoton"
+                }
+            }
+        }
+    }
+
     @SerializedName("id")
-    val id: String? = null
+    var id: String? = null
+        private set
 
     @SerializedName("created_at")
     private val createdAt: String? = null
@@ -24,10 +46,14 @@ class UnsplashImage : Serializable {
     private val likes: Int = 0
 
     @SerializedName("user")
-    private val user: UnsplashUser? = null
+    private var user: UnsplashUser? = null
 
     @SerializedName("urls")
-    private val urls: ImageUrl? = null
+    private var urls: ImageUrl? = null
+        private set
+
+    var isUnsplash: Boolean = true
+        private set
 
     val pathForDownload: String
         get() = FileUtil.galleryPath + File.separator + fileNameForDownload
@@ -59,9 +85,9 @@ class UnsplashImage : Serializable {
                 return null
             }
             when (choice) {
-                0 -> url = urls.regular
-                1 -> url = urls.small
-                2 -> url = urls.thumb
+                0 -> url = urls!!.regular
+                1 -> url = urls!!.small
+                2 -> url = urls!!.thumb
             }
             return url
         }
@@ -100,17 +126,17 @@ class UnsplashImage : Serializable {
 
 class ImageUrl : Serializable {
     @SerializedName("raw")
-    val raw: String? = null
+    var raw: String? = null
 
     @SerializedName("full")
-    val full: String? = null
+    var full: String? = null
 
     @SerializedName("regular")
-    val regular: String? = null
+    var regular: String? = null
 
     @SerializedName("small")
-    val small: String? = null
+    var small: String? = null
 
     @SerializedName("thumb")
-    val thumb: String? = null
+    var thumb: String? = null
 }

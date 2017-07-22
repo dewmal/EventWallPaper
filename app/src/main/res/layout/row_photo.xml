@@ -1,57 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:fresco="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/row_photo_cv"
+<com.juniperphoton.myersplash.widget.item.PhotoItemView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/row_photo_root"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/img_height"
     android:clickable="true"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark"
-    card_view:cardBackgroundColor="#90000000"
-    card_view:cardCornerRadius="0dp"
-    card_view:cardElevation="0dp">
+    tools:background="@android:color/black">
 
-    <RelativeLayout
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/row_photo_iv"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/img_height"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        app:backgroundTint="@color/colorPrimaryDark"/>
+
+    <FrameLayout
+        android:id="@+id/row_photo_ripple_mask_rl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackground"
         android:clickable="true">
 
-        <com.facebook.drawee.view.SimpleDraweeView
-            android:id="@+id/row_photo_iv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+        <FrameLayout
+            android:id="@+id/row_photo_download_rl"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="right|bottom"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:clickable="true"
-            fresco:backgroundTint="@color/colorPrimaryDark" />
+            android:visibility="visible">
 
-        <RelativeLayout
-            android:id="@+id/row_photo_ripple_mask_rl"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true">
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="center"
+                android:contentDescription="@string/image_desc"
+                android:scaleType="fitXY"
+                android:src="@drawable/vector_ic_file_download"/>
 
-            <FrameLayout
-                android:id="@+id/row_photo_download_rl"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:visibility="visible">
+        </FrameLayout>
 
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_gravity="center"
-                    android:contentDescription="@string/image_desc"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/vector_ic_file_download" />
-            </FrameLayout>
+        <TextView
+            android:id="@+id/row_photo_recommended_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:layout_margin="12dp"
+            android:background="@drawable/round_rect"
+            android:drawableLeft="@drawable/ic_star_yellow"
+            android:drawablePadding="4dp"
+            android:gravity="center"
+            android:paddingBottom="8dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="8dp"
+            android:text="@string/recommended_tag"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"/>
+    </FrameLayout>
+</com.juniperphoton.myersplash.widget.item.PhotoItemView>
 
-        </RelativeLayout>
-
-    </RelativeLayout>
-
-</android.support.v7.widget.CardView>
 

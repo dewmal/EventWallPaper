@@ -19,7 +19,7 @@ import com.juniperphoton.myersplash.extension.isLightColor
 import java.io.File
 
 @Suppress("unused")
-class DownloadCompleteView(ctx: Context, attrs: AttributeSet) : FrameLayout(ctx, attrs) {
+class DownloadCompleteView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     @BindView(R.id.widget_set_as_rl)
     lateinit var setAsBtn: RelativeLayout
 

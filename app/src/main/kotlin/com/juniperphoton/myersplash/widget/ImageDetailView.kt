@@ -7,6 +7,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.RectF
 import android.graphics.drawable.ColorDrawable
@@ -15,6 +16,7 @@ import android.support.customtabs.CustomTabsIntent
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.animation.FastOutSlowInInterpolator
+import android.support.v7.graphics.Palette
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -43,14 +45,13 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import rx.Observable
+import rx.Subscription
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
 import java.io.File
 
 @Suppress("unused")
-class ImageDetailView(context: Context,
-                      attrs: AttributeSet
-) : FrameLayout(context, attrs) {
+class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     companion object {
         private const val TAG = "ImageDetailView"
         private const val RESULT_CODE = 10000
@@ -176,19 +177,21 @@ class ImageDetailView(context: Context,
 
     @OnClick(R.id.detail_name_tv)
     internal fun onClickName() {
-        val uri = Uri.parse(clickedImage?.userHomePage)
+        clickedImage?.userHomePage?.let {
+            val uri = Uri.parse(it)
 
-        val intentBuilder = CustomTabsIntent.Builder()
+            val intentBuilder = CustomTabsIntent.Builder()
 
-        intentBuilder.setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
-        intentBuilder.setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark))
+            intentBuilder.setToolbarColor(ContextCompat.getColor(context, R.color.colorPrimary))
+            intentBuilder.setSecondaryToolbarColor(ContextCompat.getColor(context, R.color.colorPrimaryDark))
 
-        intentBuilder.setStartAnimations(context, R.anim.in_from_right, R.anim.out_from_left)
-        intentBuilder.setExitAnimations(context, R.anim.in_from_left, R.anim.out_from_right)
+            intentBuilder.setStartAnimations(context, R.anim.in_from_right, R.anim.out_from_left)
+            intentBuilder.setExitAnimations(context, R.anim.in_from_left, R.anim.out_from_right)
 
-        val customTabsIntent = intentBuilder.build()
+            val customTabsIntent = intentBuilder.build()
 
-        customTabsIntent.launchUrl(context, uri)
+            customTabsIntent.launchUrl(context, uri)
+        }
     }
 
     @OnClick(R.id.copy_url_flipper_view)
@@ -541,6 +544,7 @@ class ImageDetailView(context: Context,
     }
 
     fun tryHide(): Boolean {
+        subscription?.unsubscribe()
         if (associatedDownloadItem?.isValid ?: false) {
             associatedDownloadItem!!.removeChangeListener(realmChangeListener)
             associatedDownloadItem = null
@@ -550,6 +554,54 @@ class ImageDetailView(context: Context,
             return true
         }
         return false
+    }
+
+    private var subscription: Subscription? = null
+
+    private fun extractThemeColor(image: UnsplashImage) {
+        val file = FileUtil.getCachedFile(image.listUrl!!) ?: return
+        subscription = Observable.just(image)
+                .subscribeOn(Schedulers.io())
+                .map {
+                    val bm = BitmapFactory.decodeFile(file.absolutePath)
+                    Palette.from(bm).generate().darkVibrantSwatch?.rgb
+                }
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : SimpleObserver<Int>() {
+                    override fun onNext(color: Int) {
+                        super.onNext(color)
+                        updateThemeColor(color)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        super.onError(e)
+                        updateThemeColor(Color.BLACK)
+                    }
+                })
+    }
+
+    private fun updateThemeColor(themeColor: Int) {
+        detailInfoRootLayout.background = ColorDrawable(themeColor)
+        // change the color
+        if (!themeColor.isLightColor()) {
+            copyUrlTextView.setTextColor(Color.BLACK)
+            val backColor = Color.argb(200, Color.red(Color.WHITE),
+                    Color.green(Color.WHITE), Color.blue(Color.WHITE))
+            copyLayout.setBackgroundColor(backColor)
+
+            nameTextView.setTextColor(Color.WHITE)
+            lineView.background = ColorDrawable(Color.WHITE)
+            photoByTextView.setTextColor(Color.WHITE)
+        } else {
+            copyUrlTextView.setTextColor(Color.WHITE)
+            val backColor = Color.argb(200, Color.red(Color.BLACK),
+                    Color.green(Color.BLACK), Color.blue(Color.BLACK))
+            copyLayout.setBackgroundColor(backColor)
+
+            nameTextView.setTextColor(Color.BLACK)
+            lineView.background = ColorDrawable(Color.BLACK)
+            photoByTextView.setTextColor(Color.BLACK)
+        }
     }
 
     /**
@@ -566,35 +618,24 @@ class ImageDetailView(context: Context,
         clickedView = itemView
         clickedView!!.visibility = View.INVISIBLE
 
-        detailInfoRootLayout.background = ColorDrawable(unsplashImage.themeColor)
         val themeColor = unsplashImage.themeColor
 
-        //Dark
-        if (!themeColor.isLightColor()) {
-            copyUrlTextView.setTextColor(Color.BLACK)
-            val backColor = Color.argb(200, Color.red(Color.WHITE),
-                    Color.green(Color.WHITE), Color.blue(Color.WHITE))
-            copyLayout.setBackgroundColor(backColor)
+        if (!clickedImage!!.isUnsplash) {
+            photoByTextView.text = context.getString(R.string.recommended_by)
+            nameTextView.text = context.getString(R.string.author_default_name)
+            lineView.visibility = View.INVISIBLE
+
+            extractThemeColor(unsplashImage)
         } else {
-            copyUrlTextView.setTextColor(Color.WHITE)
-            val backColor = Color.argb(200, Color.red(Color.BLACK),
-                    Color.green(Color.BLACK), Color.blue(Color.BLACK))
-            copyLayout.setBackgroundColor(backColor)
+            photoByTextView.text = unsplashImage.userName
+            lineView.visibility = View.VISIBLE
+            detailInfoRootLayout.background = ColorDrawable(themeColor)
         }
+
+        updateThemeColor(themeColor)
 
         nameTextView.text = unsplashImage.userName
         progressView.progress = 5
-
-        val backColor = unsplashImage.themeColor
-        if (!backColor.isLightColor()) {
-            nameTextView.setTextColor(Color.WHITE)
-            lineView.background = ColorDrawable(Color.WHITE)
-            photoByTextView.setTextColor(Color.WHITE)
-        } else {
-            nameTextView.setTextColor(Color.BLACK)
-            lineView.background = ColorDrawable(Color.BLACK)
-            photoByTextView.setTextColor(Color.BLACK)
-        }
 
         heroView.setImageURI(unsplashImage.listUrl)
         detailRootScrollView.visibility = View.VISIBLE

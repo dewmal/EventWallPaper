@@ -66,6 +66,10 @@ open class MainListPresenter : Contract.MainPresenter {
         mainView.setRefreshing(false)
     }
 
+    private fun insertRecommendedImage(t: MutableList<UnsplashImage?>?) {
+        t?.add(0, UnsplashImage.createRecommendedImage())
+    }
+
     private fun loadPhotoList(next: Int) {
         this.next = next
         refreshing = true
@@ -83,6 +87,9 @@ open class MainListPresenter : Contract.MainPresenter {
             }
 
             override fun onNext(t: MutableList<UnsplashImage?>?) {
+                if (category.id == UnsplashCategory.NEW_CATEGORY_ID && next == REFRESH_PAGING) {
+                    insertRecommendedImage(t)
+                }
                 mainView.refreshList(t, next)
             }
         }

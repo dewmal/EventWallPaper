@@ -95,4 +95,11 @@
     <string name="oom_toast">Out of memory occurs. Please contact the develop to solve this. :(</string>
 
     <string name="failed_to_send_request">Failed to communicate with backend</string>
+
+    <string name="photo_by">photo by</string>
+    <string name="recommended_by">recommended by</string>
+    <string name="author_default_name">JuniperPhoton</string>
+    <string name="loading">Loading…</string>
+    <string name="recommended_tag">Recommended</string>
+    <string name="copied_tag">COPIED :D</string>
 </resources>
