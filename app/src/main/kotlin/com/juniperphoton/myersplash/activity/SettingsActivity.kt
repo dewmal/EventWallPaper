@@ -8,9 +8,9 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.imagepipeline.core.ImagePipelineFactory
+import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
-import com.juniperphoton.myersplash.common.Constant
 import com.juniperphoton.myersplash.event.RefreshUIEvent
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 import com.juniperphoton.myersplash.utils.ToastService
@@ -23,6 +23,9 @@ import org.greenrobot.eventbus.EventBus
 class SettingsActivity : BaseActivity() {
     companion object {
         private const val TAG = "SettingsActivity"
+
+        private val savingQualitySettingsKey = App.instance.getString(R.string.preference_key_saving_quality)
+        private val listQualitySettingsKey = App.instance.getString(R.string.preference_key_list_quality)
     }
 
     private lateinit var savingStrings: Array<String>
@@ -69,10 +72,10 @@ class SettingsActivity : BaseActivity() {
         loadingStrings = arrayOf(getString(R.string.settings_loading_large), getString(R.string.settings_loading_small),
                 getString(R.string.settings_loading_thumb))
 
-        val savingChoice = LocalSettingHelper.getInt(this, Constant.SAVING_QUALITY_CONFIG_NAME, 1)
+        val savingChoice = LocalSettingHelper.getInt(this, savingQualitySettingsKey, 1)
         savingQualitySettings.content = savingStrings[savingChoice]
 
-        val loadingChoice = LocalSettingHelper.getInt(this, Constant.LOADING_QUALITY_CONFIG_NAME, 0)
+        val loadingChoice = LocalSettingHelper.getInt(this, listQualitySettingsKey, 0)
         loadingQualitySettings.content = loadingStrings[loadingChoice]
     }
 
@@ -92,12 +95,12 @@ class SettingsActivity : BaseActivity() {
 
     @OnClick(R.id.saving_quality_settings)
     internal fun setSavingQuality(view: View) {
-        val choice = LocalSettingHelper.getInt(this, Constant.SAVING_QUALITY_CONFIG_NAME, 1)
+        val choice = LocalSettingHelper.getInt(this, savingQualitySettingsKey, 1)
 
         val builder = AlertDialog.Builder(this@SettingsActivity)
         builder.setTitle(getString(R.string.settings_saving_quality))
         builder.setSingleChoiceItems(savingStrings, choice) { dialog, which ->
-            LocalSettingHelper.putInt(this@SettingsActivity, Constant.SAVING_QUALITY_CONFIG_NAME, which)
+            LocalSettingHelper.putInt(this@SettingsActivity, savingQualitySettingsKey, which)
             dialog.dismiss()
             savingQualitySettings.content = savingStrings[which]
         }
@@ -106,13 +109,13 @@ class SettingsActivity : BaseActivity() {
 
     @OnClick(R.id.loading_quality_settings)
     internal fun setLoadingQuality(view: View) {
-        val choice = LocalSettingHelper.getInt(this, Constant.LOADING_QUALITY_CONFIG_NAME, 0)
+        val choice = LocalSettingHelper.getInt(this, listQualitySettingsKey, 0)
 
         val builder = AlertDialog.Builder(this@SettingsActivity)
         builder.setTitle(getString(R.string.settings_loading_quality))
         builder.setSingleChoiceItems(loadingStrings, choice
         ) { dialog, which ->
-            LocalSettingHelper.putInt(this@SettingsActivity, Constant.LOADING_QUALITY_CONFIG_NAME, which)
+            LocalSettingHelper.putInt(this@SettingsActivity, listQualitySettingsKey, which)
             dialog.dismiss()
             loadingQualitySettings.content = loadingStrings[which]
         }

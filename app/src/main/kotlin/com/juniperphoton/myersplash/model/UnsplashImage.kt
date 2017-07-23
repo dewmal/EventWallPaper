@@ -3,7 +3,7 @@ package com.juniperphoton.myersplash.model
 import android.graphics.Color
 import com.google.gson.annotations.SerializedName
 import com.juniperphoton.myersplash.App
-import com.juniperphoton.myersplash.common.Constant
+import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.provider.WallpaperWidgetProvider
 import com.juniperphoton.myersplash.utils.FileUtil
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
@@ -25,11 +25,15 @@ class UnsplashImage : Serializable {
                     thumb = WallpaperWidgetProvider.thumbUrl
                 }
                 user = UnsplashUser().apply {
-                    userName = "JuniperPhoton"
-                    name = "JuniperPhoton"
+                    val authorName = App.instance.getString(R.string.author_default_name)
+                    userName = authorName
+                    name = authorName
                 }
             }
         }
+
+        private val savingQualitySettingsKey = App.instance.getString(R.string.preference_key_saving_quality)
+        private val listQualitySettingsKey = App.instance.getString(R.string.preference_key_list_quality)
     }
 
     @SerializedName("id")
@@ -79,7 +83,7 @@ class UnsplashImage : Serializable {
 
     val listUrl: String?
         get() {
-            val choice = LocalSettingHelper.getInt(App.instance, Constant.LOADING_QUALITY_CONFIG_NAME, 0)
+            val choice = LocalSettingHelper.getInt(App.instance, listQualitySettingsKey, 0)
             var url: String? = null
             if (urls == null) {
                 return null
@@ -94,8 +98,7 @@ class UnsplashImage : Serializable {
 
     val downloadUrl: String?
         get() {
-            val choice = LocalSettingHelper.getInt(App.instance,
-                    Constant.SAVING_QUALITY_CONFIG_NAME, 1)
+            val choice = LocalSettingHelper.getInt(App.instance, savingQualitySettingsKey, 1)
             var url: String? = null
             when (choice) {
                 0 -> url = urls!!.raw
@@ -107,7 +110,7 @@ class UnsplashImage : Serializable {
 
     private val tagForDownloadUrl: String
         get() {
-            val choice = LocalSettingHelper.getInt(App.instance, Constant.SAVING_QUALITY_CONFIG_NAME, 1)
+            val choice = LocalSettingHelper.getInt(App.instance, savingQualitySettingsKey, 1)
             var tag = ""
             when (choice) {
                 0 -> tag = "raw"
