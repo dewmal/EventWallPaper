@@ -12,8 +12,10 @@ android {
         applicationId "com.juniperphoton.myersplash"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 253
-        versionName "2.5.2"
+        versionCode 260
+        versionName "2.6.0"
+
+        buildConfigField 'String', "UNSPLASH_APP_KEY", "\"403d9934ce4bb8dbef44765692144e8c6fac6d2698950cb40b07397d6c6635fe\""
     }
 
     sourceSets {
@@ -34,6 +36,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:cardview-v7:25.3.1'
     compile 'com.android.support:customtabs:25.3.1'
+    compile 'com.android.support:palette-v7:25.3.1'
 
     compile 'com.facebook.fresco:fresco:0.12.0'
     compile 'com.github.rahatarmanahmed:circularprogressview:2.5.0'
@@ -43,18 +46,18 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
     compile 'com.google.code.gson:gson:2.7'
-    compile 'com.jakewharton:butterknife:8.4.0'
+    compile 'com.jakewharton:butterknife:8.7.0'
     compile 'moe.feng:AlipayZeroSdk:1.1'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.android:flexbox:0.3.0-alpha3'
 
-    kapt 'com.jakewharton:butterknife-compiler:8.4.0'
+    kapt 'io.realm:realm-annotations:3.0.0'
+    kapt 'io.realm:realm-annotations-processor:3.0.0'
 
-    kapt "io.realm:realm-annotations:3.0.0"
-    kapt "io.realm:realm-annotations-processor:3.0.0"
-}
+    kapt 'com.jakewharton:butterknife-compiler:8.7.0'
 
-repositories {
-    mavenCentral()
+    //dagger
+    compile 'com.google.dagger:dagger:2.11'
+    kapt 'com.google.dagger:dagger-compiler:2.11'
 }

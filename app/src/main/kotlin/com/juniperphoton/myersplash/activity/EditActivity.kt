@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.annotation.WorkerThread
 import android.support.design.widget.FloatingActionButton
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
@@ -27,10 +26,7 @@ import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.getScreenHeight
 import com.juniperphoton.myersplash.extension.hasNavigationBar
-import com.juniperphoton.myersplash.utils.FileUtil
-import com.juniperphoton.myersplash.utils.IntentUtil
-import com.juniperphoton.myersplash.utils.SimpleObserver
-import com.juniperphoton.myersplash.utils.ToastService
+import com.juniperphoton.myersplash.utils.*
 import rx.Observable
 import rx.android.schedulers.AndroidSchedulers
 import rx.schedulers.Schedulers
@@ -92,6 +88,7 @@ class EditActivity : BaseActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        this.intent = intent
         loadImage()
     }
 
@@ -140,7 +137,7 @@ class EditActivity : BaseActivity() {
     private fun updatePreviewImage() {
         val screenHeight = previewImageView.height
 
-        Log.d(TAG, "pre scale: screen height:$screenHeight")
+        Pasteur.d(TAG, "pre scale: screen height:$screenHeight")
 
         val request = ImageRequestBuilder.newBuilderWithSource(fileUri)
                 .setResizeOptions(ResizeOptions(screenHeight, screenHeight))
@@ -168,7 +165,7 @@ class EditActivity : BaseActivity() {
     }
 
     private fun setAs(path: String) {
-        Log.d(TAG, "set as path:$path")
+        Pasteur.d(TAG, "set as path:$path")
         val intent = IntentUtil.getSetAsWallpaperIntent(File(path))
         App.instance.startActivity(intent)
     }
@@ -217,9 +214,9 @@ class EditActivity : BaseActivity() {
         // Decode file with specified sample size
         val bm = decodeBitmapFromFile(fileUri, opt) ?: throw IllegalStateException("Can't decode file")
 
-        Log.d(TAG, "file decoded, sample size:${opt.inSampleSize}, originalHeight=$originalHeight, screenH=$screenHeight")
+        Pasteur.d(TAG, "file decoded, sample size:${opt.inSampleSize}, originalHeight=$originalHeight, screenH=$screenHeight")
 
-        Log.d(TAG, "decoded size: ${bm.width} x ${bm.height}")
+        Pasteur.d(TAG, "decoded size: ${bm.width} x ${bm.height}")
 
         val c = Canvas(bm)
 
@@ -233,7 +230,7 @@ class EditActivity : BaseActivity() {
         // Draw the mask
         c.drawRect(0f, 0f, bm.width.toFloat(), bm.height.toFloat(), paint)
 
-        Log.d(TAG, "final bitmap drawn")
+        Pasteur.d(TAG, "final bitmap drawn")
 
         val finalFile = File(FileUtil.galleryPath, SAVED_FILE_NAME)
         val fos = FileOutputStream(finalFile)

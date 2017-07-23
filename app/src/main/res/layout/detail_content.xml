@@ -45,7 +45,7 @@
                     android:id="@+id/detail_photo_by_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="photo by"
+                    android:text="@string/photo_by"
                     android:textColor="@android:color/black"
                     android:textSize="12dp"/>
 
@@ -131,7 +131,7 @@
                             android:layout_marginTop="8dp"
                             android:ellipsize="end"
                             android:maxLines="1"
-                            android:text="COPIED :D"
+                            android:text="@string/copied_tag"
                             android:textColor="@android:color/black"
                             android:textSize="16sp"
                             android:textStyle="bold"/>

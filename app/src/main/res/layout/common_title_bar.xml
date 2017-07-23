@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:contentDescription="@string/image_desc"
-            android:src="@drawable/ic_arrow_back_black_24dp"/>
+            android:src="@drawable/ic_arrow_back_white"/>
     </FrameLayout>
 
     <TextView

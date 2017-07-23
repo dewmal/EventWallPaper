@@ -57,7 +57,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_brightness_6_black_24dp"
+            android:drawableLeft="@drawable/ic_brightness_white"
             android:drawablePadding="12dp"
             android:gravity="center_vertical"
             android:padding="12dp"
@@ -108,7 +108,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginRight="12dp"
-            android:src="@drawable/ic_apps_black_24dp"
+            android:src="@drawable/ic_apps_black"
             app:backgroundTint="@color/LightGray"
             app:fabSize="mini"/>
 

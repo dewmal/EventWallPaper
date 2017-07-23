@@ -30,10 +30,8 @@ class DownloadCompleteView(context: Context, attrs: AttributeSet) : FrameLayout(
     lateinit var setAsTextView: TextView
 
     var filePath: String? = null
-    private var ctx: Context? = null
 
     init {
-        ctx = context
         LayoutInflater.from(context).inflate(R.layout.widget_download_complete_view, this)
         ButterKnife.bind(this)
     }

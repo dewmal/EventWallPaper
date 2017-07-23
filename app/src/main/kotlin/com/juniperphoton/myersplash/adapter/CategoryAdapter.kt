@@ -12,16 +12,19 @@ import com.juniperphoton.myersplash.R
 
 class CategoryAdapter(val context: Context, val list: MutableList<String>) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
     companion object ResMap {
-        const val BUILDINGS = "Buildings"
-        const val FOOD = "Food"
-        const val NATURE = "Nature"
-        const val TECHNOLOGY = "Technology"
-        const val TRAVEL = "Travel"
-        const val PEOPLE = "People"
-        const val SEA = "Sea"
-        const val DUSK = "Dusk"
-        const val MOUNTAIN = "Mountain"
-        const val GALAXY = "Galaxy"
+        val KEYWORDS = mutableListOf(
+                "Buildings",
+                "Food",
+                "Nature",
+                "Technology",
+                "Travel",
+                "People",
+                "Sea",
+                "Dusk",
+                "Mountain",
+                "Galaxy",
+                "Summer"
+        )
     }
 
     var onClickItem: ((string: String) -> Unit)? = null
@@ -40,7 +43,7 @@ class CategoryAdapter(val context: Context, val list: MutableList<String>) : Rec
 
     inner class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         @BindView(R.id.category_text)
-        @JvmField var categoryName: TextView? = null
+        lateinit var categoryName: TextView
 
         private var category: String? = null
 
@@ -55,7 +58,7 @@ class CategoryAdapter(val context: Context, val list: MutableList<String>) : Rec
 
         fun bind(cate: String) {
             category = cate
-            categoryName?.text = cate
+            categoryName.text = cate
         }
     }
 }

@@ -7,6 +7,7 @@ import io.realm.annotations.PrimaryKey
 
 open class DownloadItem() : RealmObject() {
     companion object {
+        const val DOWNLOAD_STATUS_INVALID = -1
         const val DOWNLOAD_STATUS_DOWNLOADING = 0
         const val DOWNLOAD_STATUS_FAILED = 1
         const val DOWNLOAD_STATUS_OK = 2

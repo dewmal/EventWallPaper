@@ -3,16 +3,42 @@ package com.juniperphoton.myersplash.model
 import android.graphics.Color
 import com.google.gson.annotations.SerializedName
 import com.juniperphoton.myersplash.App
-import com.juniperphoton.myersplash.common.Constant
+import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.provider.WallpaperWidgetProvider
 import com.juniperphoton.myersplash.utils.FileUtil
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 import java.io.File
 import java.io.Serializable
 
-@Suppress("UNUSED")
+@Suppress("unused")
 class UnsplashImage : Serializable {
+    companion object {
+        fun createRecommendedImage(): UnsplashImage {
+            return UnsplashImage().apply {
+                isUnsplash = false
+                id = WallpaperWidgetProvider.dateString
+                urls = ImageUrl().apply {
+                    raw = WallpaperWidgetProvider.downloadUrl
+                    full = WallpaperWidgetProvider.downloadUrl
+                    regular = WallpaperWidgetProvider.thumbUrl
+                    small = WallpaperWidgetProvider.thumbUrl
+                    thumb = WallpaperWidgetProvider.thumbUrl
+                }
+                user = UnsplashUser().apply {
+                    val authorName = App.instance.getString(R.string.author_default_name)
+                    userName = authorName
+                    name = authorName
+                }
+            }
+        }
+
+        private val savingQualitySettingsKey = App.instance.getString(R.string.preference_key_saving_quality)
+        private val listQualitySettingsKey = App.instance.getString(R.string.preference_key_list_quality)
+    }
+
     @SerializedName("id")
-    val id: String? = null
+    var id: String? = null
+        private set
 
     @SerializedName("created_at")
     private val createdAt: String? = null
@@ -24,10 +50,14 @@ class UnsplashImage : Serializable {
     private val likes: Int = 0
 
     @SerializedName("user")
-    private val user: UnsplashUser? = null
+    private var user: UnsplashUser? = null
 
     @SerializedName("urls")
-    private val urls: ImageUrl? = null
+    private var urls: ImageUrl? = null
+        private set
+
+    var isUnsplash: Boolean = true
+        private set
 
     val pathForDownload: String
         get() = FileUtil.galleryPath + File.separator + fileNameForDownload
@@ -53,23 +83,22 @@ class UnsplashImage : Serializable {
 
     val listUrl: String?
         get() {
-            val choice = LocalSettingHelper.getInt(App.instance, Constant.LOADING_QUALITY_CONFIG_NAME, 0)
+            val choice = LocalSettingHelper.getInt(App.instance, listQualitySettingsKey, 0)
             var url: String? = null
             if (urls == null) {
                 return null
             }
             when (choice) {
-                0 -> url = urls.regular
-                1 -> url = urls.small
-                2 -> url = urls.thumb
+                0 -> url = urls!!.regular
+                1 -> url = urls!!.small
+                2 -> url = urls!!.thumb
             }
             return url
         }
 
     val downloadUrl: String?
         get() {
-            val choice = LocalSettingHelper.getInt(App.instance,
-                    Constant.SAVING_QUALITY_CONFIG_NAME, 1)
+            val choice = LocalSettingHelper.getInt(App.instance, savingQualitySettingsKey, 1)
             var url: String? = null
             when (choice) {
                 0 -> url = urls!!.raw
@@ -81,7 +110,7 @@ class UnsplashImage : Serializable {
 
     private val tagForDownloadUrl: String
         get() {
-            val choice = LocalSettingHelper.getInt(App.instance, Constant.SAVING_QUALITY_CONFIG_NAME, 1)
+            val choice = LocalSettingHelper.getInt(App.instance, savingQualitySettingsKey, 1)
             var tag = ""
             when (choice) {
                 0 -> tag = "raw"
@@ -100,17 +129,17 @@ class UnsplashImage : Serializable {
 
 class ImageUrl : Serializable {
     @SerializedName("raw")
-    val raw: String? = null
+    var raw: String? = null
 
     @SerializedName("full")
-    val full: String? = null
+    var full: String? = null
 
     @SerializedName("regular")
-    val regular: String? = null
+    var regular: String? = null
 
     @SerializedName("small")
-    val small: String? = null
+    var small: String? = null
 
     @SerializedName("thumb")
-    val thumb: String? = null
+    var thumb: String? = null
 }

@@ -21,7 +21,7 @@ import java.util.*
 
 class DownloadService : IntentService(TAG) {
     companion object {
-        private val TAG = "DownloadService"
+        private const val TAG = "DownloadService"
         private val subscriptionMap = HashMap<String, Subscriber<*>>()
     }
 

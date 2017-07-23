@@ -6,19 +6,19 @@ import java.io.Serializable
 
 class UnsplashUser : Serializable {
     @SerializedName("id")
-    private val id: String? = null
+    var id: String? = null
 
     @SerializedName("username")
-    private val userName: String? = null
+    var userName: String? = null
 
     @SerializedName("name")
-    val name: String? = null
+    var name: String? = null
 
     @SerializedName("links")
-    private val links: ProfileUrl? = null
+    var links: ProfileUrl? = null
 
     val homeUrl: String?
-        get() = links!!.html
+        get() = links?.html
 }
 
 class ProfileUrl : Serializable {

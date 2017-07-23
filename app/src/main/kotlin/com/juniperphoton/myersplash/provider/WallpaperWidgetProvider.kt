@@ -26,24 +26,24 @@ import java.util.*
 
 class WallpaperWidgetProvider : AppWidgetProvider() {
     companion object {
-        private val TAG = "WallpaperWidgetProvider"
+        private const val TAG = "WallpaperWidgetProvider"
+
+        var thumbUrl: String? = null
+            get() {
+                return "${CloudService.AUTO_CHANGE_WALLPAPER_THUMB}$dateString.jpg"
+            }
+
+        var downloadUrl: String? = null
+            get() {
+                return "${CloudService.AUTO_CHANGE_WALLPAPER}$dateString.jpg"
+            }
+
+        var dateString: String? = null
+            get() {
+                val date = Calendar.getInstance(TimeZone.getDefault())
+                return SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(date.time)
+            }
     }
-
-    private var thumbUrl: String? = null
-        get() {
-            return "${CloudService.AUTO_CHANGE_WALLPAPER_THUMB}$dateString.jpg"
-        }
-
-    private var downloadUrl: String? = null
-        get() {
-            return "${CloudService.AUTO_CHANGE_WALLPAPER}$dateString.jpg"
-        }
-
-    private var dateString: String? = null
-        get() {
-            val date = Calendar.getInstance(TimeZone.getDefault())
-            return SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(date.time)
-        }
 
     private var dateStringDisplay: String? = null
         get() {

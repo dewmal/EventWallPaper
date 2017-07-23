@@ -15,7 +15,7 @@ import com.juniperphoton.myersplash.service.DownloadService
 import java.io.File
 
 object NotificationUtil {
-    private val TAG = "NotificationUtil"
+    private const val TAG = "NotificationUtil"
 
     private val notificationManager: NotificationManager
         get() = App.instance.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -41,7 +41,7 @@ object NotificationUtil {
             val bm = BitmapFactory.decodeFile(it.toString())
             builder.setLargeIcon(bm)
         }
-        builder.addAction(R.drawable.ic_replay_white_48dp, App.instance.getString(R.string.retry_act),
+        builder.addAction(R.drawable.ic_replay_white, App.instance.getString(R.string.retry_act),
                 resultPendingIntent)
         notificationManager.notify(id, builder.build())
     }

@@ -23,16 +23,16 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
     }
 
     @BindView(R.id.more_btn)
-    @JvmField var moreBtn: View? = null
+    lateinit var moreBtn: View
 
     @BindView(R.id.pivot_item_0)
-    @JvmField var item0: TextView? = null
+    lateinit var item0: TextView
 
     @BindView(R.id.pivot_item_1)
-    @JvmField var item1: TextView? = null
+    lateinit var item1: TextView
 
     @BindView(R.id.pivot_item_2)
-    @JvmField var item2: TextView? = null
+    lateinit var item2: TextView
 
     var onSingleTap: ((Int) -> Unit)? = null
     var onDoubleTap: ((Int) -> Unit)? = null
@@ -87,7 +87,7 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
             R.id.menu_about to AboutActivity::class.java
     )
 
-    private var itemsMap: Map<Int, View?>? = null
+    private var itemsMap: Map<Int, View>
 
     init {
         LayoutInflater.from(context).inflate(R.layout.pivot_layout, this, true)
@@ -100,9 +100,9 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
         )
 
         gestureDetector = GestureDetector(context, gestureListener)
-        item0?.setOnTouchListener(onTouchListener)
-        item1?.setOnTouchListener(onTouchListener)
-        item2?.setOnTouchListener(onTouchListener)
+        item0.setOnTouchListener(onTouchListener)
+        item1.setOnTouchListener(onTouchListener)
+        item2.setOnTouchListener(onTouchListener)
     }
 
     @OnClick(R.id.pivot_item_0)
@@ -121,8 +121,8 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
     }
 
     private fun toggleAnimation(prevIndex: Int, newIndex: Int) {
-        val prevView = itemsMap!![prevIndex]
-        val nextView = itemsMap!![newIndex]
+        val prevView = itemsMap[prevIndex]
+        val nextView = itemsMap[newIndex]
 
         prevView?.animate()?.alpha(0.3f)?.setDuration(300)?.start()
         nextView?.animate()?.alpha(1f)?.setDuration(300)?.start()
@@ -130,7 +130,7 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
 
     @OnClick(R.id.more_btn)
     internal fun onClickMore() {
-        val popupMenu = PopupMenu(context, moreBtn!!)
+        val popupMenu = PopupMenu(context, moreBtn)
         popupMenu.inflate(R.menu.main)
         popupMenu.gravity = Gravity.END
         popupMenu.setOnMenuItemClickListener { item ->
