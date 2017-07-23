@@ -54,6 +54,21 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/about_sub_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/for_windows_amp_android"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:textStyle="normal"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/about_title_layout"/>
+
+        <TextView
             android:id="@+id/version_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -68,23 +83,8 @@
             android:textStyle="bold"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/about_title_layout"
+            app:layout_constraintTop_toBottomOf="@id/about_sub_title"
             tools:text="2.0.0"/>
-
-        <TextView
-            android:id="@+id/about_sub_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="12dp"
-            android:fontFamily="sans-serif-light"
-            android:text="@string/for_windows_amp_android"
-            android:textColor="@android:color/white"
-            android:textSize="12sp"
-            android:textStyle="normal"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/version_text_view"/>
 
         <LinearLayout
             android:layout_width="0dp"
@@ -93,11 +93,11 @@
             android:orientation="vertical"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/about_sub_title">
+            app:layout_constraintTop_toBottomOf="@+id/version_text_view">
 
             <TextView
                 style="@style/AboutSubTitleTextView"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="30dp"
                 android:text="@string/credit"/>
 
             <TextView
@@ -114,7 +114,7 @@
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/about_row_height"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:gravity="center"
                 android:orientation="horizontal">
@@ -122,25 +122,22 @@
                 <ImageView
                     android:id="@+id/email_item"
                     style="@style/AboutContactItem"
-                    android:layout_marginRight="0dp"
                     android:src="@drawable/ic_email"/>
 
                 <ImageView
                     android:id="@+id/github_item"
                     style="@style/AboutContactItem"
-                    android:layout_marginStart="0dp"
                     android:src="@drawable/ic_github_icon"/>
 
                 <ImageView
                     android:id="@+id/twitter_item"
                     style="@style/AboutContactItem"
-                    android:layout_marginStart="0dp"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/ic_twitter"/>
 
                 <ImageView
                     android:id="@+id/weibo_item"
                     style="@style/AboutContactItem"
-                    android:layout_marginStart="0dp"
                     android:src="@drawable/ic_weibo_social_logo"/>
             </LinearLayout>
 
