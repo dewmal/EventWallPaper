@@ -13,7 +13,6 @@ import butterknife.ButterKnife
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.view.SimpleDraweeView
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.common.Constant
 import com.juniperphoton.myersplash.extension.getDarker
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
@@ -49,7 +48,7 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
 
         val backColor = image.themeColor.getDarker(0.7f)
 
-        if (LocalSettingHelper.getBoolean(context, Constant.QUICK_DOWNLOAD_CONFIG_NAME, true)) {
+        if (LocalSettingHelper.getBoolean(context, context.getString(R.string.preference_key_quick_download), true)) {
             if (!image.hasDownloaded()) {
                 downloadRL.visibility = View.VISIBLE
                 downloadRL.setOnClickListener {

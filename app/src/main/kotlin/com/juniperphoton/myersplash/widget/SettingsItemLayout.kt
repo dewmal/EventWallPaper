@@ -10,6 +10,7 @@ import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.utils.LocalSettingHelper
 
 class SettingsItemLayout(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     @BindView(R.id.settings_item_title)
@@ -42,6 +43,8 @@ class SettingsItemLayout(context: Context, attrs: AttributeSet) : FrameLayout(co
             contentTextView.text = value
         }
 
+    var preferenceKey: String? = null
+
     init {
         LayoutInflater.from(context).inflate(R.layout.row_settings_item, this, true)
 
@@ -52,7 +55,13 @@ class SettingsItemLayout(context: Context, attrs: AttributeSet) : FrameLayout(co
         val content = array.getString(R.styleable.SettingsItemLayout_setting_content)
         val hasCheckbox = array.getBoolean(R.styleable.SettingsItemLayout_has_checkbox, false)
         val showDivider = array.getBoolean(R.styleable.SettingsItemLayout_show_divider, true)
+        preferenceKey = array.getString(R.styleable.SettingsItemLayout_preference_key)
         array.recycle()
+
+        preferenceKey?.let {
+            val value = LocalSettingHelper.getBoolean(context, it, true)
+            this.checked = value
+        }
 
         if (title != null) {
             titleTextView.text = title
@@ -70,8 +79,15 @@ class SettingsItemLayout(context: Context, attrs: AttributeSet) : FrameLayout(co
             dividerView.visibility = View.GONE
         }
 
+        setOnClickListener {
+            checked = !checked
+        }
+
         compoundButton.setOnCheckedChangeListener { _, isChecked ->
             onCheckedChanged?.invoke(isChecked)
+            preferenceKey?.let {
+                LocalSettingHelper.putBoolean(context, it, isChecked)
+            }
         }
     }
 }

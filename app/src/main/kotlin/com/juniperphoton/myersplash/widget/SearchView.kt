@@ -114,7 +114,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
             detailView.showDetailedImage(rectF, unsplashImage, itemView)
         }
 
-        val component = DaggerRepoComponent.builder().repoModule(RepoModule(-1, mainListFragment)).build()
+        val component = DaggerRepoComponent.builder().repoModule(RepoModule(context, -1, mainListFragment)).build()
         component.inject(presenter)
 
         activity.supportFragmentManager.beginTransaction().replace(R.id.search_result_root, mainListFragment)

@@ -88,6 +88,7 @@ class EditActivity : BaseActivity() {
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
+        this.intent = intent
         loadImage()
     }
 

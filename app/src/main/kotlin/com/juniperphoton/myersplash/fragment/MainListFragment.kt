@@ -159,7 +159,6 @@ class MainListFragment : Fragment(), Contract.MainView {
 
     override fun setUserVisibleHint(isVisibleToUser: Boolean) {
         super.setUserVisibleHint(isVisibleToUser)
-        Pasteur.d(TAG, "isVisibleToUser:" + isVisibleToUser)
         visible = isVisibleToUser
 
         if (visible && !loadedData && viewLoaded) {
@@ -182,7 +181,9 @@ class MainListFragment : Fragment(), Contract.MainView {
     }
 
     private fun initView() {
-        refreshLayout.setOnRefreshListener { requestRefresh() }
+        refreshLayout.setOnRefreshListener {
+            mainPresenter?.refresh()
+        }
         contentRecyclerView.layoutManager = LinearLayoutManager(activity,
                 LinearLayoutManager.VERTICAL, false)
         contentRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {

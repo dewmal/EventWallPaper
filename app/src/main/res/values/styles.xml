@@ -96,7 +96,7 @@
 
     <style name="AboutContactItem">
         <item name="android:layout_width">@dimen/about_contact_item_size</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">@dimen/about_contact_item_size</item>
         <item name="android:padding">12dp</item>
         <item name="android:contentDescription">@string/image_desc</item>
         <item name="android:background">@drawable/ripple_rect</item>
