@@ -6,6 +6,20 @@ apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'realm-android'
 
 android {
+    signingConfigs {
+        release {
+            Properties properties = new Properties()
+            properties.load(project.rootProject.file('local.properties').newDataInputStream())
+            def key = properties.getProperty('key')
+            def password = properties.getProperty('password')
+
+            keyAlias key
+            keyPassword password
+            storeFile file('keystore/ms.jks')
+            storePassword password
+        }
+    }
+
     compileSdkVersion 25
     buildToolsVersion "25.0.3"
     defaultConfig {
@@ -15,7 +29,24 @@ android {
         versionCode 260
         versionName "2.6.0"
 
-        buildConfigField 'String', "UNSPLASH_APP_KEY", "\"403d9934ce4bb8dbef44765692144e8c6fac6d2698950cb40b07397d6c6635fe\""
+        Properties properties = new Properties()
+        properties.load(project.rootProject.file('local.properties').newDataInputStream())
+        def unsplashKey = properties.getProperty('unsplashKey')
+
+        buildConfigField 'String', "UNSPLASH_APP_KEY", "\"" + unsplashKey + "\""
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    output.outputFile = file("$project.buildDir/outputs/apk/myersplash_release_" +
+                            "${defaultConfig.versionName}.${defaultConfig.versionCode}.apk")
+                }
+            }
+        }
     }
 
     sourceSets {
