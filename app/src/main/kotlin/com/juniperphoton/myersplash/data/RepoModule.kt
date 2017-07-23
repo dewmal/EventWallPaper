@@ -1,11 +1,13 @@
 package com.juniperphoton.myersplash.data
 
+import android.content.Context
 import com.juniperphoton.myersplash.model.UnsplashCategory
 import dagger.Module
 import dagger.Provides
 
 @Module
-class RepoModule(private val pos: Int,
+class RepoModule(private val context: Context,
+                 private val pos: Int,
                  private val view: Contract.MainView) {
     @Provides
     fun providesCategory(): UnsplashCategory {
@@ -18,7 +20,8 @@ class RepoModule(private val pos: Int,
     }
 
     @Provides
-    fun providesView(): Contract.MainView {
-        return view
-    }
+    fun providesView(): Contract.MainView = view
+
+    @Provides
+    fun providesPreferenceRepo(): PreferenceRepo = PreferenceRepo(context)
 }

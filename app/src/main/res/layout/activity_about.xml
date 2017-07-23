@@ -106,7 +106,7 @@
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
                 android:gravity="center"
-                android:text="@string/credit_content"/>
+                android:text="@string/settings_credit_content"/>
 
             <TextView
                 style="@style/AboutSubTitleTextView"
@@ -122,22 +122,26 @@
                 <ImageView
                     android:id="@+id/email_item"
                     style="@style/AboutContactItem"
+                    android:contentDescription="@string/image_desc"
                     android:src="@drawable/ic_email"/>
 
                 <ImageView
                     android:id="@+id/github_item"
                     style="@style/AboutContactItem"
+                    android:contentDescription="@string/image_desc"
                     android:src="@drawable/ic_github_icon"/>
 
                 <ImageView
                     android:id="@+id/twitter_item"
                     style="@style/AboutContactItem"
+                    android:contentDescription="@string/image_desc"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_twitter"/>
 
                 <ImageView
                     android:id="@+id/weibo_item"
                     style="@style/AboutContactItem"
+                    android:contentDescription="@string/image_desc"
                     android:src="@drawable/ic_weibo_social_logo"/>
             </LinearLayout>
 

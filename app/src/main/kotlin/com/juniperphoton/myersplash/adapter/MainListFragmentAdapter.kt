@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentStatePagerAdapter
 import android.view.View
+import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.data.DaggerRepoComponent
 import com.juniperphoton.myersplash.data.MainListPresenter
 import com.juniperphoton.myersplash.data.RepoModule
@@ -18,7 +19,7 @@ class MainListFragmentAdapter(private var callback: ((RectF, UnsplashImage, View
         val fragment = MainListFragment()
 
         val presenter = MainListPresenter()
-        val component = DaggerRepoComponent.builder().repoModule(RepoModule(position, fragment)).build()
+        val component = DaggerRepoComponent.builder().repoModule(RepoModule(App.instance, position, fragment)).build()
         component.inject(presenter)
 
         fragment.setPresenter(presenter)

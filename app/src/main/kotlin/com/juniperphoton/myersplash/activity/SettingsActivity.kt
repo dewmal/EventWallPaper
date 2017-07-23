@@ -40,34 +40,40 @@ class SettingsActivity : BaseActivity() {
     @BindView(R.id.clear_cache_settings)
     lateinit var clearCacheSettings: SettingsItemLayout
 
+    @BindView(R.id.recommendation_settings)
+    lateinit var recommendationSettings: SettingsItemLayout
+
+    @BindView(R.id.recommendation_preview)
+    lateinit var recommendationPreview: View
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
         ButterKnife.bind(this)
 
-        val quickDownload = LocalSettingHelper.getBoolean(this, Constant.QUICK_DOWNLOAD_CONFIG_NAME, true)
-        quickDownloadSettings.checked = quickDownload
         quickDownloadSettings.onCheckedChanged = {
-            LocalSettingHelper.putBoolean(this@SettingsActivity, Constant.QUICK_DOWNLOAD_CONFIG_NAME, it)
+            EventBus.getDefault().post(RefreshUIEvent())
         }
 
-        savingStrings = arrayOf(getString(R.string.saving_highest), getString(R.string.saving_high),
-                getString(R.string.saving_medium))
+        recommendationSettings.onCheckedChanged = {
+            recommendationPreview.visibility = if (it) View.VISIBLE else View.GONE
+        }
 
-        loadingStrings = arrayOf(getString(R.string.loading_large), getString(R.string.loading_small),
-                getString(R.string.loading_thumb))
+        if (!recommendationSettings.checked) {
+            recommendationPreview.visibility = View.GONE
+        }
+
+        savingStrings = arrayOf(getString(R.string.settings_saving_highest), getString(R.string.settings_saving_high),
+                getString(R.string.settings_saving_medium))
+
+        loadingStrings = arrayOf(getString(R.string.settings_loading_large), getString(R.string.settings_loading_small),
+                getString(R.string.settings_loading_thumb))
 
         val savingChoice = LocalSettingHelper.getInt(this, Constant.SAVING_QUALITY_CONFIG_NAME, 1)
         savingQualitySettings.content = savingStrings[savingChoice]
 
         val loadingChoice = LocalSettingHelper.getInt(this, Constant.LOADING_QUALITY_CONFIG_NAME, 0)
         loadingQualitySettings.content = loadingStrings[loadingChoice]
-    }
-
-    @OnClick(R.id.quick_download_settings)
-    fun toggleQuickDownload(view: View) {
-        quickDownloadSettings.checked = !quickDownloadSettings.checked
-        EventBus.getDefault().post(RefreshUIEvent())
     }
 
     @OnClick(R.id.clear_cache_settings)
@@ -89,7 +95,7 @@ class SettingsActivity : BaseActivity() {
         val choice = LocalSettingHelper.getInt(this, Constant.SAVING_QUALITY_CONFIG_NAME, 1)
 
         val builder = AlertDialog.Builder(this@SettingsActivity)
-        builder.setTitle(getString(R.string.saving_quality))
+        builder.setTitle(getString(R.string.settings_saving_quality))
         builder.setSingleChoiceItems(savingStrings, choice) { dialog, which ->
             LocalSettingHelper.putInt(this@SettingsActivity, Constant.SAVING_QUALITY_CONFIG_NAME, which)
             dialog.dismiss()
@@ -103,7 +109,7 @@ class SettingsActivity : BaseActivity() {
         val choice = LocalSettingHelper.getInt(this, Constant.LOADING_QUALITY_CONFIG_NAME, 0)
 
         val builder = AlertDialog.Builder(this@SettingsActivity)
-        builder.setTitle(getString(R.string.loading_quality))
+        builder.setTitle(getString(R.string.settings_loading_quality))
         builder.setSingleChoiceItems(loadingStrings, choice
         ) { dialog, which ->
             LocalSettingHelper.putInt(this@SettingsActivity, Constant.LOADING_QUALITY_CONFIG_NAME, which)
