@@ -155,7 +155,7 @@ class EditActivity : BaseActivity() {
         if (maskView.alpha != 0f) {
             composeMask()
         } else if (fileUri != null) {
-            setAs(fileUri!!.toString())
+            setAs(File(fileUri!!.path))
         }
     }
 
@@ -164,9 +164,9 @@ class EditActivity : BaseActivity() {
         showingPreview = !showingPreview
     }
 
-    private fun setAs(path: String) {
-        Pasteur.d(TAG, "set as path:$path")
-        val intent = IntentUtil.getSetAsWallpaperIntent(File(path))
+    private fun setAs(file: File) {
+        Pasteur.d(TAG, "set as, file path:${file.absolutePath}")
+        val intent = IntentUtil.getSetAsWallpaperIntent(file)
         App.instance.startActivity(intent)
     }
 
@@ -179,8 +179,8 @@ class EditActivity : BaseActivity() {
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : SimpleObserver<File>() {
-                    override fun onNext(t: File) {
-                        setAs(t.absolutePath)
+                    override fun onNext(value: File) {
+                        setAs(value)
                     }
 
                     override fun onError(e: Throwable) {
