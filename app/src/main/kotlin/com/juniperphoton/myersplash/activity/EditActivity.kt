@@ -152,11 +152,7 @@ class EditActivity : BaseActivity() {
 
     @OnClick(R.id.edit_confirm_fab)
     fun onClickConfirm() {
-        if (maskView.alpha != 0f) {
-            composeMask()
-        } else if (fileUri != null) {
-            setAs(File(fileUri!!.path))
-        }
+        composeMask()
     }
 
     @OnClick(R.id.edit_preview_fab)
