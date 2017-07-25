@@ -84,6 +84,7 @@ open class MainListPresenter : Contract.MainPresenter {
             }
 
             override fun onError(e: Throwable) {
+                e.printStackTrace()
                 mainView.showToast(R.string.failed_to_send_request)
                 mainView.updateNoItemVisibility()
             }
