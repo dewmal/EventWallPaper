@@ -67,11 +67,10 @@ class UnsplashImage : Serializable {
 
     val themeColor: Int
         get() {
-            try {
-                return Color.parseColor(color)
+            return try {
+                Color.parseColor(color)
             } catch (e: Exception) {
-                e.printStackTrace()
-                return Color.TRANSPARENT
+                Color.BLACK
             }
         }
 
