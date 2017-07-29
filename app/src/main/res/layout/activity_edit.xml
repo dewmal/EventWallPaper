@@ -112,7 +112,7 @@
             app:backgroundTint="@color/LightGray"
             app:fabSize="mini"/>
 
-        <com.juniperphoton.flipperviewlib.FlipperView
+        <com.juniperphoton.flipperview.FlipperView
             android:id="@+id/edit_flipper_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -146,6 +146,6 @@
                     style="@style/DefaultRingProgress"
                     app:custom_progress="30"/>
             </FrameLayout>
-        </com.juniperphoton.flipperviewlib.FlipperView>
+        </com.juniperphoton.flipperview.FlipperView>
     </LinearLayout>
 </RelativeLayout>
