@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.facebook.drawee.view.SimpleDraweeView
-import com.juniperphoton.flipperviewlib.FlipperView
+import com.juniperphoton.flipperview.FlipperView
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.model.DownloadItem

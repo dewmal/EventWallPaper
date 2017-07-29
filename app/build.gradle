@@ -26,8 +26,8 @@ android {
         applicationId "com.juniperphoton.myersplash"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 261
-        versionName "2.6.1"
+        versionCode 262
+        versionName "2.6.2"
 
         Properties properties = new Properties()
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -56,7 +56,6 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(path: ':flipperviewlib')
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
@@ -82,6 +81,8 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.android:flexbox:0.3.0-alpha3'
+
+    compile 'com.juniperphoton:flipperview:1.1.0'
 
     kapt 'io.realm:realm-annotations:3.0.0'
     kapt 'io.realm:realm-annotations-processor:3.0.0'

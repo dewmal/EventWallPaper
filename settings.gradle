@@ -1,2 +1,1 @@
-include ':app', ':lib-java', ':flipperviewlib'
-project(':lib-java').projectDir = new File('library-java')
+include ':app'

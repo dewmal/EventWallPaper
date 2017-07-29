@@ -21,7 +21,7 @@ import com.facebook.drawee.backends.pipeline.PipelineDraweeController
 import com.facebook.drawee.view.SimpleDraweeView
 import com.facebook.imagepipeline.common.ResizeOptions
 import com.facebook.imagepipeline.request.ImageRequestBuilder
-import com.juniperphoton.flipperviewlib.FlipperView
+import com.juniperphoton.flipperview.FlipperView
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.getScreenHeight
