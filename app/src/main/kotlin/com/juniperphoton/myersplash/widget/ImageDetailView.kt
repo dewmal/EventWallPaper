@@ -30,7 +30,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import com.facebook.drawee.view.SimpleDraweeView
-import com.juniperphoton.flipperview.FlipperView
+import com.juniperphoton.flipperlayout.FlipperLayout
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.activity.EditActivity
@@ -57,9 +57,9 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         private const val RESULT_CODE = 10000
         private const val SHARE_TEXT = "Share %s's amazing photo from MyerSplash app. Download this photo: %s"
 
-        private const val DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD = 0
-        private const val DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING = 1
-        private const val DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK = 2
+        private const val DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD = 0
+        private const val DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING = 1
+        private const val DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK = 2
 
         private const val RESET_THRESHOLD = 150
         private const val MOVE_THRESHOLD = 10
@@ -121,11 +121,11 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     @BindView(R.id.copied_url_fl)
     lateinit var copiedLayout: FrameLayout
 
-    @BindView(R.id.copy_url_flipper_view)
-    lateinit var copyUrlFlipperView: FlipperView
+    @BindView(R.id.copy_url_flipper_layout)
+    lateinit var copyUrlFlipperLayout: FlipperLayout
 
-    @BindView(R.id.download_flipper_view)
-    lateinit var downloadFlipperView: FlipperView
+    @BindView(R.id.download_flipper_layout)
+    lateinit var downloadFlipperLayout: FlipperLayout
 
     @BindView(R.id.detail_progress_ring)
     lateinit var progressView: RingProgressView
@@ -138,8 +138,8 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     private val realmChangeListener = RealmChangeListener<DownloadItem> { element ->
         when (element.status) {
             DownloadItem.DOWNLOAD_STATUS_DOWNLOADING -> progressView.progress = element.progress
-            DownloadItem.DOWNLOAD_STATUS_FAILED -> downloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD)
-            DownloadItem.DOWNLOAD_STATUS_OK -> downloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK)
+            DownloadItem.DOWNLOAD_STATUS_FAILED -> downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
+            DownloadItem.DOWNLOAD_STATUS_OK -> downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK)
         }
     }
 
@@ -148,7 +148,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
             return resources.getDimensionPixelOffset(R.dimen.share_btn_margin_right_hide)
         }
 
-    private val downloadFlipperViewHideOffset: Int
+    private val downloadFlipperLayoutHideOffset: Int
         get() {
             return resources.getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide)
         }
@@ -194,19 +194,19 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         }
     }
 
-    @OnClick(R.id.copy_url_flipper_view)
+    @OnClick(R.id.copy_url_flipper_layout)
     internal fun onClickCopy() {
         if (copied) return
         copied = true
 
-        copyUrlFlipperView.next()
+        copyUrlFlipperLayout.next()
 
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText(context.getString(R.string.app_name), clickedImage?.downloadUrl)
         clipboard.primaryClip = clip
 
         postDelayed({
-            copyUrlFlipperView.next()
+            copyUrlFlipperLayout.next()
             copied = false
         }, 2000)
     }
@@ -254,7 +254,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         detailRootScrollView.visibility = View.INVISIBLE
 
         detailInfoRootLayout.translationY = (-resources.getDimensionPixelOffset(R.dimen.img_detail_info_height)).toFloat()
-        downloadFlipperView.translationX = resources.getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide).toFloat()
+        downloadFlipperLayout.translationX = resources.getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide).toFloat()
         shareFAB.translationX = resources.getDimensionPixelOffset(R.dimen.share_btn_margin_right_hide).toFloat()
 
         ValueAnimator.ofFloat(0f, 360f).apply {
@@ -342,7 +342,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         valueAnimator.addUpdateListener {
             detailInfoRootLayout.alpha = it.animatedValue as Float
             shareFAB.alpha = it.animatedValue as Float
-            downloadFlipperView.alpha = it.animatedValue as Float
+            downloadFlipperLayout.alpha = it.animatedValue as Float
         }
         valueAnimator.setDuration(ANIMATION_DURATION_FAST_MILLIS).start()
     }
@@ -350,10 +350,10 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     private fun resetStatus() {
         shareFAB.alpha = 1f
         detailInfoRootLayout.alpha = 1f
-        downloadFlipperView.alpha = 1f
+        downloadFlipperLayout.alpha = 1f
 
         shareFAB.translationX = shareButtonHideOffset.toFloat()
-        downloadFlipperView.translationX = downloadFlipperViewHideOffset.toFloat()
+        downloadFlipperLayout.translationX = downloadFlipperLayoutHideOffset.toFloat()
     }
 
     private fun associateWithDownloadItem(item: DownloadItem?) {
@@ -381,7 +381,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         if (clickedImage == null) {
             return
         }
-        downloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD)
+        downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
 
         DownloadItemTransactionUtil.updateStatus(associatedDownloadItem!!, DownloadItem.DOWNLOAD_STATUS_FAILED)
         DownloadUtil.cancelDownload(context, clickedImage!!)
@@ -400,7 +400,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
     private fun toggleHeroViewAnimation(startY: Float, endY: Float, show: Boolean) {
         if (!show) {
-            downloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD)
+            downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD)
         } else {
             detailImgRL.translationX = 0f
         }
@@ -424,7 +424,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
                         animating = false
                     } else {
                         toggleDetailRLAnimation(true, false)
-                        toggleDownloadFlipperViewAnimation(true, false)
+                        toggleDownloadFlipperLayoutAnimation(true, false)
                         toggleShareBtnAnimation(true, false)
                     }
                 }
@@ -440,7 +440,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { b ->
                     if (b!!) {
-                        downloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK)
+                        downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK)
                     }
                 }
     }
@@ -477,8 +477,8 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         }
     }
 
-    private fun toggleDownloadFlipperViewAnimation(show: Boolean, oneshot: Boolean) {
-        val hideX = downloadFlipperViewHideOffset
+    private fun toggleDownloadFlipperLayoutAnimation(show: Boolean, oneshot: Boolean) {
+        val hideX = downloadFlipperLayoutHideOffset
 
         val start = if (show) hideX else 0
         val end = if (show) 0 else hideX
@@ -487,7 +487,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
             setFloatValues(start.toFloat(), end.toFloat())
             duration = if (oneshot) 0 else ANIMATION_DURATION_VERY_SLOW_MILLIS
             interpolator = DecelerateInterpolator()
-            addUpdateListener { animation -> downloadFlipperView.translationX = animation.animatedValue as Float }
+            addUpdateListener { animation -> downloadFlipperLayout.translationX = animation.animatedValue as Float }
             start()
         }
     }
@@ -539,7 +539,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
         val oneshot = detailInfoRootLayout.alpha == 0f
         toggleDetailRLAnimation(false, oneshot)
-        toggleDownloadFlipperViewAnimation(false, oneshot)
+        toggleDownloadFlipperLayoutAnimation(false, oneshot)
         toggleShareBtnAnimation(false, oneshot)
     }
 
@@ -649,13 +649,13 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
             Pasteur.d(TAG, "found download item,status:" + associatedDownloadItem!!.status)
             when (associatedDownloadItem?.status) {
                 DownloadItem.DOWNLOAD_STATUS_DOWNLOADING -> {
-                    downloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING)
+                    downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING)
                     progressView.progress = associatedDownloadItem!!.progress
                 }
                 DownloadItem.DOWNLOAD_STATUS_FAILED -> {
                 }
                 DownloadItem.DOWNLOAD_STATUS_OK -> if (clickedImage!!.hasDownloaded()) {
-                    downloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOAD_OK)
+                    downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK)
                 }
             }
             associateWithDownloadItem(associatedDownloadItem)
@@ -670,7 +670,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun receivedDownloadStarted(event: DownloadStartedEvent) {
         if (clickedImage != null && event.id == clickedImage?.id) {
-            downloadFlipperView.next(DOWNLOAD_FLIPPER_VIEW_STATUS_DOWNLOADING)
+            downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOADING)
             associateWithDownloadItem(null)
         }
     }

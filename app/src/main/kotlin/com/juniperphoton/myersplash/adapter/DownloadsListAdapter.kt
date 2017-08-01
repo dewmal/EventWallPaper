@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import butterknife.BindView
 import butterknife.ButterKnife
 import com.facebook.drawee.view.SimpleDraweeView
-import com.juniperphoton.flipperview.FlipperView
+import com.juniperphoton.flipperlayout.FlipperLayout
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.model.DownloadItem
@@ -72,8 +72,8 @@ class DownloadsListAdapter(private val context: Context) :
         @BindView(R.id.row_download_item_dv)
         @JvmField var draweeView: SimpleDraweeView? = null
 
-        @BindView(R.id.row_download_flipper_view)
-        @JvmField var flipperView: FlipperView? = null
+        @BindView(R.id.row_download_flipper_layout)
+        @JvmField var flipperLayout: FlipperLayout? = null
 
         @BindView(R.id.row_downloading_view)
         @JvmField var downloadingView: DownloadingView? = null
@@ -116,7 +116,7 @@ class DownloadsListAdapter(private val context: Context) :
                 }
                 it.onClickRetry = {
                     DownloadItemTransactionUtil.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_DOWNLOADING)
-                    flipperView?.next(item.status)
+                    flipperLayout?.next(item.status)
 
                     val intent = Intent(context, DownloadService::class.java)
                     intent.putExtra(Params.NAME_KEY, item.fileName)
@@ -130,7 +130,7 @@ class DownloadsListAdapter(private val context: Context) :
                 it.themeColor = item.color
                 it.onClickCancel = {
                     DownloadItemTransactionUtil.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_FAILED)
-                    flipperView?.next(item.status)
+                    flipperLayout?.next(item.status)
 
                     val intent = Intent(App.instance, DownloadService::class.java)
                     intent.putExtra(Params.CANCELED_KEY, true)
@@ -141,10 +141,10 @@ class DownloadsListAdapter(private val context: Context) :
 
             val last = item.lastStatus
             if (last != item.status && last != DownloadItem.DISPLAY_STATUS_NOT_SPECIFIED) {
-                flipperView?.next(item.status)
+                flipperLayout?.next(item.status)
                 item.syncStatus()
             } else {
-                flipperView?.next(item.status, false)
+                flipperLayout?.next(item.status, false)
                 item.syncStatus()
             }
         }

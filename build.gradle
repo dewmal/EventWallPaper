@@ -17,7 +17,7 @@ allprojects {
             url "https://jitpack.io"
         }
         maven {
-            url "http://dl.bintray.com/juniperphoton/JuniperPhoton/"
+            url "http://dl.bintray.com/juniperphoton/maven/"
         }
         jcenter()
     }
