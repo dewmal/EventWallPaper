@@ -66,8 +66,8 @@
                     tools:layout_editor_absoluteY="0dp"/>
             </LinearLayout>
 
-            <com.juniperphoton.flipperview.FlipperView
-                android:id="@+id/copy_url_flipper_view"
+            <com.juniperphoton.flipperlayout.FlipperLayout
+                android:id="@+id/copy_url_flipper_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
@@ -137,7 +137,7 @@
                             android:textStyle="bold"/>
                     </FrameLayout>
                 </android.support.v7.widget.CardView>
-            </com.juniperphoton.flipperview.FlipperView>
+            </com.juniperphoton.flipperlayout.FlipperLayout>
 
 
         </android.support.constraint.ConstraintLayout>
@@ -162,12 +162,12 @@
             android:src="@drawable/vector_ic_share"
             app:backgroundTint="@android:color/white"
             app:fabSize="mini"
-            app:layout_constraintBottom_toBottomOf="@+id/download_flipper_view"
-            app:layout_constraintRight_toLeftOf="@+id/download_flipper_view"
-            app:layout_constraintTop_toTopOf="@+id/download_flipper_view"/>
+            app:layout_constraintBottom_toBottomOf="@+id/download_flipper_layout"
+            app:layout_constraintRight_toLeftOf="@+id/download_flipper_layout"
+            app:layout_constraintTop_toTopOf="@+id/download_flipper_layout"/>
 
-        <com.juniperphoton.flipperview.FlipperView
-            android:id="@+id/download_flipper_view"
+        <com.juniperphoton.flipperlayout.FlipperLayout
+            android:id="@+id/download_flipper_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="75dp"
@@ -212,7 +212,7 @@
                 app:backgroundTint="@color/SettingBackground"
                 app:fabSize="normal"/>
 
-        </com.juniperphoton.flipperview.FlipperView>
+        </com.juniperphoton.flipperlayout.FlipperLayout>
 
     </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>

@@ -21,7 +21,7 @@ import com.facebook.drawee.backends.pipeline.PipelineDraweeController
 import com.facebook.drawee.view.SimpleDraweeView
 import com.facebook.imagepipeline.common.ResizeOptions
 import com.facebook.imagepipeline.request.ImageRequestBuilder
-import com.juniperphoton.flipperview.FlipperView
+import com.juniperphoton.flipperlayout.FlipperLayout
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.getScreenHeight
@@ -51,8 +51,8 @@ class EditActivity : BaseActivity() {
     @BindView(R.id.edit_mask)
     lateinit var maskView: View
 
-    @BindView(R.id.edit_flipper_view)
-    lateinit var flipperView: FlipperView
+    @BindView(R.id.edit_flipper_layout)
+    lateinit var flipperLayout: FlipperLayout
 
     @BindView(R.id.edit_progress_ring)
     lateinit var progressView: View
@@ -96,7 +96,7 @@ class EditActivity : BaseActivity() {
         super.onResume()
 
         // Reset to the initial state anyway
-        flipperView.next(0)
+        flipperLayout.next(0)
     }
 
     private fun loadImage() {
@@ -167,7 +167,7 @@ class EditActivity : BaseActivity() {
     }
 
     private fun composeMask() {
-        flipperView.next()
+        flipperLayout.next()
         Observable.just(fileUri)
                 .subscribeOn(Schedulers.io())
                 .map {
@@ -180,7 +180,7 @@ class EditActivity : BaseActivity() {
                     }
 
                     override fun onError(e: Throwable) {
-                        flipperView.next()
+                        flipperLayout.next()
                         super.onError(e)
                         if (e is OutOfMemoryError) {
                             ToastService.sendShortToast(resources.getString(R.string.oom_toast))

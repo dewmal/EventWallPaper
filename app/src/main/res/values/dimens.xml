@@ -30,7 +30,7 @@
     <dimen name="drawer_title_text_size">22sp</dimen>
     <dimen name="page_title_text_size">20sp</dimen>
     <dimen name="copy_url_width">104dp</dimen>
-    <dimen name="download_item_flipperview_height">50dp</dimen>
+    <dimen name="download_item_flipper_layout_height">50dp</dimen>
     <dimen name="pivot_title_bar_height">60dp</dimen>
 
     <dimen name="about_thanks_item_margin">4dp</dimen>
