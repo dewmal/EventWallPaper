@@ -36,6 +36,7 @@ object CloudService {
 
     init {
         builder.connectTimeout(DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
+                .addInterceptor(CustomInterceptor())
 
         retrofit = Retrofit.Builder()
                 .client(builder.build())
