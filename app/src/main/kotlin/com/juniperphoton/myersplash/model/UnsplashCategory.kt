@@ -2,6 +2,7 @@ package com.juniperphoton.myersplash.model
 
 import com.juniperphoton.myersplash.cloudservice.CloudService
 
+@Suppress("unused")
 class UnsplashCategory {
     companion object {
         val FEATURED_CATEGORY_ID = 10000
@@ -12,14 +13,6 @@ class UnsplashCategory {
         val FEATURE_S = "Featured"
         val NEW_S = "New"
         val RANDOM_S = "Random"
-
-        fun getSearchCategory(title: String): UnsplashCategory {
-            val category = UnsplashCategory()
-            category.id = UnsplashCategory.SEARCH_ID
-            category.title = title
-
-            return category
-        }
 
         val featuredCategory: UnsplashCategory
             get() {
@@ -60,20 +53,19 @@ class UnsplashCategory {
     var title: String? = null
 
     val requestUrl: String?
-        get() {
-            when (id) {
-                NEW_CATEGORY_ID -> return CloudService.PHOTO_URL
-                FEATURED_CATEGORY_ID -> return CloudService.FEATURED_PHOTO_URL
-                RANDOM_CATEGORY_ID -> return CloudService.RANDOM_PHOTOS_URL
-                SEARCH_ID -> return CloudService.SEARCH_URL
-                else -> return links?.photos
-            }
+        get() = when (id) {
+            NEW_CATEGORY_ID -> CloudService.PHOTO_URL
+            FEATURED_CATEGORY_ID -> CloudService.FEATURED_PHOTO_URL
+            RANDOM_CATEGORY_ID -> CloudService.RANDOM_PHOTOS_URL
+            SEARCH_ID -> CloudService.SEARCH_URL
+            else -> links?.photos
         }
 
     val websiteUrl: String?
         get() = links?.html
 }
 
+@Suppress("unused")
 class links {
     val self: String? = null
     val photos: String? = null

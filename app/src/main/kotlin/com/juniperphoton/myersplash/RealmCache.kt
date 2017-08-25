@@ -7,7 +7,7 @@ import io.realm.RealmConfiguration
 import io.realm.RealmMigration
 
 object RealmCache {
-    val SCHEMA_VERSION = 3L
+    private const val SCHEMA_VERSION = 3L
     private var configuration: RealmConfiguration? = null
 
     fun init(context: Context) {

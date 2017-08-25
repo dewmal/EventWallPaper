@@ -19,7 +19,6 @@ import com.juniperphoton.myersplash.event.RefreshUIEvent
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.DownloadUtil
-import com.juniperphoton.myersplash.utils.Pasteur
 import com.juniperphoton.myersplash.utils.ToastService
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe

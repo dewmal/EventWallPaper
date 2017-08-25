@@ -55,34 +55,40 @@ class DownloadsListAdapter(private val context: Context) :
     }
 
     override fun getItemCount(): Int {
-        if (data == null)
-            return 0
-        else
-            return data!!.size + 1
+        return if (data == null) {
+            0
+        } else {
+            data!!.size + 1
+        }
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (position >= itemCount - 1) {
-            return FOOTER
+        return if (position >= itemCount - 1) {
+            FOOTER
         } else
-            return ITEM
+            ITEM
     }
 
     inner class DownloadItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         @BindView(R.id.row_download_item_dv)
-        @JvmField var draweeView: SimpleDraweeView? = null
+        @JvmField
+        var draweeView: SimpleDraweeView? = null
 
         @BindView(R.id.row_download_flipper_layout)
-        @JvmField var flipperLayout: FlipperLayout? = null
+        @JvmField
+        var flipperLayout: FlipperLayout? = null
 
         @BindView(R.id.row_downloading_view)
-        @JvmField var downloadingView: DownloadingView? = null
+        @JvmField
+        var downloadingView: DownloadingView? = null
 
         @BindView(R.id.row_download_retry_view)
-        @JvmField var downloadRetryView: DownloadRetryView? = null
+        @JvmField
+        var downloadRetryView: DownloadRetryView? = null
 
         @BindView(R.id.row_download_complete_view)
-        @JvmField var downloadCompleteView: DownloadCompleteView? = null
+        @JvmField
+        var downloadCompleteView: DownloadCompleteView? = null
 
         init {
             ButterKnife.bind(this, itemView)

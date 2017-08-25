@@ -28,7 +28,5 @@ class MainListFragmentAdapter(private var callback: ((RectF, UnsplashImage, View
         return fragment
     }
 
-    override fun getCount(): Int {
-        return 3
-    }
+    override fun getCount(): Int = 3
 }
