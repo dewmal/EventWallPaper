@@ -44,13 +44,11 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
         }
 
     val selectedString: String
-        get() {
-            when (selectedItem) {
-                0 -> return UnsplashCategory.FEATURE_S.toUpperCase()
-                1 -> return UnsplashCategory.NEW_S.toUpperCase()
-                2 -> return UnsplashCategory.RANDOM_S.toUpperCase()
-                else -> return UnsplashCategory.NEW_S.toUpperCase()
-            }
+        get() = when (selectedItem) {
+            0 -> UnsplashCategory.FEATURE_S.toUpperCase()
+            1 -> UnsplashCategory.NEW_S.toUpperCase()
+            2 -> UnsplashCategory.RANDOM_S.toUpperCase()
+            else -> UnsplashCategory.NEW_S.toUpperCase()
         }
 
     private var touchingViewIndex: Int = 0
@@ -70,12 +68,10 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
     }
 
     private val onTouchListener = View.OnTouchListener { v, event ->
-        if (v === item0) {
-            touchingViewIndex = 0
-        } else if (v === item1) {
-            touchingViewIndex = 1
-        } else if (v === item2) {
-            touchingViewIndex = 2
+        when {
+            v === item0 -> touchingViewIndex = 0
+            v === item1 -> touchingViewIndex = 1
+            v === item2 -> touchingViewIndex = 2
         }
         gestureDetector.onTouchEvent(event)
         true

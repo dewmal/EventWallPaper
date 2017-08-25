@@ -87,8 +87,8 @@ class AboutActivity : BaseActivity() {
 
     @OnClick(R.id.bot_item)
     internal fun onClickBot() {
-        var uri = Uri.parse("https://t.me/myersplashbot")
-        var intent = Intent(Intent.ACTION_VIEW, uri)
+        val uri = Uri.parse("https://t.me/myersplashbot")
+        val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivitySafely(intent)
     }
 }

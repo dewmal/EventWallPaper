@@ -14,13 +14,12 @@ import java.io.File
 object FileUtil {
     val galleryPath: String?
         get() {
-            val mediaStorageDir: File
-            if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
+            val mediaStorageDir: File = if (Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED) {
                 val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES) ?: return ""
-                mediaStorageDir = File(path, "MyerSplash")
+                File(path, "MyerSplash")
             } else {
                 val extStorageDirectory = App.instance.filesDir.absolutePath
-                mediaStorageDir = File(extStorageDirectory, "MyerSplash")
+                File(extStorageDirectory, "MyerSplash")
             }
 
             if (!mediaStorageDir.exists()) {
@@ -45,9 +44,7 @@ object FileUtil {
         }
 
     val cachedPath: String?
-        get() {
-            return App.instance.cacheDir.absolutePath
-        }
+        get() = App.instance.cacheDir.absolutePath
 
     fun getCachedFile(url: String): File? {
         val cacheKey = DefaultCacheKeyFactory.getInstance().getEncodedCacheKey(

@@ -10,7 +10,8 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.juniperphoton.myersplash.R
 
-class CategoryAdapter(val context: Context, val list: MutableList<String>) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
+class CategoryAdapter(val context: Context, private val list: MutableList<String>
+) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
     companion object ResMap {
         val KEYWORDS = mutableListOf(
                 "Buildings",
@@ -33,9 +34,7 @@ class CategoryAdapter(val context: Context, val list: MutableList<String>) : Rec
         holder?.bind(list[holder.adapterPosition])
     }
 
-    override fun getItemCount(): Int {
-        return list.size
-    }
+    override fun getItemCount(): Int = list.size
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): CategoryViewHolder {
         return CategoryViewHolder(LayoutInflater.from(context).inflate(R.layout.row_search_category, parent, false))

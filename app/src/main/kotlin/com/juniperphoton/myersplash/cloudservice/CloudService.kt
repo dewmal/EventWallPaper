@@ -29,7 +29,6 @@ object CloudService {
     private val DEFAULT_TIMEOUT = 10
 
     private val retrofit: Retrofit
-    private val categoryService: CategoryService
     private val photoService: PhotoService
     private val downloadService: DownloadService
     private val builder: OkHttpClient.Builder = OkHttpClient.Builder()
@@ -45,7 +44,6 @@ object CloudService {
                 .baseUrl(BASE_URL)
                 .build()
 
-        categoryService = retrofit.create(CategoryService::class.java)
         photoService = retrofit.create(PhotoService::class.java)
         downloadService = retrofit.create(DownloadService::class.java)
     }

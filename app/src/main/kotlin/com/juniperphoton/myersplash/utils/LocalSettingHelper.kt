@@ -3,6 +3,7 @@ package com.juniperphoton.myersplash.utils
 import android.content.Context
 import android.content.SharedPreferences
 
+@Suppress("unused")
 object LocalSettingHelper {
     private val CONFIG_NAME = "config"
 

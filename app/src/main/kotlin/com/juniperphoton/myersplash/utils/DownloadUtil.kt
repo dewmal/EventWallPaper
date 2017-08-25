@@ -161,7 +161,7 @@ object DownloadUtil {
         RealmCache.getInstance().executeTransaction { realm -> realm.copyToRealmOrUpdate(item) }
     }
 
-    fun startDownloadService(context: Context, name: String, url: String) {
+    private fun startDownloadService(context: Context, name: String, url: String) {
         val intent = Intent(context, DownloadService::class.java)
         intent.putExtra(Params.NAME_KEY, name)
         intent.putExtra(Params.URL_KEY, url)

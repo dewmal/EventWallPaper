@@ -8,20 +8,15 @@ import org.junit.Test
 import rx.observers.TestSubscriber
 
 class RecommendedWallpaperTest {
-    val thumbUrl: String
-        get() {
-            return "${CloudService.AUTO_CHANGE_WALLPAPER_THUMB}${WallpaperWidgetProvider.dateString}.jpg"
-        }
+    private val thumbUrl: String
+        get() =
+            "${CloudService.AUTO_CHANGE_WALLPAPER_THUMB}${WallpaperWidgetProvider.dateString}.jpg"
 
-    val largeUrl: String
-        get() {
-            return "${CloudService.AUTO_CHANGE_WALLPAPER}${WallpaperWidgetProvider.dateString}.jpg"
-        }
+    private val largeUrl: String
+        get() = "${CloudService.AUTO_CHANGE_WALLPAPER}${WallpaperWidgetProvider.dateString}.jpg"
 
-    val invalidUrl: String
-        get() {
-            return "${CloudService.AUTO_CHANGE_WALLPAPER_THUMB}nothumb.jpg"
-        }
+    private val invalidUrl: String
+        get() = "${CloudService.AUTO_CHANGE_WALLPAPER_THUMB}nothumb.jpg"
 
     @Test
     fun testRecommendedThumb() {

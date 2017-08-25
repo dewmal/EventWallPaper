@@ -90,7 +90,7 @@ class ManageDownloadActivity : BaseActivity() {
         }
     }
 
-    fun updateNoItemVisibility() {
+    private fun updateNoItemVisibility() {
         if ((adapter?.data?.size ?: 0) > 0) {
             noItemView.visibility = View.GONE
         } else {
@@ -120,11 +120,7 @@ class ManageDownloadActivity : BaseActivity() {
         val layoutManager = GridLayoutManager(this, 2)
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                if (position == adapter!!.itemCount - 1) {
-                    return 2
-                } else {
-                    return 1
-                }
+                return if (position == adapter!!.itemCount - 1) 2 else 1
             }
         }
         downloadsList.layoutManager = layoutManager

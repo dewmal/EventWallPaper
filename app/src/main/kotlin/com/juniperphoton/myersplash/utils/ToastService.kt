@@ -10,7 +10,7 @@ import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 
 object ToastService {
-    var handler = Handler(Looper.getMainLooper())
+    private var handler = Handler(Looper.getMainLooper())
 
     fun sendShortToast(str: String?) {
         if (str == null) {
