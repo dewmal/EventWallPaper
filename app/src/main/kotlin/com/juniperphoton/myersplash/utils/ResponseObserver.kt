@@ -12,9 +12,7 @@ open class ResponseObserver<T> : Subscriber<T>() {
         onFinish()
     }
 
-    override fun onNext(t: T) {
-    }
+    override fun onNext(t: T) = Unit
 
-    open fun onFinish() {
-    }
+    open fun onFinish() = Unit
 }

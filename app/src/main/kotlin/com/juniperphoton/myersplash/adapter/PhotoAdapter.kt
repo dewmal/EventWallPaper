@@ -39,15 +39,19 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage?>?,
     init {
         lastPosition = -1
         val size = imageData?.size ?: 0
-        if (size >= 10) {
-            isAutoLoadMore = true
-            footerFlag = FOOTER_FLAG_SHOW
-        } else if (size > 0) {
-            isAutoLoadMore = false
-            footerFlag = FOOTER_FLAG_SHOW_END
-        } else {
-            isAutoLoadMore = false
-            footerFlag = FOOTER_FLAG_NOT_SHOW
+        when {
+            size >= 10 -> {
+                isAutoLoadMore = true
+                footerFlag = FOOTER_FLAG_SHOW
+            }
+            size > 0 -> {
+                isAutoLoadMore = false
+                footerFlag = FOOTER_FLAG_SHOW_END
+            }
+            else -> {
+                isAutoLoadMore = false
+                footerFlag = FOOTER_FLAG_NOT_SHOW
+            }
         }
     }
 
@@ -121,11 +125,7 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage?>?,
     }
 
     override fun getItemViewType(position: Int): Int {
-        if (isFooterView(position)) {
-            return TYPE_FOOTER_VIEW
-        } else {
-            return TYPE_COMMON_VIEW
-        }
+        return if (isFooterView(position)) TYPE_FOOTER_VIEW else TYPE_COMMON_VIEW
     }
 
     private fun isFooterView(position: Int): Boolean {
@@ -175,18 +175,22 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage?>?,
     fun setLoadMoreData(data: MutableList<UnsplashImage?>?) {
         val size = this.imageData!!.size
         this.imageData.addAll(data!!)
-        if (data.size >= 10) {
-            isAutoLoadMore = true
-            footerFlag = footerFlag or FOOTER_FLAG_SHOW
-            notifyItemInserted(size)
-        } else if (data.size > 0) {
-            isAutoLoadMore = false
-            footerFlag = footerFlag or FOOTER_FLAG_SHOW
-            footerFlag = footerFlag or FOOTER_FLAG_SHOW_END
-            notifyItemInserted(size)
-        } else {
-            isAutoLoadMore = false
-            footerFlag = FOOTER_FLAG_NOT_SHOW
+        when {
+            data.size >= 10 -> {
+                isAutoLoadMore = true
+                footerFlag = footerFlag or FOOTER_FLAG_SHOW
+                notifyItemInserted(size)
+            }
+            data.size > 0 -> {
+                isAutoLoadMore = false
+                footerFlag = footerFlag or FOOTER_FLAG_SHOW
+                footerFlag = footerFlag or FOOTER_FLAG_SHOW_END
+                notifyItemInserted(size)
+            }
+            else -> {
+                isAutoLoadMore = false
+                footerFlag = FOOTER_FLAG_NOT_SHOW
+            }
         }
     }
 

@@ -28,11 +28,9 @@ open class MainListPresenter : Contract.MainPresenter {
 
     override var query: String? = null
 
-    override fun stop() {
-    }
+    override fun stop() = Unit
 
-    override fun start() {
-    }
+    override fun start() = Unit
 
     override fun search(query: String) {
         Pasteur.d(TAG, "on search:$query")

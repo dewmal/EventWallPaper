@@ -9,21 +9,13 @@ import android.os.Build
 import android.view.Display
 import android.view.WindowManager
 
-fun Context.getDpi(): Float {
-    return resources.displayMetrics.density
-}
+fun Context.getDpi(): Float = resources.displayMetrics.density
 
-fun Context.getDimenInPixel(valueInDP: Int): Int {
-    return (valueInDP * getDpi()).toInt()
-}
+fun Context.getDimenInPixel(valueInDP: Int): Int = (valueInDP * getDpi()).toInt()
 
-fun Context.getScreenWidth(): Int {
-    return resources.displayMetrics.widthPixels
-}
+fun Context.getScreenWidth(): Int = resources.displayMetrics.widthPixels
 
-fun Context.getScreenHeight(): Int {
-    return resources.displayMetrics.heightPixels
-}
+fun Context.getScreenHeight(): Int = resources.displayMetrics.heightPixels
 
 fun Context.hasNavigationBar(): Boolean {
     val size = getNavigationBarSize()

@@ -66,12 +66,10 @@ class UnsplashImage : Serializable {
         get() = "${user!!.name} - $id - $tagForDownloadUrl"
 
     val themeColor: Int
-        get() {
-            return try {
-                Color.parseColor(color)
-            } catch (e: Exception) {
-                Color.BLACK
-            }
+        get() = try {
+            Color.parseColor(color)
+        } catch (e: Exception) {
+            Color.BLACK
         }
 
     val userName: String?

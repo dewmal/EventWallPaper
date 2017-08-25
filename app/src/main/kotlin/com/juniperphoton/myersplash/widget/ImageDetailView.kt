@@ -545,7 +545,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
     fun tryHide(): Boolean {
         subscription?.unsubscribe()
-        if (associatedDownloadItem?.isValid ?: false) {
+        if (associatedDownloadItem?.isValid == true) {
             associatedDownloadItem!!.removeChangeListener(realmChangeListener)
             associatedDownloadItem = null
         }
