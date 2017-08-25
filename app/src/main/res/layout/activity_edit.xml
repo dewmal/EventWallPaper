@@ -10,7 +10,8 @@
     <com.facebook.drawee.view.SimpleDraweeView
         android:id="@+id/edit_image_preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        app:actualImageScaleType="centerInside"/>
 
     <View
         android:id="@+id/edit_mask"
