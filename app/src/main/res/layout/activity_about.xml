@@ -1,179 +1,202 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none">
+
+        <android.support.constraint.ConstraintLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scrollbars="none">
-
-    <android.support.constraint.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:background="#000000"
-        android:fitsSystemWindows="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark">
-
-        <LinearLayout
-            android:id="@+id/about_title_layout"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
-            android:gravity="center"
-            android:orientation="horizontal"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_gravity="center"
+            android:background="#000000"
+            android:fitsSystemWindows="true"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:contentDescription="@string/image_desc"
-                android:src="@drawable/icon_launcher"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="12dp"
-                android:fontFamily="sans-serif-light"
-                android:gravity="center"
-                android:text="@string/myer"
-                android:textColor="@android:color/white"
-                android:textSize="40sp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-bold"
-                android:gravity="center"
-                android:text="@string/splash"
-                android:textColor="@android:color/white"
-                android:textSize="40sp"
-                android:textStyle="bold"/>
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/about_sub_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="12dp"
-            android:fontFamily="sans-serif-light"
-            android:text="@string/for_windows_amp_android"
-            android:textColor="@android:color/white"
-            android:textSize="12sp"
-            android:textStyle="normal"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/about_title_layout"/>
-
-        <TextView
-            android:id="@+id/version_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/version_round_bg"
-            android:paddingBottom="4dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="4dp"
-            android:textColor="@android:color/black"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/about_sub_title"
-            tools:text="2.0.0"/>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/version_text_view">
-
-            <TextView
-                style="@style/AboutSubTitleTextView"
-                android:layout_marginTop="30dp"
-                android:text="@string/credit"/>
-
-            <TextView
-                style="@style/AboutSubContentTextView"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:gravity="center"
-                android:text="@string/settings_credit_content"/>
-
-            <TextView
-                style="@style/AboutSubTitleTextView"
-                android:text="@string/telegram_bot"/>
-
-            <TextView
-                android:id="@+id/bot_item"
-                style="@style/AboutSubContentTextView"
-                android:layout_gravity="center"
-                android:layout_marginTop="12dp"
-                android:drawablePadding="12dp"
-                android:drawableLeft="@drawable/ic_telegram"
-                android:text="@string/launch_telegram_bot"/>
-
-            <TextView
-                style="@style/AboutSubTitleTextView"
-                android:text="@string/feedback"/>
+            <android.support.v4.widget.Space
+                android:id="@+id/top_space"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/about_space"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
 
             <LinearLayout
+                android:id="@+id/about_title_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/top_space">
 
                 <ImageView
-                    android:id="@+id/email_item"
-                    style="@style/AboutContactItem"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:contentDescription="@string/image_desc"
-                    android:src="@drawable/ic_email"/>
+                    android:src="@drawable/icon_launcher"/>
 
-                <ImageView
-                    android:id="@+id/github_item"
-                    style="@style/AboutContactItem"
-                    android:contentDescription="@string/image_desc"
-                    android:src="@drawable/ic_github_icon"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="12dp"
+                    android:fontFamily="sans-serif-light"
+                    android:gravity="center"
+                    android:text="@string/myer"
+                    android:textColor="@android:color/white"
+                    android:textSize="40sp"/>
 
-                <ImageView
-                    android:id="@+id/twitter_item"
-                    style="@style/AboutContactItem"
-                    android:contentDescription="@string/image_desc"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_twitter"/>
-
-                <ImageView
-                    android:id="@+id/weibo_item"
-                    style="@style/AboutContactItem"
-                    android:contentDescription="@string/image_desc"
-                    android:src="@drawable/ic_weibo_social_logo"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-bold"
+                    android:gravity="center"
+                    android:text="@string/splash"
+                    android:textColor="@android:color/white"
+                    android:textSize="40sp"
+                    android:textStyle="bold"/>
             </LinearLayout>
 
             <TextView
-                style="@style/AboutSubTitleTextView"
-                android:text="@string/like_this_app"/>
-
-            <TextView
-                android:id="@+id/donate_item"
-                style="@style/AboutSubContentTextView"
-                android:layout_gravity="center"
+                android:id="@+id/about_sub_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
-                android:text="@string/buy_me_a_drink"/>
+                android:fontFamily="sans-serif-light"
+                android:text="@string/for_windows_amp_android"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/about_title_layout"/>
 
             <TextView
-                android:id="@+id/rate_item"
-                style="@style/AboutSubContentTextView"
-                android:layout_gravity="center"
-                android:text="@string/give_me_a_rate"/>
-        </LinearLayout>
-    </android.support.constraint.ConstraintLayout>
-</ScrollView>
+                android:id="@+id/version_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/version_round_bg"
+                android:paddingBottom="4dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="4dp"
+                android:textColor="@android:color/black"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/about_sub_title"
+                tools:text="2.0.0"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/version_text_view">
+
+                <TextView
+                    style="@style/AboutSubTitleTextView"
+                    android:layout_marginTop="30dp"
+                    android:text="@string/credit"/>
+
+                <TextView
+                    style="@style/AboutSubContentTextView"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:gravity="center"
+                    android:text="@string/settings_credit_content"/>
+
+                <TextView
+                    style="@style/AboutSubTitleTextView"
+                    android:text="@string/telegram_bot"/>
+
+                <TextView
+                    android:id="@+id/bot_item"
+                    style="@style/AboutSubContentTextView"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="12dp"
+                    android:drawableLeft="@drawable/ic_telegram"
+                    android:drawablePadding="12dp"
+                    android:text="@string/launch_telegram_bot"/>
+
+                <TextView
+                    style="@style/AboutSubTitleTextView"
+                    android:text="@string/feedback"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/email_item"
+                        style="@style/AboutContactItem"
+                        android:contentDescription="@string/image_desc"
+                        android:src="@drawable/ic_email"/>
+
+                    <ImageView
+                        android:id="@+id/github_item"
+                        style="@style/AboutContactItem"
+                        android:contentDescription="@string/image_desc"
+                        android:src="@drawable/ic_github_icon"/>
+
+                    <ImageView
+                        android:id="@+id/twitter_item"
+                        style="@style/AboutContactItem"
+                        android:contentDescription="@string/image_desc"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_twitter"/>
+
+                    <ImageView
+                        android:id="@+id/weibo_item"
+                        style="@style/AboutContactItem"
+                        android:contentDescription="@string/image_desc"
+                        android:src="@drawable/ic_weibo_social_logo"/>
+                </LinearLayout>
+
+                <TextView
+                    style="@style/AboutSubTitleTextView"
+                    android:text="@string/like_this_app"/>
+
+                <TextView
+                    android:id="@+id/rate_item"
+                    style="@style/AboutSubContentTextView"
+                    android:layout_gravity="center"
+                    android:text="@string/give_me_a_rate"/>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"/>
+            </LinearLayout>
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/gradient_top_height"
+        android:background="@drawable/gradient_background"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/gradient_bottom_height"
+        android:layout_gravity="bottom"
+        android:background="@drawable/gradient_background"
+        android:rotation="180"/>
+</FrameLayout>

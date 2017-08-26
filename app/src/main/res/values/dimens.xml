@@ -41,4 +41,7 @@
     <dimen name="about_contact_item_size">56dp</dimen>
     <dimen name="about_row_height">50dp</dimen>
     <dimen name="default_navigation_bar_height">50dp</dimen>
+    <dimen name="about_space">120dp</dimen>
+    <dimen name="gradient_bottom_height">130dp</dimen>
+    <dimen name="gradient_top_height">100dp</dimen>
 </resources>
