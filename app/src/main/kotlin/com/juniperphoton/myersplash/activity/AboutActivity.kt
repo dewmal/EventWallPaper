@@ -25,9 +25,6 @@ class AboutActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN)
-
         setContentView(R.layout.activity_about)
         ButterKnife.bind(this)
 
@@ -55,13 +52,6 @@ class AboutActivity : BaseActivity() {
         val uri = Uri.parse("market://details?id=" + packageName)
         val intent = Intent(Intent.ACTION_VIEW, uri)
         startActivitySafely(intent)
-    }
-
-    @OnClick(R.id.donate_item)
-    internal fun onClickDonate() {
-        if (AlipayZeroSdk.hasInstalledAlipayClient(this)) {
-            AlipayZeroSdk.startAlipayClient(this, getString(R.string.alipay_url_code))
-        }
     }
 
     @OnClick(R.id.github_item)

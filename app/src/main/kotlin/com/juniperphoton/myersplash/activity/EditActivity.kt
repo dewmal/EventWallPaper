@@ -229,8 +229,8 @@ class EditActivity : BaseActivity() {
         val width = rect.width()
         val height = rect.height()
 
-        val screenWidth = getScreenWidth()
-        val screenHeight = getScreenHeight()
+        val screenWidth = previewImageView.width
+        val screenHeight = previewImageView.height
 
         val scaleX = screenWidth.toFloat() / width
         val scaleY = screenHeight.toFloat() / height
