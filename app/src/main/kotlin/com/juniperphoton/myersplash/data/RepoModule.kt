@@ -8,7 +8,7 @@ import dagger.Provides
 @Module
 class RepoModule(private val context: Context,
                  private val pos: Int,
-                 private val view: Contract.MainView) {
+                 private val view: MainContract.MainView) {
     @Provides
     fun providesCategory(): UnsplashCategory {
         return when (pos) {
@@ -20,7 +20,7 @@ class RepoModule(private val context: Context,
     }
 
     @Provides
-    fun providesView(): Contract.MainView = view
+    fun providesView(): MainContract.MainView = view
 
     @Provides
     fun providesPreferenceRepo(): PreferenceRepo = PreferenceRepo(context)

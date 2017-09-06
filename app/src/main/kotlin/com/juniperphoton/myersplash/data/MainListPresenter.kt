@@ -10,7 +10,7 @@ import com.juniperphoton.myersplash.utils.Pasteur
 import com.juniperphoton.myersplash.utils.ResponseObserver
 import javax.inject.Inject
 
-open class MainListPresenter : Contract.MainPresenter {
+open class MainListPresenter : MainContract.MainPresenter {
     companion object {
         const val REFRESH_PAGING = 1
         private const val TAG = "MainListPresenter"
@@ -22,7 +22,7 @@ open class MainListPresenter : Contract.MainPresenter {
     @Inject
     override lateinit var category: UnsplashCategory
     @Inject
-    lateinit var mainView: Contract.MainView
+    lateinit var mainView: MainContract.MainView
     @Inject
     lateinit var preferenceRepo: PreferenceRepo
 

@@ -3,6 +3,7 @@ package com.juniperphoton.myersplash.widget
 import android.animation.Animator
 import android.content.Context
 import android.support.design.widget.AppBarLayout
+import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
@@ -24,10 +25,7 @@ import butterknife.OnClick
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.CategoryAdapter
-import com.juniperphoton.myersplash.data.Contract
-import com.juniperphoton.myersplash.data.DaggerRepoComponent
-import com.juniperphoton.myersplash.data.MainListPresenter
-import com.juniperphoton.myersplash.data.RepoModule
+import com.juniperphoton.myersplash.data.*
 import com.juniperphoton.myersplash.fragment.MainListFragment
 import com.juniperphoton.myersplash.utils.AnimatorListenerImpl
 import com.juniperphoton.myersplash.utils.ToastService
@@ -70,7 +68,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
 
     private var categoryAdapter: CategoryAdapter? = null
 
-    private val mainListFragment: Contract.MainView
+    private val mainListFragment: MainListFragment? = null
     private var animating: Boolean = false
 
     init {
@@ -108,17 +106,17 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
 
         val presenter = MainListPresenter()
 
-        mainListFragment = MainListFragment()
-        mainListFragment.setPresenter(presenter)
-        mainListFragment.onClickPhotoItem = { rectF, unsplashImage, itemView ->
-            detailView.showDetailedImage(rectF, unsplashImage, itemView)
-        }
-
-        val component = DaggerRepoComponent.builder().repoModule(RepoModule(context, -1, mainListFragment)).build()
-        component.inject(presenter)
-
-        activity.supportFragmentManager.beginTransaction().replace(R.id.search_result_root, mainListFragment)
-                .commit()
+//        mainListFragment = MainListFragment()
+//        mainListFragment.presenter = presenter
+//        mainListFragment.onClickPhotoItem = { rectF, unsplashImage, itemView ->
+//            detailView.showDetailedImage(rectF, unsplashImage, itemView)
+//        }
+//
+//        val component = DaggerRepoComponent.builder().repoModule(RepoModule(context, -1, mainListFragment)).build()
+//        component.inject(presenter)
+//
+//        activity.supportFragmentManager.beginTransaction().replace(R.id.search_result_root, mainListFragment)
+//                .commit()
 
         appBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
             val fraction = Math.abs(verticalOffset) * 1.0f / appBarLayout.height
@@ -164,12 +162,12 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     }
 
     fun onShowing() {
-        mainListFragment.registerEvent()
+        mainListFragment?.registerEvent()
         toggleSearchButtons(false, false)
     }
 
     fun onHiding() {
-        mainListFragment.unregisterEvent()
+        mainListFragment?.unregisterEvent()
         hideKeyboard()
         toggleSearchButtons(false, false)
         tagView.animate().alpha(0f).setDuration(100).start()
@@ -185,8 +183,8 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
         val layoutParams = searchBox.layoutParams as AppBarLayout.LayoutParams
         layoutParams.scrollFlags = 0
         searchBox.layoutParams = layoutParams
-        mainListFragment.scrollToTop()
-        mainListFragment.clearData()
+        mainListFragment?.scrollToTop()
+        mainListFragment?.clearData()
         editText.setText("")
         categoryList.animate()?.alpha(1f)?.setListener(object : AnimatorListenerImpl() {
             override fun onAnimationEnd(a: Animator?) {
@@ -220,7 +218,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
         resultRoot.visibility = View.VISIBLE
         tagView.text = "# ${editText.text.toString().toUpperCase()}"
 
-        mainListFragment.search(editText.text.toString().toLowerCase())
+        mainListFragment?.search(editText.text.toString().toLowerCase())
 
         categoryList.animate().alpha(0f).setListener(object : AnimatorListenerImpl() {
             override fun onAnimationEnd(a: Animator?) {
