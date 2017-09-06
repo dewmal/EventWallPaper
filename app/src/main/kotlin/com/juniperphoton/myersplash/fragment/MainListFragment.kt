@@ -2,7 +2,6 @@ package com.juniperphoton.myersplash.fragment
 
 import android.graphics.RectF
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -14,7 +13,6 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.PhotoAdapter
-import com.juniperphoton.myersplash.data.Contract
 import com.juniperphoton.myersplash.data.MainContract
 import com.juniperphoton.myersplash.event.RefreshUIEvent
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
@@ -101,7 +99,7 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
         presenter?.search(query)
     }
 
-    override fun refreshList(images: MutableList<UnsplashImage?>?, next: Int) {
+    override fun refreshList(images: MutableList<UnsplashImage>, next: Int) {
         if (next == 1 || adapter == null) {
             displayListDataInternal(images)
         } else {
@@ -109,7 +107,7 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
         }
         if (adapter == null) {
             updateNoItemVisibility(true)
-        } else if (images?.size == 0 && adapter!!.itemCount == 0) {
+        } else if (images.size == 0 && adapter!!.itemCount == 0) {
             updateNoItemVisibility(true)
         } else {
             updateNoItemVisibility(false)
@@ -210,9 +208,9 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
         }
     }
 
-    private fun displayListDataInternal(unsplashImages: MutableList<UnsplashImage?>?) {
+    private fun displayListDataInternal(unsplashImages: MutableList<UnsplashImage>) {
         if (adapter != null && adapter!!.firstImage != null) {
-            if (adapter?.firstImage?.id == unsplashImages?.get(0)?.id) {
+            if (adapter?.firstImage?.id == unsplashImages[0].id) {
                 return
             }
         }

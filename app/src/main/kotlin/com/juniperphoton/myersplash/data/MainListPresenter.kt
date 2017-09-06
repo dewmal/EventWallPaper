@@ -66,8 +66,8 @@ open class MainListPresenter : MainContract.MainPresenter {
         mainView.setRefreshing(false)
     }
 
-    private fun insertRecommendedImage(t: MutableList<UnsplashImage?>?) {
-        t?.add(0, UnsplashImage.createRecommendedImage())
+    private fun insertRecommendedImage(t: MutableList<UnsplashImage>) {
+        t.add(0, UnsplashImage.createRecommendedImage())
     }
 
     private fun loadPhotoList(next: Int) {
@@ -76,7 +76,7 @@ open class MainListPresenter : MainContract.MainPresenter {
         if (next == REFRESH_PAGING) {
             mainView.setRefreshing(true)
         }
-        val subscriber = object : ResponseObserver<MutableList<UnsplashImage?>?>() {
+        val subscriber = object : ResponseObserver<MutableList<UnsplashImage>>() {
             override fun onFinish() {
                 setSignalOfEnd()
             }
@@ -85,9 +85,10 @@ open class MainListPresenter : MainContract.MainPresenter {
                 e.printStackTrace()
                 mainView.showToast(R.string.failed_to_send_request)
                 mainView.updateNoItemVisibility()
+                mainView.setRefreshing(false)
             }
 
-            override fun onNext(t: MutableList<UnsplashImage?>?) {
+            override fun onNext(t: MutableList<UnsplashImage>) {
                 if (category.id == UnsplashCategory.NEW_CATEGORY_ID
                         && next == REFRESH_PAGING
                         && preferenceRepo.getBoolean(App.instance.getString(R.string.preference_key_recommendation), true)) {

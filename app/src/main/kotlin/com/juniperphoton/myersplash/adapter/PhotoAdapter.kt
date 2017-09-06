@@ -13,7 +13,7 @@ import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.widget.item.PhotoItemView
 
-class PhotoAdapter(private val imageData: MutableList<UnsplashImage?>?,
+class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
                    private val context: Context)
     : RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
     companion object {
@@ -38,7 +38,7 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage?>?,
 
     init {
         lastPosition = -1
-        val size = imageData?.size ?: 0
+        val size = imageData.size
         when {
             size >= 10 -> {
                 isAutoLoadMore = true
@@ -79,7 +79,7 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage?>?,
             }
             holder.itemView.onClickPhoto = onClickPhoto
             holder.itemView.onClickQuickDownload = onClickQuickDownload
-            holder.itemView.bind(imageData!![holder.adapterPosition], position)
+            holder.itemView.bind(imageData[holder.adapterPosition], position)
         }
     }
 
@@ -120,7 +120,6 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage?>?,
         }
 
     override fun getItemCount(): Int {
-        if (imageData == null) return 1
         return imageData.size + 1
     }
 
@@ -168,13 +167,13 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage?>?,
 
     fun clear() {
         footerFlag = FOOTER_FLAG_NOT_SHOW
-        imageData!!.clear()
+        imageData.clear()
         notifyDataSetChanged()
     }
 
-    fun setLoadMoreData(data: MutableList<UnsplashImage?>?) {
-        val size = this.imageData!!.size
-        this.imageData.addAll(data!!)
+    fun setLoadMoreData(data: MutableList<UnsplashImage>) {
+        val size = this.imageData.size
+        this.imageData.addAll(data)
         when {
             data.size >= 10 -> {
                 isAutoLoadMore = true
@@ -203,7 +202,7 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage?>?,
 
     val firstImage: UnsplashImage?
         get() {
-            if (imageData != null && imageData.size > 0) {
+            if (imageData.size > 0) {
                 return imageData[0]
             }
             return null

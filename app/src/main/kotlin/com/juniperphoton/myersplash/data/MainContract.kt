@@ -20,7 +20,7 @@ interface MainContract {
         val isBusyRefreshing: Boolean
 
         fun search(query: String)
-        fun refreshList(images: MutableList<UnsplashImage?>?, next: Int)
+        fun refreshList(images: MutableList<UnsplashImage>, next: Int)
         fun clearData()
         fun setRefreshing(refreshing: Boolean)
         fun updateNoItemVisibility()

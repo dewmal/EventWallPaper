@@ -99,7 +99,8 @@
 
     <string name="oom_toast">Out of memory occurs. Please contact the develop to solve this. :(</string>
 
-    <string name="failed_to_send_request">Failed to communicate with backend</string>
+    <string name="failed_to_send_request">Failed to communicate with backend :(</string>
+    <string name="timeout">Request timeout :(</string>
 
     <string name="photo_by">photo by</string>
     <string name="recommended_by">recommended by</string>

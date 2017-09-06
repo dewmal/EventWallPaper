@@ -21,7 +21,6 @@ import butterknife.ButterKnife
 import butterknife.OnClick
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.backends.pipeline.PipelineDraweeController
-import com.facebook.drawee.controller.ControllerListener
 import com.facebook.drawee.view.SimpleDraweeView
 import com.facebook.imagepipeline.common.ResizeOptions
 import com.facebook.imagepipeline.image.ImageInfo
@@ -337,36 +336,5 @@ class EditActivity : BaseActivity() {
             bm = BitmapFactory.decodeStream(inputStream, null, opt)
         }
         return bm
-    }
-}
-
-open class SimpleControllerListener : ControllerListener<ImageInfo> {
-    override fun onIntermediateImageFailed(id: String?, throwable: Throwable?) {
-    }
-
-    override fun onRelease(id: String?) {
-    }
-
-    override fun onIntermediateImageSet(id: String?, imageInfo: ImageInfo?) {
-    }
-
-    override fun onSubmit(id: String?, callerContext: Any?) {
-    }
-
-    override fun onFailure(id: String?, throwable: Throwable?) {
-    }
-
-    override fun onFinalImageSet(id: String?, imageInfo: ImageInfo?, animatable: Animatable?) {
-    }
-}
-
-open class SimpleOnSeekBarChangeListener : SeekBar.OnSeekBarChangeListener {
-    override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-    }
-
-    override fun onStartTrackingTouch(seekBar: SeekBar) {
-    }
-
-    override fun onStopTrackingTouch(seekBar: SeekBar) {
     }
 }

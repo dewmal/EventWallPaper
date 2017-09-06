@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="@color/MyerSplashThemeColor" />
-    <corners
-        android:bottomLeftRadius="2sp"
-        android:bottomRightRadius="2sp"
-        android:topLeftRadius="2sp"
-        android:topRightRadius="2sp" />
+    <solid android:color="@color/MyerSplashThemeColor"/>
+    <corners android:radius="8dp"/>
 </shape>

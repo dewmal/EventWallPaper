@@ -1,6 +1,6 @@
 package com.juniperphoton.myersplash.model
 
-import com.juniperphoton.myersplash.cloudservice.CloudService
+import com.juniperphoton.myersplash.cloudservice.Request
 
 @Suppress("unused")
 class UnsplashCategory {
@@ -54,10 +54,10 @@ class UnsplashCategory {
 
     val requestUrl: String?
         get() = when (id) {
-            NEW_CATEGORY_ID -> CloudService.PHOTO_URL
-            FEATURED_CATEGORY_ID -> CloudService.FEATURED_PHOTO_URL
-            RANDOM_CATEGORY_ID -> CloudService.RANDOM_PHOTOS_URL
-            SEARCH_ID -> CloudService.SEARCH_URL
+            NEW_CATEGORY_ID -> Request.PHOTO_URL
+            FEATURED_CATEGORY_ID -> Request.FEATURED_PHOTO_URL
+            RANDOM_CATEGORY_ID -> Request.RANDOM_PHOTOS_URL
+            SEARCH_ID -> Request.SEARCH_URL
             else -> links?.photos
         }
 

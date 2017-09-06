@@ -12,12 +12,10 @@ import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.activity.MainActivity
 import com.juniperphoton.myersplash.cloudservice.CloudService
+import com.juniperphoton.myersplash.cloudservice.Request
 import com.juniperphoton.myersplash.extension.getLengthInKb
 import com.juniperphoton.myersplash.service.DownloadService
-import com.juniperphoton.myersplash.utils.AppWidgetUtil
-import com.juniperphoton.myersplash.utils.DownloadUtil
-import com.juniperphoton.myersplash.utils.FileUtil
-import com.juniperphoton.myersplash.utils.Params
+import com.juniperphoton.myersplash.utils.*
 import okhttp3.ResponseBody
 import rx.Subscriber
 import java.io.File
@@ -29,14 +27,10 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
         private const val TAG = "WallpaperWidgetProvider"
 
         var thumbUrl: String? = null
-            get() {
-                return "${CloudService.AUTO_CHANGE_WALLPAPER_THUMB}$dateString.jpg"
-            }
+            get() = "${Request.AUTO_CHANGE_WALLPAPER_THUMB}$dateString.jpg"
 
         var downloadUrl: String? = null
-            get() {
-                return "${CloudService.AUTO_CHANGE_WALLPAPER}$dateString.jpg"
-            }
+            get() = "${Request.AUTO_CHANGE_WALLPAPER}$dateString.jpg"
 
         var dateString: String? = null
             get() {
@@ -56,7 +50,7 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
         if (appWidgetIds == null || context == null) {
             return
         }
-        Log.d(TAG, "onUpdate")
+        Pasteur.debug(TAG, "onUpdate")
 
         val file = File(FileUtil.cachedPath, "${thumbUrl!!.hashCode()}.jpg")
         if (file.exists() && file.getLengthInKb() > 100) {
