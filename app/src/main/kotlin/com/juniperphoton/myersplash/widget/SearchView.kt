@@ -3,7 +3,6 @@ package com.juniperphoton.myersplash.widget
 import android.animation.Animator
 import android.content.Context
 import android.support.design.widget.AppBarLayout
-import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.RecyclerView
 import android.text.Editable
@@ -68,7 +67,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
 
     private var categoryAdapter: CategoryAdapter? = null
 
-    private val mainListFragment: MainListFragment? = null
+    private var mainListFragment: MainListFragment? = null
     private var animating: Boolean = false
 
     init {
@@ -106,17 +105,17 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
 
         val presenter = MainListPresenter()
 
-//        mainListFragment = MainListFragment()
-//        mainListFragment.presenter = presenter
-//        mainListFragment.onClickPhotoItem = { rectF, unsplashImage, itemView ->
-//            detailView.showDetailedImage(rectF, unsplashImage, itemView)
-//        }
-//
-//        val component = DaggerRepoComponent.builder().repoModule(RepoModule(context, -1, mainListFragment)).build()
-//        component.inject(presenter)
-//
-//        activity.supportFragmentManager.beginTransaction().replace(R.id.search_result_root, mainListFragment)
-//                .commit()
+        mainListFragment = MainListFragment()
+        mainListFragment!!.presenter = presenter
+        mainListFragment!!.onClickPhotoItem = { rectF, unsplashImage, itemView ->
+            detailView.showDetailedImage(rectF, unsplashImage, itemView)
+        }
+
+        val component = DaggerRepoComponent.builder().repoModule(RepoModule(context, -1, mainListFragment!!)).build()
+        component.inject(presenter)
+
+        activity.supportFragmentManager.beginTransaction().replace(R.id.search_result_root, mainListFragment)
+                .commit()
 
         appBarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
             val fraction = Math.abs(verticalOffset) * 1.0f / appBarLayout.height
@@ -208,7 +207,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     }
 
     @OnClick(R.id.detail_search_btn)
-    internal fun onClickSearch() {
+    fun onClickSearch() {
         hideKeyboard()
         Log.d(TAG, "onClickSearch")
         if (editText.text.toString() == "") {

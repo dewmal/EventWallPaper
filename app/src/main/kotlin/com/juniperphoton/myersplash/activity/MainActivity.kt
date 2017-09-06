@@ -3,6 +3,7 @@ package com.juniperphoton.myersplash.activity
 import android.animation.Animator
 import android.content.Intent
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.support.design.widget.AppBarLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.view.ViewPager
@@ -31,6 +32,10 @@ import rx.Subscriber
 import rx.schedulers.Schedulers
 
 class MainActivity : BaseActivity() {
+    companion object {
+        private const val SAVED_NAVIGATION_INDEX = "navi_index"
+    }
+
     private var mainListFragmentAdapter: MainListFragmentAdapter? = null
 
     private var handleShortcut: Boolean = false
@@ -71,7 +76,19 @@ class MainActivity : BaseActivity() {
 
         handleShortcutsAction()
         clearSharedFiles()
+
+        if (savedInstanceState != null) {
+            initNavigationIndex = savedInstanceState.getInt(SAVED_NAVIGATION_INDEX, 1)
+        }
         initMainViews()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
+        val index = viewPager.currentItem
+        if (index in 0..2) {
+            outState?.putInt(SAVED_NAVIGATION_INDEX, viewPager.currentItem)
+        }
+        super.onSaveInstanceState(outState, outPersistentState)
     }
 
     override fun onResume() {
