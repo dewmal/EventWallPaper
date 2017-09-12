@@ -48,9 +48,6 @@ class SettingsActivity : BaseActivity() {
     @BindView(R.id.recommendation_preview)
     lateinit var recommendationPreview: View
 
-    @BindView(R.id.clear_cache_settings)
-    lateinit var clearCacheItem: SettingsItemLayout
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
@@ -125,6 +122,6 @@ class SettingsActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        clearCacheItem.content = "${ImagePipelineFactory.getInstance().mainFileCache.size / 1024 / 1024} MB"
+        clearCacheSettings.content = "${ImagePipelineFactory.getInstance().mainFileCache.size / 1024 / 1024} MB"
     }
 }
