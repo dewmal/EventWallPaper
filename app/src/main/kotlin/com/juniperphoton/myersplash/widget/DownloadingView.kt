@@ -58,7 +58,7 @@ class DownloadingView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     }
 
     @OnClick(R.id.downloading_cancel_rl)
-    internal fun onCancel() {
+    fun onCancel() {
         onClickCancel?.invoke()
     }
 }

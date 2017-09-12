@@ -24,7 +24,9 @@ import butterknife.OnClick
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.CategoryAdapter
-import com.juniperphoton.myersplash.data.*
+import com.juniperphoton.myersplash.data.DaggerRepoComponent
+import com.juniperphoton.myersplash.data.MainListPresenter
+import com.juniperphoton.myersplash.data.RepoModule
 import com.juniperphoton.myersplash.fragment.MainListFragment
 import com.juniperphoton.myersplash.utils.AnimatorListenerImpl
 import com.juniperphoton.myersplash.utils.ToastService
@@ -73,7 +75,10 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     init {
         LayoutInflater.from(context).inflate(R.layout.search_layout, this)
         ButterKnife.bind(this)
+        initUi()
+    }
 
+    private fun initUi(){
         rootRL.setOnTouchListener { _, _ -> true }
         editText.setOnKeyListener({ _, keyCode, event ->
             if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
@@ -105,10 +110,11 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
 
         val presenter = MainListPresenter()
 
-        mainListFragment = MainListFragment()
-        mainListFragment!!.presenter = presenter
-        mainListFragment!!.onClickPhotoItem = { rectF, unsplashImage, itemView ->
-            detailView.showDetailedImage(rectF, unsplashImage, itemView)
+        mainListFragment = MainListFragment().apply {
+            this.presenter = presenter
+            onClickPhotoItem = { rectF, unsplashImage, itemView ->
+                detailView.show(rectF, unsplashImage, itemView)
+            }
         }
 
         val component = DaggerRepoComponent.builder().repoModule(RepoModule(context, -1, mainListFragment!!)).build()
@@ -121,8 +127,6 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
             val fraction = Math.abs(verticalOffset) * 1.0f / appBarLayout.height
             tagView.alpha = fraction
         }
-
-        tagView.setOnTouchListener { _, _ -> true }
 
         initCategoryList()
     }
@@ -158,6 +162,11 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
             clearBtn.animate().scaleX(if (show) 1f else 0f).scaleY(if (show) 1f else 0f).setDuration(200)
                     .start()
         }
+    }
+
+    private fun hideKeyboard() {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(editText.windowToken, 0)
     }
 
     fun onShowing() {
@@ -201,11 +210,6 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
         }
     }
 
-    private fun hideKeyboard() {
-        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(editText.windowToken, 0)
-    }
-
     @OnClick(R.id.detail_search_btn)
     fun onClickSearch() {
         hideKeyboard()
@@ -227,7 +231,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     }
 
     @OnClick(R.id.detail_clear_btn)
-    internal fun onClickClear() {
+    fun onClickClear() {
         editText.setText("")
         toggleSearchButtons(false, true)
     }

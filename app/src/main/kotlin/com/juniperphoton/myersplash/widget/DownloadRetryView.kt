@@ -51,12 +51,12 @@ class DownloadRetryView(context: Context, attrs: AttributeSet) : FrameLayout(con
     }
 
     @OnClick(R.id.delete_btn_root)
-    internal fun onClickDelete() {
+    fun onClickDelete() {
         onClickDelete?.invoke()
     }
 
     @OnClick(R.id.widget_retry_btn)
-    internal fun onClickRetry() {
+    fun onClickRetry() {
         onClickRetry?.invoke()
     }
 }

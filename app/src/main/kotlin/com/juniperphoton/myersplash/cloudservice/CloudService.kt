@@ -39,17 +39,17 @@ object CloudService {
         downloadService = retrofit.create(DownloadService::class.java)
     }
 
-    fun getPhotos(subscriber: Subscriber<MutableList<UnsplashImage>>, url: String, page: Int) {
+    fun getPhotos(url: String, page: Int, subscriber: Subscriber<MutableList<UnsplashImage>>) {
         val observable = photoService.getPhotos(url, page, 10, AppKey)
         subscribe(observable, subscriber)
     }
 
-    fun getRandomPhotos(subscriber: Subscriber<MutableList<UnsplashImage>>, url: String) {
+    fun getRandomPhotos(url: String, subscriber: Subscriber<MutableList<UnsplashImage>>) {
         val observable = photoService.getRandomPhotos(url, 10, AppKey)
         subscribe(observable, subscriber)
     }
 
-    fun getFeaturedPhotos(subscriber: Subscriber<MutableList<UnsplashImage>>, url: String, page: Int) {
+    fun getFeaturedPhotos(url: String, page: Int, subscriber: Subscriber<MutableList<UnsplashImage>>) {
         val observableF = photoService.getFeaturedPhotos(url, page, 10, AppKey)
         val observable: Observable<MutableList<UnsplashImage>> = observableF.map { images ->
             images.map { it.image!! }.toMutableList()
@@ -57,7 +57,7 @@ object CloudService {
         subscribe(observable, subscriber)
     }
 
-    fun searchPhotos(subscriber: Subscriber<MutableList<UnsplashImage>>, url: String, page: Int, query: String) {
+    fun searchPhotos(url: String, page: Int, query: String, subscriber: Subscriber<MutableList<UnsplashImage>>) {
         val observableF = photoService.searchPhotosByQuery(url, page, 10, query, AppKey)
         val observable: Observable<MutableList<UnsplashImage>> = observableF.map { searchResults ->
             searchResults.list
@@ -65,7 +65,7 @@ object CloudService {
         subscribe(observable, subscriber)
     }
 
-    fun downloadPhoto(subscriber: Subscriber<ResponseBody>, url: String): Subscription {
+    fun downloadPhoto(url: String, subscriber: Subscriber<ResponseBody>): Subscription {
         val observable = downloadService.downloadFileWithDynamicUrlSync(url)
         return observable.timeout(30, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())

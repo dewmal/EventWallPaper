@@ -99,6 +99,7 @@
         android:id="@+id/search_tag"
         style="@style/TagTextView"
         android:alpha="0"
+        android:clickable="false"
         tools:alpha="1"
         tools:text="# LAKE"/>
 

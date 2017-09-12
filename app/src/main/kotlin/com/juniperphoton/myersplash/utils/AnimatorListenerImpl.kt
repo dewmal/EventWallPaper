@@ -2,6 +2,9 @@ package com.juniperphoton.myersplash.utils
 
 import android.animation.Animator
 
+/**
+ * Handy class for implementing [Animator.AnimatorListener].
+ */
 abstract class AnimatorListenerImpl : Animator.AnimatorListener {
     override fun onAnimationStart(a: Animator) = Unit
 

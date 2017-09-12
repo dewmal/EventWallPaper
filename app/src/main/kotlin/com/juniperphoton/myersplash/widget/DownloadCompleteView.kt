@@ -37,7 +37,7 @@ class DownloadCompleteView(context: Context, attrs: AttributeSet) : FrameLayout(
     }
 
     @OnClick(R.id.widget_set_as_rl)
-    internal fun setAs() {
+    fun setAs() {
         filePath?.let {
             val intent = Intent(context, EditActivity::class.java)
             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(File(it)))

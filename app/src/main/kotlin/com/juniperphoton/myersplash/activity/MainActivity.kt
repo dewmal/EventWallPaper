@@ -204,7 +204,7 @@ class MainActivity : BaseActivity() {
             if (rectF.top <= location[1] + tagView.height) {
                 tagView.animate().alpha(0f).setDuration(100).start()
             }
-            imageDetailView.showDetailedImage(rectF, unsplashImage, itemView)
+            imageDetailView.show(rectF, unsplashImage, itemView)
         }, supportFragmentManager)
 
         viewPager.apply {
