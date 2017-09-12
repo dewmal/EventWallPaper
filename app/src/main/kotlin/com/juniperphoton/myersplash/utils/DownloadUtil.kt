@@ -110,7 +110,7 @@ object DownloadUtil {
         context.startService(intent)
     }
 
-    fun checkAndDownload(context: Activity, image: UnsplashImage) {
+    fun download(context: Activity, image: UnsplashImage) {
         if (!PermissionUtil.check(context)) {
             ToastService.sendShortToast(context.getString(R.string.no_permission))
             return
@@ -121,16 +121,12 @@ object DownloadUtil {
             builder.setMessage(R.string.wifi_attention_content)
             builder.setPositiveButton(R.string.download) { dialog, _ ->
                 dialog.dismiss()
-                startDownloadService(context, image.fileNameForDownload, image.downloadUrl!!)
-                saveDownloadItem(context, image)
-                EventBus.getDefault().post(DownloadStartedEvent(image.id))
+                doDownload(context, image)
             }
             builder.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
             builder.create().show()
         } else {
-            startDownloadService(context, image.fileNameForDownload, image.downloadUrl!!)
-            saveDownloadItem(context, image)
-            EventBus.getDefault().post(DownloadStartedEvent(image.id))
+            doDownload(context, image)
         }
     }
 
@@ -144,7 +140,17 @@ object DownloadUtil {
         return item
     }
 
-    private fun saveDownloadItem(context: Context, image: UnsplashImage) {
+    private fun doDownload(context: Context, image: UnsplashImage) {
+        var previewFile: File? = null
+        image.listUrl?.let {
+            previewFile = FileUtil.getCachedFile(it)
+        }
+        startDownloadService(context, image.fileNameForDownload, image.downloadUrl!!, previewFile?.path)
+        persistDownloadItem(context, image)
+        EventBus.getDefault().post(DownloadStartedEvent(image.id))
+    }
+
+    private fun persistDownloadItem(context: Context, image: UnsplashImage) {
         val downloadItems = RealmCache.getInstance().where(DownloadItem::class.java)
                 .findAllSorted(DownloadItem.POSITION_KEY, Sort.DESCENDING)
         var position = 0
@@ -161,10 +167,13 @@ object DownloadUtil {
         RealmCache.getInstance().executeTransaction { realm -> realm.copyToRealmOrUpdate(item) }
     }
 
-    private fun startDownloadService(context: Context, name: String, url: String) {
+    private fun startDownloadService(context: Context, name: String, url: String, previewUrl: String? = null) {
         val intent = Intent(context, DownloadService::class.java)
         intent.putExtra(Params.NAME_KEY, name)
         intent.putExtra(Params.URL_KEY, url)
+        previewUrl?.let {
+            intent.putExtra(Params.PREVIEW_URI, previewUrl)
+        }
         context.startService(intent)
     }
 }

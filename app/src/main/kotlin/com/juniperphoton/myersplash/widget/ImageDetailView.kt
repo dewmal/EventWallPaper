@@ -373,7 +373,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         if (clickedImage == null) {
             return
         }
-        DownloadUtil.checkAndDownload(context as Activity, clickedImage!!)
+        DownloadUtil.download(context as Activity, clickedImage!!)
     }
 
     @OnClick(R.id.detail_cancel_download_fab)
