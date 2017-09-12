@@ -78,6 +78,7 @@ object NotificationUtil {
             val bm = BitmapFactory.decodeFile(it.toString())
             builder.setLargeIcon(bm)
         }
+        injectAppIntent(builder)
         notificationManager.notify(id, builder!!.build())
     }
 
