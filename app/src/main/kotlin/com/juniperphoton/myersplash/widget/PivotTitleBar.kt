@@ -34,15 +34,28 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
     @BindView(R.id.pivot_item_2)
     lateinit var item2: TextView
 
+    /**
+     * Invoked when a single tap is performed on an item.
+     */
     var onSingleTap: ((Int) -> Unit)? = null
+
+    /**
+     * Invoked when a double tap is performed on an item.
+     */
     var onDoubleTap: ((Int) -> Unit)? = null
 
+    /**
+     * Which item is current selected.
+     */
     var selectedItem = DEFAULT_SELECTED
         set(value) {
             toggleAnimation(selectedItem, value)
             field = value
         }
 
+    /**
+     * Which item name is current selected.
+     */
     val selectedString: String
         get() = when (selectedItem) {
             0 -> UnsplashCategory.FEATURE_S.toUpperCase()
@@ -101,21 +114,6 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
         item2.setOnTouchListener(onTouchListener)
     }
 
-    @OnClick(R.id.pivot_item_0)
-    internal fun onClickItem0() {
-        onSingleTap?.invoke(0)
-    }
-
-    @OnClick(R.id.pivot_item_1)
-    internal fun onClickItem1() {
-        onSingleTap?.invoke(1)
-    }
-
-    @OnClick(R.id.pivot_item_2)
-    internal fun onClickItem2() {
-        onSingleTap?.invoke(2)
-    }
-
     private fun toggleAnimation(prevIndex: Int, newIndex: Int) {
         val prevView = itemsMap[prevIndex]
         val nextView = itemsMap[newIndex]
@@ -124,8 +122,23 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
         nextView?.animate()?.alpha(1f)?.setDuration(300)?.start()
     }
 
+    @OnClick(R.id.pivot_item_0)
+    fun onClickItem0() {
+        onSingleTap?.invoke(0)
+    }
+
+    @OnClick(R.id.pivot_item_1)
+    fun onClickItem1() {
+        onSingleTap?.invoke(1)
+    }
+
+    @OnClick(R.id.pivot_item_2)
+    fun onClickItem2() {
+        onSingleTap?.invoke(2)
+    }
+
     @OnClick(R.id.more_btn)
-    internal fun onClickMore() {
+    fun onClickMore() {
         val popupMenu = PopupMenu(context, moreBtn)
         popupMenu.inflate(R.menu.main)
         popupMenu.gravity = Gravity.END

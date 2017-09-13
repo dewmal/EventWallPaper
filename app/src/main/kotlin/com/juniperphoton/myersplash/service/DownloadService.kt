@@ -119,8 +119,10 @@ class DownloadService : IntentService(TAG) {
 
             override fun onNext(responseBody: ResponseBody) {
                 Log.d(TAG, "outputFile download onNext,size" + responseBody.contentLength())
-                this.outputFile = DownloadUtil.writeResponseBodyToDisk(responseBody, file!!.path, url) {
-                    NotificationUtil.showProgressNotification("MyerSplash", "Downloading...",
+                this.outputFile = DownloadUtil.writeToFile(responseBody, file!!.path) {
+                    NotificationUtil.showProgressNotification(
+                            "MyerSplash",
+                            "Downloading...",
                             it, Uri.parse(url), previewUri)
                     RealmCache.getInstance().executeTransaction { realm ->
                         val downloadItem = realm.where(DownloadItem::class.java)
@@ -132,7 +134,7 @@ class DownloadService : IntentService(TAG) {
                 }
             }
         }
-        CloudService.downloadPhoto(subscriber, url)
+        CloudService.downloadPhoto(url, subscriber)
         subscriptionMap.put(url, subscriber)
 
         return file!!.path

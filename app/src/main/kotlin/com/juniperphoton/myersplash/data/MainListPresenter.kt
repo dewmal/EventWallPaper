@@ -10,7 +10,7 @@ import com.juniperphoton.myersplash.utils.Pasteur
 import com.juniperphoton.myersplash.utils.ResponseObserver
 import javax.inject.Inject
 
-open class MainListPresenter : Contract.MainPresenter {
+open class MainListPresenter : MainContract.MainPresenter {
     companion object {
         const val REFRESH_PAGING = 1
         private const val TAG = "MainListPresenter"
@@ -22,7 +22,7 @@ open class MainListPresenter : Contract.MainPresenter {
     @Inject
     override lateinit var category: UnsplashCategory
     @Inject
-    lateinit var mainView: Contract.MainView
+    lateinit var mainView: MainContract.MainView
     @Inject
     lateinit var preferenceRepo: PreferenceRepo
 
@@ -66,8 +66,8 @@ open class MainListPresenter : Contract.MainPresenter {
         mainView.setRefreshing(false)
     }
 
-    private fun insertRecommendedImage(t: MutableList<UnsplashImage?>?) {
-        t?.add(0, UnsplashImage.createRecommendedImage())
+    private fun insertRecommendedImage(t: MutableList<UnsplashImage>) {
+        t.add(0, UnsplashImage.createRecommendedImage())
     }
 
     private fun loadPhotoList(next: Int) {
@@ -76,18 +76,19 @@ open class MainListPresenter : Contract.MainPresenter {
         if (next == REFRESH_PAGING) {
             mainView.setRefreshing(true)
         }
-        val subscriber = object : ResponseObserver<MutableList<UnsplashImage?>?>() {
+        val subscriber = object : ResponseObserver<MutableList<UnsplashImage>>() {
             override fun onFinish() {
                 setSignalOfEnd()
             }
 
             override fun onError(e: Throwable) {
+                super.onError(e)
                 e.printStackTrace()
-                mainView.showToast(R.string.failed_to_send_request)
                 mainView.updateNoItemVisibility()
+                mainView.setRefreshing(false)
             }
 
-            override fun onNext(t: MutableList<UnsplashImage?>?) {
+            override fun onNext(t: MutableList<UnsplashImage>) {
                 if (category.id == UnsplashCategory.NEW_CATEGORY_ID
                         && next == REFRESH_PAGING
                         && preferenceRepo.getBoolean(App.instance.getString(R.string.preference_key_recommendation), true)) {
@@ -100,13 +101,13 @@ open class MainListPresenter : Contract.MainPresenter {
         category.let {
             when (it.id) {
                 UnsplashCategory.FEATURED_CATEGORY_ID ->
-                    CloudService.getFeaturedPhotos(subscriber, it.requestUrl!!, next)
+                    CloudService.getFeaturedPhotos(it.requestUrl!!, next, subscriber)
                 UnsplashCategory.NEW_CATEGORY_ID ->
-                    CloudService.getPhotos(subscriber, it.requestUrl!!, next)
+                    CloudService.getPhotos(it.requestUrl!!, next, subscriber)
                 UnsplashCategory.RANDOM_CATEGORY_ID ->
-                    CloudService.getRandomPhotos(subscriber, it.requestUrl!!)
+                    CloudService.getRandomPhotos(it.requestUrl!!, subscriber)
                 UnsplashCategory.SEARCH_ID ->
-                    CloudService.searchPhotos(subscriber, it.requestUrl!!, next, query!!)
+                    CloudService.searchPhotos(it.requestUrl!!, next, query!!, subscriber)
             }
         }
     }

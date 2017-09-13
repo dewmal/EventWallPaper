@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AlertDialog
-import android.util.Log
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
@@ -24,9 +23,12 @@ import java.util.*
 object DownloadUtil {
     private const val TAG = "DownloadUtil"
 
-    fun writeResponseBodyToDisk(body: ResponseBody, fileUri: String,
-                                downloadUrl: String, onProgress: ((Int) -> Unit)?): File? {
-        try {
+    /**
+     * Write [body] to a file of [fileUri].
+     * @param onProgress will be invoked when the progress has been updated.
+     */
+    fun writeToFile(body: ResponseBody, fileUri: String, onProgress: ((Int) -> Unit)?): File? {
+        return try {
             val fileToSave = File(fileUri)
 
             var inputStream: InputStream? = null
@@ -47,13 +49,11 @@ object DownloadUtil {
 
                 while (true) {
                     val read = inputStream!!.read(buffer)
-
                     if (read == -1) {
                         break
                     }
 
                     outputStream.write(buffer, 0, read)
-
                     fileSizeDownloaded += read.toLong()
 
                     val progress = (fileSizeDownloaded / fileSize.toDouble() * 100).toInt()
@@ -64,36 +64,34 @@ object DownloadUtil {
                 }
                 val endTime = Date().time
 
-                Log.d(TAG, "time spend=" + (endTime - startTime).toString())
+                Pasteur.debug(TAG, "time spend=" + (endTime - startTime).toString())
 
                 outputStream.flush()
 
-                return fileToSave
+                fileToSave
             } catch (e0: InterruptedIOException) {
-                return null
+                null
             } catch (e: Exception) {
                 e.printStackTrace()
-                return null
+                null
             } finally {
                 try {
-                    if (inputStream != null) {
-                        inputStream.close()
-                    }
-
-                    if (outputStream != null) {
-                        outputStream.close()
-                    }
+                    inputStream?.close()
+                    outputStream?.close()
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
-
             }
         } catch (e: Exception) {
+            // Catch any other exceptions, normally we don't expect this happened.
             ToastService.sendShortToast(e.message)
-            return null
+            null
         }
     }
 
+    /**
+     * Get file to save given a [expectedName].
+     */
     fun getFileToSave(expectedName: String): File? {
         val galleryPath = FileUtil.galleryPath ?: return null
         val folder = File(galleryPath)
@@ -103,6 +101,9 @@ object DownloadUtil {
         return File(folder.toString() + File.separator + expectedName)
     }
 
+    /**
+     * Cancel the download of specified [image].
+     */
     fun cancelDownload(context: Context, image: UnsplashImage) {
         val intent = Intent(App.instance, DownloadService::class.java)
         intent.putExtra(Params.CANCELED_KEY, true)
@@ -110,7 +111,11 @@ object DownloadUtil {
         context.startService(intent)
     }
 
-    fun checkAndDownload(context: Activity, image: UnsplashImage) {
+    /**
+     * Start downloading the [image].
+     * @param context used to check network status
+     */
+    fun download(context: Activity, image: UnsplashImage) {
         if (!PermissionUtil.check(context)) {
             ToastService.sendShortToast(context.getString(R.string.no_permission))
             return
@@ -121,19 +126,18 @@ object DownloadUtil {
             builder.setMessage(R.string.wifi_attention_content)
             builder.setPositiveButton(R.string.download) { dialog, _ ->
                 dialog.dismiss()
-                startDownloadService(context, image.fileNameForDownload, image.downloadUrl!!)
-                saveDownloadItem(context, image)
-                EventBus.getDefault().post(DownloadStartedEvent(image.id))
+                doDownload(context, image)
             }
             builder.setNegativeButton(R.string.cancel) { dialog, _ -> dialog.dismiss() }
             builder.create().show()
         } else {
-            startDownloadService(context, image.fileNameForDownload, image.downloadUrl!!)
-            saveDownloadItem(context, image)
-            EventBus.getDefault().post(DownloadStartedEvent(image.id))
+            doDownload(context, image)
         }
     }
 
+    /**
+     * Get the realm object of [DownloadItem] given its [id].
+     */
     fun getDownloadItemById(id: String?): DownloadItem? {
         val realm = RealmCache.getInstance()
         realm.beginTransaction()
@@ -144,7 +148,17 @@ object DownloadUtil {
         return item
     }
 
-    private fun saveDownloadItem(context: Context, image: UnsplashImage) {
+    private fun doDownload(context: Context, image: UnsplashImage) {
+        var previewFile: File? = null
+        image.listUrl?.let {
+            previewFile = FileUtil.getCachedFile(it)
+        }
+        startDownloadService(context, image.fileNameForDownload, image.downloadUrl!!, previewFile?.path)
+        persistDownloadItem(context, image)
+        EventBus.getDefault().post(DownloadStartedEvent(image.id))
+    }
+
+    private fun persistDownloadItem(context: Context, image: UnsplashImage) {
         val downloadItems = RealmCache.getInstance().where(DownloadItem::class.java)
                 .findAllSorted(DownloadItem.POSITION_KEY, Sort.DESCENDING)
         var position = 0
@@ -161,10 +175,13 @@ object DownloadUtil {
         RealmCache.getInstance().executeTransaction { realm -> realm.copyToRealmOrUpdate(item) }
     }
 
-    private fun startDownloadService(context: Context, name: String, url: String) {
+    private fun startDownloadService(context: Context, name: String, url: String, previewUrl: String? = null) {
         val intent = Intent(context, DownloadService::class.java)
         intent.putExtra(Params.NAME_KEY, name)
         intent.putExtra(Params.URL_KEY, url)
+        previewUrl?.let {
+            intent.putExtra(Params.PREVIEW_URI, previewUrl)
+        }
         context.startService(intent)
     }
 }

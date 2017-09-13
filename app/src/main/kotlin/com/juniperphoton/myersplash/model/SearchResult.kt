@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 class SearchResult {
     @SerializedName("results")
-    val list: MutableList<UnsplashImage?>? = null
+    val list: MutableList<UnsplashImage>? = null
 }

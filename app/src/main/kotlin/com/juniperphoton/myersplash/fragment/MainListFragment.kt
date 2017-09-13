@@ -2,7 +2,6 @@ package com.juniperphoton.myersplash.fragment
 
 import android.graphics.RectF
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -14,18 +13,19 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.PhotoAdapter
-import com.juniperphoton.myersplash.data.Contract
+import com.juniperphoton.myersplash.data.MainContract
 import com.juniperphoton.myersplash.event.RefreshUIEvent
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.DownloadUtil
+import com.juniperphoton.myersplash.utils.Pasteur
 import com.juniperphoton.myersplash.utils.ToastService
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 @Suppress("unused", "unused_parameter")
-class MainListFragment : Fragment(), Contract.MainView {
+class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), MainContract.MainView {
     companion object {
         private const val TAG = "MainListFragment"
         private const val SCROLL_DETECTION_FACTOR_PX = 20
@@ -43,7 +43,6 @@ class MainListFragment : Fragment(), Contract.MainView {
     @BindView(R.id.no_item_retry_btn)
     lateinit var retryBtn: View
 
-    private var mainPresenter: Contract.MainPresenter? = null
     private var adapter: PhotoAdapter? = null
 
     override val isBusyRefreshing: Boolean
@@ -59,29 +58,33 @@ class MainListFragment : Fragment(), Contract.MainView {
 
     private var query: String? = null
 
-    override fun setPresenter(presenter: Contract.MainPresenter) {
-        mainPresenter = presenter
-    }
-
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        Pasteur.info(TAG, "onCreateView $activity")
         val view = LayoutInflater.from(activity!!).inflate(R.layout.fragment_list, null, false)
         ButterKnife.bind(this, view)
         viewLoaded = true
         initView()
 
-        mainPresenter?.start()
+        presenter?.start()
 
         if (visible && !loadedData) {
-            mainPresenter?.refresh()
+            presenter?.refresh()
             loadedData = true
         }
 
         return view
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        Pasteur.info(TAG, "onActivityCreated $activity")
+
+        super.onActivityCreated(savedInstanceState)
+    }
+
     override fun onDestroy() {
+        Pasteur.info(TAG, "onDestroy $activity")
         super.onDestroy()
-        mainPresenter?.stop()
+        presenter?.stop()
     }
 
     override fun showToast(text: String) {
@@ -93,10 +96,10 @@ class MainListFragment : Fragment(), Contract.MainView {
     }
 
     override fun search(query: String) {
-        mainPresenter?.search(query)
+        presenter?.search(query)
     }
 
-    override fun refreshList(images: MutableList<UnsplashImage?>?, next: Int) {
+    override fun refreshList(images: MutableList<UnsplashImage>, next: Int) {
         if (next == 1 || adapter == null) {
             displayListDataInternal(images)
         } else {
@@ -104,7 +107,7 @@ class MainListFragment : Fragment(), Contract.MainView {
         }
         if (adapter == null) {
             updateNoItemVisibility(true)
-        } else if (images?.size == 0 && adapter!!.itemCount == 0) {
+        } else if (images.size == 0 && adapter!!.itemCount == 0) {
             updateNoItemVisibility(true)
         } else {
             updateNoItemVisibility(false)
@@ -148,7 +151,7 @@ class MainListFragment : Fragment(), Contract.MainView {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onMessageEvent(event: ScrollToTopEvent) {
-        mainPresenter?.onReceivedScrollToTopEvent(event)
+        presenter?.onReceivedScrollToTopEvent(event)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -161,7 +164,7 @@ class MainListFragment : Fragment(), Contract.MainView {
         visible = isVisibleToUser
 
         if (visible && !loadedData && viewLoaded) {
-            mainPresenter?.refresh()
+            presenter?.refresh()
             loadedData = true
         }
 
@@ -176,12 +179,12 @@ class MainListFragment : Fragment(), Contract.MainView {
         if (refreshLayout.isRefreshing) {
             return
         }
-        mainPresenter?.refresh()
+        presenter?.refresh()
     }
 
     private fun initView() {
         refreshLayout.setOnRefreshListener {
-            mainPresenter?.refresh()
+            presenter?.refresh()
         }
         contentRecyclerView.layoutManager = LinearLayoutManager(activity,
                 LinearLayoutManager.VERTICAL, false)
@@ -201,23 +204,23 @@ class MainListFragment : Fragment(), Contract.MainView {
         })
         retryBtn.setOnClickListener {
             updateNoItemVisibility(false)
-            mainPresenter?.reloadList()
+            presenter?.reloadList()
         }
     }
 
-    private fun displayListDataInternal(unsplashImages: MutableList<UnsplashImage?>?) {
+    private fun displayListDataInternal(unsplashImages: MutableList<UnsplashImage>) {
         if (adapter != null && adapter!!.firstImage != null) {
-            if (adapter?.firstImage?.id == unsplashImages?.get(0)?.id) {
+            if (adapter?.firstImage?.id == unsplashImages[0].id) {
                 return
             }
         }
 
         adapter = PhotoAdapter(unsplashImages, activity)
         adapter?.onLoadMore = {
-            mainPresenter?.loadMore()
+            presenter?.loadMore()
         }
         adapter?.onClickQuickDownload = { image ->
-            DownloadUtil.checkAndDownload(activity, image)
+            DownloadUtil.download(activity, image)
         }
         adapter?.onClickPhoto = onClickPhotoItem
         contentRecyclerView.adapter = adapter

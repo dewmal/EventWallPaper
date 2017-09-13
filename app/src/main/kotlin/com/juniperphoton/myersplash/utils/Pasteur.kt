@@ -12,32 +12,42 @@ object Pasteur {
     }
 
     fun d(tag: String?, string: String) {
+        debug(tag, string)
+    }
+
+    fun debug(tag: String?, string: String) {
         if (debugMode) {
             Log.d(tag ?: TAG_DEFAULT, string)
         }
     }
 
     fun i(tag: String?, string: String) {
+        i(tag, string)
+    }
+
+    fun info(tag: String?, string: String) {
         if (debugMode) {
             Log.i(tag ?: TAG_DEFAULT, string)
         }
     }
 
     fun w(tag: String?, string: String) {
+        warn(tag, string)
+    }
+
+    fun warn(tag: String?, string: String) {
         if (debugMode) {
             Log.w(tag ?: TAG_DEFAULT, string)
         }
     }
 
     fun e(tag: String?, string: String) {
-        if (debugMode) {
-            Log.e(tag ?: TAG_DEFAULT, string)
-        }
+        error(tag, string)
     }
 
-    fun v(tag: String?, string: String) {
+    fun error(tag: String?, string: String) {
         if (debugMode) {
-            Log.v(tag ?: TAG_DEFAULT, string)
+            Log.e(tag ?: TAG_DEFAULT, string)
         }
     }
 }

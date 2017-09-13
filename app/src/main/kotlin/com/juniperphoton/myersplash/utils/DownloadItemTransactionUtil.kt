@@ -3,7 +3,14 @@ package com.juniperphoton.myersplash.utils
 import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.model.DownloadItem
 
+/**
+ * Helper class for updating download item status in realm.
+ */
 object DownloadItemTransactionUtil {
+
+    /**
+     * Delete a managed download [item].
+     */
     fun delete(item: DownloadItem) {
         RealmCache.getInstance().executeTransaction { realm ->
             val managedItem = realm.where(DownloadItem::class.java).equalTo(DownloadItem.ID_KEY,
@@ -12,6 +19,10 @@ object DownloadItemTransactionUtil {
         }
     }
 
+    /**
+     * Update download [status] of a download [item].
+     * @param status see [DownloadItem.DownloadStatus].
+     */
     fun updateStatus(item: DownloadItem, @DownloadItem.DownloadStatus status: Int) {
         RealmCache.getInstance().executeTransaction { realm ->
             val managedItem = realm.where(DownloadItem::class.java).equalTo(DownloadItem.ID_KEY,
@@ -25,6 +36,10 @@ object DownloadItemTransactionUtil {
         }
     }
 
+    /**
+     * Update download [status] of given a [id].
+     * @param status see [DownloadItem.DownloadStatus].
+     */
     fun updateStatus(id: String, @DownloadItem.DownloadStatus status: Int) {
         RealmCache.getInstance().executeTransaction { realm ->
             val managedItem = realm.where(DownloadItem::class.java).equalTo(DownloadItem.ID_KEY,

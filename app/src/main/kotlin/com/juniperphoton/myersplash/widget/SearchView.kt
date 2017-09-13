@@ -24,7 +24,6 @@ import butterknife.OnClick
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.CategoryAdapter
-import com.juniperphoton.myersplash.data.Contract
 import com.juniperphoton.myersplash.data.DaggerRepoComponent
 import com.juniperphoton.myersplash.data.MainListPresenter
 import com.juniperphoton.myersplash.data.RepoModule
@@ -70,13 +69,16 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
 
     private var categoryAdapter: CategoryAdapter? = null
 
-    private val mainListFragment: Contract.MainView
+    private var mainListFragment: MainListFragment? = null
     private var animating: Boolean = false
 
     init {
         LayoutInflater.from(context).inflate(R.layout.search_layout, this)
         ButterKnife.bind(this)
+        initUi()
+    }
 
+    private fun initUi(){
         rootRL.setOnTouchListener { _, _ -> true }
         editText.setOnKeyListener({ _, keyCode, event ->
             if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
@@ -108,13 +110,14 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
 
         val presenter = MainListPresenter()
 
-        mainListFragment = MainListFragment()
-        mainListFragment.setPresenter(presenter)
-        mainListFragment.onClickPhotoItem = { rectF, unsplashImage, itemView ->
-            detailView.showDetailedImage(rectF, unsplashImage, itemView)
+        mainListFragment = MainListFragment().apply {
+            this.presenter = presenter
+            onClickPhotoItem = { rectF, unsplashImage, itemView ->
+                detailView.show(rectF, unsplashImage, itemView)
+            }
         }
 
-        val component = DaggerRepoComponent.builder().repoModule(RepoModule(context, -1, mainListFragment)).build()
+        val component = DaggerRepoComponent.builder().repoModule(RepoModule(context, -1, mainListFragment!!)).build()
         component.inject(presenter)
 
         activity.supportFragmentManager.beginTransaction().replace(R.id.search_result_root, mainListFragment)
@@ -124,8 +127,6 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
             val fraction = Math.abs(verticalOffset) * 1.0f / appBarLayout.height
             tagView.alpha = fraction
         }
-
-        tagView.setOnTouchListener { _, _ -> true }
 
         initCategoryList()
     }
@@ -163,13 +164,18 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
         }
     }
 
+    private fun hideKeyboard() {
+        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(editText.windowToken, 0)
+    }
+
     fun onShowing() {
-        mainListFragment.registerEvent()
+        mainListFragment?.registerEvent()
         toggleSearchButtons(false, false)
     }
 
     fun onHiding() {
-        mainListFragment.unregisterEvent()
+        mainListFragment?.unregisterEvent()
         hideKeyboard()
         toggleSearchButtons(false, false)
         tagView.animate().alpha(0f).setDuration(100).start()
@@ -185,8 +191,8 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
         val layoutParams = searchBox.layoutParams as AppBarLayout.LayoutParams
         layoutParams.scrollFlags = 0
         searchBox.layoutParams = layoutParams
-        mainListFragment.scrollToTop()
-        mainListFragment.clearData()
+        mainListFragment?.scrollToTop()
+        mainListFragment?.clearData()
         editText.setText("")
         categoryList.animate()?.alpha(1f)?.setListener(object : AnimatorListenerImpl() {
             override fun onAnimationEnd(a: Animator?) {
@@ -204,13 +210,8 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
         }
     }
 
-    private fun hideKeyboard() {
-        val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(editText.windowToken, 0)
-    }
-
     @OnClick(R.id.detail_search_btn)
-    internal fun onClickSearch() {
+    fun onClickSearch() {
         hideKeyboard()
         Log.d(TAG, "onClickSearch")
         if (editText.text.toString() == "") {
@@ -220,7 +221,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
         resultRoot.visibility = View.VISIBLE
         tagView.text = "# ${editText.text.toString().toUpperCase()}"
 
-        mainListFragment.search(editText.text.toString().toLowerCase())
+        mainListFragment?.search(editText.text.toString().toLowerCase())
 
         categoryList.animate().alpha(0f).setListener(object : AnimatorListenerImpl() {
             override fun onAnimationEnd(a: Animator?) {
@@ -230,7 +231,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
     }
 
     @OnClick(R.id.detail_clear_btn)
-    internal fun onClickClear() {
+    fun onClickClear() {
         editText.setText("")
         toggleSearchButtons(false, true)
     }
