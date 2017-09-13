@@ -22,7 +22,7 @@ class RecommendedWallpaperTest {
     @Test
     fun testRecommendedThumb() {
         val testSubscriber = TestSubscriber<ResponseBody>()
-        CloudService.downloadPhoto(testSubscriber, thumbUrl)
+        CloudService.downloadPhoto(thumbUrl, testSubscriber)
         testSubscriber.awaitTerminalEvent()
         testSubscriber.assertNoErrors()
     }
@@ -30,7 +30,7 @@ class RecommendedWallpaperTest {
     @Test
     fun testCantDownloadRecommendedThumb() {
         val testSubscriber = TestSubscriber<ResponseBody>()
-        CloudService.downloadPhoto(testSubscriber, invalidUrl)
+        CloudService.downloadPhoto(invalidUrl, testSubscriber)
         testSubscriber.awaitTerminalEvent()
         testSubscriber.assertError(APIException::class.java)
     }
@@ -38,7 +38,7 @@ class RecommendedWallpaperTest {
     @Test
     fun testRecommendedLarge() {
         val testSubscriber = TestSubscriber<ResponseBody>()
-        CloudService.downloadPhoto(testSubscriber, largeUrl)
+        CloudService.downloadPhoto(largeUrl, testSubscriber)
         testSubscriber.awaitTerminalEvent()
         testSubscriber.assertNoErrors()
     }

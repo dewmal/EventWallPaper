@@ -1,5 +1,6 @@
 package com.juniperphoton.myersplash.utils
 
+import android.support.annotation.CallSuper
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.cloudservice.APIException
 import rx.Subscriber
@@ -10,6 +11,7 @@ open class ResponseObserver<T> : Subscriber<T>() {
         onFinish()
     }
 
+    @CallSuper
     override fun onError(e: Throwable) {
         e.printStackTrace()
         when (e) {

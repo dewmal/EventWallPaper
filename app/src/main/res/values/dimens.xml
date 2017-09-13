@@ -44,5 +44,5 @@
     <dimen name="about_space">120dp</dimen>
     <dimen name="gradient_bottom_height">130dp</dimen>
     <dimen name="gradient_top_height">100dp</dimen>
-    <dimen name="common_corner_radius">6dp</dimen>
+    <dimen name="common_corner_radius">4dp</dimen>
 </resources>

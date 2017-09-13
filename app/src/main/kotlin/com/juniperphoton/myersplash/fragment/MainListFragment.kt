@@ -220,7 +220,7 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
             presenter?.loadMore()
         }
         adapter?.onClickQuickDownload = { image ->
-            DownloadUtil.checkAndDownload(activity, image)
+            DownloadUtil.download(activity, image)
         }
         adapter?.onClickPhoto = onClickPhotoItem
         contentRecyclerView.adapter = adapter

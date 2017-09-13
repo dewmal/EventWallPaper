@@ -5,7 +5,6 @@ import android.widget.SeekBar
 import com.facebook.drawee.controller.ControllerListener
 import com.facebook.imagepipeline.image.ImageInfo
 
-
 open class SimpleControllerListener : ControllerListener<ImageInfo> {
     override fun onIntermediateImageFailed(id: String?, throwable: Throwable?) {
     }

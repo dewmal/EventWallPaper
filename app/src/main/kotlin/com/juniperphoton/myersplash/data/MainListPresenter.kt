@@ -82,8 +82,8 @@ open class MainListPresenter : MainContract.MainPresenter {
             }
 
             override fun onError(e: Throwable) {
+                super.onError(e)
                 e.printStackTrace()
-                mainView.showToast(R.string.failed_to_send_request)
                 mainView.updateNoItemVisibility()
                 mainView.setRefreshing(false)
             }
@@ -101,13 +101,13 @@ open class MainListPresenter : MainContract.MainPresenter {
         category.let {
             when (it.id) {
                 UnsplashCategory.FEATURED_CATEGORY_ID ->
-                    CloudService.getFeaturedPhotos(subscriber, it.requestUrl!!, next)
+                    CloudService.getFeaturedPhotos(it.requestUrl!!, next, subscriber)
                 UnsplashCategory.NEW_CATEGORY_ID ->
-                    CloudService.getPhotos(subscriber, it.requestUrl!!, next)
+                    CloudService.getPhotos(it.requestUrl!!, next, subscriber)
                 UnsplashCategory.RANDOM_CATEGORY_ID ->
-                    CloudService.getRandomPhotos(subscriber, it.requestUrl!!)
+                    CloudService.getRandomPhotos(it.requestUrl!!, subscriber)
                 UnsplashCategory.SEARCH_ID ->
-                    CloudService.searchPhotos(subscriber, it.requestUrl!!, next, query!!)
+                    CloudService.searchPhotos(it.requestUrl!!, next, query!!, subscriber)
             }
         }
     }

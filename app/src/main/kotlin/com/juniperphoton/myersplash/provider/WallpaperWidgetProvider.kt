@@ -60,11 +60,11 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
             return
         }
 
-        CloudService.downloadPhoto(object : Subscriber<ResponseBody>() {
+        CloudService.downloadPhoto(thumbUrl!!, object : Subscriber<ResponseBody>() {
             var outputFile: File? = null
 
-            override fun onError(e: Throwable?) {
-                e!!.printStackTrace()
+            override fun onError(e: Throwable) {
+                e.printStackTrace()
             }
 
             override fun onCompleted() {
@@ -76,9 +76,9 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
             }
 
             override fun onNext(responseBody: ResponseBody?) {
-                outputFile = DownloadUtil.writeResponseBodyToDisk(responseBody!!, file.path, thumbUrl!!, null)
+                outputFile = DownloadUtil.writeToFile(responseBody!!, file.path, null)
             }
-        }, thumbUrl!!)
+        })
     }
 
     private fun updateWidget(context: Context, widgetId: Int, filePath: String) {

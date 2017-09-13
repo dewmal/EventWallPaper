@@ -16,7 +16,6 @@ import com.juniperphoton.myersplash.utils.LocalSettingHelper
 import com.juniperphoton.myersplash.utils.ToastService
 import com.juniperphoton.myersplash.widget.SettingsItemLayout
 import io.realm.Realm
-import kotlinx.android.synthetic.main.activity_settings.*
 import org.greenrobot.eventbus.EventBus
 
 @Suppress("unused", "unused_parameter")
@@ -113,8 +112,7 @@ class SettingsActivity : BaseActivity() {
 
         val builder = AlertDialog.Builder(this@SettingsActivity)
         builder.setTitle(getString(R.string.settings_loading_quality))
-        builder.setSingleChoiceItems(loadingStrings, choice
-        ) { dialog, which ->
+        builder.setSingleChoiceItems(loadingStrings, choice) { dialog, which ->
             LocalSettingHelper.putInt(this@SettingsActivity, listQualitySettingsKey, which)
             dialog.dismiss()
             loadingQualitySettings.content = loadingStrings[which]
@@ -124,6 +122,6 @@ class SettingsActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        clear_cache_settings.content = "${ImagePipelineFactory.getInstance().mainFileCache.size / 1024 / 1024} MB"
+        clearCacheSettings.content = "${ImagePipelineFactory.getInstance().mainFileCache.size / 1024 / 1024} MB"
     }
 }

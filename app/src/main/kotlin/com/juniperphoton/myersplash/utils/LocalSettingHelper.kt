@@ -5,9 +5,9 @@ import android.content.SharedPreferences
 
 @Suppress("unused")
 object LocalSettingHelper {
-    private val CONFIG_NAME = "config"
+    private const val CONFIG_NAME = "config"
 
-    fun getSharedPreference(context: Context): SharedPreferences {
+    private fun getSharedPreference(context: Context): SharedPreferences {
         return context.getSharedPreferences(CONFIG_NAME, Context.MODE_PRIVATE)
     }
 
