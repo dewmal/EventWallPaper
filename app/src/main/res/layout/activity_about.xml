@@ -117,6 +117,7 @@
                     android:layout_marginLeft="30dp"
                     android:layout_marginRight="30dp"
                     android:gravity="center"
+                    android:layout_gravity="center"
                     android:text="@string/settings_credit_content"/>
 
                 <TextView

@@ -18,6 +18,7 @@ import com.juniperphoton.myersplash.event.RefreshUIEvent
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.DownloadUtil
+import com.juniperphoton.myersplash.utils.LayoutManager
 import com.juniperphoton.myersplash.utils.Pasteur
 import com.juniperphoton.myersplash.utils.ToastService
 import org.greenrobot.eventbus.EventBus
@@ -186,8 +187,7 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
         refreshLayout.setOnRefreshListener {
             presenter?.refresh()
         }
-        contentRecyclerView.layoutManager = LinearLayoutManager(activity,
-                LinearLayoutManager.VERTICAL, false)
+        contentRecyclerView.layoutManager = LayoutManager.createGridLayoutManager(activity)
         contentRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(list: RecyclerView?, newState: Int) {
                 super.onScrollStateChanged(list, newState)

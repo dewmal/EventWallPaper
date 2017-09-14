@@ -18,6 +18,10 @@ import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 
 class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
+    companion object {
+        const val ASPECT_RATIO = 4f / 3f
+    }
+
     @BindView(R.id.row_photo_iv)
     lateinit var simpleDraweeView: SimpleDraweeView
 
@@ -40,6 +44,12 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
     override fun onFinishInflate() {
         super.onFinishInflate()
         ButterKnife.bind(this, this)
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val width = MeasureSpec.getSize(widthMeasureSpec)
+        val height = width / ASPECT_RATIO
+        super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(height.toInt(), MeasureSpec.EXACTLY))
     }
 
     fun bind(image: UnsplashImage?, pos: Int) {

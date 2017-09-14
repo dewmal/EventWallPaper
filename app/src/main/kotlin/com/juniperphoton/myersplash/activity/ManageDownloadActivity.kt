@@ -18,6 +18,7 @@ import com.juniperphoton.myersplash.adapter.DownloadsListAdapter
 import com.juniperphoton.myersplash.extension.getDimenInPixel
 import com.juniperphoton.myersplash.extension.hasNavigationBar
 import com.juniperphoton.myersplash.model.DownloadItem
+import com.juniperphoton.myersplash.utils.LayoutManager
 import com.juniperphoton.myersplash.utils.Pasteur
 import io.realm.RealmChangeListener
 import io.realm.Sort
@@ -117,7 +118,7 @@ class ManageDownloadActivity : BaseActivity() {
         }
         adapter!!.refreshItems(downloadItems)
 
-        val layoutManager = GridLayoutManager(this, 2)
+        val layoutManager = LayoutManager.createGridLayoutManager(this)
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
                 return if (position == adapter!!.itemCount - 1) 2 else 1

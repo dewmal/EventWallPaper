@@ -16,4 +16,8 @@
         <attr name="has_checkbox" format="boolean"/>
         <attr name="show_divider" format="boolean"/>
     </declare-styleable>
+
+    <declare-styleable name="FixedSizeCardView">
+        <attr name="aspect_ratio" format="float"/>
+    </declare-styleable>
 </resources>
