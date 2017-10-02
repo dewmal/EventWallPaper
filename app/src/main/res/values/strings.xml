@@ -14,8 +14,8 @@
     <string name="settings_quick_download">Show download button in list</string>
     <string name="settings_quick_download_title">Quick download</string>
 
-    <string name="settings_recommendation_title">Show recommendation</string>
-    <string name="settings_recommendation_content">Updated everyday</string>
+    <string name="settings_recommendation_title">Show today</string>
+    <string name="settings_recommendation_content">Update everyday</string>
 
     <string name="image_desc">Desc</string>
 
@@ -93,7 +93,7 @@
     <string name="github_url">https://github.com/JuniperPhoton/MyerSplashAndroid</string>
     <string name="twitter_url">https://twitter.com/juniperphoton</string>
     <string name="weibo_url">
-        https://m.weibo.cn/p/1005051624312593?from=qrcode&amp;frwbqr=53&amp;jumpfrom=weibocom
+        https://weibo.com/photon
     </string>
     <string name="dim_the_brightness">DIM THE BRIGHTNESS</string>
 
@@ -106,6 +106,6 @@
     <string name="recommended_by">recommended by</string>
     <string name="author_default_name">JuniperPhoton</string>
     <string name="loading">Loading…</string>
-    <string name="recommended_tag">Recommended</string>
+    <string name="recommended_tag">TODAY</string>
     <string name="copied_tag">COPIED :D</string>
 </resources>
