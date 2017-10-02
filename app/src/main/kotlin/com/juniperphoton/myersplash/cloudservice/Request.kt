@@ -7,6 +7,6 @@ object Request {
     const val RANDOM_PHOTOS_URL = "https://api.unsplash.com/photos/random?"
     const val SEARCH_URL = "https://api.unsplash.com/search/photos?"
 
-    const val AUTO_CHANGE_WALLPAPER = "http://juniperphoton.net/myersplash/wallpapers/"
-    const val AUTO_CHANGE_WALLPAPER_THUMB = "http://juniperphoton.net/myersplash/wallpapers/thumbs/"
+    const val AUTO_CHANGE_WALLPAPER = "https://juniperphoton.net/myersplash/wallpapers/"
+    const val AUTO_CHANGE_WALLPAPER_THUMB = "https://juniperphoton.net/myersplash/wallpapers/thumbs/"
 }
