@@ -130,6 +130,7 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
     }
 
     override fun scrollToTop() {
+        contentRecyclerView.scrollToPosition(5)
         contentRecyclerView.smoothScrollToPosition(0)
     }
 
