@@ -2,6 +2,7 @@ package com.juniperphoton.myersplash.utils
 
 import android.animation.Animator
 
+@Suppress("unused")
 open class SimpleAnimatorListener: Animator.AnimatorListener{
     override fun onAnimationRepeat(animation: Animator?) = Unit
 

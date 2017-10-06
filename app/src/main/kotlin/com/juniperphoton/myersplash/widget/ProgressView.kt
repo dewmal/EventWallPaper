@@ -10,6 +10,7 @@ import android.view.View
 
 import com.juniperphoton.myersplash.R
 
+@Suppress("unused")
 class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     var color: Int = 0
     var progress: Int = 0
