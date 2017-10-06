@@ -190,10 +190,6 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
         contentRecyclerView.layoutManager = LinearLayoutManager(activity,
                 LinearLayoutManager.VERTICAL, false)
         contentRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(list: RecyclerView?, newState: Int) {
-                super.onScrollStateChanged(list, newState)
-            }
-
             override fun onScrolled(list: RecyclerView?, dx: Int, dy: Int) {
                 super.onScrolled(list, dx, dy)
                 if (dy > SCROLL_DETECTION_FACTOR_PX) {

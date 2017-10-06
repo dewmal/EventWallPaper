@@ -14,6 +14,9 @@
     <string name="settings_quick_download">Show download button in list</string>
     <string name="settings_quick_download_title">Quick download</string>
 
+    <string name="settings_download_metered">Always download via metered network</string>
+    <string name="settings_download_metered_title">Metered network setting</string>
+
     <string name="settings_recommendation_title">Show today</string>
     <string name="settings_recommendation_content">Update everyday</string>
 
@@ -73,7 +76,7 @@
     <string name="completed">Completed</string>
     <string name="no_permission">No permission to write file into external storage.</string>
     <string name="attention">ATTENTION</string>
-    <string name="wifi_attention_content">You are not using WiFi network. Continue to download?</string>
+    <string name="wifi_attention_content">You are using metered network. Continue to download?</string>
     <string name="download">DOWNLOAD</string>
     <string name="downloading_in_background">Downloading in background</string>
     <string name="something_wrong">Something went wrong :-(</string>
