@@ -39,7 +39,7 @@ object ToastService {
     private fun sendToastInternal(str: String?) {
         val view = LayoutInflater.from(App.instance).inflate(R.layout.toast_layout, null)
 
-        val textView = view.findViewById(R.id.toast_textView) as TextView
+        val textView = view.findViewById<TextView>(R.id.toast_textView)
         textView.text = str
 
         val toast = Toast(App.instance)
