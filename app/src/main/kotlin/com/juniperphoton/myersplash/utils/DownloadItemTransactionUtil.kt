@@ -6,8 +6,8 @@ import com.juniperphoton.myersplash.model.DownloadItem
 /**
  * Helper class for updating download item status in realm.
  */
+@Suppress("unused")
 object DownloadItemTransactionUtil {
-
     /**
      * Delete a managed download [item].
      */

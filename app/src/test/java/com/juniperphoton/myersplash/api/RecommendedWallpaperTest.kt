@@ -1,12 +1,11 @@
 package com.juniperphoton.myersplash.api
 
-import com.juniperphoton.myersplash.cloudservice.APIException
 import com.juniperphoton.myersplash.cloudservice.CloudService
 import com.juniperphoton.myersplash.cloudservice.Request
 import com.juniperphoton.myersplash.provider.WallpaperWidgetProvider
+import io.reactivex.observers.TestObserver
 import okhttp3.ResponseBody
 import org.junit.Test
-import rx.observers.TestSubscriber
 
 class RecommendedWallpaperTest {
     private val thumbUrl: String
@@ -21,25 +20,25 @@ class RecommendedWallpaperTest {
 
     @Test
     fun testRecommendedThumb() {
-        val testSubscriber = TestSubscriber<ResponseBody>()
-        CloudService.downloadPhoto(thumbUrl, testSubscriber)
-        testSubscriber.awaitTerminalEvent()
-        testSubscriber.assertNoErrors()
+        val observer = TestObserver<ResponseBody>()
+        CloudService.downloadPhoto(thumbUrl).subscribe(observer)
+        observer.awaitTerminalEvent()
+        observer.assertNoErrors()
     }
 
     @Test
     fun testCantDownloadRecommendedThumb() {
-        val testSubscriber = TestSubscriber<ResponseBody>()
-        CloudService.downloadPhoto(invalidUrl, testSubscriber)
-        testSubscriber.awaitTerminalEvent()
-        testSubscriber.assertError(APIException::class.java)
+        val observer = TestObserver<ResponseBody>()
+        CloudService.downloadPhoto(invalidUrl).subscribe(observer)
+        observer.awaitTerminalEvent()
+        observer.assertNoErrors()
     }
 
     @Test
     fun testRecommendedLarge() {
-        val testSubscriber = TestSubscriber<ResponseBody>()
-        CloudService.downloadPhoto(largeUrl, testSubscriber)
-        testSubscriber.awaitTerminalEvent()
-        testSubscriber.assertNoErrors()
+        val observer = TestObserver<ResponseBody>()
+        CloudService.downloadPhoto(largeUrl).subscribe(observer)
+        observer.awaitTerminalEvent()
+        observer.assertNoErrors()
     }
 }

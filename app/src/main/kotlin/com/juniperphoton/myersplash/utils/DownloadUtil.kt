@@ -120,6 +120,11 @@ object DownloadUtil {
             ToastService.sendShortToast(context.getString(R.string.no_permission))
             return
         }
+        if (LocalSettingHelper.getBoolean(context,
+                context.getString(R.string.preference_key_download_via_metered_network), false)) {
+            doDownload(context, image)
+            return
+        }
         if (!context.usingWifi()) {
             val builder = AlertDialog.Builder(context)
             builder.setTitle(R.string.attention)

@@ -54,7 +54,6 @@ class UnsplashImage : Serializable {
 
     @SerializedName("urls")
     private var urls: ImageUrl? = null
-        private set
 
     var isUnsplash: Boolean = true
         private set

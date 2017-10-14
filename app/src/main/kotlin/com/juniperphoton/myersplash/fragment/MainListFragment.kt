@@ -3,6 +3,7 @@ package com.juniperphoton.myersplash.fragment
 import android.graphics.RectF
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -29,6 +30,7 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
     companion object {
         private const val TAG = "MainListFragment"
         private const val SCROLL_DETECTION_FACTOR_PX = 20
+        private const val SCROLL_START_POSITION = 5
     }
 
     @BindView(R.id.content_activity_rv)
@@ -130,6 +132,11 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
     }
 
     override fun scrollToTop() {
+        val lm = contentRecyclerView.layoutManager as LinearLayoutManager
+        val pos = lm.findFirstCompletelyVisibleItemPosition()
+        if (pos > SCROLL_START_POSITION) {
+            contentRecyclerView.scrollToPosition(SCROLL_START_POSITION)
+        }
         contentRecyclerView.smoothScrollToPosition(0)
     }
 
@@ -189,10 +196,6 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
         contentRecyclerView.layoutManager = LinearLayoutManager(activity,
                 LinearLayoutManager.VERTICAL, false)
         contentRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(list: RecyclerView?, newState: Int) {
-                super.onScrollStateChanged(list, newState)
-            }
-
             override fun onScrolled(list: RecyclerView?, dx: Int, dy: Int) {
                 super.onScrolled(list, dx, dy)
                 if (dy > SCROLL_DETECTION_FACTOR_PX) {

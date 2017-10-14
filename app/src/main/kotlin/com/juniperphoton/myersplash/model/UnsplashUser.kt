@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 import java.io.Serializable
 
+@Suppress("unused")
 class UnsplashUser : Serializable {
     @SerializedName("id")
     var id: String? = null
@@ -14,13 +15,14 @@ class UnsplashUser : Serializable {
     @SerializedName("name")
     var name: String? = null
 
-    @SerializedName("links")
+    @SerializedName("Links")
     var links: ProfileUrl? = null
 
     val homeUrl: String?
         get() = links?.html
 }
 
+@Suppress("unused")
 class ProfileUrl : Serializable {
     @SerializedName("self")
     val self: String? = null

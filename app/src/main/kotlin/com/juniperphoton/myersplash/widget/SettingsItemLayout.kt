@@ -55,11 +55,12 @@ class SettingsItemLayout(context: Context, attrs: AttributeSet) : FrameLayout(co
         val content = array.getString(R.styleable.SettingsItemLayout_setting_content)
         val hasCheckbox = array.getBoolean(R.styleable.SettingsItemLayout_has_checkbox, false)
         val showDivider = array.getBoolean(R.styleable.SettingsItemLayout_show_divider, true)
+        val defaultValue = array.getBoolean(R.styleable.SettingsItemLayout_default_value, true)
         preferenceKey = array.getString(R.styleable.SettingsItemLayout_preference_key)
         array.recycle()
 
         preferenceKey?.let {
-            val value = LocalSettingHelper.getBoolean(context, it, true)
+            val value = LocalSettingHelper.getBoolean(context, it, defaultValue)
             this.checked = value
         }
 

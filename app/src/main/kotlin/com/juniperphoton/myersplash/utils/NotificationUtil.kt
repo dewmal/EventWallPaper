@@ -14,6 +14,7 @@ import com.juniperphoton.myersplash.activity.ManageDownloadActivity
 import com.juniperphoton.myersplash.service.DownloadService
 import java.io.File
 
+@Suppress("unused")
 object NotificationUtil {
     private const val TAG = "NotificationUtil"
 

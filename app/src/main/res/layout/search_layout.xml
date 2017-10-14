@@ -56,6 +56,7 @@
                         android:layout_width="50dp"
                         android:layout_height="50dp"
                         android:layout_gravity="center_vertical"
+                        android:contentDescription="@string/image_desc"
                         android:padding="10dp"
                         android:src="@drawable/ic_close"/>
                 </FrameLayout>

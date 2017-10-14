@@ -2,6 +2,7 @@ package com.juniperphoton.myersplash.utils
 
 import android.util.Log
 
+@Suppress("unused")
 object Pasteur {
     private const val TAG_DEFAULT = "MYERSPLASH"
 

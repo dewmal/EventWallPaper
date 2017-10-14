@@ -23,13 +23,13 @@ import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.utils.AnimatorListenerImpl
 import com.juniperphoton.myersplash.utils.FileUtil
 import com.juniperphoton.myersplash.utils.PermissionUtil
+import com.juniperphoton.myersplash.utils.SimpleObserver
 import com.juniperphoton.myersplash.widget.ImageDetailView
 import com.juniperphoton.myersplash.widget.PivotTitleBar
 import com.juniperphoton.myersplash.widget.SearchView
+import io.reactivex.Observable
+import io.reactivex.schedulers.Schedulers
 import org.greenrobot.eventbus.EventBus
-import rx.Observable
-import rx.Subscriber
-import rx.schedulers.Schedulers
 
 class MainActivity : BaseActivity() {
     companion object {
@@ -155,15 +155,12 @@ class MainActivity : BaseActivity() {
         Observable.just(FileUtil.sharePath)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe(object : Subscriber<String>() {
-                    override fun onCompleted() {
-                    }
-
-                    override fun onNext(t: String?) {
+                .subscribe(object : SimpleObserver<String>() {
+                    override fun onNext(t: String) {
                         FileUtil.clearFilesToShared()
                     }
 
-                    override fun onError(e: Throwable?) {
+                    override fun onError(e: Throwable) {
                         e?.printStackTrace()
                     }
                 })

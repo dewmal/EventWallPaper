@@ -3,6 +3,7 @@ package com.juniperphoton.myersplash.data
 import android.content.Context
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 
+@Suppress("unused")
 class PreferenceRepo(private val context: Context) {
     fun getBoolean(key: String, def: Boolean = false): Boolean {
         return LocalSettingHelper.getBoolean(context, key, def)

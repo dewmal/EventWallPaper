@@ -40,14 +40,14 @@ import com.juniperphoton.myersplash.extension.isLightColor
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.*
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import io.realm.RealmChangeListener
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import rx.Observable
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 import java.io.File
 
 @Suppress("unused")
@@ -159,14 +159,10 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     }
 
     private val shareButtonHideOffset: Int
-        get() {
-            return resources.getDimensionPixelOffset(R.dimen.share_btn_margin_right_hide)
-        }
+        get() = resources.getDimensionPixelOffset(R.dimen.share_btn_margin_right_hide)
 
     private val downloadFlipperLayoutHideOffset: Int
-        get() {
-            return resources.getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide)
-        }
+        get() = resources.getDimensionPixelOffset(R.dimen.download_btn_margin_right_hide)
 
     private var animating: Boolean = false
     private var copied: Boolean = false
@@ -448,21 +444,20 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         toggleShareBtnAnimation(false, oneshot)
     }
 
-    private var subscription: Subscription? = null
+    private var disposable: Disposable? = null
 
     private fun extractThemeColor(image: UnsplashImage) {
         val file = FileUtil.getCachedFile(image.listUrl!!) ?: return
-        subscription = Observable.just(image)
+        disposable = Observable.just(image)
                 .subscribeOn(Schedulers.io())
                 .map {
                     val bm = BitmapFactory.decodeFile(file.absolutePath)
                     Palette.from(bm).generate().darkVibrantSwatch?.rgb
                 }
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : SimpleObserver<Int>() {
-                    override fun onNext(color: Int) {
-                        super.onNext(color)
-                        updateThemeColor(color)
+                .subscribeWith(object : SimpleObserver<Int>() {
+                    override fun onNext(data: Int) {
+                        updateThemeColor(data)
                     }
 
                     override fun onError(e: Throwable) {
@@ -681,7 +676,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
      * Try to hide this view. If this view is fully displayed to user.
      */
     fun tryHide(): Boolean {
-        subscription?.unsubscribe()
+        disposable?.dispose()
         if (associatedDownloadItem?.isValid == true) {
             associatedDownloadItem!!.removeChangeListener(realmChangeListener)
             associatedDownloadItem = null

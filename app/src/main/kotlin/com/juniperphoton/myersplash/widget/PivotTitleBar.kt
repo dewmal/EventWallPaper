@@ -58,10 +58,10 @@ class PivotTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context
      */
     val selectedString: String
         get() = when (selectedItem) {
-            0 -> UnsplashCategory.FEATURE_S.toUpperCase()
-            1 -> UnsplashCategory.NEW_S.toUpperCase()
-            2 -> UnsplashCategory.RANDOM_S.toUpperCase()
-            else -> UnsplashCategory.NEW_S.toUpperCase()
+            0 -> UnsplashCategory.FEATURE.toUpperCase()
+            1 -> UnsplashCategory.NEW.toUpperCase()
+            2 -> UnsplashCategory.RANDOM.toUpperCase()
+            else -> UnsplashCategory.NEW.toUpperCase()
         }
 
     private var touchingViewIndex: Int = 0

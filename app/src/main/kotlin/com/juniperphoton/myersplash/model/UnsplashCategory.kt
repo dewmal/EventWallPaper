@@ -10,15 +10,15 @@ class UnsplashCategory {
         val RANDOM_CATEGORY_ID = 10002
         val SEARCH_ID = 10003
 
-        val FEATURE_S = "Featured"
-        val NEW_S = "New"
-        val RANDOM_S = "Random"
+        val FEATURE = "Featured"
+        val NEW = "New"
+        val RANDOM = "Random"
 
         val featuredCategory: UnsplashCategory
             get() {
                 return UnsplashCategory().apply {
                     id = UnsplashCategory.FEATURED_CATEGORY_ID
-                    title = UnsplashCategory.FEATURE_S
+                    title = UnsplashCategory.FEATURE
                 }
             }
 
@@ -26,7 +26,7 @@ class UnsplashCategory {
             get() {
                 return UnsplashCategory().apply {
                     id = UnsplashCategory.NEW_CATEGORY_ID
-                    title = UnsplashCategory.NEW_S
+                    title = UnsplashCategory.NEW
                 }
             }
 
@@ -34,7 +34,7 @@ class UnsplashCategory {
             get() {
                 return UnsplashCategory().apply {
                     id = UnsplashCategory.RANDOM_CATEGORY_ID
-                    title = UnsplashCategory.RANDOM_S
+                    title = UnsplashCategory.RANDOM
                 }
             }
 
@@ -46,8 +46,8 @@ class UnsplashCategory {
             }
     }
 
-    private val photo_count: Int = 0
-    private val links: links? = null
+    private val photoCount: Int = 0
+    private val links: Links? = null
 
     var id: Int = 0
     var title: String? = null
@@ -66,7 +66,7 @@ class UnsplashCategory {
 }
 
 @Suppress("unused")
-class links {
+class Links {
     val self: String? = null
     val photos: String? = null
     val html: String? = null
