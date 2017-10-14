@@ -17,7 +17,6 @@ import com.juniperphoton.myersplash.extension.getLengthInKb
 import com.juniperphoton.myersplash.service.DownloadService
 import com.juniperphoton.myersplash.utils.*
 import okhttp3.ResponseBody
-import rx.Subscriber
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -60,14 +59,14 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
             return
         }
 
-        CloudService.downloadPhoto(thumbUrl!!, object : Subscriber<ResponseBody>() {
+        val observer = object : ResponseObserver<ResponseBody>() {
             var outputFile: File? = null
 
-            override fun onError(e: Throwable) {
+            override fun onUnknownError(e: Throwable) {
                 e.printStackTrace()
             }
 
-            override fun onCompleted() {
+            override fun onComplete() {
                 outputFile?.let {
                     AppWidgetUtil.doWithWidgetId {
                         updateWidget(App.instance, it, outputFile!!.absolutePath)
@@ -75,10 +74,12 @@ class WallpaperWidgetProvider : AppWidgetProvider() {
                 }
             }
 
-            override fun onNext(responseBody: ResponseBody?) {
-                outputFile = DownloadUtil.writeToFile(responseBody!!, file.path, null)
+            override fun onNext(data: ResponseBody) {
+                outputFile = DownloadUtil.writeToFile(data, file.path, null)
             }
-        })
+        }
+
+        CloudService.downloadPhoto(thumbUrl!!).subscribeWith(observer)
     }
 
     private fun updateWidget(context: Context, widgetId: Int, filePath: String) {

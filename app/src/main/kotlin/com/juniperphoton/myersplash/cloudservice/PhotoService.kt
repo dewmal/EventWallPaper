@@ -3,11 +3,10 @@ package com.juniperphoton.myersplash.cloudservice
 import com.juniperphoton.myersplash.model.SearchResult
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.model.UnsplashImageFeatured
-
+import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Query
 import retrofit2.http.Url
-import rx.Observable
 
 interface PhotoService {
     @GET

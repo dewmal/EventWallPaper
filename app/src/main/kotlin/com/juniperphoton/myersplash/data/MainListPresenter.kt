@@ -76,7 +76,7 @@ open class MainListPresenter : MainContract.MainPresenter {
         if (next == REFRESH_PAGING) {
             mainView.setRefreshing(true)
         }
-        val subscriber = object : ResponseObserver<MutableList<UnsplashImage>>() {
+        val observer = object : ResponseObserver<MutableList<UnsplashImage>>() {
             override fun onFinish() {
                 setSignalOfEnd()
             }
@@ -101,13 +101,13 @@ open class MainListPresenter : MainContract.MainPresenter {
         category.let {
             when (it.id) {
                 UnsplashCategory.FEATURED_CATEGORY_ID ->
-                    CloudService.getFeaturedPhotos(it.requestUrl!!, next, subscriber)
+                    CloudService.getFeaturedPhotos(it.requestUrl!!, next, observer)
                 UnsplashCategory.NEW_CATEGORY_ID ->
-                    CloudService.getPhotos(it.requestUrl!!, next, subscriber)
+                    CloudService.getPhotos(it.requestUrl!!, next, observer)
                 UnsplashCategory.RANDOM_CATEGORY_ID ->
-                    CloudService.getRandomPhotos(it.requestUrl!!, subscriber)
+                    CloudService.getRandomPhotos(it.requestUrl!!, observer)
                 UnsplashCategory.SEARCH_ID ->
-                    CloudService.searchPhotos(it.requestUrl!!, next, query!!, subscriber)
+                    CloudService.searchPhotos(it.requestUrl!!, next, query!!, observer)
             }
         }
     }

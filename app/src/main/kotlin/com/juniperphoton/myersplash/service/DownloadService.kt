@@ -14,15 +14,16 @@ import com.juniperphoton.myersplash.utils.DownloadUtil
 import com.juniperphoton.myersplash.utils.NotificationUtil
 import com.juniperphoton.myersplash.utils.Params
 import com.juniperphoton.myersplash.utils.ToastService
+import io.reactivex.disposables.Disposable
+import io.reactivex.observers.DisposableObserver
 import okhttp3.ResponseBody
-import rx.Subscriber
 import java.io.File
 import java.util.*
 
 class DownloadService : IntentService(TAG) {
     companion object {
         private const val TAG = "DownloadService"
-        private val subscriptionMap = HashMap<String, Subscriber<*>>()
+        private val disposableMap = HashMap<String, Disposable>()
     }
 
     private var isUnsplash = true
@@ -45,9 +46,9 @@ class DownloadService : IntentService(TAG) {
 
         if (canceled) {
             Log.d(TAG, "on handle intent cancelled")
-            val subscriber = subscriptionMap[downloadUrl]
+            val subscriber = disposableMap[downloadUrl]
             if (subscriber != null) {
-                subscriber.unsubscribe()
+                subscriber.dispose()
                 NotificationUtil.cancelNotification(Uri.parse(downloadUrl))
                 ToastService.sendShortToast(getString(R.string.cancelled_download))
             }
@@ -61,10 +62,10 @@ class DownloadService : IntentService(TAG) {
 
     private fun downloadImage(url: String, fileName: String): String {
         val file = DownloadUtil.getFileToSave(fileName)
-        val subscriber = object : Subscriber<ResponseBody>() {
+        val observer = object : DisposableObserver<ResponseBody>() {
             internal var outputFile: File? = null
 
-            override fun onCompleted() {
+            override fun onComplete() {
                 if (outputFile == null) {
                     NotificationUtil.showErrorNotification(Uri.parse(url), fileName, url, previewUri)
                     RealmCache.getInstance().executeTransaction { realm ->
@@ -134,8 +135,9 @@ class DownloadService : IntentService(TAG) {
                 }
             }
         }
-        CloudService.downloadPhoto(url, subscriber)
-        subscriptionMap.put(url, subscriber)
+
+        val disposable = CloudService.downloadPhoto(url).subscribeWith(observer)
+        disposableMap.put(url, disposable)
 
         return file!!.path
     }
