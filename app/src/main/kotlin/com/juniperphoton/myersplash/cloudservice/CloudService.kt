@@ -3,7 +3,6 @@ package com.juniperphoton.myersplash.cloudservice
 import com.juniperphoton.myersplash.BuildConfig
 import com.juniperphoton.myersplash.model.UnsplashImage
 import io.reactivex.Observable
-import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
@@ -39,51 +38,44 @@ object CloudService {
     }
 
     fun getPhotos(url: String,
-                  page: Int,
-                  observer: Observer<MutableList<UnsplashImage>>) {
-        val o = photoService.getPhotos(url, page, 10, AppKey)
-        subscribe(o, observer)
+                  page: Int): Observable<MutableList<UnsplashImage>> {
+        return photoService.getPhotos(url, page, 10, AppKey)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
     }
 
-    fun getRandomPhotos(url: String,
-                        observer: Observer<MutableList<UnsplashImage>>) {
-        val o = photoService.getRandomPhotos(url, 10, AppKey)
-        subscribe(o, observer)
+    fun getRandomPhotos(url: String): Observable<MutableList<UnsplashImage>> {
+        return photoService.getRandomPhotos(url, 10, AppKey)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
     }
 
     fun getFeaturedPhotos(url: String,
-                          page: Int,
-                          observer: Observer<MutableList<UnsplashImage>>) {
-        val o = photoService
+                          page: Int): Observable<MutableList<UnsplashImage>> {
+        return photoService
                 .getFeaturedPhotos(url, page, 10, AppKey)
                 .map { images ->
                     images.map { it.image!! }.toMutableList()
                 }
-        subscribe(o, observer)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
     }
 
     fun searchPhotos(url: String,
                      page: Int,
-                     query: String,
-                     observer: Observer<MutableList<UnsplashImage>>) {
-        val o = photoService
+                     query: String): Observable<MutableList<UnsplashImage>> {
+        return photoService
                 .searchPhotosByQuery(url, page, 10, query, AppKey)
                 .map { searchResults ->
                     searchResults.list!!
                 }
-        subscribe(o, observer)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
     }
 
     fun downloadPhoto(url: String): Observable<ResponseBody> {
         return downloadService
                 .downloadFileWithDynamicUrlSync(url).timeout(30, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
-    }
-
-    private fun subscribe(observable: Observable<MutableList<UnsplashImage>>,
-                          observer: Observer<MutableList<UnsplashImage>>) {
-        observable.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(observer)
     }
 }

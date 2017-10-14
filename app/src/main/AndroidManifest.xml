@@ -80,7 +80,7 @@
                 android:resource="@xml/paths"/>
         </provider>
 
-        <receiver android:name=".provider.WallpaperWidgetProvider">
+        <receiver android:name=".broadcastreceiver.WallpaperWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
             </intent-filter>

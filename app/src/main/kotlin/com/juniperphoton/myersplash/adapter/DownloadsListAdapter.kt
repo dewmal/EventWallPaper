@@ -24,49 +24,61 @@ import com.juniperphoton.myersplash.widget.DownloadingView
 class DownloadsListAdapter(private val context: Context) :
         RecyclerView.Adapter<DownloadsListAdapter.DownloadItemViewHolder>() {
     companion object {
-        private val ITEM = 1
-        private val FOOTER = 1 shl 1
-        private val ASPECT_RATIO = 1.7f
+        private const val ITEM_TYPE_ITEM = 0
+        private const val ITEM_TYPE_FOOTER = 1
+        private const val ASPECT_RATIO = 1.7f
     }
 
-    var data: MutableList<DownloadItem>? = null
+    var data: MutableList<DownloadItem> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DownloadItemViewHolder? {
-        if (viewType == ITEM) {
-            val view = LayoutInflater.from(context).inflate(R.layout.row_download_item, parent, false)
-            val width = context.resources.displayMetrics.widthPixels
-            val params = view.layoutParams
-            params.height = (width / ASPECT_RATIO).toInt()
-            view.layoutParams = params
-            return DownloadItemViewHolder(view)
-        } else if (viewType == FOOTER) {
-            val footer = LayoutInflater.from(context).inflate(R.layout.row_footer_blank, parent, false)
-            return DownloadItemViewHolder(footer)
+        return when (viewType) {
+            ITEM_TYPE_ITEM -> {
+                val view = LayoutInflater.from(context)
+                        .inflate(R.layout.row_download_item, parent, false)
+                val width = context.resources.displayMetrics.widthPixels
+                val params = view.layoutParams.apply {
+                    height = (width / ASPECT_RATIO).toInt()
+                }
+                view.layoutParams = params
+                DownloadItemViewHolder(view)
+            }
+            ITEM_TYPE_FOOTER -> {
+                val footer = LayoutInflater.from(context).inflate(R.layout.row_footer_blank, parent, false)
+                DownloadItemViewHolder(footer)
+            }
+            else -> null
         }
-        return null
     }
 
     override fun onBindViewHolder(holder: DownloadItemViewHolder, position: Int) {
-        if (getItemViewType(position) == FOOTER) {
+        if (getItemViewType(position) == ITEM_TYPE_FOOTER) {
             return
         }
-        val item = data!![holder.adapterPosition]
-        holder.bind(item)
+        holder.bind(data[holder.adapterPosition])
     }
 
-    override fun getItemCount(): Int {
-        return if (data == null) {
-            0
-        } else {
-            data!!.size + 1
-        }
-    }
+    override fun getItemCount(): Int = data.size + 1
 
     override fun getItemViewType(position: Int): Int {
         return if (position >= itemCount - 1) {
-            FOOTER
-        } else
-            ITEM
+            ITEM_TYPE_FOOTER
+        } else {
+            ITEM_TYPE_ITEM
+        }
+    }
+
+    fun updateItem(item: DownloadItem) {
+        val index = data.indexOf(item)
+        if (index >= 0 && index <= data.size) {
+            Log.d("adapter", "notifyItemChanged:" + index)
+            notifyItemChanged(index)
+        }
+    }
+
+    fun refreshItems(items: MutableList<DownloadItem>) {
+        data = items
+        notifyDataSetChanged()
     }
 
     inner class DownloadItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -107,7 +119,7 @@ class DownloadsListAdapter(private val context: Context) :
                 it.themeColor = item.color
                 it.onClickDelete = {
                     try {
-                        data!!.removeAt(adapterPosition)
+                        data.removeAt(adapterPosition)
                         notifyItemRemoved(adapterPosition)
 
                         val intent = Intent(App.instance, DownloadService::class.java)
@@ -154,18 +166,5 @@ class DownloadsListAdapter(private val context: Context) :
                 item.syncStatus()
             }
         }
-    }
-
-    fun updateItem(item: DownloadItem) {
-        val index = data!!.indexOf(item)
-        if (index >= 0 && index <= data!!.size) {
-            Log.d("adapter", "notifyItemChanged:" + index)
-            notifyItemChanged(index)
-        }
-    }
-
-    fun refreshItems(items: MutableList<DownloadItem>) {
-        data = items
-        notifyDataSetChanged()
     }
 }

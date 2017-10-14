@@ -10,12 +10,15 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import butterknife.BindView
 import butterknife.ButterKnife
+import butterknife.OnClick
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.view.SimpleDraweeView
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.getDarker
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
     @BindView(R.id.row_photo_iv)
@@ -37,26 +40,46 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
     var onClickQuickDownload: ((image: UnsplashImage) -> Unit)? = null
     var onBind: ((View, Int) -> Unit)? = null
 
+    private var unsplashImage: UnsplashImage? = null
+
     override fun onFinishInflate() {
         super.onFinishInflate()
         ButterKnife.bind(this, this)
     }
 
+    @OnClick(R.id.row_photo_download_rl)
+    fun onClickQuickDownload() {
+        unsplashImage?.let {
+            onClickQuickDownload?.invoke(it)
+        }
+    }
+
+    private fun checkDownloadStatus() {
+        val image = unsplashImage ?: return
+        image.checkDownloaded()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { downloaded ->
+                    if (downloaded) {
+                        downloadRL.visibility = View.GONE
+                    } else {
+                        downloadRL.visibility = View.VISIBLE
+                    }
+                }
+    }
+
     fun bind(image: UnsplashImage?, pos: Int) {
         if (image == null) return
+
+        unsplashImage = image
+
         val regularUrl = image.listUrl
 
         val backColor = image.themeColor.getDarker(0.7f)
 
-        if (LocalSettingHelper.getBoolean(context, context.getString(R.string.preference_key_quick_download), true)) {
-            if (!image.hasDownloaded()) {
-                downloadRL.visibility = View.VISIBLE
-                downloadRL.setOnClickListener {
-                    onClickQuickDownload?.invoke(image)
-                }
-            } else {
-                downloadRL.visibility = View.GONE
-            }
+        if (LocalSettingHelper.getBoolean(context,
+                context.getString(R.string.preference_key_quick_download), true)) {
+            checkDownloadStatus()
         } else {
             downloadRL.visibility = View.GONE
         }

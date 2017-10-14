@@ -8,6 +8,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.extension.use
 
 class RingProgressView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     companion object {
@@ -43,11 +44,9 @@ class RingProgressView(context: Context, attrs: AttributeSet) : View(context, at
         paint.style = Paint.Style.STROKE
         paint.strokeCap = Paint.Cap.ROUND
 
-        val typeArray = context.obtainStyledAttributes(attrs, R.styleable.CustomProgressView)
-        val progress = typeArray.getInt(R.styleable.CustomProgressView_custom_progress, 0)
-        typeArray.recycle()
-
-        this.progress = progress
+        context.obtainStyledAttributes(attrs, R.styleable.CustomProgressView).use {
+            progress = getInt(R.styleable.CustomProgressView_custom_progress, 0)
+        }
     }
 
     override fun onDraw(canvas: Canvas) {

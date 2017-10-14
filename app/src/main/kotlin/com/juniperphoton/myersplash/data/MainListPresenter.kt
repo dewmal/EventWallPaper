@@ -8,6 +8,8 @@ import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.Pasteur
 import com.juniperphoton.myersplash.utils.ResponseObserver
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.observers.DisposableObserver
 import javax.inject.Inject
 
 open class MainListPresenter : MainContract.MainPresenter {
@@ -16,8 +18,9 @@ open class MainListPresenter : MainContract.MainPresenter {
         private const val TAG = "MainListPresenter"
     }
 
-    private var next: Int = REFRESH_PAGING
+    private var nextPage: Int = REFRESH_PAGING
     private var refreshing: Boolean = false
+    private var disposableList = CompositeDisposable()
 
     @Inject
     override lateinit var category: UnsplashCategory
@@ -28,7 +31,9 @@ open class MainListPresenter : MainContract.MainPresenter {
 
     override var query: String? = null
 
-    override fun stop() = Unit
+    override fun stop() {
+        disposableList.dispose()
+    }
 
     override fun start() = Unit
 
@@ -50,11 +55,11 @@ open class MainListPresenter : MainContract.MainPresenter {
     }
 
     override fun loadMore() {
-        loadPhotoList(++next)
+        loadPhotoList(++nextPage)
     }
 
     override fun reloadList() {
-        loadPhotoList(next)
+        loadPhotoList(nextPage)
     }
 
     override fun refresh() {
@@ -66,49 +71,48 @@ open class MainListPresenter : MainContract.MainPresenter {
         mainView.setRefreshing(false)
     }
 
-    private fun insertRecommendedImage(t: MutableList<UnsplashImage>) {
-        t.add(0, UnsplashImage.createRecommendedImage())
-    }
-
-    private fun loadPhotoList(next: Int) {
-        this.next = next
-        refreshing = true
-        if (next == REFRESH_PAGING) {
-            mainView.setRefreshing(true)
-        }
-        val observer = object : ResponseObserver<MutableList<UnsplashImage>>() {
+    private fun getObserver(): DisposableObserver<MutableList<UnsplashImage>> {
+        return object : ResponseObserver<MutableList<UnsplashImage>>() {
             override fun onFinish() {
                 setSignalOfEnd()
             }
 
             override fun onError(e: Throwable) {
                 super.onError(e)
-                e.printStackTrace()
                 mainView.updateNoItemVisibility()
                 mainView.setRefreshing(false)
             }
 
-            override fun onNext(t: MutableList<UnsplashImage>) {
+            override fun onNext(data: MutableList<UnsplashImage>) {
                 if (category.id == UnsplashCategory.NEW_CATEGORY_ID
-                        && next == REFRESH_PAGING
+                        && nextPage == REFRESH_PAGING
                         && preferenceRepo.getBoolean(App.instance.getString(R.string.preference_key_recommendation), true)) {
-                    insertRecommendedImage(t)
+                    data.add(0, UnsplashImage.createTodayImage())
                 }
-                mainView.refreshList(t, next)
+                mainView.refreshList(data, nextPage)
             }
         }
+    }
+
+    private fun loadPhotoList(next: Int) {
+        nextPage = next
+        refreshing = true
+
+        mainView.setRefreshing(next == REFRESH_PAGING)
 
         category.let {
-            when (it.id) {
+            val o = when (it.id) {
                 UnsplashCategory.FEATURED_CATEGORY_ID ->
-                    CloudService.getFeaturedPhotos(it.requestUrl!!, next, observer)
+                    CloudService.getFeaturedPhotos(it.requestUrl!!, next)
                 UnsplashCategory.NEW_CATEGORY_ID ->
-                    CloudService.getPhotos(it.requestUrl!!, next, observer)
+                    CloudService.getPhotos(it.requestUrl!!, next)
                 UnsplashCategory.RANDOM_CATEGORY_ID ->
-                    CloudService.getRandomPhotos(it.requestUrl!!, observer)
+                    CloudService.getRandomPhotos(it.requestUrl!!)
                 UnsplashCategory.SEARCH_ID ->
-                    CloudService.searchPhotos(it.requestUrl!!, next, query!!, observer)
+                    CloudService.searchPhotos(it.requestUrl!!, next, query!!)
+                else -> throw IllegalArgumentException("unknown category id")
             }
+            disposableList.add(o.subscribeWith(getObserver()))
         }
     }
 }

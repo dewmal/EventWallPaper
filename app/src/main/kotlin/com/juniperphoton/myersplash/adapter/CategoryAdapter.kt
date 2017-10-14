@@ -8,26 +8,19 @@ import android.view.ViewGroup
 import android.widget.TextView
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 
-class CategoryAdapter(val context: Context, private val list: MutableList<String>
+class CategoryAdapter(private val context: Context,
+                      private val list: Array<String>
 ) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
     companion object ResMap {
-        val KEYWORDS = mutableListOf(
-                "Buildings",
-                "Food",
-                "Nature",
-                "Technology",
-                "Travel",
-                "People",
-                "Sea",
-                "Dusk",
-                "Mountain",
-                "Galaxy",
-                "Summer"
-        )
+        val KEYWORDS: Array<String> = App.instance.resources.getStringArray(R.array.search_category)!!
     }
 
+    /**
+     * Invoked when item clicked.
+     */
     var onClickItem: ((string: String) -> Unit)? = null
 
     override fun onBindViewHolder(holder: CategoryViewHolder?, position: Int) {
@@ -49,8 +42,8 @@ class CategoryAdapter(val context: Context, private val list: MutableList<String
         init {
             ButterKnife.bind(this, itemView)
             itemView.setOnClickListener {
-                if (category != null) {
-                    onClickItem?.invoke(category!!)
+                category?.let {
+                    onClickItem?.invoke(it)
                 }
             }
         }

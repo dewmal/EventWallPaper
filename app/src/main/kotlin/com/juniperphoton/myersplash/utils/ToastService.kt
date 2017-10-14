@@ -1,5 +1,6 @@
 package com.juniperphoton.myersplash.utils
 
+import android.annotation.SuppressLint
 import android.os.Handler
 import android.os.Looper
 import android.view.Gravity
@@ -19,7 +20,7 @@ object ToastService {
         if (Looper.getMainLooper() != Looper.myLooper()) {
             handler.post { sendToastInternal(str) }
         } else {
-            handler.post { sendToastInternal(str) }
+            sendToastInternal(str)
         }
     }
 
@@ -34,6 +35,7 @@ object ToastService {
         }
     }
 
+    @SuppressLint("InflateParams")
     private fun sendToastInternal(str: String?) {
         val view = LayoutInflater.from(App.instance).inflate(R.layout.toast_layout, null)
 

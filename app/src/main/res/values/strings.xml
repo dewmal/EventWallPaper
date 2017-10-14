@@ -83,7 +83,7 @@
     <string name="copy_url">COPY URL</string>
     <string name="failed_to_download">Failed to download :(</string>
     <string name="uh_oh">Uh oh :-(</string>
-    <string name="no_items_please_try_again">No items. Please try again.</string>
+    <string name="no_items_please_try_again">Something went wrong</string>
     <string name="retry">RETRY</string>
     <string name="downloads_title">DOWNLOADS</string>
     <string name="thanks_to">THANKS TO</string>

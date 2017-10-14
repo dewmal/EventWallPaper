@@ -14,15 +14,15 @@ import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.widget.item.PhotoItemView
 
 class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
-                   private val context: Context)
-    : RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
+                   private val context: Context
+) : RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
     companion object {
-        val TYPE_COMMON_VIEW = 0
-        val TYPE_FOOTER_VIEW = 1
+        const val ITEM_TYPE_ITEM = 0
+        const val ITEM_TYPE_FOOTER = 1
 
-        private val FOOTER_FLAG_NOT_SHOW = 0
-        private val FOOTER_FLAG_SHOW = 1
-        private val FOOTER_FLAG_SHOW_END = 1 shl 1 or FOOTER_FLAG_SHOW
+        private const val FOOTER_FLAG_NOT_SHOW = 0
+        private const val FOOTER_FLAG_SHOW = 1
+        private const val FOOTER_FLAG_SHOW_END = 1 shl 1 or FOOTER_FLAG_SHOW
     }
 
     private var isAutoLoadMore = true
@@ -32,9 +32,23 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
     private var layoutManager: RecyclerView.LayoutManager? = null
     private var lastPosition = -1
 
+    /**
+     * Invoked when photo is clicked
+     */
     var onClickPhoto: ((rectF: RectF, unsplashImage: UnsplashImage, itemView: View) -> Unit)? = null
+
+    /**
+     * Invoked when quick-download button is clicked.
+     * Note that [onClickPhoto] and [onClickQuickDownload] won't happened at the same time.
+     */
     var onClickQuickDownload: ((image: UnsplashImage) -> Unit)? = null
-    var onLoadMore: (() -> Unit)? = null
+
+    val firstImage: UnsplashImage?
+        get() {
+            return if (imageData.size > 0) {
+                imageData[0]
+            } else null
+        }
 
     init {
         lastPosition = -1
@@ -57,11 +71,11 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder? {
         return when (viewType) {
-            TYPE_COMMON_VIEW -> {
+            ITEM_TYPE_ITEM -> {
                 val view = LayoutInflater.from(context).inflate(R.layout.row_photo, parent, false)
                 return PhotoViewHolder(view, viewType, footerFlag)
             }
-            TYPE_FOOTER_VIEW -> {
+            ITEM_TYPE_FOOTER -> {
                 val view: View = when (footerFlag) {
                     FOOTER_FLAG_SHOW_END -> LayoutInflater.from(context).inflate(R.layout.row_footer_end, parent, false)
                     else -> LayoutInflater.from(context).inflate(R.layout.row_footer, parent, false)
@@ -81,6 +95,12 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
             holder.itemView.onClickQuickDownload = onClickQuickDownload
             holder.itemView.bind(imageData[holder.adapterPosition], position)
         }
+    }
+
+    private fun findLastVisibleItemPosition(layoutManager: RecyclerView.LayoutManager?): Int {
+        return if (layoutManager is LinearLayoutManager) {
+            layoutManager.findLastVisibleItemPosition()
+        } else -1
     }
 
     private fun animateContainer(container: View, position: Int) {
@@ -119,50 +139,19 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
             return Math.ceil(height.toDouble() / imgHeight.toDouble()).toInt()
         }
 
-    override fun getItemCount(): Int {
-        return imageData.size + 1
-    }
+    override fun getItemCount(): Int = imageData.size + 1
 
     override fun getItemViewType(position: Int): Int {
-        return if (isFooterView(position)) TYPE_FOOTER_VIEW else TYPE_COMMON_VIEW
+        return if (isFooterView(position)) ITEM_TYPE_FOOTER else ITEM_TYPE_ITEM
     }
 
-    private fun isFooterView(position: Int): Boolean {
-        return position >= itemCount - 1
-    }
+    private fun isFooterView(position: Int): Boolean = position >= itemCount - 1
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView?) {
         super.onAttachedToRecyclerView(recyclerView)
         this.recyclerView = recyclerView
         lastPosition = -1
         layoutManager = recyclerView!!.layoutManager
-        startLoadMore(recyclerView, layoutManager)
-    }
-
-    private fun startLoadMore(recyclerView: RecyclerView?, layoutManager: RecyclerView.LayoutManager?) {
-        if (onLoadMore == null) {
-            return
-        }
-
-        recyclerView?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(list: RecyclerView?, newState: Int) {
-                super.onScrollStateChanged(list, newState)
-                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                    if (!isAutoLoadMore && findLastVisibleItemPosition(layoutManager) + 1 == itemCount) {
-                        scrollLoadMore()
-                    }
-                }
-            }
-
-            override fun onScrolled(list: RecyclerView?, dx: Int, dy: Int) {
-                super.onScrolled(list, dx, dy)
-                if (isAutoLoadMore && findLastVisibleItemPosition(layoutManager) + 1 == itemCount) {
-                    scrollLoadMore()
-                } else if (isAutoLoadMore) {
-                    isAutoLoadMore = false
-                }
-            }
-        })
     }
 
     fun clear() {
@@ -193,26 +182,9 @@ class PhotoAdapter(private val imageData: MutableList<UnsplashImage>,
         }
     }
 
-    private fun findLastVisibleItemPosition(layoutManager: RecyclerView.LayoutManager?): Int {
-        return if (layoutManager is LinearLayoutManager) {
-            layoutManager.findLastVisibleItemPosition()
-        } else -1
-    }
-
-    val firstImage: UnsplashImage?
-        get() {
-            return if (imageData.size > 0) {
-                imageData[0]
-            } else null
-        }
-
-    private fun scrollLoadMore() {
-        onLoadMore?.invoke()
-    }
-
     class PhotoViewHolder(itemView: View, type: Int, footerFlag: Int) : RecyclerView.ViewHolder(itemView) {
         init {
-            if (type != PhotoAdapter.TYPE_COMMON_VIEW && footerFlag == FOOTER_FLAG_NOT_SHOW) {
+            if (type != PhotoAdapter.ITEM_TYPE_ITEM && footerFlag == FOOTER_FLAG_NOT_SHOW) {
                 itemView.visibility = View.INVISIBLE
             }
         }

@@ -2,9 +2,9 @@ package com.juniperphoton.myersplash.utils
 
 import android.util.Log
 
-@Suppress("unused")
+@Suppress("unused", "MemberVisibilityCanPrivate")
 object Pasteur {
-    private const val TAG_DEFAULT = "MYERSPLASH"
+    private const val DEFAULT_TAG = "MYERSPLASH"
 
     private var debugMode: Boolean = false
 
@@ -18,7 +18,7 @@ object Pasteur {
 
     fun debug(tag: String?, string: String) {
         if (debugMode) {
-            Log.d(tag ?: TAG_DEFAULT, string)
+            Log.d(tag ?: DEFAULT_TAG, string)
         }
     }
 
@@ -28,7 +28,7 @@ object Pasteur {
 
     fun info(tag: String?, string: String) {
         if (debugMode) {
-            Log.i(tag ?: TAG_DEFAULT, string)
+            Log.i(tag ?: DEFAULT_TAG, string)
         }
     }
 
@@ -38,7 +38,7 @@ object Pasteur {
 
     fun warn(tag: String?, string: String) {
         if (debugMode) {
-            Log.w(tag ?: TAG_DEFAULT, string)
+            Log.w(tag ?: DEFAULT_TAG, string)
         }
     }
 
@@ -48,7 +48,7 @@ object Pasteur {
 
     fun error(tag: String?, string: String) {
         if (debugMode) {
-            Log.e(tag ?: TAG_DEFAULT, string)
+            Log.e(tag ?: DEFAULT_TAG, string)
         }
     }
 }

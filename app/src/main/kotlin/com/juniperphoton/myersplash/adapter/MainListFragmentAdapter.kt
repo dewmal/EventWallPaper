@@ -26,7 +26,8 @@ class MainListFragmentAdapter(private var callback: ((RectF, UnsplashImage, View
 
     private fun inject(fragment: MainListFragment, position: Int) {
         val presenter = MainListPresenter()
-        val component = DaggerRepoComponent.builder().repoModule(RepoModule(App.instance, position, fragment)).build()
+        val component = DaggerRepoComponent.builder()
+                .repoModule(RepoModule(App.instance, position, fragment)).build()
         component.inject(presenter)
 
         fragment.presenter = presenter

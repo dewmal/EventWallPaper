@@ -9,6 +9,7 @@ import android.util.AttributeSet
 import android.view.View
 
 import com.juniperphoton.myersplash.R
+import com.juniperphoton.myersplash.extension.use
 
 @Suppress("unused")
 class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs) {
@@ -20,10 +21,10 @@ class ProgressView(context: Context, attrs: AttributeSet) : View(context, attrs)
         }
 
     init {
-        val array = context.obtainStyledAttributes(attrs, R.styleable.CustomProgressView, 0, 0)
-        color = array.getInt(R.styleable.CustomProgressView_background_color, Color.WHITE)
-        progress = array.getInt(R.styleable.CustomProgressView_custom_progress, 0)
-        array.recycle()
+        context.obtainStyledAttributes(attrs, R.styleable.CustomProgressView, 0, 0).use {
+            color = getInt(R.styleable.CustomProgressView_background_color, Color.WHITE)
+            progress = getInt(R.styleable.CustomProgressView_custom_progress, 0)
+        }
     }
 
     fun animateProgressTo(progress: Int) {
