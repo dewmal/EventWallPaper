@@ -31,9 +31,10 @@ import com.juniperphoton.myersplash.extension.getScreenHeight
 import com.juniperphoton.myersplash.extension.getScreenWidth
 import com.juniperphoton.myersplash.extension.hasNavigationBar
 import com.juniperphoton.myersplash.utils.*
-import rx.Observable
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import java.io.File
 import java.io.FileOutputStream
 
@@ -251,6 +252,8 @@ class EditActivity : BaseActivity() {
         App.instance.startActivity(intent)
     }
 
+    private var comp: CompositeDisposable = CompositeDisposable()
+
     private fun composeMask() {
         flipperLayout.next()
         Observable.just(fileUri)
@@ -260,16 +263,16 @@ class EditActivity : BaseActivity() {
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : SimpleObserver<File>() {
-                    override fun onNext(value: File) {
-                        setAs(value)
-                    }
-
                     override fun onError(e: Throwable) {
                         flipperLayout.next()
                         super.onError(e)
                         if (e is OutOfMemoryError) {
                             ToastService.sendShortToast(resources.getString(R.string.oom_toast))
                         }
+                    }
+
+                    override fun onNext(t: File) {
+                        setAs(t)
                     }
                 })
     }

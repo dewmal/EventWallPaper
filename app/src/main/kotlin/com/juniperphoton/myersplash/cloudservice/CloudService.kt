@@ -2,16 +2,15 @@ package com.juniperphoton.myersplash.cloudservice
 
 import com.juniperphoton.myersplash.BuildConfig
 import com.juniperphoton.myersplash.model.UnsplashImage
+import io.reactivex.Observable
+import io.reactivex.Observer
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import rx.Observable
-import rx.Subscriber
-import rx.Subscription
-import rx.android.schedulers.AndroidSchedulers
-import rx.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
 object CloudService {
@@ -31,7 +30,7 @@ object CloudService {
         retrofit = Retrofit.Builder()
                 .client(builder.build())
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .baseUrl(Request.BASE_URL)
                 .build()
 
@@ -39,45 +38,52 @@ object CloudService {
         downloadService = retrofit.create(DownloadService::class.java)
     }
 
-    fun getPhotos(url: String, page: Int, subscriber: Subscriber<MutableList<UnsplashImage>>) {
-        val observable = photoService.getPhotos(url, page, 10, AppKey)
-        subscribe(observable, subscriber)
+    fun getPhotos(url: String,
+                  page: Int,
+                  observer: Observer<MutableList<UnsplashImage>>) {
+        val o = photoService.getPhotos(url, page, 10, AppKey)
+        subscribe(o, observer)
     }
 
-    fun getRandomPhotos(url: String, subscriber: Subscriber<MutableList<UnsplashImage>>) {
-        val observable = photoService.getRandomPhotos(url, 10, AppKey)
-        subscribe(observable, subscriber)
+    fun getRandomPhotos(url: String,
+                        observer: Observer<MutableList<UnsplashImage>>) {
+        val o = photoService.getRandomPhotos(url, 10, AppKey)
+        subscribe(o, observer)
     }
 
-    fun getFeaturedPhotos(url: String, page: Int, subscriber: Subscriber<MutableList<UnsplashImage>>) {
-        val observableF = photoService.getFeaturedPhotos(url, page, 10, AppKey)
-        val observable: Observable<MutableList<UnsplashImage>> = observableF.map { images ->
-            images.map { it.image!! }.toMutableList()
-        }
-        subscribe(observable, subscriber)
+    fun getFeaturedPhotos(url: String,
+                          page: Int,
+                          observer: Observer<MutableList<UnsplashImage>>) {
+        val o = photoService
+                .getFeaturedPhotos(url, page, 10, AppKey)
+                .map { images ->
+                    images.map { it.image!! }.toMutableList()
+                }
+        subscribe(o, observer)
     }
 
-    fun searchPhotos(url: String, page: Int, query: String, subscriber: Subscriber<MutableList<UnsplashImage>>) {
-        val observableF = photoService.searchPhotosByQuery(url, page, 10, query, AppKey)
-        val observable: Observable<MutableList<UnsplashImage>> = observableF.map { searchResults ->
-            searchResults.list
-        }
-        subscribe(observable, subscriber)
+    fun searchPhotos(url: String,
+                     page: Int,
+                     query: String,
+                     observer: Observer<MutableList<UnsplashImage>>) {
+        val o = photoService
+                .searchPhotosByQuery(url, page, 10, query, AppKey)
+                .map { searchResults ->
+                    searchResults.list!!
+                }
+        subscribe(o, observer)
     }
 
-    fun downloadPhoto(url: String, subscriber: Subscriber<ResponseBody>): Subscription {
-        val observable = downloadService.downloadFileWithDynamicUrlSync(url)
-        return observable.timeout(30, TimeUnit.SECONDS)
+    fun downloadPhoto(url: String): Observable<ResponseBody> {
+        return downloadService
+                .downloadFileWithDynamicUrlSync(url).timeout(30, TimeUnit.SECONDS)
                 .subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .subscribe(subscriber)
     }
 
-    private fun subscribe(observable: Observable<MutableList<UnsplashImage>>, subscriber: Subscriber<MutableList<UnsplashImage>>) {
+    private fun subscribe(observable: Observable<MutableList<UnsplashImage>>,
+                          observer: Observer<MutableList<UnsplashImage>>) {
         observable.subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber)
+                .subscribe(observer)
     }
 }

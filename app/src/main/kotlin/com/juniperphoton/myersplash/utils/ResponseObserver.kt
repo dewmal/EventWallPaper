@@ -3,11 +3,11 @@ package com.juniperphoton.myersplash.utils
 import android.support.annotation.CallSuper
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.cloudservice.APIException
-import rx.Subscriber
+import io.reactivex.observers.DisposableObserver
 import java.net.SocketTimeoutException
 
-open class ResponseObserver<T> : Subscriber<T>() {
-    override fun onCompleted() {
+open class ResponseObserver<T> : DisposableObserver<T>() {
+    override fun onComplete() {
         onFinish()
     }
 
@@ -21,14 +21,14 @@ open class ResponseObserver<T> : Subscriber<T>() {
             is APIException -> {
                 ToastService.sendShortToast(R.string.failed_to_send_request)
             }
-            else -> onErrorOccurs(e)
+            else -> onUnknownError(e)
         }
         onFinish()
     }
 
-    open fun onErrorOccurs(e: Throwable) = Unit
+    open fun onUnknownError(e: Throwable) = Unit
 
-    override fun onNext(t: T) = Unit
+    override fun onNext(data: T) = Unit
 
     open fun onFinish() = Unit
 }
