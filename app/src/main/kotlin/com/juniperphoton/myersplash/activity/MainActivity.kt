@@ -80,6 +80,7 @@ class MainActivity : BaseActivity() {
         if (savedInstanceState != null) {
             initNavigationIndex = savedInstanceState.getInt(SAVED_NAVIGATION_INDEX, 1)
         }
+
         initMainViews()
     }
 
@@ -152,6 +153,9 @@ class MainActivity : BaseActivity() {
     }
 
     private fun clearSharedFiles() {
+        if (!PermissionUtil.check(this)) {
+            return
+        }
         Observable.just(FileUtil.sharePath)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
