@@ -28,7 +28,7 @@ class ProfileUrl : Serializable {
     val self: String? = null
 
     @SerializedName("html")
-    val html: String? = null
+    var html: String? = null
 
     @SerializedName("photos")
     val photos: String? = null

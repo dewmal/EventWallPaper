@@ -628,12 +628,10 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
         if (!clickedImage!!.isUnsplash) {
             photoByTextView.text = context.getString(R.string.recommended_by)
-            lineView.visibility = View.INVISIBLE
 
             extractThemeColor(unsplashImage)
         } else {
             photoByTextView.text = context.getString(R.string.photo_by)
-            lineView.visibility = View.VISIBLE
             detailInfoRootLayout.background = ColorDrawable(themeColor)
         }
 

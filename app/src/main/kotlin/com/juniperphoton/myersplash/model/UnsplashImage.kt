@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.broadcastreceiver.WallpaperWidgetProvider
+import com.juniperphoton.myersplash.cloudservice.Request.ME_HOME_PAGE
 import com.juniperphoton.myersplash.utils.FileUtil
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
 import io.reactivex.Observable
@@ -32,6 +33,9 @@ class UnsplashImage : Serializable {
                     val authorName = App.instance.getString(R.string.author_default_name)
                     userName = authorName
                     name = authorName
+                    links = ProfileUrl().apply {
+                        html = ME_HOME_PAGE
+                    }
                 }
             }
         }

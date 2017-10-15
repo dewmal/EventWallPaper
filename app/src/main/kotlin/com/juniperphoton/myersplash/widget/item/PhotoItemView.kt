@@ -33,8 +33,8 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
     @BindView(R.id.row_photo_ripple_mask_rl)
     lateinit var rippleMaskRL: ViewGroup
 
-    @BindView(R.id.row_photo_recommended_tag)
-    lateinit var recommendedTag: View
+    @BindView(R.id.row_photo_today_tag)
+    lateinit var todayTag: View
 
     var onClickPhoto: ((rectF: RectF, unsplashImage: UnsplashImage, itemView: View) -> Unit)? = null
     var onClickQuickDownload: ((image: UnsplashImage) -> Unit)? = null
@@ -85,9 +85,9 @@ class PhotoItemView(context: Context, attrs: AttributeSet?) : FrameLayout(contex
         }
 
         if (!image.isUnsplash) {
-            recommendedTag.visibility = View.VISIBLE
+            todayTag.visibility = View.VISIBLE
         } else {
-            recommendedTag.visibility = View.GONE
+            todayTag.visibility = View.GONE
         }
 
         rootView.background = ColorDrawable(backColor)
