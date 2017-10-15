@@ -38,17 +38,16 @@
                 android:layout_gravity="center"
                 android:contentDescription="@string/image_desc"
                 android:scaleType="fitXY"
-                android:src="@drawable/vector_ic_file_download"/>
+                android:src="@drawable/vector_ic_file_download"
+                android:visibility="gone"/>
 
         </FrameLayout>
 
         <TextView
-            android:id="@+id/row_photo_recommended_tag"
+            android:id="@+id/row_photo_today_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|left"
-            android:layout_margin="12dp"
-            android:background="@drawable/round_rect"
             android:drawableLeft="@drawable/ic_star_yellow"
             android:drawablePadding="4dp"
             android:gravity="center"
@@ -56,6 +55,10 @@
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
             android:paddingTop="8dp"
+            android:shadowColor="#6c000000"
+            android:shadowDx="5"
+            android:shadowDy="5"
+            android:shadowRadius="12"
             android:text="@string/recommended_tag"
             android:textColor="@android:color/white"
             android:textStyle="bold"/>
