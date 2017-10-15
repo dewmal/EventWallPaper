@@ -39,7 +39,7 @@
                 android:contentDescription="@string/image_desc"
                 android:scaleType="fitXY"
                 android:src="@drawable/vector_ic_file_download"
-                android:visibility="gone"/>
+                android:visibility="visible"/>
 
         </FrameLayout>
 
@@ -48,13 +48,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|left"
+            android:layout_margin="17dp"
             android:drawableLeft="@drawable/ic_star_yellow"
             android:drawablePadding="4dp"
             android:gravity="center"
-            android:paddingBottom="8dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:paddingTop="8dp"
             android:shadowColor="#6c000000"
             android:shadowDx="5"
             android:shadowDy="5"
@@ -64,5 +61,3 @@
             android:textStyle="bold"/>
     </FrameLayout>
 </com.juniperphoton.myersplash.widget.item.PhotoItemView>
-
-
