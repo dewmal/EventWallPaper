@@ -15,6 +15,7 @@ import android.net.Uri
 import android.support.customtabs.CustomTabsIntent
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.FileProvider
 import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.support.v7.graphics.Palette
 import android.util.AttributeSet
@@ -560,12 +561,14 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         val shareText = String.format(SHARE_TEXT, clickedImage!!.userName, clickedImage!!.downloadUrl)
 
         val intent = Intent(Intent.ACTION_SEND)
+        val contentUri = FileProvider.getUriForFile(context,
+                context.getString(R.string.authorities), copiedFile)
         intent.apply {
             action = Intent.ACTION_SEND
             type = "image/*"
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            putExtra(Intent.EXTRA_STREAM, Uri.fromFile(copiedFile))
+            putExtra(Intent.EXTRA_STREAM, contentUri)
             putExtra(Intent.EXTRA_SUBJECT, "Share")
             putExtra(Intent.EXTRA_TEXT, shareText)
         }
