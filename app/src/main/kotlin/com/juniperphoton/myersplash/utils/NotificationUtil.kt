@@ -1,11 +1,13 @@
 package com.juniperphoton.myersplash.utils
 
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import android.support.v4.app.NotificationCompat
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
@@ -17,9 +19,23 @@ import java.io.File
 @Suppress("unused")
 object NotificationUtil {
     private const val TAG = "NotificationUtil"
+    private val NOTIFICATION_CHANNEL_ID = "default_channel"
 
-    private val notificationManager: NotificationManager
-        get() = App.instance.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private val notificationManager: NotificationManager =
+            App.instance.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    init {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(NOTIFICATION_CHANNEL_ID, "App Notifications",
+                    NotificationManager.IMPORTANCE_DEFAULT)
+
+            // Configure the notification channel.
+            notificationChannel.description = "App notification"
+            notificationChannel.enableLights(false)
+            notificationChannel.enableVibration(false)
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
+    }
 
     fun cancelNotification(downloadUri: Uri) {
         notificationManager.cancel(downloadUri.hashCode())
@@ -34,7 +50,7 @@ object NotificationUtil {
 
         val resultPendingIntent = PendingIntent.getService(App.instance, 0, intent, 0)
 
-        val builder = NotificationCompat.Builder(App.instance)
+        val builder = NotificationCompat.Builder(App.instance, NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(App.instance.getString(R.string.download_error))
                 .setContentText(App.instance.getString(R.string.download_error_retry))
                 .setSmallIcon(R.drawable.vector_ic_clear_white)
@@ -44,13 +60,13 @@ object NotificationUtil {
         }
         builder.addAction(R.drawable.ic_replay_white, App.instance.getString(R.string.retry_act),
                 resultPendingIntent)
-        notificationManager.notify(id, builder.build())
+        notificationManager.notify(id, builder!!.build())
     }
 
     fun showCompleteNotification(downloadUri: Uri, previewUri: Uri?, filePath: String?) {
         val id: Int = downloadUri.hashCode()
 
-        val builder = NotificationCompat.Builder(App.instance)
+        val builder = NotificationCompat.Builder(App.instance, NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(App.instance.getString(R.string.saved))
                 .setContentText(App.instance.getString(R.string.tap_to_open_manage))
                 .setAutoCancel(false)
@@ -64,13 +80,13 @@ object NotificationUtil {
         } else {
             injectAppIntent(builder)
         }
-        notificationManager.notify(id, builder.build())
+        notificationManager.notify(id, builder!!.build())
     }
 
     fun showProgressNotification(title: String, content: String, progress: Int, downloadUri: Uri, previewUri: Uri?) {
         val id = downloadUri.hashCode()
 
-        val builder = NotificationCompat.Builder(App.instance)
+        val builder = NotificationCompat.Builder(App.instance, NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(title)
                 .setContentText(content)
                 .setSmallIcon(R.drawable.vector_ic_file_download)
