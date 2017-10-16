@@ -31,7 +31,7 @@ class ManageDownloadActivity : BaseActivity() {
 
     private var adapter: DownloadsListAdapter? = null
 
-    private var itemStatusChangedListener: RealmChangeListener<DownloadItem>? = RealmChangeListener { item ->
+    private var itemStatusChangedListener = RealmChangeListener<DownloadItem> { item ->
         Pasteur.d(TAG, "onChange")
         if (item.isValid) {
             adapter?.updateItem(item)
@@ -80,12 +80,13 @@ class ManageDownloadActivity : BaseActivity() {
 
     private fun deleteFromRealm(status: Int) {
         RealmCache.getInstance().executeTransaction {
-            val result = it.where(DownloadItem::class.java)
-                    .equalTo(DownloadItem.STATUS_KEY, status).findAll()
-            result.toList().forEach {
-                it.removeAllChangeListeners()
-                it.deleteFromRealm()
-            }
+            it.where(DownloadItem::class.java)
+                    .equalTo(DownloadItem.STATUS_KEY, status)
+                    .findAll()
+                    .forEach {
+                        it.removeAllChangeListeners()
+                        it.deleteFromRealm()
+                    }
             initViews()
         }
     }
@@ -115,20 +116,28 @@ class ManageDownloadActivity : BaseActivity() {
         if (adapter == null) {
             adapter = DownloadsListAdapter(this)
         }
+
         adapter!!.refreshItems(downloadItems)
 
-        val layoutManager = GridLayoutManager(this, 2)
-        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
-            override fun getSpanSize(position: Int): Int {
-                return if (position == adapter!!.itemCount - 1) 2 else 1
+        val layoutManager = GridLayoutManager(this, 2).apply {
+            spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    return if (position == adapter!!.itemCount - 1) 2 else 1
+                }
             }
         }
-        downloadsList.layoutManager = layoutManager
-        (downloadsList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-        downloadsList.adapter = adapter
-        updateNoItemVisibility()
 
-        if (!hasNavigationBar()) {
+        downloadsList.layoutManager = layoutManager
+        downloadsList.adapter = adapter
+
+        // We don't change the item animator so we cast it directly
+        (downloadsList.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+
+        updateNoItemVisibility()
+    }
+
+    override fun onConfigNavigationBar(hasNavigationBar: Boolean) {
+        if (hasNavigationBar) {
             val params = moreFab.layoutParams as ConstraintLayout.LayoutParams
             params.setMargins(0, 0, getDimenInPixel(24), getDimenInPixel(24))
             moreFab.layoutParams = params
