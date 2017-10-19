@@ -10,6 +10,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.extension.getActivity
+import com.juniperphoton.myersplash.extension.use
 
 class CommonTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(context, attrs) {
     @BindView(R.id.back_iv)
@@ -23,14 +24,14 @@ class CommonTitleBar(context: Context, attrs: AttributeSet) : FrameLayout(contex
 
         ButterKnife.bind(this)
 
-        val array = context.obtainStyledAttributes(attrs, R.styleable.CommonTitleBar)
-        val title = array.getString(R.styleable.CommonTitleBar_title)
-        array.recycle()
+        context.obtainStyledAttributes(attrs, R.styleable.CommonTitleBar).use {
+            val title = getString(R.styleable.CommonTitleBar_title)
 
-        textView.text = title
-        backView.setOnClickListener { view ->
-            val activity = view.getActivity()
-            activity?.finish()
+            textView.text = title
+            backView.setOnClickListener { view ->
+                val activity = view.getActivity()
+                activity?.finish()
+            }
         }
     }
 }

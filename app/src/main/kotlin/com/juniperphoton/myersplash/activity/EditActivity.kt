@@ -271,8 +271,8 @@ class EditActivity : BaseActivity() {
                         }
                     }
 
-                    override fun onNext(t: File) {
-                        setAs(t)
+                    override fun onNext(data: File) {
+                        setAs(data)
                     }
                 })
     }

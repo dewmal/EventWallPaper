@@ -4,16 +4,21 @@ import android.graphics.Color
 import com.google.gson.annotations.SerializedName
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
-import com.juniperphoton.myersplash.provider.WallpaperWidgetProvider
+import com.juniperphoton.myersplash.broadcastreceiver.WallpaperWidgetProvider
+import com.juniperphoton.myersplash.cloudservice.Request.ME_HOME_PAGE
 import com.juniperphoton.myersplash.utils.FileUtil
 import com.juniperphoton.myersplash.utils.LocalSettingHelper
+import io.reactivex.Observable
 import java.io.File
 import java.io.Serializable
 
 @Suppress("unused")
 class UnsplashImage : Serializable {
     companion object {
-        fun createRecommendedImage(): UnsplashImage {
+        private val savingQualitySettingsKey = App.instance.getString(R.string.preference_key_saving_quality)
+        private val listQualitySettingsKey = App.instance.getString(R.string.preference_key_list_quality)
+
+        fun createTodayImage(): UnsplashImage {
             return UnsplashImage().apply {
                 isUnsplash = false
                 id = WallpaperWidgetProvider.dateString
@@ -28,12 +33,12 @@ class UnsplashImage : Serializable {
                     val authorName = App.instance.getString(R.string.author_default_name)
                     userName = authorName
                     name = authorName
+                    links = ProfileUrl().apply {
+                        html = ME_HOME_PAGE
+                    }
                 }
             }
         }
-
-        private val savingQualitySettingsKey = App.instance.getString(R.string.preference_key_saving_quality)
-        private val listQualitySettingsKey = App.instance.getString(R.string.preference_key_list_quality)
     }
 
     @SerializedName("id")
@@ -79,48 +84,52 @@ class UnsplashImage : Serializable {
 
     val listUrl: String?
         get() {
+            val urls = urls ?: return null
             val choice = LocalSettingHelper.getInt(App.instance, listQualitySettingsKey, 0)
-            var url: String? = null
-            if (urls == null) {
-                return null
+            return when (choice) {
+                0 -> urls.regular
+                1 -> urls.small
+                2 -> urls.thumb
+                else -> null
             }
-            when (choice) {
-                0 -> url = urls!!.regular
-                1 -> url = urls!!.small
-                2 -> url = urls!!.thumb
-            }
-            return url
         }
 
     val downloadUrl: String?
         get() {
+            val urls = urls ?: return null
             val choice = LocalSettingHelper.getInt(App.instance, savingQualitySettingsKey, 1)
-            var url: String? = null
-            when (choice) {
-                0 -> url = urls!!.raw
-                1 -> url = urls!!.full
-                2 -> url = urls!!.small
+            return when (choice) {
+                0 -> urls.raw
+                1 -> urls.full
+                2 -> urls.small
+                else -> null
             }
-            return url
         }
+
+    fun checkDownloaded(): Observable<Boolean> {
+        return Observable.create { s ->
+            try {
+                val path = pathForDownload + ".jpg"
+                val file = File(path)
+                val existed = file.exists()
+                s.onNext(existed)
+                s.onComplete()
+            } catch (e: Exception) {
+                s.onError(e)
+            }
+        }
+    }
 
     private val tagForDownloadUrl: String
         get() {
             val choice = LocalSettingHelper.getInt(App.instance, savingQualitySettingsKey, 1)
-            var tag = ""
-            when (choice) {
-                0 -> tag = "raw"
-                1 -> tag = "regular"
-                2 -> tag = "small"
+            return when (choice) {
+                0 -> "raw"
+                1 -> "regular"
+                2 -> "small"
+                else -> ""
             }
-            return tag
         }
-
-    fun hasDownloaded(): Boolean {
-        val path = pathForDownload + ".jpg"
-        val file = File(path)
-        return file.exists()
-    }
 }
 
 class ImageUrl : Serializable {

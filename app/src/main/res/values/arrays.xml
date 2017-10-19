@@ -16,4 +16,17 @@
         <item>Gson</item>
         <item>ConstraintLayout</item>
     </string-array>
+    <string-array name="search_category">
+        <item>Buildings</item>
+        <item>Food</item>
+        <item>Nature</item>
+        <item>Technology</item>
+        <item>Travel</item>
+        <item>People</item>
+        <item>Sea</item>
+        <item>Dusk</item>
+        <item>Mountain</item>
+        <item>Galaxy</item>
+        <item>Summer</item>
+    </string-array>
 </resources>

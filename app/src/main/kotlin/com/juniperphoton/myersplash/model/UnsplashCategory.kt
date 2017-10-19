@@ -5,14 +5,14 @@ import com.juniperphoton.myersplash.cloudservice.Request
 @Suppress("unused")
 class UnsplashCategory {
     companion object {
-        val FEATURED_CATEGORY_ID = 10000
-        val NEW_CATEGORY_ID = 10001
-        val RANDOM_CATEGORY_ID = 10002
-        val SEARCH_ID = 10003
+        const val FEATURED_CATEGORY_ID = 10000
+        const val NEW_CATEGORY_ID = 10001
+        const val RANDOM_CATEGORY_ID = 10002
+        const val SEARCH_ID = 10003
 
-        val FEATURE = "Featured"
-        val NEW = "New"
-        val RANDOM = "Random"
+        const val FEATURE = "Featured"
+        const val NEW = "New"
+        const val RANDOM = "Random"
 
         val featuredCategory: UnsplashCategory
             get() {

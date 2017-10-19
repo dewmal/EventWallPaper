@@ -1,8 +1,8 @@
 package com.juniperphoton.myersplash.cloudservice
 
 import com.juniperphoton.myersplash.model.SearchResult
+import com.juniperphoton.myersplash.model.UnsplashFeaturedImage
 import com.juniperphoton.myersplash.model.UnsplashImage
-import com.juniperphoton.myersplash.model.UnsplashImageFeatured
 import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -19,7 +19,7 @@ interface PhotoService {
     fun getFeaturedPhotos(@Url url: String,
                           @Query("page") page: Int,
                           @Query("per_page") per_page: Int,
-                          @Query("client_id") id: String): Observable<MutableList<UnsplashImageFeatured>>
+                          @Query("client_id") id: String): Observable<MutableList<UnsplashFeaturedImage>>
 
     @GET
     fun searchPhotosByQuery(@Url url: String,

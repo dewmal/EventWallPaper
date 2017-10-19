@@ -15,6 +15,7 @@ import android.net.Uri
 import android.support.customtabs.CustomTabsIntent
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.FileProvider
 import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.support.v7.graphics.Palette
 import android.util.AttributeSet
@@ -315,7 +316,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
                 detailImgRL.translationX = startX * (1 - it.animatedFraction)
                 detailImgRL.translationY = it.animatedValue as Float
             }
-            addListener(object : AnimatorListenerImpl() {
+            addListener(object : AnimatorListeners.End() {
                 override fun onAnimationEnd(a: Animator) {
                     if (!show && clickedView != null) {
                         clickedView!!.visibility = View.VISIBLE
@@ -335,14 +336,15 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
     }
 
     private fun checkDownloadStatus() {
-        Observable.just<UnsplashImage>(clickedImage)
-                .observeOn(Schedulers.io())
-                .map { clickedImage!!.hasDownloaded() }
+        val image = clickedImage ?: return
+        image.checkDownloaded()
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { b ->
-                    if (b!!) {
-                        downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK)
-                    }
+                .filter {
+                    it
+                }
+                .subscribe {
+                    downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK)
                 }
     }
 
@@ -361,7 +363,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
             addUpdateListener { animation ->
                 detailInfoRootLayout.translationY = animation.animatedValue as Float
             }
-            addListener(object : AnimatorListenerImpl() {
+            addListener(object : AnimatorListeners.End() {
                 override fun onAnimationStart(a: Animator) {
                     animating = true
                 }
@@ -413,7 +415,7 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
                 if (show) ContextCompat.getColor(context, R.color.MaskColor) else Color.TRANSPARENT)
         animator.duration = ANIMATION_DURATION_FAST_MILLIS
         animator.addUpdateListener { animation -> detailRootScrollView.background = ColorDrawable(animation.animatedValue as Int) }
-        animator.addListener(object : AnimatorListenerImpl() {
+        animator.addListener(object : AnimatorListeners.End() {
             override fun onAnimationStart(a: Animator) {
                 if (show) {
                     onShowing?.invoke()
@@ -559,12 +561,14 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
         val shareText = String.format(SHARE_TEXT, clickedImage!!.userName, clickedImage!!.downloadUrl)
 
         val intent = Intent(Intent.ACTION_SEND)
+        val contentUri = FileProvider.getUriForFile(context,
+                context.getString(R.string.authorities), copiedFile)
         intent.apply {
             action = Intent.ACTION_SEND
             type = "image/*"
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            putExtra(Intent.EXTRA_STREAM, Uri.fromFile(copiedFile))
+            putExtra(Intent.EXTRA_STREAM, contentUri)
             putExtra(Intent.EXTRA_SUBJECT, "Share")
             putExtra(Intent.EXTRA_TEXT, shareText)
         }
@@ -627,12 +631,10 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
 
         if (!clickedImage!!.isUnsplash) {
             photoByTextView.text = context.getString(R.string.recommended_by)
-            lineView.visibility = View.INVISIBLE
 
             extractThemeColor(unsplashImage)
         } else {
             photoByTextView.text = context.getString(R.string.photo_by)
-            lineView.visibility = View.VISIBLE
             detailInfoRootLayout.background = ColorDrawable(themeColor)
         }
 
@@ -659,8 +661,8 @@ class ImageDetailView(context: Context, attrs: AttributeSet) : FrameLayout(conte
                 }
                 DownloadItem.DOWNLOAD_STATUS_FAILED -> {
                 }
-                DownloadItem.DOWNLOAD_STATUS_OK -> if (clickedImage!!.hasDownloaded()) {
-                    downloadFlipperLayout.next(DOWNLOAD_FLIPPER_LAYOUT_STATUS_DOWNLOAD_OK)
+                DownloadItem.DOWNLOAD_STATUS_OK -> {
+                    checkDownloadStatus()
                 }
             }
             associateWithDownloadItem(associatedDownloadItem)

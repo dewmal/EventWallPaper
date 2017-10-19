@@ -6,10 +6,13 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.WindowManager
+import com.juniperphoton.myersplash.extension.hasNavigationBar
 
 open class BaseActivity : AppCompatActivity() {
     private val isChrome: Boolean
         get() = Build.BRAND == "chromium" || Build.BRAND == "chrome"
+
+    private var navigationBarConfigured = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,4 +29,14 @@ open class BaseActivity : AppCompatActivity() {
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
     }
+
+    override fun onStart() {
+        super.onStart()
+        if (!navigationBarConfigured) {
+            navigationBarConfigured = true
+            onConfigNavigationBar(hasNavigationBar())
+        }
+    }
+
+    open fun onConfigNavigationBar(hasNavigationBar: Boolean) = Unit
 }

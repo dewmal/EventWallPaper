@@ -1,8 +1,8 @@
 package com.juniperphoton.myersplash.api
 
+import com.juniperphoton.myersplash.broadcastreceiver.WallpaperWidgetProvider
 import com.juniperphoton.myersplash.cloudservice.CloudService
 import com.juniperphoton.myersplash.cloudservice.Request
-import com.juniperphoton.myersplash.provider.WallpaperWidgetProvider
 import io.reactivex.observers.TestObserver
 import okhttp3.ResponseBody
 import org.junit.Test

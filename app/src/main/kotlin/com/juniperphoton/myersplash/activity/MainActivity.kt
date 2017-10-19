@@ -20,7 +20,7 @@ import com.juniperphoton.myersplash.extension.getDimenInPixel
 import com.juniperphoton.myersplash.extension.hasNavigationBar
 import com.juniperphoton.myersplash.extension.pow
 import com.juniperphoton.myersplash.model.UnsplashCategory
-import com.juniperphoton.myersplash.utils.AnimatorListenerImpl
+import com.juniperphoton.myersplash.utils.AnimatorListeners
 import com.juniperphoton.myersplash.utils.FileUtil
 import com.juniperphoton.myersplash.utils.PermissionUtil
 import com.juniperphoton.myersplash.utils.SimpleObserver
@@ -80,6 +80,7 @@ class MainActivity : BaseActivity() {
         if (savedInstanceState != null) {
             initNavigationIndex = savedInstanceState.getInt(SAVED_NAVIGATION_INDEX, 1)
         }
+
         initMainViews()
     }
 
@@ -127,7 +128,7 @@ class MainActivity : BaseActivity() {
         val animator = ViewAnimationUtils.createCircularReveal(searchView,
                 fabPositionX, fabPositionY,
                 (if (show) 0 else radius).toFloat(), (if (show) radius else 0).toFloat())
-        animator.addListener(object : AnimatorListenerImpl() {
+        animator.addListener(object : AnimatorListeners.End() {
             override fun onAnimationEnd(a: Animator) {
                 if (!show) {
                     searchView.reset()
@@ -152,16 +153,19 @@ class MainActivity : BaseActivity() {
     }
 
     private fun clearSharedFiles() {
+        if (!PermissionUtil.check(this)) {
+            return
+        }
         Observable.just(FileUtil.sharePath)
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .subscribe(object : SimpleObserver<String>() {
-                    override fun onNext(t: String) {
+                    override fun onNext(data: String) {
                         FileUtil.clearFilesToShared()
                     }
 
                     override fun onError(e: Throwable) {
-                        e?.printStackTrace()
+                        e.printStackTrace()
                     }
                 })
     }

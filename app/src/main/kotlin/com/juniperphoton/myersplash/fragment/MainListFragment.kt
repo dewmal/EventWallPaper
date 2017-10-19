@@ -3,7 +3,6 @@ package com.juniperphoton.myersplash.fragment
 import android.graphics.RectF
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -19,6 +18,7 @@ import com.juniperphoton.myersplash.event.RefreshUIEvent
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.model.UnsplashImage
 import com.juniperphoton.myersplash.utils.DownloadUtil
+import com.juniperphoton.myersplash.utils.LoadMoreListener
 import com.juniperphoton.myersplash.utils.Pasteur
 import com.juniperphoton.myersplash.utils.ToastService
 import org.greenrobot.eventbus.EventBus
@@ -46,6 +46,7 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
     lateinit var retryBtn: View
 
     private var adapter: PhotoAdapter? = null
+    private var loadMoreListener: LoadMoreListener? = null
 
     override val isBusyRefreshing: Boolean
         get() = refreshLayout.isRefreshing
@@ -62,8 +63,11 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         Pasteur.info(TAG, "onCreateView $activity")
-        val view = LayoutInflater.from(activity!!).inflate(R.layout.fragment_list, null, false)
+
+        val view = LayoutInflater.from(activity!!).inflate(R.layout.fragment_list, container, false)
+
         ButterKnife.bind(this, view)
+
         viewLoaded = true
         initView()
 
@@ -77,16 +81,10 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
         return view
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        Pasteur.info(TAG, "onActivityCreated $activity")
-
-        super.onActivityCreated(savedInstanceState)
-    }
-
     override fun onDestroy() {
         Pasteur.info(TAG, "onDestroy $activity")
-        super.onDestroy()
         presenter?.stop()
+        super.onDestroy()
     }
 
     override fun showToast(text: String) {
@@ -219,14 +217,16 @@ class MainListFragment : BasePresenterFragment<MainContract.MainPresenter>(), Ma
         }
 
         adapter = PhotoAdapter(unsplashImages, activity)
-        adapter?.onLoadMore = {
-            presenter?.loadMore()
-        }
         adapter?.onClickQuickDownload = { image ->
             DownloadUtil.download(activity, image)
         }
         adapter?.onClickPhoto = onClickPhotoItem
         contentRecyclerView.adapter = adapter
+
+        loadMoreListener = LoadMoreListener {
+            presenter?.loadMore()
+        }
+        loadMoreListener!!.attach(contentRecyclerView)
     }
 
     private fun updateNoItemVisibility(show: Boolean) {

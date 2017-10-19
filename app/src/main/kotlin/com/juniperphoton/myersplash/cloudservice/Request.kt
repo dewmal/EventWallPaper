@@ -9,4 +9,6 @@ object Request {
 
     const val AUTO_CHANGE_WALLPAPER = "https://juniperphoton.net/myersplash/wallpapers/"
     const val AUTO_CHANGE_WALLPAPER_THUMB = "https://juniperphoton.net/myersplash/wallpapers/thumbs/"
+
+    const val ME_HOME_PAGE = "https://unsplash.com/@juniperphoton"
 }

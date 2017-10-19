@@ -29,9 +29,10 @@
         tools:alpha="1">
 
         <include
-            layout="@layout/widget_edit_home_time_h2"
+            layout="@layout/widget_edit_home_pixel"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="76dp"
+            android:layout_marginTop="30dp"
             tools:alpha="1"/>
 
         <ImageView
@@ -43,7 +44,6 @@
             android:scaleType="fitEnd"
             android:src="@drawable/preview"/>
     </FrameLayout>
-
 
     <LinearLayout
         android:id="@+id/edit_bottom_bar"

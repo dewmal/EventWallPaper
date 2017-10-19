@@ -1,4 +1,4 @@
-package com.juniperphoton.myersplash.provider
+package com.juniperphoton.myersplash.broadcastreceiver
 
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
