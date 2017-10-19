@@ -98,7 +98,7 @@
     <string name="weibo_url">
         https://weibo.com/photon
     </string>
-    <string name="dim_the_brightness">DIM THE BRIGHTNESS</string>
+    <string name="dim_the_brightness">DIMMING</string>
 
     <string name="oom_toast">Out of memory occurs. Please contact the develop to solve this. :(</string>
 
