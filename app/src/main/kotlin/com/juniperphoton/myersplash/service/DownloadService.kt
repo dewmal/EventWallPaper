@@ -1,8 +1,10 @@
 package com.juniperphoton.myersplash.service
 
-import android.app.IntentService
+import android.app.Service
 import android.content.Intent
 import android.net.Uri
+import android.os.Binder
+import android.os.IBinder
 import android.util.Log
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
@@ -10,26 +12,35 @@ import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.cloudservice.CloudService
 import com.juniperphoton.myersplash.extension.sendScanBroadcast
 import com.juniperphoton.myersplash.model.DownloadItem
-import com.juniperphoton.myersplash.utils.DownloadUtil
-import com.juniperphoton.myersplash.utils.NotificationUtil
-import com.juniperphoton.myersplash.utils.Params
-import com.juniperphoton.myersplash.utils.ToastService
+import com.juniperphoton.myersplash.utils.*
 import io.reactivex.disposables.Disposable
 import io.reactivex.observers.DisposableObserver
 import okhttp3.ResponseBody
 import java.io.File
 import java.util.*
 
-class DownloadService : IntentService(TAG) {
+class DownloadService : Service() {
+    private class LocalBinder : Binder()
+
+    override fun onBind(intent: Intent?): IBinder = binder
+
     companion object {
         private const val TAG = "DownloadService"
         private val disposableMap = HashMap<String, Disposable>()
     }
 
+    private var binder: LocalBinder = LocalBinder()
+
     private var isUnsplash = true
     private var previewUri: Uri? = null
 
-    override fun onHandleIntent(intent: Intent?) {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Pasteur.info(TAG, "on start command")
+        onHandleIntent(intent)
+        return START_NOT_STICKY
+    }
+
+    private fun onHandleIntent(intent: Intent?) {
         val downloadUrl = intent!!.getStringExtra(Params.URL_KEY)
         val fileName = intent.getStringExtra(Params.NAME_KEY)
         val canceled = intent.getBooleanExtra(Params.CANCELED_KEY, false)
