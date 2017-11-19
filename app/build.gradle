@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'realm-android'
 
 android {
@@ -20,7 +19,7 @@ android {
     }
 
     compileSdkVersion 26
-    buildToolsVersion "26.0.1"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.juniperphoton.myersplash"
         minSdkVersion 21
@@ -39,10 +38,10 @@ android {
         release {
             signingConfig signingConfigs.release
 
-            applicationVariants.all { variant ->
-                variant.outputs.each { output ->
-                    output.outputFile = file("$project.buildDir/outputs/apk/myersplash_release_" +
-                            "${defaultConfig.versionName}.${defaultConfig.versionCode}.apk")
+            android.applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "$project.buildDir/outputs/apk/myersplash_release_" +
+                    "${defaultConfig.versionName}.${defaultConfig.versionCode}.apk"
                 }
             }
         }
@@ -80,7 +79,6 @@ dependencies {
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.android:flexbox:0.3.0-alpha3'
-
     compile 'com.juniperphoton:flipperlayout:1.1.1'
 
     kapt 'io.realm:realm-annotations:3.0.0'
