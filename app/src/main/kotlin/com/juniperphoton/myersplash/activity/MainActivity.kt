@@ -225,12 +225,6 @@ class MainActivity : BaseActivity() {
             })
         }
 
-        if (!hasNavigationBar()) {
-            val params = searchFab.layoutParams as RelativeLayout.LayoutParams
-            params.setMargins(0, 0, getDimenInPixel(24), getDimenInPixel(24))
-            searchFab.layoutParams = params
-        }
-
         toolbarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
             if (Math.abs(verticalOffset) - appBarLayout.height == 0) {
                 tagView.animate().alpha(1f).setDuration(300).start()
@@ -242,6 +236,14 @@ class MainActivity : BaseActivity() {
         }
 
         tagView.setOnClickListener { EventBus.getDefault().post(ScrollToTopEvent(idMaps[pivotTitleBar.selectedItem]!!, false)) }
+    }
+
+    override fun onConfigNavigationBar(hasNavigationBar: Boolean) {
+        if (!hasNavigationBar) {
+            val params = searchFab.layoutParams as RelativeLayout.LayoutParams
+            params.setMargins(0, 0, getDimenInPixel(24), getDimenInPixel(24))
+            searchFab.layoutParams = params
+        }
     }
 
     private fun handleShortcutsAction() {

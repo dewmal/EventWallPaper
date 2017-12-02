@@ -136,7 +136,7 @@ class ManageDownloadActivity : BaseActivity() {
     }
 
     override fun onConfigNavigationBar(hasNavigationBar: Boolean) {
-        if (hasNavigationBar) {
+        if (!hasNavigationBar) {
             val params = moreFab.layoutParams as ConstraintLayout.LayoutParams
             params.setMargins(0, 0, getDimenInPixel(24), getDimenInPixel(24))
             moreFab.layoutParams = params
