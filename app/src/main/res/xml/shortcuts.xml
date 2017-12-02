@@ -10,16 +10,6 @@
             android:targetPackage="com.juniperphoton.myersplash" />
     </shortcut>
     <shortcut
-        android:icon="@drawable/ic_download_shortcut"
-        android:shortcutId="download"
-        android:shortcutLongLabel="@string/downloadLowercase"
-        android:shortcutShortLabel="@string/downloadLowercase">
-        <intent
-            android:action="action.download"
-            android:targetClass="com.juniperphoton.myersplash.activity.ManageDownloadActivity"
-            android:targetPackage="com.juniperphoton.myersplash" />
-    </shortcut>
-    <shortcut
         android:icon="@drawable/ic_random_shortcut"
         android:shortcutId="random"
         android:shortcutLongLabel="@string/random"
