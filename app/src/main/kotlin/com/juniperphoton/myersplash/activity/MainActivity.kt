@@ -97,6 +97,7 @@ class MainActivity : BaseActivity() {
                 return
             }
             val intent = Intent(this, ManageDownloadActivity::class.java)
+            intent.action = ManageDownloadActivity.ACTION
             val shortcut = ShortcutInfo.Builder(this, DOWNLOADS_SHORTCUT_ID)
                     .setShortLabel(getString(R.string.downloadLowercase))
                     .setLongLabel(getString(R.string.downloadLowercase))

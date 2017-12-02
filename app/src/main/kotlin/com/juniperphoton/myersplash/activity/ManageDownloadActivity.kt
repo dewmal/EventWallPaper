@@ -26,6 +26,7 @@ import java.util.*
 class ManageDownloadActivity : BaseActivity() {
     companion object {
         private const val TAG = "ManageDownloadActivity"
+        const val ACTION = "action.downloads"
     }
 
     private var adapter: DownloadsListAdapter? = null
