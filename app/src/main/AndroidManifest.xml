@@ -55,6 +55,7 @@
 
         <activity
             android:name=".activity.EditActivity"
+            android:label="Edit wallpaper"
             android:launchMode="singleInstance"
             android:process=":edit"
             android:screenOrientation="portrait"
