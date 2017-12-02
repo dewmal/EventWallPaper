@@ -1,5 +1,6 @@
 package com.juniperphoton.myersplash.cloudservice
 
+import android.annotation.SuppressLint
 import com.juniperphoton.myersplash.BuildConfig
 import com.juniperphoton.myersplash.model.UnsplashImage
 import io.reactivex.Observable
@@ -10,8 +11,15 @@ import okhttp3.ResponseBody
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.security.SecureRandom
+import java.security.cert.CertificateException
+import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+import javax.net.ssl.X509TrustManager
 
+@Suppress("DEPRECATION")
 object CloudService {
     private const val AppKey = BuildConfig.UNSPLASH_APP_KEY
 
@@ -23,6 +31,24 @@ object CloudService {
     private val builder: OkHttpClient.Builder = OkHttpClient.Builder()
 
     init {
+        val ctx = SSLContext.getInstance("SSL")
+
+        val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
+            override fun getAcceptedIssuers(): Array<X509Certificate> = arrayOf()
+
+            @SuppressLint("TrustAllX509TrustManager")
+            @Throws(CertificateException::class)
+            override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) = Unit
+
+            @SuppressLint("TrustAllX509TrustManager")
+            @Throws(CertificateException::class)
+            override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) = Unit
+        })
+
+        ctx.init(null, trustAllCerts, SecureRandom())
+
+        builder.sslSocketFactory(ctx.socketFactory)
+
         builder.connectTimeout(DEFAULT_TIMEOUT.toLong(), TimeUnit.SECONDS)
                 .addInterceptor(CustomInterceptor())
 
