@@ -40,8 +40,8 @@ android {
 
             android.applicationVariants.all { variant ->
                 variant.outputs.all {
-                    outputFileName = "$project.buildDir/outputs/apk/myersplash_release_" +
-                    "${defaultConfig.versionName}.${defaultConfig.versionCode}.apk"
+                    outputFileName = "myersplash_release_build.${defaultConfig.versionName}" +
+                            ".${defaultConfig.versionCode}.apk"
                 }
             }
         }
