@@ -15,7 +15,7 @@ class UnsplashUser : Serializable {
     @SerializedName("name")
     var name: String? = null
 
-    @SerializedName("Links")
+    @SerializedName("links")
     var links: ProfileUrl? = null
 
     val homeUrl: String?
