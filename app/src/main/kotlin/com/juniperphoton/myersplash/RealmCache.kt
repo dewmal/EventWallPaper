@@ -21,6 +21,7 @@ object RealmCache {
     fun getInstance() = Realm.getInstance(configuration)!!
 }
 
+@Suppress("UNUSED_CHANGED_VALUE")
 class CacheMigration : RealmMigration {
     override fun migrate(realm: DynamicRealm?, oldVersion: Long, newVersion: Long) {
         val schema = realm!!.schema

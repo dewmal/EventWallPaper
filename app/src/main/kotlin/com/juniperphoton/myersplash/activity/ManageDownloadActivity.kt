@@ -16,7 +16,6 @@ import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.adapter.DownloadsListAdapter
 import com.juniperphoton.myersplash.extension.getDimenInPixel
-import com.juniperphoton.myersplash.extension.hasNavigationBar
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.utils.Pasteur
 import io.realm.RealmChangeListener
@@ -110,7 +109,7 @@ class ManageDownloadActivity : BaseActivity() {
                 }
 
         downloadItems.forEach {
-            it.addChangeListener(itemStatusChangedListener!!)
+            it.addChangeListener(itemStatusChangedListener)
         }
 
         if (adapter == null) {
