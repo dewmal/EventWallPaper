@@ -2,14 +2,17 @@ package com.juniperphoton.myersplash.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import butterknife.BindView
 import butterknife.ButterKnife
+import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.drawee.view.SimpleDraweeView
+import com.facebook.imagepipeline.common.ResizeOptions
+import com.facebook.imagepipeline.request.ImageRequestBuilder
 import com.juniperphoton.flipperlayout.FlipperLayout
 import com.juniperphoton.myersplash.App
 import com.juniperphoton.myersplash.R
@@ -17,6 +20,7 @@ import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.service.DownloadService
 import com.juniperphoton.myersplash.utils.DownloadItemTransactionUtil
 import com.juniperphoton.myersplash.utils.Params
+import com.juniperphoton.myersplash.utils.Pasteur
 import com.juniperphoton.myersplash.widget.DownloadCompleteView
 import com.juniperphoton.myersplash.widget.DownloadRetryView
 import com.juniperphoton.myersplash.widget.DownloadingView
@@ -24,9 +28,11 @@ import com.juniperphoton.myersplash.widget.DownloadingView
 class DownloadsListAdapter(private val context: Context) :
         RecyclerView.Adapter<DownloadsListAdapter.DownloadItemViewHolder>() {
     companion object {
+        private const val TAG = "DownloadsListAdapter"
         private const val ITEM_TYPE_ITEM = 0
         private const val ITEM_TYPE_FOOTER = 1
         private const val ASPECT_RATIO = 1.7f
+        private const val MAX_DIMENSION_PREVIEW_PX = 500
     }
 
     var data: MutableList<DownloadItem> = mutableListOf()
@@ -44,7 +50,8 @@ class DownloadsListAdapter(private val context: Context) :
                 DownloadItemViewHolder(view)
             }
             ITEM_TYPE_FOOTER -> {
-                val footer = LayoutInflater.from(context).inflate(R.layout.row_footer_blank, parent, false)
+                val footer = LayoutInflater.from(context).inflate(R.layout.row_footer_blank,
+                        parent, false)
                 DownloadItemViewHolder(footer)
             }
             else -> null
@@ -71,7 +78,7 @@ class DownloadsListAdapter(private val context: Context) :
     fun updateItem(item: DownloadItem) {
         val index = data.indexOf(item)
         if (index >= 0 && index <= data.size) {
-            Log.d("adapter", "notifyItemChanged:" + index)
+            Pasteur.d(TAG, "notifyItemChanged:" + index)
             notifyItemChanged(index)
         }
     }
@@ -102,12 +109,64 @@ class DownloadsListAdapter(private val context: Context) :
         @JvmField
         var downloadCompleteView: DownloadCompleteView? = null
 
+        private var downloadItem: DownloadItem? = null
+
         init {
             ButterKnife.bind(this, itemView)
+            downloadRetryView?.onClickDelete = onDelete@ {
+                val item = downloadItem ?: return@onDelete
+                try {
+                    data.removeAt(adapterPosition)
+                    notifyItemRemoved(adapterPosition)
+
+                    val intent = Intent(App.instance, DownloadService::class.java)
+                    intent.putExtra(Params.CANCELED_KEY, true)
+                    intent.putExtra(Params.URL_KEY, item.downloadUrl)
+                    context.startService(intent)
+
+                    DownloadItemTransactionUtil.delete(item)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+            downloadRetryView?.onClickRetry = onRetry@ {
+                val item = downloadItem ?: return@onRetry
+
+                DownloadItemTransactionUtil.updateStatus(item,
+                        DownloadItem.DOWNLOAD_STATUS_DOWNLOADING)
+                flipperLayout?.next(item.status)
+
+                val intent = Intent(context, DownloadService::class.java)
+                intent.putExtra(Params.NAME_KEY, item.fileName)
+                intent.putExtra(Params.URL_KEY, item.downloadUrl)
+                context.startService(intent)
+            }
+
+            downloadingView?.onClickCancel = onCancel@ {
+                val item = downloadItem ?: return@onCancel
+                DownloadItemTransactionUtil.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_FAILED)
+                flipperLayout?.next(item.status)
+
+                val intent = Intent(App.instance, DownloadService::class.java)
+                intent.putExtra(Params.CANCELED_KEY, true)
+                intent.putExtra(Params.URL_KEY, item.downloadUrl)
+                context.startService(intent)
+            }
         }
 
         internal fun bind(item: DownloadItem) {
-            draweeView?.setImageURI(item.thumbUrl)
+            this.downloadItem = item
+
+            draweeView?.let {
+                var request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(item.thumbUrl))
+                        .setResizeOptions(ResizeOptions(MAX_DIMENSION_PREVIEW_PX,
+                                MAX_DIMENSION_PREVIEW_PX)).build()
+                var controller = Fresco.newDraweeControllerBuilder().setImageRequest(request)
+                        .setOldController(it.controller).build()
+                it.controller = controller
+            }
+
             downloadingView?.progress = item.progress
 
             downloadCompleteView?.let {
@@ -117,44 +176,11 @@ class DownloadsListAdapter(private val context: Context) :
 
             downloadRetryView?.let {
                 it.themeColor = item.color
-                it.onClickDelete = {
-                    try {
-                        data.removeAt(adapterPosition)
-                        notifyItemRemoved(adapterPosition)
-
-                        val intent = Intent(App.instance, DownloadService::class.java)
-                        intent.putExtra(Params.CANCELED_KEY, true)
-                        intent.putExtra(Params.URL_KEY, item.downloadUrl)
-                        context.startService(intent)
-
-                        DownloadItemTransactionUtil.delete(item)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
-                it.onClickRetry = {
-                    DownloadItemTransactionUtil.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_DOWNLOADING)
-                    flipperLayout?.next(item.status)
-
-                    val intent = Intent(context, DownloadService::class.java)
-                    intent.putExtra(Params.NAME_KEY, item.fileName)
-                    intent.putExtra(Params.URL_KEY, item.downloadUrl)
-                    context.startService(intent)
-                }
             }
 
             downloadingView?.let {
                 it.progress = item.progress
                 it.themeColor = item.color
-                it.onClickCancel = {
-                    DownloadItemTransactionUtil.updateStatus(item, DownloadItem.DOWNLOAD_STATUS_FAILED)
-                    flipperLayout?.next(item.status)
-
-                    val intent = Intent(App.instance, DownloadService::class.java)
-                    intent.putExtra(Params.CANCELED_KEY, true)
-                    intent.putExtra(Params.URL_KEY, item.downloadUrl)
-                    context.startService(intent)
-                }
             }
 
             val last = item.lastStatus
