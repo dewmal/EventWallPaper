@@ -13,7 +13,9 @@ class CustomInterceptor : Interceptor {
         if (url.last() == '&') {
             url = url.substring(0, url.length - 2)
         }
-        url = "$url&client_id=${BuildConfig.UNSPLASH_APP_KEY}"
+        if (url.startsWith(Request.BASE_URL)) {
+            url = "$url&client_id=${BuildConfig.UNSPLASH_APP_KEY}"
+        }
         builder.url(url)
 
         val resp = chain.proceed(builder.build())
