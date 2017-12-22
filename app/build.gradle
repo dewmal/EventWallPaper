@@ -24,8 +24,8 @@ android {
         applicationId "com.juniperphoton.myersplash"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 280
-        versionName "2.8.0"
+        versionCode 281
+        versionName "2.8.1"
 
         Properties properties = new Properties()
         properties.load(project.rootProject.file('local.properties').newDataInputStream())
