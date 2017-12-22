@@ -21,7 +21,7 @@ import javax.net.ssl.X509TrustManager
 
 @Suppress("DEPRECATION")
 object CloudService {
-    private const val AppKey = BuildConfig.UNSPLASH_APP_KEY
+    private const val APP_KEY = BuildConfig.UNSPLASH_APP_KEY
 
     private val DEFAULT_TIMEOUT = 10
 
@@ -65,13 +65,13 @@ object CloudService {
 
     fun getPhotos(url: String,
                   page: Int): Observable<MutableList<UnsplashImage>> {
-        return photoService.getPhotos(url, page, 10, AppKey)
+        return photoService.getPhotos(url, page, 10, APP_KEY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 
     fun getRandomPhotos(url: String): Observable<MutableList<UnsplashImage>> {
-        return photoService.getRandomPhotos(url, 10, AppKey)
+        return photoService.getRandomPhotos(url, 10, APP_KEY)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
@@ -79,7 +79,7 @@ object CloudService {
     fun getFeaturedPhotos(url: String,
                           page: Int): Observable<MutableList<UnsplashImage>> {
         return photoService
-                .getFeaturedPhotos(url, page, 10, AppKey)
+                .getFeaturedPhotos(url, page, 10, APP_KEY)
                 .map { images ->
                     images.map { it.image!! }.toMutableList()
                 }
@@ -91,7 +91,7 @@ object CloudService {
                      page: Int,
                      query: String): Observable<MutableList<UnsplashImage>> {
         return photoService
-                .searchPhotosByQuery(url, page, 10, query, AppKey)
+                .searchPhotosByQuery(url, page, 10, query, APP_KEY)
                 .map { searchResults ->
                     searchResults.list!!
                 }
@@ -102,6 +102,11 @@ object CloudService {
     fun downloadPhoto(url: String): Observable<ResponseBody> {
         return downloadService
                 .downloadFileWithDynamicUrlSync(url).timeout(30, TimeUnit.SECONDS)
+                .subscribeOn(Schedulers.io())
+    }
+
+    fun reportDownload(url: String): Observable<ResponseBody> {
+        return downloadService.reportDownload(url, APP_KEY)
                 .subscribeOn(Schedulers.io())
     }
 }
