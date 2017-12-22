@@ -12,24 +12,20 @@ interface PhotoService {
     @GET
     fun getPhotos(@Url url: String,
                   @Query("page") page: Int,
-                  @Query("per_page") per_page: Int,
-                  @Query("client_id") id: String): Observable<MutableList<UnsplashImage>>
+                  @Query("per_page") per_page: Int): Observable<MutableList<UnsplashImage>>
 
     @GET
     fun getFeaturedPhotos(@Url url: String,
                           @Query("page") page: Int,
-                          @Query("per_page") per_page: Int,
-                          @Query("client_id") id: String): Observable<MutableList<UnsplashFeaturedImage>>
+                          @Query("per_page") per_page: Int): Observable<MutableList<UnsplashFeaturedImage>>
 
     @GET
     fun searchPhotosByQuery(@Url url: String,
                             @Query("page") page: Int,
                             @Query("per_page") per_page: Int,
-                            @Query("query") query: String,
-                            @Query("client_id") id: String): Observable<SearchResult>
+                            @Query("query") query: String): Observable<SearchResult>
 
     @GET
     fun getRandomPhotos(@Url url: String,
-                        @Query("count") count: Int,
-                        @Query("client_id") id: String): Observable<MutableList<UnsplashImage>>
+                        @Query("count") count: Int): Observable<MutableList<UnsplashImage>>
 }

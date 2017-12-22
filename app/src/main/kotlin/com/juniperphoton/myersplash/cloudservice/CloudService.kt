@@ -1,7 +1,6 @@
 package com.juniperphoton.myersplash.cloudservice
 
 import android.annotation.SuppressLint
-import com.juniperphoton.myersplash.BuildConfig
 import com.juniperphoton.myersplash.model.UnsplashImage
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -21,9 +20,8 @@ import javax.net.ssl.X509TrustManager
 
 @Suppress("DEPRECATION")
 object CloudService {
-    private const val APP_KEY = BuildConfig.UNSPLASH_APP_KEY
-
-    private val DEFAULT_TIMEOUT = 10
+    private const val DEFAULT_TIMEOUT = 10
+    private const val DEFAULT_REQUEST_COUNT = 10
 
     private val retrofit: Retrofit
     private val photoService: PhotoService
@@ -65,13 +63,13 @@ object CloudService {
 
     fun getPhotos(url: String,
                   page: Int): Observable<MutableList<UnsplashImage>> {
-        return photoService.getPhotos(url, page, 10, APP_KEY)
+        return photoService.getPhotos(url, page, DEFAULT_REQUEST_COUNT)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
 
     fun getRandomPhotos(url: String): Observable<MutableList<UnsplashImage>> {
-        return photoService.getRandomPhotos(url, 10, APP_KEY)
+        return photoService.getRandomPhotos(url, DEFAULT_REQUEST_COUNT)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
     }
@@ -79,7 +77,7 @@ object CloudService {
     fun getFeaturedPhotos(url: String,
                           page: Int): Observable<MutableList<UnsplashImage>> {
         return photoService
-                .getFeaturedPhotos(url, page, 10, APP_KEY)
+                .getFeaturedPhotos(url, page, DEFAULT_REQUEST_COUNT)
                 .map { images ->
                     images.map { it.image!! }.toMutableList()
                 }
@@ -91,7 +89,7 @@ object CloudService {
                      page: Int,
                      query: String): Observable<MutableList<UnsplashImage>> {
         return photoService
-                .searchPhotosByQuery(url, page, 10, query, APP_KEY)
+                .searchPhotosByQuery(url, page, DEFAULT_REQUEST_COUNT, query)
                 .map { searchResults ->
                     searchResults.list!!
                 }
@@ -106,7 +104,7 @@ object CloudService {
     }
 
     fun reportDownload(url: String): Observable<ResponseBody> {
-        return downloadService.reportDownload(url, APP_KEY)
+        return downloadService.reportDownload(url)
                 .subscribeOn(Schedulers.io())
     }
 }
