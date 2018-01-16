@@ -16,7 +16,6 @@ import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.RealmCache
 import com.juniperphoton.myersplash.adapter.DownloadsListAdapter
 import com.juniperphoton.myersplash.extension.getDimenInPixel
-import com.juniperphoton.myersplash.extension.hasNavigationBar
 import com.juniperphoton.myersplash.model.DownloadItem
 import com.juniperphoton.myersplash.utils.Pasteur
 import io.realm.RealmChangeListener
@@ -27,6 +26,7 @@ import java.util.*
 class ManageDownloadActivity : BaseActivity() {
     companion object {
         private const val TAG = "ManageDownloadActivity"
+        const val ACTION = "action.downloads"
     }
 
     private var adapter: DownloadsListAdapter? = null
@@ -110,7 +110,7 @@ class ManageDownloadActivity : BaseActivity() {
                 }
 
         downloadItems.forEach {
-            it.addChangeListener(itemStatusChangedListener!!)
+            it.addChangeListener(itemStatusChangedListener)
         }
 
         if (adapter == null) {
@@ -137,7 +137,7 @@ class ManageDownloadActivity : BaseActivity() {
     }
 
     override fun onConfigNavigationBar(hasNavigationBar: Boolean) {
-        if (hasNavigationBar) {
+        if (!hasNavigationBar) {
             val params = moreFab.layoutParams as ConstraintLayout.LayoutParams
             params.setMargins(0, 0, getDimenInPixel(24), getDimenInPixel(24))
             moreFab.layoutParams = params

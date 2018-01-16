@@ -60,6 +60,12 @@ class UnsplashImage : Serializable {
     @SerializedName("urls")
     private var urls: ImageUrl? = null
 
+    @SerializedName("links")
+    private var links: ImageLinks? = null
+
+    val downloadLocationLink: String?
+        get() = links?.downloadLocation
+
     var isUnsplash: Boolean = true
         private set
 
@@ -130,6 +136,11 @@ class UnsplashImage : Serializable {
                 else -> ""
             }
         }
+}
+
+class ImageLinks : Serializable {
+    @SerializedName("download_location")
+    var downloadLocation: String? = null
 }
 
 class ImageUrl : Serializable {

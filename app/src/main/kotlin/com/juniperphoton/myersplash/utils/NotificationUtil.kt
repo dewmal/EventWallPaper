@@ -1,5 +1,6 @@
 package com.juniperphoton.myersplash.utils
 
+import android.annotation.TargetApi
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -25,6 +26,7 @@ object NotificationUtil {
             App.instance.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
     init {
+        @TargetApi(Build.VERSION_CODES.O)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel = NotificationChannel(NOTIFICATION_CHANNEL_ID, "App Notifications",
                     NotificationManager.IMPORTANCE_DEFAULT)
@@ -33,6 +35,7 @@ object NotificationUtil {
             notificationChannel.description = "App notification"
             notificationChannel.enableLights(false)
             notificationChannel.enableVibration(false)
+            notificationChannel.importance = NotificationManager.IMPORTANCE_LOW
             notificationManager.createNotificationChannel(notificationChannel)
         }
     }
@@ -73,17 +76,22 @@ object NotificationUtil {
                 .setSmallIcon(R.drawable.small_download_ok)
         previewUri?.let {
             val bm = BitmapFactory.decodeFile(it.toString())
-            builder.setLargeIcon(bm)
+            bm?.let {
+                builder.setLargeIcon(it)
+            }
         }
         if (filePath != null) {
             injectViewIntent(builder, filePath)
         } else {
             injectAppIntent(builder)
         }
-        notificationManager.notify(id, builder!!.build())
+
+        Pasteur.info(TAG, "completed: $downloadUri")
+        notificationManager.notify(id, builder.build())
     }
 
-    fun showProgressNotification(title: String, content: String, progress: Int, downloadUri: Uri, previewUri: Uri?) {
+    fun showProgressNotification(title: String, content: String,
+                                 progress: Int, downloadUri: Uri, previewUri: Uri?) {
         val id = downloadUri.hashCode()
 
         val builder = NotificationCompat.Builder(App.instance, NOTIFICATION_CHANNEL_ID)
@@ -93,10 +101,12 @@ object NotificationUtil {
                 .setProgress(100, progress, false)
         previewUri?.let {
             val bm = BitmapFactory.decodeFile(it.toString())
-            builder.setLargeIcon(bm)
+            bm?.let {
+                builder.setLargeIcon(it)
+            }
         }
         injectAppIntent(builder)
-        notificationManager.notify(id, builder!!.build())
+        notificationManager.notify(id, builder.build())
     }
 
     private fun injectAppIntent(builder: NotificationCompat.Builder) {

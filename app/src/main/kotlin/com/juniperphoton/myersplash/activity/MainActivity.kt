@@ -1,7 +1,11 @@
 package com.juniperphoton.myersplash.activity
 
 import android.animation.Animator
+import android.annotation.TargetApi
 import android.content.Intent
+import android.content.pm.ShortcutInfo
+import android.content.pm.ShortcutManager
+import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.support.design.widget.AppBarLayout
@@ -17,7 +21,6 @@ import com.juniperphoton.myersplash.R
 import com.juniperphoton.myersplash.adapter.MainListFragmentAdapter
 import com.juniperphoton.myersplash.event.ScrollToTopEvent
 import com.juniperphoton.myersplash.extension.getDimenInPixel
-import com.juniperphoton.myersplash.extension.hasNavigationBar
 import com.juniperphoton.myersplash.extension.pow
 import com.juniperphoton.myersplash.model.UnsplashCategory
 import com.juniperphoton.myersplash.utils.AnimatorListeners
@@ -34,6 +37,7 @@ import org.greenrobot.eventbus.EventBus
 class MainActivity : BaseActivity() {
     companion object {
         private const val SAVED_NAVIGATION_INDEX = "navi_index"
+        private const val DOWNLOADS_SHORTCUT_ID = "downloads_shortcut"
     }
 
     private var mainListFragmentAdapter: MainListFragmentAdapter? = null
@@ -81,7 +85,27 @@ class MainActivity : BaseActivity() {
             initNavigationIndex = savedInstanceState.getInt(SAVED_NAVIGATION_INDEX, 1)
         }
 
+        initShortcuts()
         initMainViews()
+    }
+
+    private fun initShortcuts() {
+        @TargetApi(android.os.Build.VERSION_CODES.N_MR1)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N_MR1) {
+            val shortcutManager = getSystemService(ShortcutManager::class.java)
+            if (shortcutManager.dynamicShortcuts.size > 0) {
+                return
+            }
+            val intent = Intent(this, ManageDownloadActivity::class.java)
+            intent.action = ManageDownloadActivity.ACTION
+            val shortcut = ShortcutInfo.Builder(this, DOWNLOADS_SHORTCUT_ID)
+                    .setShortLabel(getString(R.string.downloadLowercase))
+                    .setLongLabel(getString(R.string.downloadLowercase))
+                    .setIcon(Icon.createWithResource(this, R.drawable.ic_download_shortcut))
+                    .setIntent(intent)
+                    .build()
+            shortcutManager.dynamicShortcuts = listOf(shortcut)
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
@@ -225,12 +249,6 @@ class MainActivity : BaseActivity() {
             })
         }
 
-        if (!hasNavigationBar()) {
-            val params = searchFab.layoutParams as RelativeLayout.LayoutParams
-            params.setMargins(0, 0, getDimenInPixel(24), getDimenInPixel(24))
-            searchFab.layoutParams = params
-        }
-
         toolbarLayout.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
             if (Math.abs(verticalOffset) - appBarLayout.height == 0) {
                 tagView.animate().alpha(1f).setDuration(300).start()
@@ -242,6 +260,14 @@ class MainActivity : BaseActivity() {
         }
 
         tagView.setOnClickListener { EventBus.getDefault().post(ScrollToTopEvent(idMaps[pivotTitleBar.selectedItem]!!, false)) }
+    }
+
+    override fun onConfigNavigationBar(hasNavigationBar: Boolean) {
+        if (!hasNavigationBar) {
+            val params = searchFab.layoutParams as RelativeLayout.LayoutParams
+            params.setMargins(0, 0, getDimenInPixel(24), getDimenInPixel(24))
+            searchFab.layoutParams = params
+        }
     }
 
     private fun handleShortcutsAction() {

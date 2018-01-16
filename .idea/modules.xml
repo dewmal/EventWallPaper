@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/MyerSplash.Android.iml" filepath="$PROJECT_DIR$/MyerSplash.Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/MyerSplashAndroid.iml" filepath="$PROJECT_DIR$/MyerSplashAndroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>

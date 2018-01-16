@@ -158,6 +158,7 @@ object DownloadUtil {
         image.listUrl?.let {
             previewFile = FileUtil.getCachedFile(it)
         }
+        DownloadReporter.report(image.downloadLocationLink)
         startDownloadService(context, image.fileNameForDownload, image.downloadUrl!!, previewFile?.path)
         persistDownloadItem(context, image)
         EventBus.getDefault().post(DownloadStartedEvent(image.id))

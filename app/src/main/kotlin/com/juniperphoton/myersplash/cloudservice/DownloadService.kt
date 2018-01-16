@@ -10,4 +10,7 @@ interface DownloadService {
     @Streaming
     @GET
     fun downloadFileWithDynamicUrlSync(@Url fileUrl: String): Observable<ResponseBody>
+
+    @GET
+    fun reportDownload(@Url url: String): Observable<ResponseBody>
 }
