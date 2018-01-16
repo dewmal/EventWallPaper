@@ -47,7 +47,7 @@ class MainActivity : BaseActivity() {
     private var fabPositionX: Int = 0
     private var fabPositionY: Int = 0
 
-    private var idMaps = mutableMapOf(
+    private val idMaps = mutableMapOf(
             0 to UnsplashCategory.FEATURED_CATEGORY_ID,
             1 to UnsplashCategory.NEW_CATEGORY_ID,
             2 to UnsplashCategory.RANDOM_CATEGORY_ID)

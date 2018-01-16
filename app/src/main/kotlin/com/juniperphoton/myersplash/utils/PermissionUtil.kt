@@ -13,8 +13,8 @@ object PermissionUtil{
     }
 
     fun checkAndRequest(context: Activity) {
-        if (ContextCompat.checkSelfPermission(context,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(context,
                     arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     0)

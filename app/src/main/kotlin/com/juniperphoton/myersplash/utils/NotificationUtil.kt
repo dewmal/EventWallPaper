@@ -22,8 +22,10 @@ object NotificationUtil {
     private const val TAG = "NotificationUtil"
     private val NOTIFICATION_CHANNEL_ID = "default_channel"
 
-    private val notificationManager: NotificationManager =
-            App.instance.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private val notificationManager: NotificationManager
+        get() {
+            return App.instance.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        }
 
     init {
         @TargetApi(Build.VERSION_CODES.O)

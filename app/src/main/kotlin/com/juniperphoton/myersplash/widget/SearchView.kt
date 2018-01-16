@@ -78,7 +78,7 @@ class SearchView(context: Context, attrs: AttributeSet) : FrameLayout(context, a
         initUi()
     }
 
-    private fun initUi(){
+    private fun initUi() {
         rootRL.setOnTouchListener { _, _ -> true }
         editText.setOnKeyListener({ _, keyCode, event ->
             if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {

@@ -8,9 +8,7 @@ import java.lang.Exception
 
 fun File.getFolderLengthInMb(): Long {
     if (!exists()) return 0
-    return listFiles()
-            .map(File::length)
-            .sum() / 1024 / 1024
+    return listFiles().map(File::length).sum() / 1024 / 1024
 }
 
 fun File.getLengthInKb(): Long = length() / 1024 / 1024

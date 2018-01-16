@@ -32,6 +32,8 @@ class LoadMoreListener(private val onLoadMore: (() -> Unit)? = null) {
     private fun findLastVisibleItemPosition(layoutManager: RecyclerView.LayoutManager?): Int {
         return if (layoutManager is LinearLayoutManager) {
             layoutManager.findLastVisibleItemPosition()
-        } else -1
+        } else {
+            -1
+        }
     }
 }
