@@ -1,5 +1,6 @@
 package com.juniperphoton.myersplash.cloudservice
 
+import android.net.Uri
 import com.juniperphoton.myersplash.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -9,14 +10,14 @@ class CustomInterceptor : Interceptor {
         val request = chain.request()
         val builder = request.newBuilder()
 
-        var url = request.url().toString()
-        if (url.last() == '&') {
-            url = url.substring(0, url.length - 2)
+        val original = request.url().toString()
+        val ub = Uri.parse(original).buildUpon()
+
+        if (original.startsWith(Request.BASE_URL)) {
+            ub.appendQueryParameter("client_id", BuildConfig.UNSPLASH_APP_KEY)
         }
-        if (url.startsWith(Request.BASE_URL)) {
-            url = "$url&client_id=${BuildConfig.UNSPLASH_APP_KEY}"
-        }
-        builder.url(url)
+
+        builder.url(ub.build().toString())
 
         val resp = chain.proceed(builder.build())
         if (!resp.isSuccessful) {
