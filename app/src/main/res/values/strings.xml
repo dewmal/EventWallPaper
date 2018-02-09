@@ -7,18 +7,18 @@
     <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
 
     <string name="settings_credit_content">Photos are from Unsplash, an amazing website providing free high-resolution photos.</string>
-    <string name="settings_saving_quality">Saving quality</string>
-    <string name="settings_loading_quality">Loading quality in list</string>
+    <string name="settings_saving_quality">Save</string>
+    <string name="settings_loading_quality">Thumbnails</string>
     <string name="settings_clean_up_cache">Clean up cache</string>
 
     <string name="settings_quick_download">Show download button in list</string>
-    <string name="settings_quick_download_title">Quick download</string>
+    <string name="settings_quick_download_title">Download shortcut</string>
 
     <string name="settings_download_metered">Always download via metered network</string>
-    <string name="settings_download_metered_title">Metered network setting</string>
+    <string name="settings_download_metered_title">Metered network warning</string>
 
-    <string name="settings_recommendation_title">Show today</string>
-    <string name="settings_recommendation_content">Update everyday</string>
+    <string name="settings_recommendation_content">Update every day</string>
+    <string name="settings_recommendation_title">Today highlight</string>
 
     <string name="image_desc">Desc</string>
 

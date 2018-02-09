@@ -29,15 +29,6 @@ class ManageDownloadActivity : BaseActivity() {
         const val ACTION = "action.downloads"
     }
 
-    private var adapter: DownloadsListAdapter? = null
-
-    private var itemStatusChangedListener = RealmChangeListener<DownloadItem> { item ->
-        Pasteur.d(TAG, "onChange")
-        if (item.isValid) {
-            adapter?.updateItem(item)
-        }
-    }
-
     @BindView(R.id.downloads_list)
     lateinit var downloadsList: RecyclerView
 
@@ -46,6 +37,15 @@ class ManageDownloadActivity : BaseActivity() {
 
     @BindView(R.id.downloads_more_fab)
     lateinit var moreFab: FloatingActionButton
+
+    private var adapter: DownloadsListAdapter? = null
+
+    private var itemStatusChangedListener = RealmChangeListener<DownloadItem> { item ->
+        Pasteur.d(TAG, "onChange")
+        if (item.isValid) {
+            adapter?.updateItem(item)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

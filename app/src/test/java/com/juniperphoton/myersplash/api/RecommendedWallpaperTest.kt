@@ -9,14 +9,19 @@ import org.junit.Test
 
 class RecommendedWallpaperTest {
     private val thumbUrl: String
-        get() =
-            "${Request.AUTO_CHANGE_WALLPAPER_THUMB}${WallpaperWidgetProvider.dateString}.jpg"
+        get() {
+            return "${Request.AUTO_CHANGE_WALLPAPER_THUMB}${WallpaperWidgetProvider.DATE_STRING}.jpg"
+        }
 
     private val largeUrl: String
-        get() = "${Request.AUTO_CHANGE_WALLPAPER}${WallpaperWidgetProvider.dateString}.jpg"
+        get() {
+            return "${Request.AUTO_CHANGE_WALLPAPER}${WallpaperWidgetProvider.DATE_STRING}.jpg"
+        }
 
     private val invalidUrl: String
-        get() = "${Request.AUTO_CHANGE_WALLPAPER_THUMB}nothumb.jpg"
+        get() {
+            return "${Request.AUTO_CHANGE_WALLPAPER_THUMB}nothumb.jpg"
+        }
 
     @Test
     fun testRecommendedThumb() {

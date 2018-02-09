@@ -14,11 +14,11 @@ import javax.inject.Inject
 
 open class MainListPresenter : MainContract.MainPresenter {
     companion object {
-        const val REFRESH_PAGING = 1
+        const val DEFAULT_PAGING = 1
         private const val TAG = "MainListPresenter"
     }
 
-    private var nextPage: Int = REFRESH_PAGING
+    private var nextPage: Int = DEFAULT_PAGING
     private var refreshing: Boolean = false
     private var disposableList = CompositeDisposable()
 
@@ -63,7 +63,7 @@ open class MainListPresenter : MainContract.MainPresenter {
     }
 
     override fun refresh() {
-        loadPhotoList(REFRESH_PAGING)
+        loadPhotoList(DEFAULT_PAGING)
     }
 
     private fun setSignalOfEnd() {
@@ -85,7 +85,7 @@ open class MainListPresenter : MainContract.MainPresenter {
 
             override fun onNext(data: MutableList<UnsplashImage>) {
                 if (category.id == UnsplashCategory.NEW_CATEGORY_ID
-                        && nextPage == REFRESH_PAGING
+                        && nextPage == DEFAULT_PAGING
                         && preferenceRepo.getBoolean(App.instance.getString(R.string.preference_key_recommendation), true)) {
                     data.add(0, UnsplashImage.createTodayImage())
                 }
@@ -98,7 +98,7 @@ open class MainListPresenter : MainContract.MainPresenter {
         nextPage = next
         refreshing = true
 
-        mainView.setRefreshing(next == REFRESH_PAGING)
+        mainView.setRefreshing(next == DEFAULT_PAGING)
 
         category.let {
             val o = when (it.id) {

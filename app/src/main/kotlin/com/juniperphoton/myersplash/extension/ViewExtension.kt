@@ -10,7 +10,7 @@ fun View.getActivity(): Activity? {
         if (ctx is Activity) {
             return ctx
         }
-        ctx = (ctx).baseContext
+        ctx = ctx.baseContext
     }
     return null
 }

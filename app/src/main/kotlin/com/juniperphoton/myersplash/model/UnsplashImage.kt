@@ -21,13 +21,13 @@ class UnsplashImage : Serializable {
         fun createTodayImage(): UnsplashImage {
             return UnsplashImage().apply {
                 isUnsplash = false
-                id = WallpaperWidgetProvider.dateString
+                id = WallpaperWidgetProvider.DATE_STRING
                 urls = ImageUrl().apply {
-                    raw = WallpaperWidgetProvider.downloadUrl
-                    full = WallpaperWidgetProvider.downloadUrl
-                    regular = WallpaperWidgetProvider.thumbUrl
-                    small = WallpaperWidgetProvider.thumbUrl
-                    thumb = WallpaperWidgetProvider.thumbUrl
+                    raw = WallpaperWidgetProvider.DOWNLOAD_URL
+                    full = WallpaperWidgetProvider.DOWNLOAD_URL
+                    regular = WallpaperWidgetProvider.THUMB_URL
+                    small = WallpaperWidgetProvider.THUMB_URL
+                    thumb = WallpaperWidgetProvider.THUMB_URL
                 }
                 user = UnsplashUser().apply {
                     val authorName = App.instance.getString(R.string.author_default_name)
@@ -83,10 +83,10 @@ class UnsplashImage : Serializable {
         }
 
     val userName: String?
-        get() = user!!.name
+        get() = user?.name
 
     val userHomePage: String?
-        get() = user!!.homeUrl
+        get() = user?.homeUrl
 
     val listUrl: String?
         get() {

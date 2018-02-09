@@ -13,8 +13,8 @@ object DownloadItemTransactionUtil {
      */
     fun delete(item: DownloadItem) {
         RealmCache.getInstance().executeTransaction { realm ->
-            val managedItem = realm.where(DownloadItem::class.java).equalTo(DownloadItem.ID_KEY,
-                    item.id).findFirst()
+            val managedItem = realm.where(DownloadItem::class.java)
+                    .equalTo(DownloadItem.ID_KEY, item.id).findFirst()
             managedItem?.deleteFromRealm()
         }
     }
@@ -25,8 +25,8 @@ object DownloadItemTransactionUtil {
      */
     fun updateStatus(item: DownloadItem, @DownloadItem.DownloadStatus status: Int) {
         RealmCache.getInstance().executeTransaction { realm ->
-            val managedItem = realm.where(DownloadItem::class.java).equalTo(DownloadItem.ID_KEY,
-                    item.id).findFirst()
+            val managedItem = realm.where(DownloadItem::class.java)
+                    .equalTo(DownloadItem.ID_KEY, item.id).findFirst()
             if (managedItem != null) {
                 managedItem.status = status
                 if (status == DownloadItem.DOWNLOAD_STATUS_FAILED) {
@@ -42,8 +42,8 @@ object DownloadItemTransactionUtil {
      */
     fun updateStatus(id: String, @DownloadItem.DownloadStatus status: Int) {
         RealmCache.getInstance().executeTransaction { realm ->
-            val managedItem = realm.where(DownloadItem::class.java).equalTo(DownloadItem.ID_KEY,
-                    id).findFirst()
+            val managedItem = realm.where(DownloadItem::class.java)
+                    .equalTo(DownloadItem.ID_KEY, id).findFirst()
             if (managedItem != null) {
                 managedItem.status = status
                 if (status == DownloadItem.DOWNLOAD_STATUS_FAILED) {

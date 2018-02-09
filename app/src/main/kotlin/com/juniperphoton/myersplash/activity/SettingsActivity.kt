@@ -23,12 +23,9 @@ class SettingsActivity : BaseActivity() {
     companion object {
         private const val TAG = "SettingsActivity"
 
-        private val savingQualitySettingsKey = App.instance.getString(R.string.preference_key_saving_quality)
-        private val listQualitySettingsKey = App.instance.getString(R.string.preference_key_list_quality)
+        private val KEY_SAVING_QUALITY = App.instance.getString(R.string.preference_key_saving_quality)
+        private val KEY_LIST_QUALITY = App.instance.getString(R.string.preference_key_list_quality)
     }
-
-    private lateinit var savingStrings: Array<String>
-    private lateinit var loadingStrings: Array<String>
 
     @BindView(R.id.quick_download_settings)
     lateinit var quickDownloadSettings: SettingsItemLayout
@@ -47,6 +44,9 @@ class SettingsActivity : BaseActivity() {
 
     @BindView(R.id.recommendation_preview)
     lateinit var recommendationPreview: View
+
+    private lateinit var savingStrings: Array<String>
+    private lateinit var loadingStrings: Array<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,10 +71,10 @@ class SettingsActivity : BaseActivity() {
         loadingStrings = arrayOf(getString(R.string.settings_loading_large), getString(R.string.settings_loading_small),
                 getString(R.string.settings_loading_thumb))
 
-        val savingChoice = LocalSettingHelper.getInt(this, savingQualitySettingsKey, 1)
+        val savingChoice = LocalSettingHelper.getInt(this, KEY_SAVING_QUALITY, 1)
         savingQualitySettings.content = savingStrings[savingChoice]
 
-        val loadingChoice = LocalSettingHelper.getInt(this, listQualitySettingsKey, 0)
+        val loadingChoice = LocalSettingHelper.getInt(this, KEY_LIST_QUALITY, 0)
         loadingQualitySettings.content = loadingStrings[loadingChoice]
     }
 
@@ -94,12 +94,12 @@ class SettingsActivity : BaseActivity() {
 
     @OnClick(R.id.saving_quality_settings)
     internal fun setSavingQuality(view: View) {
-        val choice = LocalSettingHelper.getInt(this, savingQualitySettingsKey, 1)
+        val choice = LocalSettingHelper.getInt(this, KEY_SAVING_QUALITY, 1)
 
         val builder = AlertDialog.Builder(this@SettingsActivity)
         builder.setTitle(getString(R.string.settings_saving_quality))
         builder.setSingleChoiceItems(savingStrings, choice) { dialog, which ->
-            LocalSettingHelper.putInt(this@SettingsActivity, savingQualitySettingsKey, which)
+            LocalSettingHelper.putInt(this@SettingsActivity, KEY_SAVING_QUALITY, which)
             dialog.dismiss()
             savingQualitySettings.content = savingStrings[which]
         }
@@ -108,12 +108,12 @@ class SettingsActivity : BaseActivity() {
 
     @OnClick(R.id.loading_quality_settings)
     internal fun setLoadingQuality(view: View) {
-        val choice = LocalSettingHelper.getInt(this, listQualitySettingsKey, 0)
+        val choice = LocalSettingHelper.getInt(this, KEY_LIST_QUALITY, 0)
 
         val builder = AlertDialog.Builder(this@SettingsActivity)
         builder.setTitle(getString(R.string.settings_loading_quality))
         builder.setSingleChoiceItems(loadingStrings, choice) { dialog, which ->
-            LocalSettingHelper.putInt(this@SettingsActivity, listQualitySettingsKey, which)
+            LocalSettingHelper.putInt(this@SettingsActivity, KEY_LIST_QUALITY, which)
             dialog.dismiss()
             loadingQualitySettings.content = loadingStrings[which]
         }
