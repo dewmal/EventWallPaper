@@ -16,5 +16,4 @@
     <color name="HintColor">#afafaf</color>
     <color name="LightGray">#e2e2e2</color>
     <color name="ShadowColor">#2f000000</color>
-    <color name="StatusBarColor">#3b000000</color>
 </resources>

@@ -22,15 +22,6 @@ fun Context.hasNavigationBar(): Boolean {
     return size.y > 0
 }
 
-fun Context.getStatusBarHeight(): Int {
-    var barHeight = 0
-    val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
-    if (resourceId > 0) {
-        barHeight = resources.getDimensionPixelSize(resourceId)
-    }
-    return barHeight
-}
-
 fun Context.getNavigationBarSize(): Point {
     val appUsableSize = getAppUsableScreenSize()
     val realScreenSize = getRealScreenSize()
